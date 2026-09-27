@@ -26,6 +26,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { BadgeMark, PremiumBadge } from "@/components/verified/premium-badge"
+import { ShineBorder } from "@/components/ui/shine-border"
 import {
   BADGE_RANGES,
   tierBadgeSpans,
@@ -178,38 +179,46 @@ export default function UsernamePage() {
           </div>
 
           {trimmed !== "" && !shapeError && tier && (
-            <div className="space-y-3 rounded-2xl bg-muted/40 p-4">
-              <div className="flex items-baseline justify-between">
-                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  {t(`tiers.${tier.labelKey}`)}
-                  {/* Asked of the typed name, not the tier: ultra spans both marks,
-                  so this is the only place the exact badge is knowable. */}
-                  <PremiumBadge name={trimmed} className="size-3.5" />
-                </span>
-                <span className="flex items-center gap-1.5 text-lg font-bold tabular-nums">
-                  <Image
-                    src={ICP_LOGO}
-                    alt=""
-                    width={40}
-                    height={40}
-                    className="size-5 object-contain"
-                  />
-                  {formatAmount(price)}
-                </span>
+            <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card/60 p-4 shadow-xs">
+              <ShineBorder
+                className="rounded-2xl"
+                borderWidth={1.2}
+                duration={12}
+                shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+              />
+              <div className="relative z-10 space-y-3">
+                <div className="flex items-baseline justify-between">
+                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    {t(`tiers.${tier.labelKey}`)}
+                    {/* Asked of the typed name, not the tier: ultra spans both marks,
+                    so this is the only place the exact badge is knowable. */}
+                    <PremiumBadge name={trimmed} className="size-3.5" />
+                  </span>
+                  <span className="flex items-center gap-1.5 text-lg font-bold tabular-nums">
+                    <Image
+                      src={ICP_LOGO}
+                      alt=""
+                      width={40}
+                      height={40}
+                      className="size-5 object-contain"
+                    />
+                    {formatAmount(price)}
+                  </span>
+                </div>
+                <div className="flex items-baseline justify-between text-xs text-muted-foreground">
+                  <span>{t("networkFee")}</span>
+                  <span className="tabular-nums">{formatAmount(ICP_FEE)} ICP</span>
+                </div>
+                <div className="flex items-baseline justify-between border-t border-border/60 pt-3 text-sm font-medium">
+                  <span>{t("total")}</span>
+                  <span className="tabular-nums">{formatAmount(total)} ICP</span>
+                </div>
+                {treasury && (
+                  <p className="text-xs text-muted-foreground">
+                    {t("treasuryNote", { principal: shortPrincipal(treasury) })}
+                  </p>
+                )}
               </div>
-              <div className="flex items-baseline justify-between text-xs text-muted-foreground">
-                <span>{t("networkFee")}</span>
-                <span className="tabular-nums">{formatAmount(ICP_FEE)} ICP</span>
-              </div>
-              <div className="flex items-baseline justify-between border-t pt-3 text-sm font-medium">
-                <span>{t("total")}</span>
-                <span className="tabular-nums">{formatAmount(total)} ICP</span>
-              </div>
-              {treasury && (
-                <p className="text-xs text-muted-foreground">
-                  {t("treasuryNote", { principal: shortPrincipal(treasury) })}
-                </p>
-              )}
             </div>
           )}
 
@@ -279,15 +288,22 @@ export default function UsernamePage() {
                 </PopoverContent>
               </Popover>
             </div>
-            <div className="overflow-hidden rounded-2xl border">
-              {TIERS.map((tier, i) => (
-                <div
-                  key={tier.labelKey}
-                  className={cn(
-                    "flex items-baseline justify-between px-4 py-3 text-sm",
-                    i > 0 && "border-t"
-                  )}
-                >
+            <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card/40 shadow-xs">
+              <ShineBorder
+                className="rounded-2xl"
+                borderWidth={1.2}
+                duration={14}
+                shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+              />
+              <div className="relative z-10">
+                {TIERS.map((tier, i) => (
+                  <div
+                    key={tier.labelKey}
+                    className={cn(
+                      "flex items-baseline justify-between px-4 py-3 text-sm",
+                      i > 0 && "border-t border-border/60"
+                    )}
+                  >
                   <div>
                     <p className="font-medium">{t(`tiers.${tier.labelKey}`)}</p>
                     <p className="text-xs text-muted-foreground">
@@ -308,6 +324,7 @@ export default function UsernamePage() {
                   </span>
                 </div>
               ))}
+              </div>
             </div>
             <p className="text-xs text-muted-foreground">{t("note")}</p>
             <Link
