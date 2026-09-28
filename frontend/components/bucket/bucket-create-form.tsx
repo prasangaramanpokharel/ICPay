@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,11 +16,13 @@ import {
 } from "@/components/ui/field"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { BucketPriceLabel } from "@/components/bucket/bucket-price-label"
+import { ShineBorder } from "@/components/ui/shine-border"
 import { useBucketCycleStatus, useBucketPrice } from "@/hooks/bucket/useBucket"
 import { useLiveBalance } from "@/hooks/wallet/useWalletData"
 import { CAPACITY_TIERS_GB, mapBucketError, validateBucketName } from "@/lib/bucket/bucket"
 import { calculateListPriceE8s } from "@/lib/bucket/pricing"
-import { ICP_FEE } from "@/lib/wallet/utils"
+import { ICP_FEE, formatAmount } from "@/lib/wallet/utils"
+import { cn } from "@/lib/ui/utils"
 import type { BucketVisibilityVariant } from "@/services/bucket/types"
 
 export function BucketCreateForm({
@@ -67,105 +70,164 @@ export function BucketCreateForm({
         </Alert>
       )}
 
-      <div className="space-y-6">
-      <div className="space-y-2">
-        <Label htmlFor="bucket-name">{t("name")}</Label>
-        <Input
-          id="bucket-name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="my-assets"
-          autoComplete="off"
-        />
-        <p className="text-xs text-muted-foreground">{t("nameHint")}</p>
-        {nameError && name.length > 0 && (
-          <p className="text-xs text-destructive">{nameError}</p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <Label>{t("capacity")}</Label>
-        <div className="flex flex-wrap gap-1.5">
-          {CAPACITY_TIERS_GB.map((gb) => (
-            <Button
-              key={gb}
-              type="button"
-              size="xs"
-              variant={capacityGB === gb ? "default" : "outline"}
-              onClick={() => setCapacityGB(gb)}
-            >
-              {gb}G
-            </Button>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label>{t("visibility")}</Label>
-        <RadioGroup
-          value={"Public" in visibility ? "public" : "private"}
-          onValueChange={(value) => {
-            if (value === "public") setVisibility({ Public: null })
-            if (value === "private") setVisibility({ Private: null })
-          }}
-          className="grid gap-2 sm:grid-cols-2"
-        >
-          <FieldLabel htmlFor="bucket-visibility-public">
-            <Field orientation="horizontal">
-              <FieldContent>
-                <FieldTitle>{t("public")}</FieldTitle>
-                <FieldDescription>{t("publicHint")}</FieldDescription>
-              </FieldContent>
-              <RadioGroupItem value="public" id="bucket-visibility-public" />
-            </Field>
-          </FieldLabel>
-          <FieldLabel htmlFor="bucket-visibility-private">
-            <Field orientation="horizontal">
-              <FieldContent>
-                <FieldTitle>{t("private")}</FieldTitle>
-                <FieldDescription>{t("privateHint")}</FieldDescription>
-              </FieldContent>
-              <RadioGroupItem value="private" id="bucket-visibility-private" />
-            </Field>
-          </FieldLabel>
-        </RadioGroup>
-      </div>
-
-      <div className="rounded-2xl border border-dashed border-primary/20 bg-primary/5 px-4 py-3">
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">{t("price")}</span>
-          {priceLoading || price === null ? (
-            <span className="font-semibold tabular-nums">…</span>
-          ) : (
-            <BucketPriceLabel
-              priceE8s={price}
-              listPriceE8s={listPrice}
-              perMonth={t("perMonth")}
-            />
+      <div className="space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="bucket-name" className="text-xs font-medium">
+            {t("name")}
+          </Label>
+          <Input
+            id="bucket-name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="my-assets"
+            autoComplete="off"
+            className="h-10"
+          />
+          <p className="text-xs text-muted-foreground">{t("nameHint")}</p>
+          {nameError && name.length > 0 && (
+            <p className="text-xs text-destructive">{nameError}</p>
           )}
         </div>
-      </div>
 
-      {error && (
-        <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="text-xs font-medium">{t("capacity")}</Label>
+            <span className="text-[11px] text-muted-foreground">
+              Dedicated EOP Canister
+            </span>
+          </div>
+          <div className="grid grid-cols-6 gap-1.5">
+            {CAPACITY_TIERS_GB.map((gb) => {
+              const active = capacityGB === gb
+              return (
+                <Button
+                  key={gb}
+                  type="button"
+                  size="xs"
+                  variant={active ? "default" : "outline"}
+                  className={cn(
+                    "h-9 font-medium text-xs transition-all",
+                    active && "ring-1 ring-primary shadow-xs font-semibold"
+                  )}
+                  onClick={() => setCapacityGB(gb)}
+                >
+                  {gb}G
+                </Button>
+              )
+            })}
+          </div>
+        </div>
 
-      <Button
-        className="w-full"
-        disabled={
-          submitting ||
-          !canCreate ||
-          Boolean(nameError) ||
-          name.trim().length === 0 ||
-          priceLoading ||
-          insufficient
-        }
-        onClick={handleSubmit}
-      >
-        {submitting ? t("creating") : insufficient ? t("insufficientBalance") : t("create")}
-      </Button>
+        <div className="space-y-2">
+          <Label className="text-xs font-medium">{t("visibility")}</Label>
+          <RadioGroup
+            value={"Public" in visibility ? "public" : "private"}
+            onValueChange={(value) => {
+              if (value === "public") setVisibility({ Public: null })
+              if (value === "private") setVisibility({ Private: null })
+            }}
+            className="grid gap-2 sm:grid-cols-2"
+          >
+            <FieldLabel htmlFor="bucket-visibility-public" className="cursor-pointer">
+              <Field orientation="horizontal">
+                <FieldContent>
+                  <FieldTitle>{t("public")}</FieldTitle>
+                  <FieldDescription>{t("publicHint")}</FieldDescription>
+                </FieldContent>
+                <RadioGroupItem value="public" id="bucket-visibility-public" />
+              </Field>
+            </FieldLabel>
+            <FieldLabel htmlFor="bucket-visibility-private" className="cursor-pointer">
+              <Field orientation="horizontal">
+                <FieldContent>
+                  <FieldTitle>{t("private")}</FieldTitle>
+                  <FieldDescription>{t("privateHint")}</FieldDescription>
+                </FieldContent>
+                <RadioGroupItem value="private" id="bucket-visibility-private" />
+              </Field>
+            </FieldLabel>
+          </RadioGroup>
+        </div>
+
+        {/* Pricing Card with ShineBorder */}
+        <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-b from-primary/10 via-background to-background p-4 shadow-sm">
+          <ShineBorder
+            className="rounded-2xl z-0"
+            borderWidth={1.5}
+            duration={10}
+            shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+          />
+          <div className="relative z-10 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wider text-primary">
+                  {capacityGB} GB Plan
+                </span>
+                <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-500">
+                  50% OFF
+                </span>
+              </div>
+              <span className="text-xs text-muted-foreground">30-day cycle</span>
+            </div>
+
+            <div className="flex items-baseline justify-between border-t border-border/50 pt-2.5">
+              <span className="text-xs text-muted-foreground">{t("price")}</span>
+              {priceLoading || price === null ? (
+                <span className="font-semibold tabular-nums text-foreground">…</span>
+              ) : (
+                <BucketPriceLabel
+                  priceE8s={price}
+                  listPriceE8s={listPrice}
+                  perMonth={t("perMonth")}
+                  showUsd={true}
+                />
+              )}
+            </div>
+            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <span className="size-1.5 rounded-full bg-emerald-500" />
+              <span>Dedicated 400 GB EOP Canister · Instant Boundary CDN</span>
+            </div>
+          </div>
+        </div>
+
+        {insufficient && (
+          <div className="flex items-center justify-between rounded-xl border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive">
+            <span>
+              {t("insufficientBalance")} ({formatAmount(balance ?? 0n)} / {formatAmount(totalCost ?? 0n)} ICP)
+            </span>
+            <Link
+              href="/deposit"
+              className="font-medium underline hover:opacity-80"
+            >
+              Deposit ICP →
+            </Link>
+          </div>
+        )}
+
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        <Button
+          className="w-full h-11 text-sm font-semibold shadow-sm transition-all"
+          disabled={
+            submitting ||
+            !canCreate ||
+            Boolean(nameError) ||
+            name.trim().length === 0 ||
+            priceLoading ||
+            insufficient
+          }
+          onClick={handleSubmit}
+        >
+          {submitting
+            ? t("creating")
+            : insufficient
+            ? t("insufficientBalance")
+            : `${t("create")} · ${capacityGB} GB`}
+        </Button>
       </div>
     </div>
   )
