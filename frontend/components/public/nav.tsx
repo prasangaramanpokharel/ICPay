@@ -102,6 +102,7 @@ export function PublicNav() {
 
   return (
     <header
+      suppressHydrationWarning
       className={cn(
         "sticky top-0 z-50 backdrop-blur-md bg-background/80",
         isCharityCampaignPage && charityCampaignShellClass
@@ -128,7 +129,7 @@ export function PublicNav() {
             </span>
           </Link>
 
-          <NavigationMenu className="hidden max-w-none lg:flex" align="start">
+          <NavigationMenu suppressHydrationWarning className="hidden max-w-none lg:flex" align="start">
             <NavigationMenuList className="flex-wrap justify-start gap-0.5">
               {primaryLinks.map((link) => {
                 const active = isActive(pathname, link.href)

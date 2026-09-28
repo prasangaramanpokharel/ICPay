@@ -4,7 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import useSWR, { useSWRConfig } from "swr"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowDataTransferHorizontalIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons"
+import { Alert02Icon, ArrowDataTransferHorizontalIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -16,7 +17,12 @@ import { useApplyTradeBalances, useRefreshTradeBalances, useTradeTokens, useTrad
 import { useRefreshWallet, useTokenHolding } from "@/hooks/wallet/useWalletData"
 import { formatTokenAmount, parseTokenAmount, toPlainTokenAmount } from "@/lib/wallet/utils"
 import { tradeOrderAlert, tradeOrderBlock, tradeImpactAlert, canSubmitTrade, canOpenTransfer } from "@/lib/market/tradeOrderBlock"
-import { classifyTradeQuoteError, classifyTradeExecError, shouldRetryTradeQuote } from "@/lib/market/tradeQuoteError"
+import {
+  classifyTradeQuoteError,
+  formatTradeErrorMessage,
+  isInsufficientBalanceError,
+  shouldRetryTradeQuote,
+} from "@/lib/market/tradeQuoteError"
 import {
   estimatePriceImpactPct,
   isTradeTokenSafe,
@@ -514,11 +520,11 @@ export function TradeOrderPanel({
         await refreshTradeBalances(inId)
       } else {
         setStatus("error")
-        setTradeError("err" in res ? res.err : "Failed to place limit order")
+        setTradeError(formatTradeErrorMessage("err" in res ? res.err : "Failed to place limit order"))
       }
     } catch (e) {
       setStatus("error")
-      setTradeError(e instanceof Error ? e.message : "Failed to place limit order")
+      setTradeError(formatTradeErrorMessage(e))
     }
   }
 
@@ -619,7 +625,7 @@ export function TradeOrderPanel({
           at: now,
         })
         setStatus("error")
-        setTradeError(result.err)
+        setTradeError(formatTradeErrorMessage(result.err))
         return
       }
       const inKey = tradeBalanceKey(identity, tokenIn.ledgerId)
@@ -660,18 +666,7 @@ export function TradeOrderPanel({
         at: now,
       })
       setStatus("error")
-      const kind = classifyTradeExecError(e)
-      setTradeError(
-        kind === "slippage"
-          ? t("slippageExceeded")
-          : kind === "liquidity"
-            ? t("insufficientLiquidity")
-            : kind === "timeout"
-              ? t("tradeTimeout")
-              : e instanceof Error
-                ? e.message
-                : "Trade failed"
-      )
+      setTradeError(formatTradeErrorMessage(e))
     }
   }
 
@@ -1095,9 +1090,46 @@ export function TradeOrderPanel({
                       : t(guard.key as "cannotTrade")}
               </div>
             ) : status === "error" && tradeError ? (
-              <div className="px-0.5 py-0.5 text-xs text-destructive">
-                {tradeError}
-              </div>
+              <Alert
+                variant="destructive"
+                className="border-destructive/30 bg-destructive/10 text-destructive dark:bg-destructive/15 py-2.5 px-3"
+              >
+                <div className="flex items-start gap-2">
+                  <HugeiconsIcon
+                    icon={Alert02Icon}
+                    className="size-4 shrink-0 mt-0.5 text-destructive"
+                  />
+                  <div className="flex-1 space-y-1.5">
+                    <AlertDescription className="text-xs leading-relaxed font-medium text-destructive">
+                      {tradeError}
+                    </AlertDescription>
+                    {isInsufficientBalanceError(tradeError) && (
+                      <div className="pt-0.5">
+                        <Button
+                          type="button"
+                          size="xs"
+                          variant="outline"
+                          className="h-6 gap-1 px-2 text-[11px] font-semibold border-destructive/40 text-destructive hover:bg-destructive/20 hover:text-destructive cursor-pointer"
+                          onClick={() => {
+                            setDepositDrawerOpen(true)
+                            setTradeError(null)
+                          }}
+                        >
+                          <span>{tDeposit("title")}</span>
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setTradeError(null)}
+                    className="text-destructive/70 hover:text-destructive text-xs p-0.5 -mr-1 -mt-0.5 rounded cursor-pointer transition-colors"
+                    aria-label="Dismiss error"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </Alert>
             ) : null}
 
             {/* Action CTA Button */}

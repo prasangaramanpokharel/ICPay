@@ -30,7 +30,7 @@ export function LocaleFlag({ country, label, size = "md", className, priority }:
       width={width}
       height={height}
       unoptimized
-      loading={priority ? "eager" : "lazy"}
+      loading="eager"
       fetchPriority={priority ? "high" : "auto"}
       priority={priority}
       style={{ width: `${width}px`, height: `${height}px` }}

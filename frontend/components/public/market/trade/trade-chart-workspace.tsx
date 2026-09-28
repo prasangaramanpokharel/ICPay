@@ -17,7 +17,7 @@ export function TradeChartWorkspace({
   const t = useTranslations("marketTrade")
 
   return (
-    <Card size="sm" className="m-1 flex h-full min-h-[320px] flex-col gap-0 overflow-hidden py-0">
+    <Card size="sm" className="m-1 flex h-full min-h-[300px] flex-col gap-0 overflow-hidden py-0">
       <Tabs defaultValue="chart" className="flex h-full min-h-0 flex-col gap-0">
         <TabsList variant="line" className="w-full shrink-0 justify-start border-b px-4">
           <TabsTrigger value="chart">{t("tabChart")}</TabsTrigger>

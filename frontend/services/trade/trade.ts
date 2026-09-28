@@ -1,7 +1,6 @@
 import type { Principal } from "@icp-sdk/core/principal"
 import type { Identity } from "@icp-sdk/core/agent"
 import { call, type Outcome } from "@/services/client"
-import { getWalletActor } from "@/services/wallet"
 import { isSwapToken } from "@/lib/swap/tokens"
 import { isLedgerSupported } from "@/services/tokens"
 import { getTradeActor } from "@/services/trade/actor"
@@ -23,10 +22,10 @@ export type TradeQuoteOpts = TradeQuoteFees & {
 
 export { fetchTradeQuote }
 
-/** Preload wallet actor while the user reviews the confirm drawer. */
+/** Preload trade actor while the user prepares order. */
 export async function warmTradeSession(identity: Identity | undefined): Promise<void> {
   if (!identity) return
-  await getWalletActor(identity)
+  await getTradeActor(identity)
 }
 
 export async function getTradingBalance(
@@ -61,22 +60,52 @@ export async function withdrawFromTrade(
 }
 
 function toTradeResult(ok: {
-  blockIndex: bigint
-  amountIn: bigint
-  amountOut: bigint
-  icpServiceFee: bigint
-  txId: string
+  blockIndex?: bigint
+  block_index?: bigint
+  amountIn?: bigint
+  amount_in?: bigint
+  amountOut?: bigint
+  amount_out?: bigint
+  icpServiceFee?: bigint
+  service_fee?: bigint
+  txId?: string
+  tx_id?: string
 }): TradeResult {
   return {
-    blockIndex: ok.blockIndex,
-    amountIn: ok.amountIn,
-    amountOut: ok.amountOut,
-    serviceFee: ok.icpServiceFee,
-    txId: ok.txId,
+    blockIndex:
+      "block_index" in ok && ok.block_index !== undefined
+        ? ok.block_index
+        : "blockIndex" in ok && ok.blockIndex !== undefined
+          ? ok.blockIndex
+          : 0n,
+    amountIn:
+      "amount_in" in ok && ok.amount_in !== undefined
+        ? ok.amount_in
+        : "amountIn" in ok && ok.amountIn !== undefined
+          ? ok.amountIn
+          : 0n,
+    amountOut:
+      "amount_out" in ok && ok.amount_out !== undefined
+        ? ok.amount_out
+        : "amountOut" in ok && ok.amountOut !== undefined
+          ? ok.amountOut
+          : 0n,
+    serviceFee:
+      "service_fee" in ok && ok.service_fee !== undefined
+        ? ok.service_fee
+        : "icpServiceFee" in ok && ok.icpServiceFee !== undefined
+          ? ok.icpServiceFee
+          : 0n,
+    txId:
+      "tx_id" in ok && ok.tx_id !== undefined
+        ? ok.tx_id
+        : "txId" in ok && ok.txId !== undefined
+          ? ok.txId
+          : "",
   }
 }
 
-/** One wallet update: fund (top-up only if needed) → swap. Output stays on trade balance. */
+/** Execute instant market swap directly on the Trade Canister */
 export async function runTrade(
   identity: Identity | undefined,
   tokenIn: string,
@@ -84,13 +113,18 @@ export async function runTrade(
   amountIn: bigint,
   amountOutMin: bigint
 ): Promise<Outcome<TradeResult>> {
-  return call<TradeResult>(identity, "Trade failed", async (actor) => {
-    const r = await actor.executeTrade(tokenIn, tokenOut, amountIn, amountOutMin)
-    if ("ok" in r && r.ok !== undefined) {
-      return { ok: toTradeResult(r.ok) }
-    }
-    return { err: "err" in r ? (r.err ?? "Trade failed") : "Trade failed" }
-  })
+  if (!identity) return { err: "Authentication required" }
+  try {
+    const actor = await getTradeActor(identity)
+    const res = await actor.execute_swap(tokenIn, tokenOut, amountIn, amountOutMin)
+    if ("Ok" in res) return { ok: toTradeResult(res.Ok) }
+    if ("ok" in res) return { ok: toTradeResult(res.ok) }
+    if ("Err" in res) return { err: res.Err }
+    if ("err" in res) return { err: res.err }
+    return { err: "Trade failed" }
+  } catch (e) {
+    return { err: e instanceof Error ? e.message : "Trade failed" }
+  }
 }
 
 function parseLimitOrderStatus(status: CandidLimitOrder["status"]): LimitOrderStatus {
