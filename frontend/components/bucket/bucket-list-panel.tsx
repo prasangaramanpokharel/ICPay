@@ -11,6 +11,7 @@ import { BucketCard } from "@/components/bucket/bucket-card"
 import { BucketCreateForm } from "@/components/bucket/bucket-create-form"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { ShineBorder } from "@/components/ui/shine-border"
 import {
   Dialog,
   DialogContent,
@@ -172,12 +173,20 @@ export function BucketListPanel() {
       )}
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>{t("formTitle")}</DialogTitle>
-            <DialogDescription>{t("formSubtitle")}</DialogDescription>
-          </DialogHeader>
-          <BucketCreateForm onCreate={handleCreate} />
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto overflow-x-hidden">
+          <ShineBorder
+            className="z-0 pointer-events-none"
+            borderWidth={1.5}
+            duration={12}
+            shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+          />
+          <div className="relative z-10 flex flex-col gap-5">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold tracking-tight">{t("formTitle")}</DialogTitle>
+              <DialogDescription className="text-sm text-muted-foreground">{t("formSubtitle")}</DialogDescription>
+            </DialogHeader>
+            <BucketCreateForm onCreate={handleCreate} />
+          </div>
         </DialogContent>
       </Dialog>
     </AppPage>
