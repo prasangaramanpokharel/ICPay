@@ -30,6 +30,8 @@ const COMMANDS: Record<string, string> = {
   "trade:build": "trade/build.ts",
   "trade:deploy": "trade/deploy.ts",
   "trade:hash": "trade/hash.ts",
+  "blob:deploy": "blob/deploy.ts",
+  "blob:status": "blob/status.ts",
   "frontend:build": "frontend/build.ts",
   "frontend:deploy": "frontend/deploy.ts",
   "canister:list": "canister/list.ts",
