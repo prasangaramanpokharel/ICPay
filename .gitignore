@@ -1,5 +1,6 @@
 # Local tooling and operating-system files
 .agents/
+.loopgoal/
 .opencode/
 .cursor/
 .windsurf/

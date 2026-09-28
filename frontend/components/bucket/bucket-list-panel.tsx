@@ -173,7 +173,7 @@ export function BucketListPanel() {
       )}
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="max-w-md overflow-hidden relative">
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto overflow-x-hidden">
           <ShineBorder
             className="z-0 pointer-events-none"
             borderWidth={1.5}
