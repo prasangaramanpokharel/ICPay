@@ -15,6 +15,7 @@ export type StoreFileOptions = {
   path: string
   contentType?: string
   apiKey?: string
+  storageCanisterId?: string
   onProgress?: (pct: number) => void
 }
 
