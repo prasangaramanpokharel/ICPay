@@ -12,7 +12,17 @@ confirm("upgrade the mainnet blob store canister")
 
 step("DEPLOY")
 const initArg = `(principal "${WALLET_CANISTER_ID}")`
-dfx(["deploy", CANISTER, "--mode", "upgrade", "--argument", initArg, "--yes"])
+dfx([
+  "deploy",
+  CANISTER,
+  "--mode",
+  "upgrade",
+  "--wasm-memory-persistence",
+  "keep",
+  "--argument",
+  initArg,
+  "--yes",
+])
 
 step("RESULT")
 const after = moduleHash(CANISTER)

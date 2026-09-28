@@ -22,8 +22,8 @@ type PriceCurrency = "icp" | "usd"
 
 const PLAN_DEFS = [
   { id: "starter", capacityGb: 1 },
-  { id: "pro", capacityGb: 2 },
-  { id: "business", capacityGb: 3 },
+  { id: "pro", capacityGb: 5 },
+  { id: "business", capacityGb: 10 },
 ] as const
 
 function icpFromE8s(e8s: bigint): number {
