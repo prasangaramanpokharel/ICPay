@@ -32,6 +32,33 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "on-chain-cloud-storage-icbucket-s3-guide",
+    title: "icBucket: True On-Chain Cloud Storage with S3-Compatible API at 1 GB per ICP",
+    description:
+      "How icBucket delivers decentralized, S3-compatible object storage hosted 100% on the Internet Computer with zero AWS invoices, simple 30-day plans, and instant payment from your ICPay balance.",
+    publishedAt: "2026-09-28",
+    readingMinutes: 6,
+    category: "Infrastructure",
+  },
+  {
+    slug: "address-poisoning-clipboard-hijacking-username-protection",
+    title: "How Address Poisoning Scams Work and Why Verified Usernames on ICPay Eliminate Clipboard Hijacking",
+    description:
+      "A deep dive into address poisoning and clipboard hijacking scams in Web3, and how ICPay uses verified human-readable usernames and subaccount isolation on the Internet Computer to eradicate destination spoofing.",
+    publishedAt: "2026-09-28",
+    readingMinutes: 7,
+    category: "Security",
+  },
+  {
+    slug: "icfalcon-framework-milestone",
+    title: "ICFalcon Crosses 469 Weekly Downloads on npm: Standardizing Four-Layer Motoko Architecture",
+    description:
+      "How ICFalcon reached 469 weekly downloads on npm by bringing strict four-layer Motoko backend architecture, Next.js frontend scaffolding, and deterministic CLI operations to the Internet Computer.",
+    publishedAt: "2026-09-28",
+    readingMinutes: 6,
+    category: "Developers",
+  },
+  {
     slug: "bitget-wallet-exploit-lessons-self-custody",
     title: "The $351M Bitget Exploit: How Centralized Backend Vulnerabilities Expose Crypto and Why On-Chain Verification Wins",
     description:
