@@ -1296,7 +1296,8 @@
       "sectionLegal": "法的情報",
       "primary": {
         "blog": "ブログ",
-        "charity": "チャリティ"
+        "charity": "チャリティ",
+        "launchpad": "Launchpad"
       },
       "products": {
         "wallet": {
@@ -1314,6 +1315,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "グローバル CLI 付きの本番向け Motoko フレームワーク。"
+        },
+        "launchpad": {
+          "title": "Launchpad",
+          "description": "Join community token sales with 100% smart contract escrow."
         }
       },
       "resources": {

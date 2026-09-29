@@ -1296,7 +1296,8 @@
       "sectionLegal": "कानूनी",
       "primary": {
         "blog": "ब्लॉग",
-        "charity": "चैरिटी"
+        "charity": "चैरिटी",
+        "launchpad": "Launchpad"
       },
       "products": {
         "wallet": {
@@ -1314,6 +1315,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "ग्लोबल CLI के साथ प्रोडक्शन Motoko फ्रेमवर्क।"
+        },
+        "launchpad": {
+          "title": "Launchpad",
+          "description": "Join community token sales with 100% smart contract escrow."
         }
       },
       "resources": {

@@ -57,6 +57,9 @@ export const WALLET_CANISTER_ID = getIsLocal()
 export const TRADE_CANISTER_ID =
   process.env.NEXT_PUBLIC_TRADE_CANISTER_ID ?? MAINNET_TRADE_CANISTER_ID
 
+export const LAUNCHPAD_CANISTER_ID =
+  process.env.NEXT_PUBLIC_LAUNCHPAD_CANISTER_ID ?? ""
+
 export function getIdentityProvider(): string {
   if (getIsLocal()) return withAuthorizePath(`http://${LOCAL_II_CANISTER_ID}.localhost:4943`)
   return withAuthorizePath(process.env.NEXT_PUBLIC_II_URL ?? "https://id.ai")

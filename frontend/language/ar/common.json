@@ -1296,7 +1296,8 @@
       "sectionLegal": "قانوني",
       "primary": {
         "blog": "المدونة",
-        "charity": "الخيرية"
+        "charity": "الخيرية",
+        "launchpad": "Launchpad"
       },
       "products": {
         "wallet": {
@@ -1314,6 +1315,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "إطار Motoko للإنتاج مع CLI عالمي."
+        },
+        "launchpad": {
+          "title": "Launchpad",
+          "description": "Join community token sales with 100% smart contract escrow."
         }
       },
       "resources": {

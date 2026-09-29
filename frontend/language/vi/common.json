@@ -1296,7 +1296,8 @@
       "sectionLegal": "Pháp lý",
       "primary": {
         "blog": "Blog",
-        "charity": "Từ thiện"
+        "charity": "Từ thiện",
+        "launchpad": "Launchpad"
       },
       "products": {
         "wallet": {
@@ -1314,6 +1315,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "Framework Motoko sản xuất với CLI toàn cục."
+        },
+        "launchpad": {
+          "title": "Launchpad",
+          "description": "Join community token sales with 100% smart contract escrow."
         }
       },
       "resources": {

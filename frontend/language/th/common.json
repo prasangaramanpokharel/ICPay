@@ -1296,7 +1296,8 @@
       "sectionLegal": "กฎหมาย",
       "primary": {
         "blog": "บล็อก",
-        "charity": "การกุศล"
+        "charity": "การกุศล",
+        "launchpad": "Launchpad"
       },
       "products": {
         "wallet": {
@@ -1314,6 +1315,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "เฟรมเวิร์ก Motoko สำหรับโปรดักชันพร้อม CLI สากล"
+        },
+        "launchpad": {
+          "title": "Launchpad",
+          "description": "Join community token sales with 100% smart contract escrow."
         }
       },
       "resources": {

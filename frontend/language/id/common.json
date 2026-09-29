@@ -1296,7 +1296,8 @@
       "sectionLegal": "Legal",
       "primary": {
         "blog": "Blog",
-        "charity": "Amal"
+        "charity": "Amal",
+        "launchpad": "Launchpad"
       },
       "products": {
         "wallet": {
@@ -1314,6 +1315,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "Framework Motoko produksi dengan CLI global."
+        },
+        "launchpad": {
+          "title": "Launchpad",
+          "description": "Join community token sales with 100% smart contract escrow."
         }
       },
       "resources": {

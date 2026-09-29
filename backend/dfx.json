@@ -21,6 +21,12 @@
       "crate": "icpay_trade",
       "type": "rust"
     },
+    "icpay_launchpad": {
+      "candid": "rust/launchpad/icpay_launchpad.did",
+      "package": "icpay_launchpad",
+      "crate": "icpay_launchpad",
+      "type": "rust"
+    },
     "icp_blob_store": {
       "type": "motoko",
       "main": "blob_store/src/main.mo",

@@ -1296,7 +1296,8 @@
       "sectionLegal": "Mentions légales",
       "primary": {
         "blog": "Blog",
-        "charity": "Charité"
+        "charity": "Charité",
+        "launchpad": "Launchpad"
       },
       "products": {
         "wallet": {
@@ -1314,6 +1315,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "Framework Motoko de production avec un CLI global."
+        },
+        "launchpad": {
+          "title": "Launchpad",
+          "description": "Join community token sales with 100% smart contract escrow."
         }
       },
       "resources": {

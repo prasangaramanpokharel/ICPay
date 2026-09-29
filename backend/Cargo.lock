@@ -411,6 +411,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "icpay_launchpad"
+version = "0.1.0"
+dependencies = [
+ "candid",
+ "ciborium",
+ "ic-cdk",
+ "ic-stable-structures 0.7.2",
+ "icrc-ledger-types",
+ "serde",
+]
+
+[[package]]
 name = "icpay_trade"
 version = "0.1.0"
 dependencies = [

@@ -10,11 +10,15 @@ export type NavMenuItemDef = {
   external?: boolean
 }
 
-export const PUBLIC_PRIMARY_LINK_DEFS: SiteLinkDef[] = [{ id: "blog", href: "/blog" }]
+export const PUBLIC_PRIMARY_LINK_DEFS: SiteLinkDef[] = [
+  { id: "launchpad", href: "/launchpad" },
+  { id: "blog", href: "/blog" },
+]
 
 export const PUBLIC_PRODUCT_MENU_DEFS: NavMenuItemDef[] = [
   { id: "wallet", href: "/login" },
   { id: "launch", href: "/token/create" },
+  { id: "launchpad", href: "/launchpad" },
   { id: "icbucket", href: "/icbucket" },
   { id: "icfalcon", href: "/icfalcon" },
 ]

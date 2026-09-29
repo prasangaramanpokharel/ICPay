@@ -1296,7 +1296,8 @@
       "sectionLegal": "Правовая информация",
       "primary": {
         "blog": "Блог",
-        "charity": "Благотворительность"
+        "charity": "Благотворительность",
+        "launchpad": "Launchpad"
       },
       "products": {
         "wallet": {
@@ -1314,6 +1315,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "Продакшен-фреймворк Motoko с глобальным CLI."
+        },
+        "launchpad": {
+          "title": "Launchpad",
+          "description": "Join community token sales with 100% smart contract escrow."
         }
       },
       "resources": {

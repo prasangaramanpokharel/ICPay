@@ -1296,7 +1296,8 @@
       "sectionLegal": "법적 고지",
       "primary": {
         "blog": "블로그",
-        "charity": "기부"
+        "charity": "기부",
+        "launchpad": "Launchpad"
       },
       "products": {
         "wallet": {
@@ -1314,6 +1315,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "글로벌 CLI가 포함된 프로덕션 Motoko 프레임워크."
+        },
+        "launchpad": {
+          "title": "Launchpad",
+          "description": "Join community token sales with 100% smart contract escrow."
         }
       },
       "resources": {

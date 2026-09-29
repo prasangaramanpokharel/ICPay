@@ -26,6 +26,7 @@ export const NAV_MENU_ICONS: Record<string, IconSvgElement> = {
   "/blog": News01Icon,
   "/login": Wallet01Icon,
   "/token/create": Rocket01Icon,
+  "/launchpad": Rocket01Icon,
   "/canister": DashboardSquare01Icon,
   "/canister/tools": Package01Icon,
   "/canister/manage": Settings01Icon,

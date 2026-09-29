@@ -1296,7 +1296,8 @@
       "sectionLegal": "Legal",
       "primary": {
         "blog": "Blog",
-        "charity": "Kawanggawa"
+        "charity": "Kawanggawa",
+        "launchpad": "Launchpad"
       },
       "products": {
         "wallet": {
@@ -1314,6 +1315,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "Production Motoko framework na may global CLI."
+        },
+        "launchpad": {
+          "title": "Launchpad",
+          "description": "Join community token sales with 100% smart contract escrow."
         }
       },
       "resources": {

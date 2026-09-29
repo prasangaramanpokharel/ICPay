@@ -1,0 +1,85 @@
+type ApiResult = variant { Ok : nat64; Err : text };
+type ApiResult_1 = variant { Ok; Err : text };
+type ApiResult_2 = variant { Ok : nat; Err : text };
+
+type CampaignPublic = record {
+  id : nat64;
+  creator : principal;
+  token_ledger : principal;
+  token_symbol : text;
+  token_name : text;
+  token_decimals : nat8;
+  total_tokens_allocated : nat;
+  min_icp_target_e8s : nat64;
+  max_icp_target_e8s : nat64;
+  min_participant_icp_e8s : nat64;
+  max_participant_icp_e8s : nat64;
+  total_icp_raised_e8s : nat64;
+  participant_count : nat64;
+  start_timestamp : nat64;
+  end_timestamp : nat64;
+  dex_liquidity_percent : nat8;
+  description : text;
+  website : opt text;
+  status : LaunchpadStatus;
+  tokens_deposited : bool;
+};
+
+type Commitment = record {
+  campaign_id : nat64;
+  participant : principal;
+  amount_icp_e8s : nat64;
+  tokens_claimed : bool;
+  refund_claimed : bool;
+  timestamp : nat64;
+};
+
+type CreateCampaignArgs = record {
+  token_ledger : principal;
+  token_symbol : text;
+  token_name : text;
+  token_decimals : nat8;
+  total_tokens_allocated : nat;
+  min_icp_target_e8s : nat64;
+  max_icp_target_e8s : nat64;
+  min_participant_icp_e8s : nat64;
+  max_participant_icp_e8s : nat64;
+  duration_seconds : nat64;
+  dex_liquidity_percent : nat8;
+  description : text;
+  website : opt text;
+};
+
+type InitArgs = record {
+  wallet_canister : principal;
+  treasury : principal;
+  fee_e8s : nat64;
+};
+
+type LaunchpadStatus = variant {
+  Pending;
+  Open;
+  Committed;
+  Aborted;
+  Finalized;
+};
+
+type FinalizeResult = record {
+  creator_net_e8s : nat64;
+  platform_fee_e8s : nat64;
+};
+
+type ApiResult_Finalize = variant { Ok : FinalizeResult; Err : text };
+
+service : (InitArgs) -> {
+  create_campaign : (CreateCampaignArgs) -> (ApiResult);
+  mark_tokens_deposited : (nat64) -> (ApiResult_1);
+  participate : (nat64, nat64) -> (ApiResult);
+  claim_tokens : (nat64) -> (ApiResult_2);
+  claim_refund : (nat64) -> (ApiResult);
+  claim_creator_funds : (nat64) -> (ApiResult_Finalize);
+  get_campaign : (nat64) -> (opt CampaignPublic) query;
+  list_campaigns : (opt LaunchpadStatus, nat64, nat64) -> (vec CampaignPublic) query;
+  get_user_commitment : (nat64, principal) -> (opt Commitment) query;
+  health : () -> (text) query;
+}

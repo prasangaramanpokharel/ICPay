@@ -1296,7 +1296,8 @@
       "sectionLegal": "Yasal",
       "primary": {
         "blog": "Blog",
-        "charity": "Yardım"
+        "charity": "Yardım",
+        "launchpad": "Launchpad"
       },
       "products": {
         "wallet": {
@@ -1314,6 +1315,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "Global CLI'lı üretim Motoko framework'ü."
+        },
+        "launchpad": {
+          "title": "Launchpad",
+          "description": "Join community token sales with 100% smart contract escrow."
         }
       },
       "resources": {
