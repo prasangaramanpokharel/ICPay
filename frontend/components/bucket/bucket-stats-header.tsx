@@ -1,14 +1,17 @@
 "use client"
 
+import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Calendar01Icon,
+  Copy01Icon,
   Database01Icon,
   Folder02Icon,
   Globe02Icon,
   LockIcon,
   RefreshIcon,
+  Tick02Icon,
   Alert02Icon,
 } from "@hugeicons/core-free-icons"
 import { Card, CardContent } from "@/components/ui/card"
@@ -20,6 +23,7 @@ import {
   isPublicVisibility,
   expiresAtToMs,
 } from "@/lib/bucket/bucket"
+import { copyText } from "@/lib/wallet/utils"
 import type { BucketStats } from "@/services/bucket/types"
 
 export function BucketStatsHeader({
@@ -32,11 +36,14 @@ export function BucketStatsHeader({
   const t = useTranslations("bucket")
   const active = isBucketActive(stats.status)
   const isPublic = isPublicVisibility(stats.visibility)
+  const [copied, setCopied] = useState(false)
 
   const usedBytes = stats.storageUsed
   const capacityBytes = stats.capacity
   const usagePct =
     capacityBytes > 0n ? Math.min(100, Number((usedBytes * 100n) / capacityBytes)) : 0
+  const usagePctLabel =
+    usagePct > 0 ? `${usagePct}%` : usedBytes > 0n ? "< 1%" : "0%"
 
   const periodDays = Math.max(1, Number(stats.periodDays || 30n))
   const daysRemaining = Math.max(0, Number(stats.daysRemaining))
@@ -49,9 +56,22 @@ export function BucketStatsHeader({
     day: "numeric",
   })
 
+  const handleCopyId = async () => {
+    await copyText(stats.id)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const planBarColor =
+    !active || daysRemaining <= 3
+      ? "bg-destructive"
+      : daysRemaining <= 7
+        ? "bg-amber-500"
+        : "bg-emerald-500"
+
   return (
     <Card className="overflow-hidden border border-border/70 bg-gradient-to-b from-card/80 to-card/40 shadow-xs">
-      <CardContent className="space-y-4 p-4 sm:p-5">
+      <CardContent className="space-y-3 p-3.5 sm:p-4">
         {/* Top bar: Name, Badges & Actions */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
@@ -77,9 +97,27 @@ export function BucketStatsHeader({
                   <span>{isPublic ? t("public") : t("private")}</span>
                 </Badge>
               </div>
-              <p className="mt-0.5 text-[11px] text-muted-foreground">
-                {Number(stats.fileCount)} {t("files").toLowerCase()} · ID:{" "}
-                <span className="font-mono">{stats.id}</span>
+              <p className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
+                <span>
+                  {Number(stats.fileCount)} {t("files").toLowerCase()}
+                </span>
+                <span>·</span>
+                <span>
+                  ID: <span className="font-mono text-foreground/80">{stats.id}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={handleCopyId}
+                  className="inline-flex size-4 items-center justify-center rounded text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Copy bucket ID"
+                  title={copied ? "Copied!" : "Copy bucket ID"}
+                >
+                  <HugeiconsIcon
+                    icon={copied ? Tick02Icon : Copy01Icon}
+                    className="size-3"
+                    strokeWidth={1.75}
+                  />
+                </button>
               </p>
             </div>
           </div>
@@ -97,7 +135,7 @@ export function BucketStatsHeader({
         </div>
 
         {/* Dual Progress Bars Grid */}
-        <div className="grid grid-cols-1 gap-4 border-t border-border/50 pt-3 sm:grid-cols-2 sm:gap-6">
+        <div className="grid grid-cols-1 gap-3 border-t border-border/50 pt-2.5 sm:grid-cols-2 sm:gap-6">
           {/* Storage Usage Progress */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
@@ -108,14 +146,14 @@ export function BucketStatsHeader({
               <span className="font-medium text-foreground tabular-nums">
                 {formatBytes(usedBytes)}{" "}
                 <span className="font-normal text-muted-foreground">
-                  / {formatBytes(capacityBytes)} ({usagePct}%)
+                  / {formatBytes(capacityBytes)} ({usagePctLabel})
                 </span>
               </span>
             </div>
             <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full bg-primary transition-all duration-300"
-                style={{ width: `${Math.max(2, usagePct)}%` }}
+                style={{ width: usagePct > 0 ? `${Math.max(2, usagePct)}%` : "0%" }}
               />
             </div>
           </div>
@@ -139,7 +177,11 @@ export function BucketStatsHeader({
                   <>
                     <span
                       className={
-                        stats.isExpiringSoon ? "font-semibold text-amber-500" : "text-foreground"
+                        daysRemaining <= 3
+                          ? "font-semibold text-destructive"
+                          : daysRemaining <= 7
+                            ? "font-semibold text-amber-500"
+                            : "text-foreground"
                       }
                     >
                       {t("daysLeft", { days: daysRemaining })}
@@ -153,13 +195,7 @@ export function BucketStatsHeader({
             </div>
             <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted">
               <div
-                className={
-                  !active
-                    ? "h-full bg-destructive transition-all duration-300"
-                    : stats.isExpiringSoon
-                      ? "h-full bg-amber-500 transition-all duration-300"
-                      : "h-full bg-emerald-500 transition-all duration-300"
-                }
+                className={`h-full transition-all duration-300 ${planBarColor}`}
                 style={{ width: `${Math.max(active ? 2 : 0, expiryPct)}%` }}
               />
             </div>

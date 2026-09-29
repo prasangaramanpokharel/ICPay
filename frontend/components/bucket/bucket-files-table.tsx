@@ -64,7 +64,7 @@ export function BucketFilesTable({
               </TableHead>
             ) : null}
             <TableHead>{t("name")}</TableHead>
-            <TableHead>{t("fileSize")}</TableHead>
+            <TableHead className="text-right">{t("fileSize")}</TableHead>
             <TableHead>{t("mimeType")}</TableHead>
             <TableHead className="w-10" />
           </TableRow>
@@ -93,7 +93,7 @@ export function BucketFilesTable({
                     <span className="truncate text-sm font-medium">{entry.name}</span>
                   </div>
                 </TableCell>
-                <TableCell className="text-muted-foreground tabular-nums">
+                <TableCell className="text-right text-muted-foreground tabular-nums">
                   {formatFileSize(folderTotals(files, prefix, entry.name).bytes)}
                 </TableCell>
                 <TableCell className="text-muted-foreground">{t("folder")}</TableCell>
@@ -130,7 +130,7 @@ export function BucketFilesTable({
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className="text-muted-foreground tabular-nums">
+                <TableCell className="text-right text-muted-foreground tabular-nums">
                   {formatFileSize(entry.file.size)}
                 </TableCell>
                 <TableCell className="max-w-40 truncate text-muted-foreground">
