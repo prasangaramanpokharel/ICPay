@@ -9,6 +9,7 @@ import { cn } from "@/lib/ui/utils"
 import { ShineBorder } from "@/components/ui/shine-border"
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text"
 import { Nodejs, Python, Rust, Go } from "@dev.icons/react"
+import { Terminal } from "lucide-react"
 
 const COMMANDS = [
   { lang: "npm", cmd: "npm install icpay-bucket", tag: "Node.js", icon: Nodejs },
@@ -46,6 +47,57 @@ export function InstallSection() {
           <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
             {t("subtitle")}
           </p>
+        </div>
+
+        {/* Quick One-Line Developer Suite Installer */}
+        <div className="mx-auto mb-8 max-w-4xl">
+          <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-card/85 p-5 shadow-lg backdrop-blur-md">
+            <ShineBorder
+              shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+              borderWidth={1.2}
+              duration={10}
+            />
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
+                  <Terminal className="size-4.5" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground tracking-tight sm:text-base">
+                    Install ICPay & icBucket Developer Suite in one command:
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    Instant CLI setup with free 1 GB on-chain storage tier
+                  </p>
+                </div>
+              </div>
+              <div className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary w-fit shrink-0">
+                macOS / Linux / WSL
+              </div>
+            </div>
+
+            <div className="mt-3.5 flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-muted/50 px-4 py-3">
+              <div className="flex items-center gap-2 overflow-x-auto font-mono text-xs sm:text-sm text-foreground select-all">
+                <span className="text-muted-foreground select-none">$</span>
+                <span className="truncate">curl -sSL https://icpay.app/bu/install.sh | bash</span>
+              </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() => copyToClipboard("curl -sSL https://icpay.app/bu/install.sh | bash", "curl")}
+                className="size-8 shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer transition-colors"
+                aria-label="Copy install command"
+              >
+                <HugeiconsIcon
+                  icon={copied === "curl" ? Tick02Icon : Copy01Icon}
+                  className={cn(
+                    "size-4 transition-colors",
+                    copied === "curl" ? "text-primary" : "text-muted-foreground"
+                  )}
+                />
+              </Button>
+            </div>
+          </div>
         </div>
 
         <div className="mx-auto grid max-w-4xl gap-4 sm:grid-cols-2">
