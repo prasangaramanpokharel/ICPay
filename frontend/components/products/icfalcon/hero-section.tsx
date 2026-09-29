@@ -11,7 +11,8 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Particles } from "@/components/ui/particles"
 import { ShineBorder } from "@/components/ui/shine-border"
-import { AnimatedShinyText } from "@/components/ui/animated-shiny-text"
+
+import { cn } from "@/lib/ui/utils"
 
 function GitHubIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -27,12 +28,15 @@ export function HeroSection() {
   const t = useTranslations("publicSite.icfalcon.hero")
   const { resolvedTheme } = useTheme()
   const [copied, setCopied] = useState(false)
+  const [activeTab, setActiveTab] = useState<"curl" | "npm">("curl")
   const color = resolvedTheme === "dark" ? "#ffffff" : "#000000"
 
-  const command = "npm create icfalcon@latest my-app"
+  const curlCommand = "curl -sSL https://icpay.app/flc/install.sh | bash"
+  const npmCommand = "npm create icfalcon@latest my-app"
+  const activeCommand = activeTab === "curl" ? curlCommand : npmCommand
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(command)
+    await navigator.clipboard.writeText(activeCommand)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
   }
@@ -71,20 +75,41 @@ export function HeroSection() {
         </div>
 
         <div className="mx-auto flex flex-col items-center space-y-3">
-          <div className="group rounded-full border border-border/60 bg-muted/40 px-3.5 py-1 backdrop-blur-xs transition-colors">
-            <AnimatedShinyText className="inline-flex items-center justify-center text-xs font-medium">
-              <span>{t("installLabel")}</span>
-            </AnimatedShinyText>
+          <div className="flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 p-1 backdrop-blur-xs">
+            <button
+              type="button"
+              onClick={() => setActiveTab("curl")}
+              className={cn(
+                "rounded-full px-3 py-1 text-xs font-semibold transition-all cursor-pointer",
+                activeTab === "curl"
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              curl (One-Liner)
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab("npm")}
+              className={cn(
+                "rounded-full px-3 py-1 text-xs font-semibold transition-all cursor-pointer",
+                activeTab === "npm"
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              npm create
+            </button>
           </div>
 
-          <div className="relative mx-auto flex w-full max-w-md items-center justify-between gap-3 rounded-xl border border-border/60 bg-card/80 px-4 py-2.5 shadow-sm backdrop-blur-xs">
+          <div className="relative mx-auto flex w-full max-w-lg items-center justify-between gap-3 rounded-xl border border-border/60 bg-card/80 px-4 py-2.5 shadow-sm backdrop-blur-xs">
             <ShineBorder
               shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
               borderWidth={1.2}
               duration={12}
             />
-            <span className="font-mono text-xs sm:text-sm text-foreground select-all tracking-tight">
-              {command}
+            <span className="font-mono text-xs sm:text-sm text-foreground select-all tracking-tight truncate">
+              {activeCommand}
             </span>
             <Button
               variant="ghost"
@@ -100,7 +125,9 @@ export function HeroSection() {
               />
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">{t("installHint")}</p>
+          <p className="text-xs text-muted-foreground">
+            {activeTab === "curl" ? "One command to install and initialize on macOS / Linux / WSL" : t("installHint")}
+          </p>
         </div>
 
         <div className="flex flex-col items-center gap-4 pt-6 sm:flex-row sm:justify-center">
