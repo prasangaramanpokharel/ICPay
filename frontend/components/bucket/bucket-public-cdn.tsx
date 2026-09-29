@@ -29,7 +29,7 @@ export function BucketPublicCdn({ publicBaseUrl }: { publicBaseUrl: string }) {
   const t = useTranslations("bucket")
   const tc = useTranslations("common")
   const [open, setOpen] = useState(false)
-  const [urlMode, setUrlMode] = useState<BucketUrlMode>("raw")
+  const [urlMode, setUrlMode] = useState<BucketUrlMode>("cdn")
   const [copied, setCopied] = useState(false)
   const cdnEnabled = getBucketCdnBase() !== null
   const displayBase = resolvePublicFileUrl(publicBaseUrl, urlMode)

@@ -1,16 +1,67 @@
 ---
 title: Public CDN URLs
-description: Public buckets expose copyable links on the IC raw HTTP gateway (per-canister host).
+description: Fast, zero-egress public delivery via cloud.icpay.app and the IC raw HTTP gateway.
 group: CDN & URLs
 order: 1
 ---
 
-Public buckets expose copyable links on the IC raw HTTP gateway:
+Every file stored in a **public bucket** is immediately accessible worldwide over standard HTTP/2 with zero egress bandwidth charges.
+
+### Default Edge CDN URL (Recommended)
+
+By default, the SDK and web dashboard generate global Edge CDN links routed through `cloud.icpay.app`:
 
 ```text
-https://{canister}.raw.icp0.io/cloud/{bucket}/path/to/file.webp
+https://cloud.icpay.app/cloud/{bucketName}/path/to/file.webp
 ```
 
-A **Raw / CDN** toggle on the bucket page switches between the canister host and the `cloud.icpay.app` CDN (when enabled).
+- **Global Anycast Edge**: Cached across 300+ edge locations worldwide.
+- **Latency**: **~140 ms** TTFB globally (vs ~650 ms raw canister query).
+- **Caching**: Automatic `Cache-Control: public, max-age=31536000, immutable` and `ETag` validation (HTTP 304 Not Modified).
+- **CORS**: Preconfigured with `Access-Control-Allow-Origin: *` for direct browser embedding (`<img src="...">`, `<video>`, `<audio>`).
 
-Private buckets have no public URL — download with `downloadFile` while signed in.
+---
+
+### Raw Canister Gateway URL (Fallback Option)
+
+If you require direct, decentralized boundary-node resolution bypassing the edge CDN cache, use the raw IC canister URL:
+
+```text
+https://{canisterId}.raw.icp0.io/cloud/{bucketName}/path/to/file.webp
+```
+
+- Direct query to the Internet Computer boundary node state tree.
+- Verifiable with certified state proofs.
+
+---
+
+### SDK Usage
+
+The `icpay-bucket` SDK defaults to the accelerated `cloud.icpay.app` CDN with a built-in option for the raw fallback:
+
+```typescript
+import { ICBucket } from "icpay-bucket"
+
+const client = new ICBucket({ apiKey: "icp_cloud_..." })
+
+// 1. Default (Edge CDN - cloud.icpay.app)
+const cdnUrl = client.publicUrl("my-bucket", "images/banner.png")
+// -> https://cloud.icpay.app/cloud/my-bucket/images/banner.png
+
+// 2. Direct Raw Canister URL (Fallback)
+const rawUrl = client.rawUrl("my-bucket", "images/banner.png")
+// -> https://6vbhm-nqaaa-aaaan-q6muq-cai.raw.icp0.io/cloud/my-bucket/images/banner.png
+```
+
+---
+
+### Performance Comparison
+
+| Metric | Edge CDN (`cloud.icpay.app`) | Raw Canister (`.raw.icp0.io`) |
+|---|:---:|:---:|
+| **Edge Cache Hit** | **~135 – 145 ms** | ~460 – 1,070 ms |
+| **Global PoPs** | 300+ Edge Anycast Cities | IC Boundary Node Locations |
+| **HTTP 304 Revalidation** | Supported (< 50 ms) | Supported (~350 ms) |
+| **Bandwidth / Egress Cost** | **$0.00 / Unlimited** | **$0.00 / Unlimited** |
+
+> **Note**: Files in **private buckets** are not accessible via public URLs. Download private files authenticated via `client.downloadFile(bucket, path)`.

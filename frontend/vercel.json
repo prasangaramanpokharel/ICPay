@@ -14,6 +14,18 @@
     }
   },
   "redirects": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "cloud.icpay.app" }],
+      "destination": "https://icpay.app",
+      "permanent": false
+    },
+    {
+      "source": "/((?!cloud/).*)",
+      "has": [{ "type": "host", "value": "cloud.icpay.app" }],
+      "destination": "https://icpay.app/$1",
+      "permanent": false
+    },
     { "source": "/what-is-icp", "destination": "/blog/what-is-icp", "permanent": true },
     { "source": "/best-crypto-wallet", "destination": "/blog/best-crypto-wallet", "permanent": true },
     { "source": "/best-icp-wallet", "destination": "/blog/best-icp-wallet", "permanent": true },
@@ -36,7 +48,6 @@
   "rewrites": [
     {
       "source": "/cloud/:bucket/:path*",
-      "has": [{ "type": "host", "value": "cloud.icpay.app" }],
       "destination": "/api/cloud/:bucket/:path*"
     },
     {

@@ -11,17 +11,16 @@ const RAW_CLOUD_RE = new RegExp(
 )
 
 /**
- * CDN base for bucket URLs. Opt-in via NEXT_PUBLIC_BUCKET_CDN_URL; the default
- * is the raw canister host. Setting the env to a URL enables cloud.icpay.app
- * (or any custom CDN), and empty disables it explicitly.
+ * CDN base for bucket URLs. Defaults to the accelerated BUCKET_CDN_ORIGIN
+ * (https://cloud.icpay.app). Setting NEXT_PUBLIC_BUCKET_CDN_URL overrides it.
  */
-export function getBucketCdnBase(): string | null {
+export function getBucketCdnBase(): string {
   const explicit = process.env.NEXT_PUBLIC_BUCKET_CDN_URL
   if (explicit !== undefined) {
     const trimmed = explicit.trim()
-    return trimmed ? trimmed.replace(/\/$/, "") : null
+    return trimmed ? trimmed.replace(/\/$/, "") : BUCKET_CDN_ORIGIN
   }
-  return null
+  return BUCKET_CDN_ORIGIN
 }
 
 function rawCloudTail(url: string): string | null {
@@ -52,14 +51,14 @@ export function toRawCanisterUrl(url: string): string {
 
 export type BucketUrlMode = "cdn" | "raw"
 
-/** Resolve a bucket URL to the raw canister host by default, or the CDN host. */
-export function resolvePublicFileUrl(url: string, mode: BucketUrlMode = "raw"): string {
+/** Resolve a bucket URL to the CDN host by default, or the raw canister host. */
+export function resolvePublicFileUrl(url: string, mode: BucketUrlMode = "cdn"): string {
   const raw = toRawCanisterUrl(url)
   if (mode === "raw") return raw
   const tail = rawCloudTail(raw)
   if (tail) {
     const cdnBase = getBucketCdnBase()
-    if (cdnBase) return `${cdnBase}/cloud/${tail}`
+    return `${cdnBase}/cloud/${tail}`
   }
   return raw
 }
