@@ -92,10 +92,14 @@ export function isBucketActive(status: BucketStatusVariant): boolean {
 
 export function formatBytes(bytes: bigint | number): string {
   const n = typeof bytes === "bigint" ? Number(bytes) : bytes
+  if (n <= 0) return "0 B"
+  if (n >= 1_000_000_000 && n % 1_000_000_000 === 0) {
+    return `${n / 1_000_000_000} GB`
+  }
   if (n < 1024) return `${n} B`
   if (n < 1024 ** 2) return `${(n / 1024).toFixed(1)} KB`
   if (n < 1024 ** 3) return `${(n / 1024 ** 2).toFixed(1)} MB`
-  return `${(n / 1024 ** 3).toFixed(2)} GB`
+  return `${Number((n / 1024 ** 3).toFixed(2))} GB`
 }
 
 export function formatUsageLabel(used: bigint, capacity: bigint): string {

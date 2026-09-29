@@ -5,7 +5,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { Refresh01Icon, Search01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import {
   Select,
   SelectContent,
@@ -22,7 +21,6 @@ export function BucketFilesToolbar({
   query,
   sort,
   refreshing,
-  canWrite,
   onQueryChange,
   onSortChange,
   onRefresh,
@@ -30,7 +28,7 @@ export function BucketFilesToolbar({
   query: string
   sort: FileSortKey
   refreshing: boolean
-  canWrite: boolean
+  canWrite?: boolean
   onQueryChange: (value: string) => void
   onSortChange: (value: FileSortKey) => void
   onRefresh: () => void
@@ -90,25 +88,6 @@ export function BucketFilesToolbar({
             strokeWidth={1.75}
           />
         </Button>
-        {canWrite ? (
-          <div className="hidden items-center gap-2 lg:flex">
-            <KbdGroup>
-              <Kbd>Ctrl</Kbd>
-              <span className="text-xs text-muted-foreground">+</span>
-              <Kbd>A</Kbd>
-            </KbdGroup>
-            <KbdGroup>
-              <Kbd>Ctrl</Kbd>
-              <span className="text-xs text-muted-foreground">+</span>
-              <Kbd>D</Kbd>
-            </KbdGroup>
-            <KbdGroup>
-              <Kbd>Ctrl</Kbd>
-              <span className="text-xs text-muted-foreground">+</span>
-              <Kbd>F</Kbd>
-            </KbdGroup>
-          </div>
-        ) : null}
       </div>
     </div>
   )

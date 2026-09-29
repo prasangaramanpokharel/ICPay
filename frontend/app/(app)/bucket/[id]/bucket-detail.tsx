@@ -6,7 +6,13 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useSWRConfig } from "swr"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon, Folder02Icon, MoreVerticalIcon } from "@hugeicons/core-free-icons"
+import {
+  ArrowRight01Icon,
+  Book02Icon,
+  Folder02Icon,
+  Key01Icon,
+  MoreVerticalIcon,
+} from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -73,6 +79,14 @@ export function BucketDetail() {
   useEffect(() => {
     clearLegacyBucketStorage()
   }, [])
+
+  useEffect(() => {
+    if (stats?.name) {
+      document.title = `${stats.name} — ICPay Cloud`
+    } else {
+      document.title = "Bucket — ICPay Cloud"
+    }
+  }, [stats?.name])
 
   const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -212,6 +226,18 @@ export function BucketDetail() {
 
   const headerActions = (
     <div className="flex flex-wrap items-center justify-end gap-2">
+      {stats ? (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setApiKeysOpen(true)}
+          className="gap-1.5"
+        >
+          <HugeiconsIcon icon={Key01Icon} className="size-4" strokeWidth={1.75} />
+          <span>{t("apiKeysShort")}</span>
+        </Button>
+      ) : null}
       {canWrite ? (
         <>
           <Button type="button" variant="outline" size="sm" onClick={() => setFolderOpen(true)}>
@@ -229,24 +255,25 @@ export function BucketDetail() {
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button variant="ghost" size="icon-sm" aria-label={tNav("more")} className="shrink-0" />
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label={tNav("more")}
+              title={tNav("more")}
+              className="shrink-0"
+            />
           }
         >
           <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" strokeWidth={1.75} />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {stats ? (
-            <>
-              <DropdownMenuItem onClick={() => setApiKeysOpen(true)}>
-                {t("apiKeysShort")}
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setRenewOpen(true)}>
-                {t("renew")}
-              </DropdownMenuItem>
-            </>
-          ) : null}
-          <DropdownMenuItem onClick={() => router.push("/bucket/docs")}>
-            {t("docs")}
+          <DropdownMenuItem onClick={() => router.push("/bucket/docs")} className="gap-2">
+            <HugeiconsIcon
+              icon={Book02Icon}
+              className="size-4 text-muted-foreground"
+              strokeWidth={1.75}
+            />
+            <span>{t("docs")}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

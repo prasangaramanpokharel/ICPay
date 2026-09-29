@@ -48,6 +48,7 @@ const COMMANDS: Record<string, string> = {
   "ledger:balance": "ledger/balance.ts",
   "ledger:transfer": "ledger/transfer.ts",
   "ledger:history": "ledger/history.ts",
+  "seo:index": "seo/index.ts",
 }
 
 const name = process.argv[2]
