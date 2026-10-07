@@ -29,9 +29,10 @@ export function AppHeader() {
             if (router.canGoBack()) router.back()
             else router.replace('/')
           }}
-          className="min-h-11 justify-center pr-2"
+          className="min-h-11 flex-row items-center gap-1.5 pr-3 active:opacity-70"
         >
-          <Text className="text-sm font-medium">{tc('back')}</Text>
+          <Text className="text-lg font-bold text-primary">‹</Text>
+          <Text className="text-sm font-semibold text-foreground">{tc('back')}</Text>
         </Pressable>
       ) : (
         <Pressable

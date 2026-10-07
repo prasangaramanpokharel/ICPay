@@ -14,6 +14,7 @@ not all of them.
 | [`skills/icpay-backend/SKILL.md`](skills/icpay-backend/SKILL.md) | Touching any `.mo` file. Layering rules, the reserved-keyword traps, how to add an endpoint. |
 | [`skills/icpay-frontend/SKILL.md`](skills/icpay-frontend/SKILL.md) | Touching `frontend/`. Static-export limits, actor/agent code, i18n, the lint baseline. |
 | [`skills/icpay-ops/SKILL.md`](skills/icpay-ops/SKILL.md) | Deploying, cycles, rollback, reading logs. Every `npm run ci` command. |
+| [`skills/icpay-memory/SKILL.md`](skills/icpay-memory/SKILL.md) | Canister memory architecture, stable memory vs heap, high-water mark, upgrade safety. |
 | [`skills/icpay-git/SKILL.md`](skills/icpay-git/SKILL.md) | Committing, branching, opening a PR, cutting a release. |
 | [`skills/icpay-roadmap/SKILL.md`](skills/icpay-roadmap/SKILL.md) | Asked to build a feature. What is done, what is next, what was refused and why. |
 | [`skills/icpay-seo/SKILL.md`](skills/icpay-seo/SKILL.md) | SEO indexing for Google (Indexing API) & Yandex/Bing (IndexNow). Every `npm run ci -- seo:index` command. |

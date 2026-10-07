@@ -65,9 +65,11 @@ export function WalletScreen() {
               )}
             </View>
             <View className="mt-4 flex-row items-end justify-between">
-              <Text className="rounded-full bg-white/15 px-2.5 py-1 text-sm font-medium text-primary-foreground">
-                {fiat.formatted ? `≈ ${fiat.symbol}${fiat.formatted} ${fiat.currency}` : ' '}
-              </Text>
+              <View className="rounded-full bg-white/15 px-2.5 py-1">
+                <Text className="text-sm font-medium text-primary-foreground">
+                  {fiat.formatted ? `≈ ${fiat.symbol}${fiat.formatted} ${fiat.currency}` : ' '}
+                </Text>
+              </View>
               <Text className="text-[11px] font-semibold uppercase tracking-widest text-primary-foreground/40">
                 Internet Computer
               </Text>

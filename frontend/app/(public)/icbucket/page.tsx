@@ -67,9 +67,52 @@ export const metadata: Metadata = {
   },
 }
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "ICBucket",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "All, Web, Internet Computer",
+      "description":
+        "Decentralized on-chain cloud storage on the Internet Computer with CDN, API keys, and SDKs. 30-day ICP plans from 0.5 ICP, no credit card.",
+      "url": "https://icpay.app/icbucket",
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": "ICP",
+        "lowPrice": "0.5",
+        "highPrice": "2.0",
+        "offerCount": "3",
+      },
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://icpay.app",
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "ICBucket",
+          "item": "https://icpay.app/icbucket",
+        },
+      ],
+    },
+  ],
+}
+
 export default function ICBucketPage() {
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <HeroSection />
       <InstallSection />
       <IntegrateSection />
@@ -84,3 +127,4 @@ export default function ICBucketPage() {
     </div>
   )
 }
+

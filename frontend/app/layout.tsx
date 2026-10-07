@@ -57,7 +57,20 @@ export const metadata: Metadata = {
     description,
     images: ["/og.png"],
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    "max-video-preview": -1,
+    "max-image-preview": "large",
+    "max-snippet": -1,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -80,33 +93,58 @@ export const viewport: Viewport = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  name: "ICPay",
-  url: siteUrl,
-  description,
-  applicationCategory: "FinanceApplication",
-  operatingSystem: "Web",
-  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-  featureList: [
-    "Send ICP by username",
-    "Receive ICP to a personal deposit address",
-    "Internet Identity sign-in without a seed phrase",
-    "Transaction history with on-chain block links",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${siteUrl}/#organization`,
+      name: "ICPay",
+      url: siteUrl,
+      logo: `${siteUrl}/icon.png`,
+      sameAs: [
+        "https://x.com/IcpayOfficial",
+        "https://github.com/prasangapokharel/ICPay",
+        "https://www.linkedin.com/company/icpayofficial",
+      ],
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${siteUrl}/#website`,
+      name: "ICPay",
+      url: siteUrl,
+      publisher: { "@id": `${siteUrl}/#organization` },
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${siteUrl}/blog?q={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
+    },
+    {
+      "@type": "WebApplication",
+      name: "ICPay",
+      url: siteUrl,
+      description,
+      applicationCategory: "FinanceApplication",
+      operatingSystem: "Web",
+      offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+      featureList: [
+        "Send ICP by username",
+        "Receive ICP to a personal deposit address",
+        "Internet Identity sign-in without a seed phrase",
+        "Transaction history with on-chain block links",
+        "On-chain cloud storage with ICBucket",
+      ],
+      sameAs: [
+        "https://x.com/IcpayOfficial",
+        "https://github.com/prasangapokharel/ICPay",
+        "https://www.linkedin.com/company/icpayofficial",
+      ],
+    },
   ],
-  // Named so the sitelinks a search result shows are the pages a stranger can
-  // actually read, rather than whichever signed-in route was crawled first.
-  sameAs: ["https://github.com/prasangapokharel/ICPay"],
-  isPartOf: {
-    "@type": "WebSite",
-    name: "ICPay",
-    url: siteUrl,
-    hasPart: [
-      { "@type": "WebPage", name: "About", url: `${siteUrl}/about` },
-      { "@type": "WebPage", name: "FAQ", url: `${siteUrl}/faq` },
-      { "@type": "WebPage", name: "Transparency", url: `${siteUrl}/transparency` },
-    ],
-  },
 }
+
 
 export default function RootLayout({
   children,

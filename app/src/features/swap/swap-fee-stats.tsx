@@ -26,28 +26,35 @@ export function SwapFeeStats({
     tokenIn.ledgerId === ICP_LEDGER_ID && serviceDebit
       ? requiredIcpSwapBalance(amountIn, tokenIn.fee, serviceDebit)
       : requiredBalance(amountIn, tokenIn.fee)
-  const rate = quote ? swapRate(amountIn, quote.amountOut) : null
+  const rate = quote && amountIn > 0n ? swapRate(amountIn, quote.amountOut) : null
 
   return (
-    <View className="rounded-2xl border border-border/60 bg-muted/30 px-4 py-3">
-      {icpToken ? (
-        <FeeRow label={t('icpServiceFee')} value={`${formatTokenAmount(serviceFee, icpToken.decimals)} ${icpToken.symbol}`} />
+    <View className="rounded-2xl border border-border/50 bg-muted/20 px-4 py-3">
+      {rate && tokenOut ? (
+        <View className="mb-2 flex-row items-center justify-between border-b border-border/40 pb-2">
+          <Text className="text-xs text-muted-foreground">{t('rate')}</Text>
+          <Text className="text-xs font-semibold tabular-nums text-foreground">
+            1 {tokenIn.symbol} ≈ {rate} {tokenOut.symbol}
+          </Text>
+        </View>
       ) : null}
-      {quote ? (
-        <FeeRow label={t('poolFee')} value={`${formatTokenAmount(quote.swapFee, tokenIn.decimals)} ${tokenIn.symbol}`} />
-      ) : null}
-      <FeeRow label={t('ledgerFees')} value={`${formatTokenAmount(3n * tokenIn.fee, tokenIn.decimals)} ${tokenIn.symbol}`} />
-      <View className="mt-2 flex-row justify-between border-t border-border/50 pt-2">
-        <Text className="text-xs font-medium">{t('totalDebit')}</Text>
-        <Text className="text-xs font-medium tabular-nums">
+
+      <View className="gap-1">
+        {icpToken ? (
+          <FeeRow label={t('icpServiceFee')} value={`${formatTokenAmount(serviceFee, icpToken.decimals)} ${icpToken.symbol}`} />
+        ) : null}
+        {quote ? (
+          <FeeRow label={t('poolFee')} value={`${formatTokenAmount(quote.swapFee, tokenIn.decimals)} ${tokenIn.symbol}`} />
+        ) : null}
+        <FeeRow label={t('ledgerFees')} value={`${formatTokenAmount(3n * tokenIn.fee, tokenIn.decimals)} ${tokenIn.symbol}`} />
+      </View>
+
+      <View className="mt-2.5 flex-row justify-between border-t border-border/40 pt-2.5">
+        <Text className="text-xs font-semibold text-foreground">{t('totalDebit')}</Text>
+        <Text className="text-xs font-semibold tabular-nums text-foreground">
           {formatTokenAmount(totalDebit, tokenIn.decimals)} {tokenIn.symbol}
         </Text>
       </View>
-      {rate && tokenOut ? (
-        <Text className="mt-2 text-[11px] text-muted-foreground">
-          {t('rate')}: 1 {tokenIn.symbol} ≈ {rate} {tokenOut.symbol}
-        </Text>
-      ) : null}
     </View>
   )
 }

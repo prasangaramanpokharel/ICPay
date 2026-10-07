@@ -44,23 +44,22 @@ export function SettingsScreen() {
     {
       key: 'identity',
       items: [
-        { href: '/icpverse', key: 'icpverse', icon: 'icpverse' },
-        { href: '/channels', key: 'community', icon: 'community', badge: 'communityBadge' },
-        { href: '/live', key: 'live', icon: 'live' },
+        { href: '/icpverse', key: 'icpverse', icon: 'icpverse', keywords: 'people tip discover profile social users icpverse web3' },
+        { href: '/channels', key: 'community', icon: 'community', badge: 'communityBadge', keywords: 'channels community telegram broadcast chat messages' },
       ],
     },
     {
       key: 'activity',
       items: [
-        { href: '/analytics', key: 'analytics', icon: 'analytics' },
-        { href: '/transactions', key: 'history', icon: 'history' },
+        { href: '/analytics', key: 'analytics', icon: 'analytics', keywords: 'analytics stats volume csv export tracking' },
+        { href: '/transactions', key: 'history', icon: 'history', keywords: 'activity transactions history ledger transfers payments' },
       ],
     },
     {
       key: 'more',
       items: [
-        { href: '/security', key: 'security', icon: 'security', keywords: 'lock faceid fingerprint pin biometric' },
-        { key: 'settings', icon: 'settings', onOpen: () => setDrawerOpen(true) },
+        { href: '/security', key: 'security', icon: 'security', keywords: 'lock faceid fingerprint pin biometric security 2fa' },
+        { key: 'settings', icon: 'settings', onOpen: () => setDrawerOpen(true), keywords: 'settings language theme currency preferences logout' },
       ],
     },
   ]

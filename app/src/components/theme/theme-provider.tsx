@@ -12,21 +12,28 @@ type ThemeContextType = {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: 'system',
-  resolved: 'light',
+  theme: 'dark',
+  resolved: 'dark',
   setTheme: () => {},
 })
 
 function getSnapshot(): ThemeName {
   const stored = getItem(STORAGE_KEY)
   if (stored === 'light' || stored === 'dark' || stored === 'system') return stored
-  return 'system'
+  return 'dark'
 }
 
 function applyDomTheme(resolved: 'light' | 'dark') {
   if (Platform.OS !== 'web' || typeof document === 'undefined') return
   document.documentElement.classList.toggle('dark', resolved === 'dark')
   document.documentElement.style.colorScheme = resolved
+}
+
+if (Platform.OS === 'web' && typeof document !== 'undefined') {
+  try {
+    const snapshot = getSnapshot()
+    applyDomTheme(snapshot === 'light' ? 'light' : 'dark')
+  } catch {}
 }
 
 export function ThemeProvider({
@@ -36,12 +43,13 @@ export function ThemeProvider({
   children: ReactNode
   systemDark: boolean
 }) {
-  const theme = useSyncExternalStore(subscribeKv, getSnapshot, () => 'system' as ThemeName)
-  const resolved = theme === 'system' ? (systemDark ? 'dark' : 'light') : theme
+  const theme = useSyncExternalStore(subscribeKv, getSnapshot, () => 'dark' as ThemeName)
+  const resolved = theme === 'system' ? (systemDark ? 'dark' : 'dark') : theme
   const setTheme = useCallback((next: ThemeName) => {
     setItem(STORAGE_KEY, next)
   }, [])
   const value = useMemo(() => ({ theme, resolved, setTheme }), [theme, resolved, setTheme])
+
 
   useLayoutEffect(() => {
     applyDomTheme(resolved)

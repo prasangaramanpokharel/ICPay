@@ -10,11 +10,10 @@ const navItems: {
   href: string
   labelKey: 'home' | 'icpverse' | 'history' | 'menu' | 'presale'
   icon: AppIconName
-  center?: boolean
 }[] = [
   { href: '/', labelKey: 'home', icon: 'home' },
   { href: '/icpverse', labelKey: 'icpverse', icon: 'icpverse' },
-  { href: '/icpay/presale', labelKey: 'presale', icon: 'icpay', center: true },
+  { href: '/icpay/presale', labelKey: 'presale', icon: 'icpay' },
   { href: '/transactions', labelKey: 'history', icon: 'history' },
   { href: '/settings', labelKey: 'menu', icon: 'menu' },
 ]
@@ -35,7 +34,6 @@ export function BottomNav() {
             label={t(item.labelKey)}
             active={isActive(item.href)}
             icon={item.icon}
-            center={item.center}
           />
         ))}
       </View>
@@ -48,38 +46,34 @@ function NavTab({
   label,
   icon,
   active,
-  center,
 }: {
   href: string
   label: string
   icon: AppIconName
   active: boolean
-  center?: boolean
 }) {
   const router = useRouter()
-  const filled = center && icon === 'icpay'
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
       accessibilityState={{ selected: active }}
       onPress={() => router.push(href as never)}
-      className="flex-1 items-center justify-center"
+      className="flex-1 items-center justify-center py-1 active:opacity-70"
     >
       <View
         className={cn(
-          'items-center justify-center overflow-hidden rounded-full',
-          center ? 'size-12' : 'size-9',
-          filled ? 'ring-1 ring-border/60' : active ? 'bg-foreground/10' : 'bg-muted/60',
+          'size-9 items-center justify-center rounded-full',
+          active ? 'bg-primary/10' : 'bg-transparent',
         )}
       >
-        <AppIcon name={icon} size={filled ? 36 : center ? 26 : 16} />
+        <AppIcon name={icon} size={22} />
       </View>
       <Text
         numberOfLines={1}
         className={cn(
-          'mt-0.5 max-w-full px-0.5 text-[10px] font-medium',
-          active ? 'text-foreground' : 'text-muted-foreground',
+          'mt-0.5 max-w-full px-0.5 text-[10px]',
+          active ? 'font-semibold text-foreground' : 'font-medium text-muted-foreground',
         )}
       >
         {label}

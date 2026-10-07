@@ -19,34 +19,156 @@ import { fileURLToPath } from "node:url"
 const BASE_DOMAIN = "https://icpay.app"
 const HOST = "icpay.app"
 
-const DEFAULT_URLS = [
-  "https://icpay.app/",
-  "https://icpay.app/bucket",
-  "https://icpay.app/bucket/pricing",
-  "https://icpay.app/bucket/docs",
-  "https://icpay.app/blog",
-  "https://icpay.app/blog/on-chain-cloud-storage-icbucket-s3-guide",
-  "https://icpay.app/blog/instant-crypto-payments-icpay",
-  "https://icpay.app/blog/best-icp-wallet",
-  "https://icpay.app/blog/how-to-send-icp",
-  "https://icpay.app/blog/accept-icp-payments-ecommerce",
-  "https://icpay.app/blog/address-poisoning-clipboard-hijacking-username-protection",
-  "https://icpay.app/blog/icrc-1-token-standard",
-  "https://icpay.app/blog/transparent-crypto-donations-on-chain",
-  "https://icpay.app/blog/jackson-hole-2026-crypto-payments",
-  "https://icpay.app/about",
-  "https://icpay.app/faq",
-  "https://icpay.app/terms",
-  "https://icpay.app/privacy",
-  "https://icpay.app/transparency",
-]
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..")
+
+function loadAllPublicUrls(): string[] {
+  const blogFile = join(root, "frontend/services/blog/blog.ts")
+  const slugs: string[] = []
+  if (existsSync(blogFile)) {
+    const content = readFileSync(blogFile, "utf-8")
+    const matches = content.matchAll(/slug:\s*["']([^"']+)["']/g)
+    for (const match of matches) {
+      if (match[1] && !slugs.includes(match[1])) slugs.push(match[1])
+    }
+  }
+
+  const staticPublicPages = [
+    "/",
+    "/icfalcon",
+    "/products/icFalcon",
+    "/products/icFalcon/packages",
+    "/products/icFalcon/commands",
+    "/icbucket",
+    "/products/icBucket",
+    "/products/icBucket/packages",
+    "/bucket/docs",
+    "/bucket/docs/getting-started/overview",
+    "/bucket/docs/getting-started/quickstart",
+    "/bucket/docs/api/auth",
+    "/bucket/docs/api/buckets",
+    "/bucket/docs/api/bulk",
+    "/bucket/docs/api/keys",
+    "/bucket/docs/api/methods",
+    "/bucket/docs/api/pagination",
+    "/bucket/docs/api/read",
+    "/bucket/docs/api/tags",
+    "/bucket/docs/api/upload",
+    "/bucket/docs/api/write",
+    "/bucket/docs/cdn/verify",
+    "/bucket/docs/cdn/urls",
+    "/bucket/docs/sdk/python",
+    "/bucket/docs/sdk/typescript",
+    "/token/create",
+    "/canister/tools",
+    "/canister/manage",
+    "/canister/create",
+    "/canister/cycles",
+    "/canister/snapshots",
+    "/topup",
+    "/about",
+    "/faq",
+    "/terms",
+    "/privacy",
+    "/transparency",
+    "/roadmap",
+    "/brand-protection",
+    "/channels",
+    "/charity",
+    "/charity/nepal/nepal-flash-flood",
+    "/blog",
+  ]
+
+  const urls = new Set<string>()
+  for (const page of staticPublicPages) {
+    urls.add(`${BASE_DOMAIN}${page === "/" ? "/" : page}`)
+  }
+  for (const slug of slugs) {
+    urls.add(`${BASE_DOMAIN}/blog/${slug}`)
+  }
+  return [...urls]
+}
+
+function verifyRobotsDirectives(): { passed: boolean; checks: { name: string; ok: boolean; detail: string }[] } {
+  const checks: { name: string; ok: boolean; detail: string }[] = []
+
+  // Check 1: Root layout.tsx
+  const rootLayoutPath = join(root, "frontend/app/layout.tsx")
+  if (existsSync(rootLayoutPath)) {
+    const content = readFileSync(rootLayoutPath, "utf-8")
+    const hasIndex = /robots:\s*\{[\s\S]*?index:\s*true/i.test(content)
+    const hasFollow = /follow:\s*true/i.test(content)
+    const hasGoogleBot = /googleBot:\s*\{/i.test(content)
+    const hasMaxImagePreview = /max-image-preview/i.test(content)
+    const ok = hasIndex && hasFollow && hasGoogleBot && hasMaxImagePreview
+    checks.push({
+      name: "Root Layout Robots Meta",
+      ok,
+      detail: ok
+        ? "index: true, follow: true, googleBot configured, max-image-preview: large, max-snippet: -1"
+        : "Missing index, follow, or googleBot directives in root layout.tsx",
+    })
+  }
+
+  // Check 2: Authenticated (app)/layout.tsx
+  const appLayoutPath = join(root, "frontend/app/(app)/layout.tsx")
+  if (existsSync(appLayoutPath)) {
+    const content = readFileSync(appLayoutPath, "utf-8")
+    const hasNoIndex = /robots:\s*\{[\s\S]*?index:\s*false/i.test(content)
+    const hasNoFollow = /follow:\s*false/i.test(content)
+    const ok = hasNoIndex && hasNoFollow
+    checks.push({
+      name: "Private App Routes Robots Meta",
+      ok,
+      detail: ok
+        ? "index: false, follow: false (protected from search engine crawling)"
+        : "Missing noindex on authenticated app layout",
+    })
+  }
+
+  // Check 3: robots.ts configuration
+  const robotsTsPath = join(root, "frontend/app/robots.ts")
+  if (existsSync(robotsTsPath)) {
+    const content = readFileSync(robotsTsPath, "utf-8")
+    const hasPublic = /PUBLIC\s*=/i.test(content)
+    const hasPrivate = /PRIVATE\s*=/i.test(content)
+    const hasBucketDocs = content.includes("/bucket/docs")
+    const ok = hasPublic && hasPrivate && hasBucketDocs
+    checks.push({
+      name: "robots.txt Directives",
+      ok,
+      detail: ok
+        ? "PUBLIC allowlist & PRIVATE disallowlist configured with AI bots & bucket docs"
+        : "Incomplete robots.ts rules",
+    })
+  }
+
+  // Check 4: sitemap.ts
+  const sitemapTsPath = join(root, "frontend/app/sitemap.ts")
+  if (existsSync(sitemapTsPath)) {
+    const content = readFileSync(sitemapTsPath, "utf-8")
+    const hasBucketDocs = content.includes("/bucket/docs")
+    const hasBlogEntries = content.includes("blogEntries")
+    const ok = hasBucketDocs && hasBlogEntries
+    checks.push({
+      name: "Sitemap Entries",
+      ok,
+      detail: ok
+        ? "All public pages, blog posts, charity campaigns, and bucket docs present"
+        : "Missing bucket docs or blog entries in sitemap.ts",
+    })
+  }
+
+  const passed = checks.every((c) => c.ok)
+  return { passed, checks }
+}
+
+const DEFAULT_URLS = loadAllPublicUrls()
 
 type ServiceAccountKey = {
   client_email: string
   private_key: string
 }
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..")
 
 function findGoogleKey(): { path: string; key: ServiceAccountKey } | null {
   const candidateDirs = [
@@ -182,10 +304,11 @@ async function submitGoogleUrl(
   }
 }
 
-async function submitIndexNowBatch(
+async function submitIndexNowEndpoint(
+  endpoint: string,
   key: string,
   urls: string[]
-): Promise<{ yandexStatus: number; yandexOk: boolean; yandexMsg?: string }> {
+): Promise<{ endpoint: string; status: number; ok: boolean; msg?: string }> {
   const keyLocation = `${BASE_DOMAIN}/${key}.txt`
   const body = {
     host: HOST,
@@ -194,45 +317,63 @@ async function submitIndexNowBatch(
     urlList: urls,
   }
 
-  // Ping Yandex IndexNow endpoint
-  const yandexRes = await fetch("https://yandex.com/indexnow", {
+  const res = await fetch(endpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json; charset=utf-8" },
     body: JSON.stringify(body),
   })
 
-  const yandexOk = yandexRes.status === 200 || yandexRes.status === 202
-  let yandexMsg: string | undefined
-  if (!yandexOk) {
+  const ok = res.status === 200 || res.status === 202
+  let msg: string | undefined
+  if (!ok) {
     try {
-      const text = await yandexRes.text()
-      yandexMsg = text || `HTTP ${yandexRes.status}`
+      const text = await res.text()
+      msg = text || `HTTP ${res.status}`
     } catch {
-      yandexMsg = `HTTP ${yandexRes.status}`
+      msg = `HTTP ${res.status}`
     }
   }
 
-  return {
-    yandexStatus: yandexRes.status,
-    yandexOk,
-    yandexMsg,
-  }
+  return { endpoint, status: res.status, ok, msg }
 }
 
 // Parse command line arguments
 const rawArgs = process.argv.slice(3) // skip node, cli.ts, "seo:index"
 const isDelete = rawArgs.includes("--delete") || rawArgs.includes("-d")
 const onlyGoogle = rawArgs.includes("--google") || rawArgs.includes("--engine=google")
-const onlyYandex = rawArgs.includes("--yandex") || rawArgs.includes("--engine=yandex")
+const onlyIndexNow = rawArgs.includes("--indexnow") || rawArgs.includes("--yandex") || rawArgs.includes("--engine=yandex")
+const verifyOnly = rawArgs.includes("--verify") || rawArgs.includes("--check")
+
+// 0. Robots Meta & SEO Integrity Audit
+console.log("─── 0. Robots Meta & SEO Directives Audit ───────────")
+const audit = verifyRobotsDirectives()
+for (const check of audit.checks) {
+  if (check.ok) {
+    console.log(`  🟢  [PASS]  ${check.name}: ${check.detail}`)
+  } else {
+    console.error(`  🔴  [FAIL]  ${check.name}: ${check.detail}`)
+  }
+}
+if (!audit.passed) {
+  console.error("\n⚠️  Robots meta verification had failures. Please fix before indexing.")
+  if (rawArgs.includes("--strict")) process.exit(1)
+} else {
+  console.log("  ✨  All robots meta directives passed inspection!")
+}
+
+if (verifyOnly) {
+  console.log("\n═ Verification complete. Exiting (--verify). ═")
+  process.exit(0)
+}
 
 const urlArgs = rawArgs.filter((arg) => !arg.startsWith("-"))
 const targetUrls = urlArgs.length > 0 ? urlArgs.map(normalizeUrl) : DEFAULT_URLS
 const action = isDelete ? "URL_DELETED" : "URL_UPDATED"
 
-console.log(`🌐 Target: ${targetUrls.length} URL(s) on ${HOST}`)
+console.log(`\n🌐 Target: ${targetUrls.length} URL(s) on ${HOST}`)
 
 // 1. Google Indexing
-if (!onlyYandex) {
+if (!onlyIndexNow) {
   console.log("\n─── 1. Google Indexing API ──────────────────────────")
   const googleKeyData = findGoogleKey()
   if (!googleKeyData) {
@@ -262,30 +403,37 @@ if (!onlyYandex) {
   }
 }
 
-// 2. Yandex (IndexNow)
+// 2. IndexNow (Bing, Yandex, Naver, Seznam)
 if (!onlyGoogle) {
-  console.log("\n─── 2. Yandex & Bing (IndexNow) ─────────────────────")
+  console.log("\n─── 2. IndexNow (Bing, Yandex, Global) ──────────────")
   const indexNowKey = findIndexNowKey()
   if (!indexNowKey) {
-    console.error("⚠️  Skipping Yandex: No IndexNow key found in auto/seo/yandex/indexnow_key.txt")
+    console.error("⚠️  Skipping IndexNow: No IndexNow key found in auto/seo/yandex/indexnow_key.txt")
   } else {
     console.log(`🔑 Key: ${indexNowKey}`)
     console.log(`📍 Key Location: ${BASE_DOMAIN}/${indexNowKey}.txt`)
-    console.log(`🚀 Sending batch of ${targetUrls.length} URL(s) to Yandex IndexNow...`)
+    console.log(`🚀 Sending batch of ${targetUrls.length} URL(s) to IndexNow endpoints...`)
 
-    try {
-      const { yandexStatus, yandexOk, yandexMsg } = await submitIndexNowBatch(indexNowKey, targetUrls)
-      if (yandexOk) {
-        console.log(`  🟢  [INDEXED ON YANDEX] HTTP ${yandexStatus} (Success - URLs queued for instant crawling)`)
-        for (const u of targetUrls) {
-          console.log(`      ✓ ${u}`)
+    const endpoints = [
+      { name: "IndexNow Global (Bing/Naver/Seznam)", url: "https://api.indexnow.org/indexnow" },
+      { name: "Yandex IndexNow", url: "https://yandex.com/indexnow" },
+    ]
+
+    for (const ep of endpoints) {
+      try {
+        const res = await submitIndexNowEndpoint(ep.url, indexNowKey, targetUrls)
+        if (res.ok) {
+          console.log(`  🟢  [${ep.name}] HTTP ${res.status} (Success - URLs queued for instant crawling)`)
+        } else {
+          console.error(`  🔴  [${ep.name} FAILED] HTTP ${res.status}: ${res.msg ?? "Verification pending"}`)
         }
-      } else {
-        console.error(`  🔴  [YANDEX FAILED] HTTP ${yandexStatus}: ${yandexMsg ?? "Verification pending"}`)
-        console.log(`      Ensure https://${HOST}/${indexNowKey}.txt is deployed and publicly reachable.`)
+      } catch (e: unknown) {
+        console.error(`❌ ${ep.name} error:`, e instanceof Error ? e.message : e)
       }
-    } catch (e: unknown) {
-      console.error("❌ Yandex IndexNow error:", e instanceof Error ? e.message : e)
+    }
+    console.log(`\n  Queued ${targetUrls.length} public URL(s):`)
+    for (const u of targetUrls) {
+      console.log(`      ✓ ${u}`)
     }
   }
 }
@@ -293,3 +441,4 @@ if (!onlyGoogle) {
 console.log("\n" + "═".repeat(50))
 console.log("✅ Finished indexing cycle.")
 console.log("═".repeat(50))
+

@@ -26,7 +26,7 @@ dfx deploy --network ic icp_wallet_frontend
 echo
 echo "Deployed. Verifying the canister actually serves the new build:"
 base="https://63dke-waaaa-aaaan-q6mvq-cai.icp0.io"
-for path in /terms.html /privacy.html /transparency.html /.well-known/ii-alternative-origins; do
+for path in /terms.html /privacy.html /transparency.html /.well-known/ii-alternative-origins /.well-known/ii-app-metadata; do
   printf '  %-40s %s\n' "$path" "$(curl -s -o /dev/null -w '%{http_code}' "$base$path")"
 done
 
