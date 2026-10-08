@@ -17,6 +17,7 @@ export const OWNED_CANISTERS = [
   { name: "icpay_trade", label: "trade" },
   { name: "icp_wallet_frontend", label: "frontend" },
   { name: "icp_blob_store", label: "blob store" },
+  { name: "cnsmangment", label: "cns" },
 ] as const
 export type OwnedCanisterName = (typeof OWNED_CANISTERS)[number]["name"]
 
@@ -24,7 +25,7 @@ export function canisterIds(): Record<string, { ic?: string }> {
   return JSON.parse(readFileSync(resolve(BACKEND, "canister_ids.json"), "utf8"))
 }
 
-/** Resolve dfx canister name from shorthand: backend | frontend | blob | blob store */
+/** Resolve dfx canister name from shorthand: backend | frontend | blob | blob store | cns */
 export function resolveOwnedCanister(target?: string): OwnedCanisterName | undefined {
   if (!target) return undefined
   const key = target.toLowerCase().replace(/_/g, " ").trim()
@@ -33,7 +34,9 @@ export function resolveOwnedCanister(target?: string): OwnedCanisterName | undef
       c.name === target ||
       c.label === key ||
       (key === "blob" && c.name === "icp_blob_store") ||
-      (key === "trade" && c.name === "icpay_trade"),
+      (key === "trade" && c.name === "icpay_trade") ||
+      (key === "cns" && c.name === "cnsmangment") ||
+      (key === "cnsmangment" && c.name === "cnsmangment"),
   )
   return hit?.name
 }
