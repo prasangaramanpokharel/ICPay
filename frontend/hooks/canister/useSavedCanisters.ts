@@ -1,9 +1,16 @@
 "use client"
 
 import { useSyncExternalStore } from "react"
+import useSWR from "swr"
+import type { Identity } from "@icp-sdk/core/agent"
+import {
+  fetchRemoteLinkedCanisters,
+  batchSyncLocalCanistersToCloud,
+} from "@/services/canister/cnsClient"
 import {
   listSavedCanisterEntries,
   listSavedCanisters,
+  mergeRemoteCanisters,
   subscribeSavedCanisters,
   type SavedCanister,
 } from "@/lib/canister/savedCanisters"
@@ -37,4 +44,35 @@ export function useSavedCanisterEntries(
   } catch {
     return []
   }
+}
+
+/**
+ * Synchronizes linked canisters between the browser and the on-chain cnsmangment canister.
+ * Seamlessly populates linked canisters when logging in from new devices/browsers.
+ */
+export function useSyncCloudCanisters(identity: Identity | null | undefined): void {
+  const principal = identity?.getPrincipal().toText() ?? ""
+
+  useSWR(
+    principal && identity ? (["cloud-linked-canisters", principal] as const) : null,
+    async () => {
+      if (!identity || !principal) return null
+      const remote = await fetchRemoteLinkedCanisters(identity)
+      if (remote && remote.length > 0) {
+        mergeRemoteCanisters(principal, remote)
+      }
+      // If local storage has entries not yet in cloud, sync them up
+      const currentLocal = listSavedCanisterEntries(principal)
+      const remoteIds = new Set((remote ?? []).map((r) => r.id))
+      const toSync = currentLocal.filter((l) => !remoteIds.has(l.id))
+      if (toSync.length > 0) {
+        await batchSyncLocalCanistersToCloud(identity, toSync)
+      }
+      return remote
+    },
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 60_000,
+    }
+  )
 }

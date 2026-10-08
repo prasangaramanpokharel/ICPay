@@ -38,11 +38,15 @@ import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useMineCanisters } from "@/hooks/canister/useMineCanisters"
 import { useMineStatusMap } from "@/hooks/canister/useMineStatusMap"
-import { useSavedCanisterEntries } from "@/hooks/canister/useSavedCanisters"
+import {
+  useSavedCanisterEntries,
+  useSyncCloudCanisters,
+} from "@/hooks/canister/useSavedCanisters"
 import {
   displayCanisterLabel,
   rememberCanister,
 } from "@/lib/canister/savedCanisters"
+import { syncCanisterToCloud } from "@/services/canister/cnsClient"
 import { subnetLabel } from "@/services/canister/controlledCanisters"
 import { shortSubnetId } from "@/services/canister/subnetLocations"
 import { parseCanisterId } from "@/services/cycles/topUp"
@@ -83,6 +87,7 @@ export function MyCanistersPanel() {
   const principal = identity?.getPrincipal().toText() ?? null
   const mine = useMineCanisters(principal)
   const entries = useSavedCanisterEntries(principal)
+  useSyncCloudCanisters(identity)
   const nameById = useMemo(() => new Map(entries.map((e) => [e.id, e.name])), [entries])
   const [topUpTarget, setTopUpTarget] = useState<string | null>(null)
   const [topUpOpen, setTopUpOpen] = useState(false)
@@ -111,6 +116,7 @@ export function MyCanistersPanel() {
     if (!principal || !parsedDraft) return
     const name = draftName.trim()
     rememberCanister(principal, parsedDraft, name)
+    void syncCanisterToCloud(identity, parsedDraft, name)
     setDraftId("")
     setDraftName("")
     setLinkOpen(false)
