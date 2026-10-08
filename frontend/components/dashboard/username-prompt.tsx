@@ -34,6 +34,8 @@ export function UsernamePrompt({ username }: { username?: string }) {
                 title={APP_LOGO_ALT}
                 width={112}
                 height={112}
+                priority
+                loading="eager"
                 className="size-9 object-contain"
               />
             </span>
