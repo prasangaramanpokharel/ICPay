@@ -22,8 +22,8 @@ export function NavMenuItemContent({
         strokeWidth={1.75}
       />
       <div className="min-w-0 flex flex-col gap-1">
-        <span className="text-sm font-medium leading-snug text-foreground">{title}</span>
-        <span className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+        <span suppressHydrationWarning className="text-sm font-medium leading-snug text-foreground">{title}</span>
+        <span suppressHydrationWarning className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
           {description}
         </span>
       </div>

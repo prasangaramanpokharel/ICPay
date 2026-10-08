@@ -68,8 +68,11 @@ function NavDropdown({
 }) {
   return (
     <NavigationMenuItem>
-      <NavigationMenuTrigger className="bg-transparent px-3 font-normal text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground data-open:bg-transparent data-popup-open:bg-transparent">
-        {label}
+      <NavigationMenuTrigger
+        suppressHydrationWarning
+        className="bg-transparent px-3 font-normal text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground data-open:bg-transparent data-popup-open:bg-transparent"
+      >
+        <span suppressHydrationWarning>{label}</span>
       </NavigationMenuTrigger>
       <NavigationMenuContent>
         <ul
@@ -141,7 +144,11 @@ export function PublicNav() {
                         "bg-transparent px-3 font-normal shadow-none hover:bg-transparent hover:text-foreground",
                         active ? "text-foreground" : "text-muted-foreground"
                       )}
-                      render={<Link href={link.href}>{link.label}</Link>}
+                      render={
+                        <Link href={link.href} suppressHydrationWarning>
+                          <span suppressHydrationWarning>{link.label}</span>
+                        </Link>
+                      }
                     />
                   </NavigationMenuItem>
                 )
