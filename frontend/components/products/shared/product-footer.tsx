@@ -2,7 +2,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Github01Icon, Package01Icon } from "@hugeicons/core-free-icons"
+import { Package01Icon } from "@hugeicons/core-free-icons"
 import { PublicFooter } from "@/components/public/footer"
 import { ICPAY_TOKEN_ICON } from "@/lib/ui/brand-images"
 import { Npm, Python, Go } from "@dev.icons/react"
@@ -15,7 +15,7 @@ export type ProductPackageLink = {
 export const ICBUCKET_PACKAGE_LINKS: ProductPackageLink[] = [
   { label: "npm", href: "https://www.npmjs.com/package/icpay-bucket" },
   { label: "PyPI", href: "https://pypi.org/project/icpay-bucket/" },
-  { label: "Go", href: "https://github.com/prasangapokharel/icpay-bucket-go" },
+  { label: "Go", href: "https://gitlab.com/prasangapokharel/icpay-bucket-go" },
 ]
 
 type ProductOpenSourceBannerProps = {
@@ -25,7 +25,7 @@ type ProductOpenSourceBannerProps = {
 
 export function ProductOpenSourceBanner({
   packageLinks,
-  openSourceDescription = "All ICPay products are open source and available on GitHub",
+  openSourceDescription = "All ICPay products are open source and available on GitLab",
 }: ProductOpenSourceBannerProps) {
   return (
     <section className="border-t bg-muted/30 py-12">
@@ -73,13 +73,15 @@ export function ProductOpenSourceBanner({
                 </div>
               ) : (
                 <Link
-                  href="https://github.com/prasangapokharel/ICPay"
+                  href="https://gitlab.com/prasangapokharel/icpay"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                 >
-                  <HugeiconsIcon icon={Github01Icon} className="size-4" />
-                  View on GitHub
+                  <svg viewBox="0 0 24 24" className="size-4 shrink-0 fill-current">
+                    <path d="m23.6 9.58-1.02-3.14a.8.8 0 0 0-.3-.39.84.84 0 0 0-.49-.14.86.86 0 0 0-.5.15.82.82 0 0 0-.29.4L19.2 11.9H4.8L3 6.46a.82.82 0 0 0-.29-.4.86.86 0 0 0-.5-.15.84.84 0 0 0-.49.14.8.8 0 0 0-.3.39L.4 9.58a.9.9 0 0 0 .33 1l11.08 8.06a.37.37 0 0 0 .38 0L23.27 10.6a.9.9 0 0 0 .33-1.02Z"/>
+                  </svg>
+                  View on GitLab
                 </Link>
               )}
             </CardContent>

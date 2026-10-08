@@ -30,5 +30,5 @@ export const OPERATOR_CONTROLLER_PRINCIPAL =
 export const TREASURY_PRINCIPAL =
   "ni5n2-efxui-dyqdu-2mnpr-atclq-d6snc-zdq5q-u6ibz-ibpkq-brjpj-gqe"
 
-/** ICPay official GitHub repository */
-export const ICPAY_REPO_URL = "https://github.com/prasangapokharel/ICPay"
+/** ICPay official GitLab repository */
+export const ICPAY_REPO_URL = "https://gitlab.com/prasangapokharel/icpay"

@@ -149,12 +149,12 @@ export function PackagesHero() {
             nativeButton={false}
             render={
               <Link
-                href="https://github.com/prasangapokharel/icp-hub"
+                href="https://gitlab.com/prasangapokharel/falconpkg"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 <HugeiconsIcon icon={CodeCircleIcon} className="size-3.5 text-primary" />
-                <span>icp-hub GitHub</span>
+                <span>falconpkg GitLab</span>
               </Link>
             }
           />

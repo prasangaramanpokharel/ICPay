@@ -97,7 +97,7 @@ writing anything that touches fund movement, username ownership or stored state.
 ## Security
 
 Report vulnerabilities at
-[GitHub issues](https://github.com/prasangapokharel/ICPay/issues). There is no
+[GitLab issues](https://gitlab.com/prasangapokharel/icpay/-/issues). There is no
 bug bounty and no private disclosure channel — **an issue is public**, so if a
 finding would put user funds at immediate risk, please weigh that before filing.
 Full policy in [SECURITY.md](SECURITY.md).

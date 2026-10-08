@@ -11,7 +11,8 @@ export const ICPAY_CANISTERS = {
 } as const
 
 export const ICPAY_SOCIAL_LINKS = {
-  github: "https://github.com/prasangapokharel/ICPay",
+  gitlab: "https://gitlab.com/prasangapokharel/icpay",
+  github: "https://gitlab.com/prasangapokharel/icpay",
   x: "https://x.com/IcpayOfficial",
   linkedin: "https://www.linkedin.com/company/icpayofficial",
   discord: "https://discord.gg/icpay",
@@ -24,7 +25,7 @@ export type TrustLinkDef = {
 }
 
 export const TRUST_LINK_DEFS: TrustLinkDef[] = [
-  { id: "github", href: ICPAY_SOCIAL_LINKS.github, external: true },
+  { id: "github", href: ICPAY_SOCIAL_LINKS.gitlab, external: true },
   {
     id: "backendCanister",
     href: `https://dashboard.internetcomputer.org/canister/${ICPAY_CANISTERS.backend}`,

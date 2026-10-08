@@ -5,7 +5,7 @@ audited**.
 
 ## Reporting a vulnerability
 
-Report at [GitHub issues](https://github.com/prasangapokharel/ICPay/issues).
+Report at [GitLab issues](https://gitlab.com/prasangapokharel/icpay/-/issues).
 
 There is no private disclosure channel and no bug bounty. **An issue is public
 the moment you file it.** If your finding would let someone drain or freeze user

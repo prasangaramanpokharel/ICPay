@@ -63,7 +63,7 @@ export const PUBLIC_RESOURCE_LINK_DEFS: SiteLinkDef[] = [
 ]
 
 export const PUBLIC_COMMUNITY_LINK_DEFS: SiteLinkDef[] = [
-  { id: "github", href: "https://github.com/prasangapokharel/ICPay", external: true },
+  { id: "github", href: "https://gitlab.com/prasangapokharel/icpay", external: true },
   { id: "x", href: "https://x.com/IcpayOfficial", external: true },
   { id: "linkedin", href: "https://www.linkedin.com/company/icpayofficial", external: true },
   { id: "discord", href: "https://discord.gg/icpay", external: true },

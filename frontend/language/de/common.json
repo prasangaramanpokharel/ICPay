@@ -1434,7 +1434,7 @@
         "charity": "Wohltätigkeit"
       },
       "community": {
-        "github": "GitHub",
+        "github": "GitLab",
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
@@ -1601,7 +1601,7 @@
         "readMore": "Mehr lesen →",
         "items": {
           "github": {
-            "label": "Open Source auf GitHub",
+            "label": "Open Source auf GitLab",
             "description": "Motoko-Backend und Next.js-Frontend sind öffentlich. Prüfe Geldflüsse, Auth und Upgrade-Pfade selbst."
           },
           "backendCanister": {
@@ -1657,7 +1657,7 @@
         "title": "ICBucket",
         "tagline": "Dateien On-Chain speichern mit einer S3-kompatiblen API. Keine Server, keine AWS-Rechnungen — einfache 30-Tage-Tarife in ICP aus deinem ICPay-Guthaben.",
         "tryIcBucket": "ICBucket testen",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Packages",
         "imageAlt": "ICBucket auf dem Smartphone"
       },
@@ -1949,7 +1949,7 @@
         "copyCommand": "Befehl kopieren",
         "installHint": "Installiert Abhängigkeiten, deployed lokal und startet den Dev-Server unter localhost:3000",
         "npm": "npm",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Packages"
       },
       "problemSolution": {

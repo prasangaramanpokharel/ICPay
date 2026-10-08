@@ -1475,7 +1475,7 @@
         "charity": "Charity"
       },
       "community": {
-        "github": "GitHub",
+        "github": "GitLab",
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
@@ -1664,7 +1664,7 @@
         "readMore": "Read more →",
         "items": {
           "github": {
-            "label": "Open source on GitHub",
+            "label": "Open source on GitLab",
             "description": "Backend Motoko and the Next.js frontend are public. Inspect fund movement, auth, and upgrade paths yourself."
           },
           "backendCanister": {
@@ -1696,7 +1696,7 @@
         "title": "ICBucket",
         "tagline": "Store files on-chain with an S3-compatible API. No servers, no AWS bills — simple 30-day plans paid in ICP from your ICPay balance.",
         "tryIcBucket": "Try ICBucket",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Packages",
         "imageAlt": "ICBucket on mobile"
       },
@@ -1988,7 +1988,7 @@
         "copyCommand": "Copy command",
         "installHint": "Installs dependencies, deploys locally, and starts dev server at localhost:3000",
         "npm": "npm",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Packages"
       },
       "problemSolution": {

@@ -408,7 +408,7 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                     <span>{cat.label}</span>
                   </span>
                   <Link
-                    href={`https://github.com/prasangapokharel/icp-hub/tree/master/${pkg.path}`}
+                    href={`https://gitlab.com/prasangapokharel/falconpkg/-/tree/main/${pkg.path}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-1 text-primary hover:underline font-medium transition-all"
@@ -469,11 +469,11 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                     <span>{cmdCopied ? "Copied" : "Copy Install"}</span>
                   </Button>
                   <Link
-                    href={`https://github.com/prasangapokharel/icp-hub/tree/master/${pkg.path}`}
+                    href={`https://gitlab.com/prasangapokharel/falconpkg/-/tree/main/${pkg.path}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex size-8 items-center justify-center rounded-lg border border-border/60 bg-background/60 text-muted-foreground hover:text-foreground transition-colors"
-                    title="View Source on GitHub"
+                    title="View Source on GitLab"
                   >
                     <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5" />
                   </Link>

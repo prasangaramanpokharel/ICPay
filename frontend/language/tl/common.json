@@ -1434,7 +1434,7 @@
         "charity": "Kawanggawa"
       },
       "community": {
-        "github": "GitHub",
+        "github": "GitLab",
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
@@ -1601,7 +1601,7 @@
         "readMore": "Magbasa pa →",
         "items": {
           "github": {
-            "label": "Open source sa GitHub",
+            "label": "Open source sa GitLab",
             "description": "Public ang backend Motoko at Next.js frontend. Suriin ang fund movement, auth, at upgrade paths mismo."
           },
           "backendCanister": {
@@ -1657,7 +1657,7 @@
         "title": "ICBucket",
         "tagline": "Mag-imbak ng files on-chain gamit ang S3-compatible API. Walang server, walang AWS bill — simpleng 30-araw na plano na binabayaran sa ICP mula sa ICPay balance mo.",
         "tryIcBucket": "Subukan ang ICBucket",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Mga Package",
         "imageAlt": "ICBucket sa mobile"
       },
@@ -1949,7 +1949,7 @@
         "copyCommand": "Kopyahin ang command",
         "installHint": "Nag-i-install ng dependencies, nagde-deploy locally, at nagsisimula ng dev server sa localhost:3000",
         "npm": "npm",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Mga Package"
       },
       "problemSolution": {

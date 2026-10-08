@@ -1434,7 +1434,7 @@
         "charity": "Благотворительность"
       },
       "community": {
-        "github": "GitHub",
+        "github": "GitLab",
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
@@ -1601,7 +1601,7 @@
         "readMore": "Подробнее →",
         "items": {
           "github": {
-            "label": "Открытый исходный код на GitHub",
+            "label": "Открытый исходный код на GitLab",
             "description": "Бэкенд Motoko и фронтенд Next.js открыты. Проверьте движение средств, аутентификацию и пути обновления самостоятельно."
           },
           "backendCanister": {
@@ -1657,7 +1657,7 @@
         "title": "ICBucket",
         "tagline": "Храните файлы в блокчейне через S3-совместимый API. Без серверов, без счетов AWS — простые 30-дневные тарифы, оплачиваемые в ICP с баланса ICPay.",
         "tryIcBucket": "Попробовать ICBucket",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Пакеты",
         "imageAlt": "ICBucket на мобильном устройстве"
       },
@@ -1949,7 +1949,7 @@
         "copyCommand": "Копировать команду",
         "installHint": "Устанавливает зависимости, разворачивает локально и запускает dev-сервер на localhost:3000",
         "npm": "npm",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Пакеты"
       },
       "problemSolution": {

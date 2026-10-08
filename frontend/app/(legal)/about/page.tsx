@@ -114,12 +114,12 @@ export default function AboutPage() {
           no support desk and no account managers — questions, bugs and security
           reports go to{" "}
           <a
-            href="https://github.com/prasangapokharel/ICPay/issues"
+            href="https://gitlab.com/prasangapokharel/icpay/-/issues"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-2"
           >
-            GitHub issues
+            GitLab issues
           </a>
           , in public.
         </p>

@@ -1434,7 +1434,7 @@
         "charity": "การกุศล"
       },
       "community": {
-        "github": "GitHub",
+        "github": "GitLab",
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
@@ -1601,7 +1601,7 @@
         "readMore": "อ่านเพิ่มเติม →",
         "items": {
           "github": {
-            "label": "โอเพนซอร์สบน GitHub",
+            "label": "โอเพนซอร์สบน GitLab",
             "description": "Motoko แบ็กเอนด์และ Next.js ฟรอนต์เอนด์เป็นสาธารณะ ตรวจสอบการเคลื่อนไหวของเงิน auth และเส้นทางอัปเกรดด้วยตนเอง"
           },
           "backendCanister": {
@@ -1657,7 +1657,7 @@
         "title": "ICBucket",
         "tagline": "เก็บไฟล์ on-chain ด้วย API ที่เข้ากันได้กับ S3 ไม่มีเซิร์ฟเวอร์ ไม่มีบิล AWS — แผน 30 วันง่ายๆ จ่าย ICP จากยอด ICPay",
         "tryIcBucket": "ลอง ICBucket",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "แพ็กเกจ",
         "imageAlt": "ICBucket บนมือถือ"
       },
@@ -1949,7 +1949,7 @@
         "copyCommand": "คัดลอกคำสั่ง",
         "installHint": "ติดตั้ง dependencies deploy ในเครื่อง และเริ่ม dev server ที่ localhost:3000",
         "npm": "npm",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "แพ็กเกจ"
       },
       "problemSolution": {

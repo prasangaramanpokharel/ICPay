@@ -15,7 +15,7 @@ const COMMANDS = [
   { lang: "npm", cmd: "npm install icpay-bucket", tag: "Node.js", icon: Nodejs },
   { lang: "pip", cmd: "pip install icpay-bucket", tag: "Python", icon: Python },
   { lang: "cargo", cmd: "cargo add icpay-bucket", tag: "Rust", icon: Rust },
-  { lang: "go", cmd: "go get github.com/icpay/icbucket-go", tag: "Go", icon: Go },
+  { lang: "go", cmd: "go get gitlab.com/prasangapokharel/icpay-bucket-go", tag: "Go", icon: Go },
 ] as const
 
 export function InstallSection() {

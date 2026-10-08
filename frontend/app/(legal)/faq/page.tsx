@@ -108,12 +108,12 @@ export default function FaqPage() {
       <p className="border-t pt-5 text-xs leading-relaxed text-muted-foreground">
         Still stuck? Open an issue on{" "}
         <a
-          href="https://github.com/prasangapokharel/ICPay/issues"
+          href="https://gitlab.com/prasangapokharel/icpay/-/issues"
           target="_blank"
           rel="noopener noreferrer"
           className="underline underline-offset-2"
         >
-          GitHub
+          GitLab
         </a>
         , or read the{" "}
         <Link href="/transparency" className="underline underline-offset-2">
