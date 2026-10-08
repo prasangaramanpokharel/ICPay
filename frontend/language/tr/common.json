@@ -1434,7 +1434,7 @@
         "charity": "Yardım"
       },
       "community": {
-        "github": "GitHub",
+        "github": "GitLab",
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
@@ -1601,7 +1601,7 @@
         "readMore": "Daha fazla oku →",
         "items": {
           "github": {
-            "label": "GitHub'da açık kaynak",
+            "label": "GitLab'da açık kaynak",
             "description": "Motoko backend ve Next.js frontend herkese açıktır. Fon hareketini, auth'u ve yükseltme yollarını kendiniz inceleyin."
           },
           "backendCanister": {
@@ -1657,7 +1657,7 @@
         "title": "ICBucket",
         "tagline": "S3 uyumlu API ile dosyaları on-chain saklayın. Sunucu yok, AWS faturası yok — ICPay bakiyenizden ICP ile ödenen basit 30 günlük planlar.",
         "tryIcBucket": "ICBucket'ı dene",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Paketler",
         "imageAlt": "Mobilde ICBucket"
       },
@@ -1949,7 +1949,7 @@
         "copyCommand": "Komutu kopyala",
         "installHint": "Bağımlılıkları kurar, yerel olarak dağıtır ve localhost:3000'de dev sunucusunu başlatır",
         "npm": "npm",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Paketler"
       },
       "problemSolution": {

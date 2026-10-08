@@ -1434,7 +1434,7 @@
         "charity": "慈善"
       },
       "community": {
-        "github": "GitHub",
+        "github": "GitLab",
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
@@ -1601,7 +1601,7 @@
         "readMore": "了解更多 →",
         "items": {
           "github": {
-            "label": "GitHub 开源",
+            "label": "GitLab 开源",
             "description": "后端 Motoko 和 Next.js 前端均为公开。可自行审查资金流转、身份验证和升级路径。"
           },
           "backendCanister": {
@@ -1657,7 +1657,7 @@
         "title": "ICBucket",
         "tagline": "通过 S3 兼容 API 在链上存储文件。无需服务器，无需 AWS 账单——从 ICPay 余额用 ICP 购买简单的 30 天套餐。",
         "tryIcBucket": "试用 ICBucket",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "软件包",
         "imageAlt": "移动端 ICBucket"
       },
@@ -1949,7 +1949,7 @@
         "copyCommand": "复制命令",
         "installHint": "安装依赖、本地部署并在 localhost:3000 启动开发服务器",
         "npm": "npm",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "软件包"
       },
       "problemSolution": {

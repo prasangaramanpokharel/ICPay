@@ -1434,7 +1434,7 @@
         "charity": "चैरिटी"
       },
       "community": {
-        "github": "GitHub",
+        "github": "GitLab",
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
@@ -1601,7 +1601,7 @@
         "readMore": "और पढ़ें →",
         "items": {
           "github": {
-            "label": "GitHub पर ओपन सोर्स",
+            "label": "GitLab पर ओपन सोर्स",
             "description": "बैकएंड Motoko और Next.js फ्रंटएंड सार्वजनिक हैं। फंड मूवमेंट, auth और upgrade पथ खुद जाँचें।"
           },
           "backendCanister": {
@@ -1657,7 +1657,7 @@
         "title": "ICBucket",
         "tagline": "S3-compatible API से फ़ाइलें ऑन-चेन स्टोर करें। कोई सर्वर नहीं, कोई AWS बिल नहीं — ICPay बैलेंस से ICP में सरल 30-दिन के प्लान।",
         "tryIcBucket": "ICBucket आज़माएँ",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Packages",
         "imageAlt": "मोबाइल पर ICBucket"
       },
@@ -1949,7 +1949,7 @@
         "copyCommand": "कमांड कॉपी करें",
         "installHint": "dependencies इंस्टॉल, locally deploy और dev server localhost:3000 पर शुरू",
         "npm": "npm",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Packages"
       },
       "problemSolution": {

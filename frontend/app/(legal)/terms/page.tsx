@@ -181,12 +181,12 @@ export default function TermsPage() {
         <p>
           Questions, security reports and bugs go to{" "}
           <a
-            href="https://github.com/prasangapokharel/ICPay/issues"
+            href="https://gitlab.com/prasangapokharel/icpay/-/issues"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-2"
           >
-            GitHub issues
+            GitLab issues
           </a>
           . There is no support email and no private channel.
         </p>

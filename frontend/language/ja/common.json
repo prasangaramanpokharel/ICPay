@@ -1434,7 +1434,7 @@
         "charity": "チャリティ"
       },
       "community": {
-        "github": "GitHub",
+        "github": "GitLab",
         "x": "X",
         "linkedin": "LinkedIn",
         "discord": "Discord"
@@ -1601,7 +1601,7 @@
         "readMore": "詳しく見る →",
         "items": {
           "github": {
-            "label": "GitHub でオープンソース",
+            "label": "GitLab でオープンソース",
             "description": "バックエンド Motoko と Next.js フロントエンドは公開されています。資金移動、認証、アップグレードパスを自分で確認できます。"
           },
           "backendCanister": {
@@ -1657,7 +1657,7 @@
         "title": "ICBucket",
         "tagline": "S3 互換 API でファイルをオンチェーンに保存。サーバー不要、AWS の請求も不要 — ICPay 残高から ICP で支払うシンプルな 30 日プラン。",
         "tryIcBucket": "ICBucket を試す",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "パッケージ",
         "imageAlt": "モバイル版 ICBucket"
       },
@@ -1949,7 +1949,7 @@
         "copyCommand": "コマンドをコピー",
         "installHint": "依存関係のインストール、ローカルデプロイ、localhost:3000 での開発サーバー起動まで実行",
         "npm": "npm",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "パッケージ"
       },
       "problemSolution": {

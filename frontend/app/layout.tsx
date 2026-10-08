@@ -102,7 +102,7 @@ const jsonLd = {
       logo: `${siteUrl}/icon.png`,
       sameAs: [
         "https://x.com/IcpayOfficial",
-        "https://github.com/prasangapokharel/ICPay",
+        "https://gitlab.com/prasangapokharel/icpay",
         "https://www.linkedin.com/company/icpayofficial",
       ],
     },
@@ -138,7 +138,7 @@ const jsonLd = {
       ],
       sameAs: [
         "https://x.com/IcpayOfficial",
-        "https://github.com/prasangapokharel/ICPay",
+        "https://gitlab.com/prasangapokharel/icpay",
         "https://www.linkedin.com/company/icpayofficial",
       ],
     },

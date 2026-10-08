@@ -1,6 +1,6 @@
-/** Desktop wallet installers — served from GitHub Releases, not Vercel public/. */
+/** Desktop wallet installers — served from GitLab Releases, not Vercel public/. */
 const RELEASE_BASE =
-  "https://github.com/prasangapokharel/ICPay/releases/latest/download"
+  "https://gitlab.com/prasangapokharel/icpay/-/releases/permalink/latest/downloads"
 
 export const DESKTOP_DOWNLOADS = {
   windows: `${RELEASE_BASE}/icpay-wallet-setup.exe`,
