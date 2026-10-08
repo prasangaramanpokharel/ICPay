@@ -109,6 +109,36 @@ export function forgetCanister(principal: string, canisterId: string): void {
   )
 }
 
+/** Merges remotely synced canisters into local storage for this principal. */
+export function mergeRemoteCanisters(
+  principal: string,
+  remoteEntries: SavedCanister[]
+): void {
+  if (!principal || !remoteEntries.length) return
+  const current = readEntries(principal)
+  const map = new Map<string, string>()
+
+  // Local entries first
+  for (const e of current) {
+    map.set(e.id, e.name)
+  }
+
+  // Remote entries merged
+  for (const r of remoteEntries) {
+    if (!map.has(r.id)) {
+      map.set(r.id, r.name)
+    } else if (r.name && !map.get(r.id)) {
+      map.set(r.id, r.name)
+    }
+  }
+
+  const merged: SavedCanister[] = Array.from(map.entries()).map(([id, name]) => ({
+    id,
+    name,
+  }))
+  writeEntries(principal, merged)
+}
+
 export function shortCanisterId(id: string): string {
   const text = id.trim()
   if (text.length <= 18) return text

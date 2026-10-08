@@ -1,0 +1,25 @@
+type LinkedCanister = record {
+  canister_id : principal;
+  name : text;
+  description : opt text;
+  linked_at : nat64;
+  updated_at : nat64;
+};
+
+type LinkCanisterArgs = record {
+  canister_id : principal;
+  name : text;
+  description : opt text;
+};
+
+type Result = variant { Ok; Err : text };
+type ResultRecord = variant { Ok : LinkedCanister; Err : text };
+type ResultList = variant { Ok : vec LinkedCanister; Err : text };
+
+service : {
+  get_linked_canisters : () -> (vec LinkedCanister) query;
+  link_canister : (LinkCanisterArgs) -> (ResultRecord);
+  unlink_canister : (principal) -> (Result);
+  update_canister_name : (principal, text) -> (Result);
+  batch_sync_canisters : (vec LinkCanisterArgs) -> (ResultList);
+}
