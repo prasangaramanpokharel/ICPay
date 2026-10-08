@@ -11,6 +11,7 @@ export type BucketPublic = {
   status: BucketStatusVariant
   expiresAt: bigint
   createdAt: bigint
+  storageCanisterId?: string
 }
 
 export type BucketStats = {
@@ -28,6 +29,7 @@ export type BucketStats = {
   renewPriceE8s: bigint
   periodDays: bigint
   publicBaseUrl: [] | [string]
+  storageCanisterId?: string
 }
 
 export type BucketRenewQuote = {

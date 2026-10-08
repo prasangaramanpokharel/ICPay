@@ -61,6 +61,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ]
 
+  const bucketDocEntries: MetadataRoute.Sitemap = [
+    "/bucket/docs",
+    "/bucket/docs/getting-started/overview",
+    "/bucket/docs/getting-started/quickstart",
+    "/bucket/docs/api/auth",
+    "/bucket/docs/api/buckets",
+    "/bucket/docs/api/bulk",
+    "/bucket/docs/api/keys",
+    "/bucket/docs/api/methods",
+    "/bucket/docs/api/pagination",
+    "/bucket/docs/api/read",
+    "/bucket/docs/api/tags",
+    "/bucket/docs/api/upload",
+    "/bucket/docs/api/write",
+    "/bucket/docs/cdn/verify",
+    "/bucket/docs/cdn/urls",
+    "/bucket/docs/sdk/python",
+    "/bucket/docs/sdk/typescript",
+  ].map((path) => ({
+    url: `${siteUrl}${path}`,
+    changeFrequency: "weekly" as const,
+    priority: path === "/bucket/docs" ? 0.85 : 0.75,
+  }))
+
   return [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
     { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.8 },
@@ -70,13 +94,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/login`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/icbucket`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/products/icBucket`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${siteUrl}/bucket/pricing`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${siteUrl}/products/icBucket/packages`, changeFrequency: "weekly", priority: 0.75 },
+    ...bucketDocEntries,
     { url: `${siteUrl}/icfalcon`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/products/icFalcon`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/products/icFalcon/packages`, changeFrequency: "weekly", priority: 0.75 },
     { url: `${siteUrl}/products/icFalcon/commands`, changeFrequency: "weekly", priority: 0.75 },
     { url: `${siteUrl}/token/create`, changeFrequency: "weekly", priority: 0.85 },
-    { url: `${siteUrl}/canister`, changeFrequency: "weekly", priority: 0.85 },
     { url: `${siteUrl}/canister/tools`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/canister/manage`, changeFrequency: "weekly", priority: 0.75 },
     { url: `${siteUrl}/canister/create`, changeFrequency: "weekly", priority: 0.8 },

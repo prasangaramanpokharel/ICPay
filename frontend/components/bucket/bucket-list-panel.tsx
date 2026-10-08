@@ -41,6 +41,7 @@ export function BucketListPanel() {
   const t = useTranslations("bucket")
   const tCommon = useTranslations("common")
   const tGov = useTranslations("governance")
+  const tAnalytics = useTranslations("analytics")
   const router = useRouter()
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
@@ -159,7 +160,8 @@ export function BucketListPanel() {
                 <TableHead>{t("name")}</TableHead>
                 <TableHead>{t("visibility")}</TableHead>
                 <TableHead>{t("usage")}</TableHead>
-                <TableHead>{t("active")}</TableHead>
+                <TableHead>{tAnalytics("colStatus")}</TableHead>
+                <TableHead>Expires</TableHead>
                 <TableHead className="w-10" />
               </TableRow>
             </TableHeader>

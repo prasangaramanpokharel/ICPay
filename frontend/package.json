@@ -26,6 +26,7 @@
     "@icp-sdk/auth": "^8.0.3",
     "@icp-sdk/canisters": "^3.6.0",
     "@icp-sdk/core": "^5.4.0",
+    "@radix-ui/react-use-controllable-state": "^1.2.6",
     "@shadcn/react": "^0.2.1",
     "@tanstack/react-table": "^9.2.4",
     "@vercel/analytics": "^2.0.1",

@@ -3,39 +3,64 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { motion } from "motion/react"
 import {
-  Card,
-  CardAction,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+  CutoutCard,
+  CutoutCardAction,
+  CutoutCardContent,
+  CutoutCardFooter,
+  CutoutCardImage,
+  CutoutCardInsetLabel,
+  CutoutCardMedia,
+  CutoutCardOverlay,
+  CutoutCardPin,
+  cutoutCardSurfaceClassName,
+  CutoutCorner,
+  useCutoutContentStaggerVariants,
+} from "@/components/ui/cutout-card"
 import { LANDING_MEDIA } from "@/lib/public/landing-media"
+import { cn } from "@/lib/ui/utils"
 
 export function LandingProducts() {
   const t = useTranslations("publicSite.landing.products")
+  const stagger = useCutoutContentStaggerVariants()
 
   const products = [
     {
       id: "wallet",
       href: "/login",
       image: LANDING_MEDIA.heroBanner,
+      avatar: "/images/logo/logo-256.webp",
+      avatarClassName: "object-cover",
       badge: "Wallet",
+      pin: "Official",
+      footerTitle: "Internet Computer",
+      footerSubtitle: "Custodial Subaccounts",
+      footerTag: "Gasless",
     },
     {
       id: "icbucket",
       href: "/icbucket",
       image: LANDING_MEDIA.icbucket,
+      avatar: "/images/logo/logo.svg",
+      avatarClassName: "object-contain p-0.5",
       badge: "Cloud Storage",
+      pin: "On-Chain",
+      footerTitle: "Decentralized S3",
+      footerSubtitle: "Canister Storage",
+      footerTag: "Pay in ICP",
     },
     {
       id: "icfalcon",
       href: "/icfalcon",
       image: LANDING_MEDIA.icfalcon,
+      avatar: "/images/pages/icfalcon/hero.webp",
+      avatarClassName: "object-cover object-center",
       badge: "Framework",
+      pin: "Developer",
+      footerTitle: "Motoko Stack",
+      footerSubtitle: "CLI & Templates",
+      footerTag: "v1.0",
     },
   ] as const
 
@@ -61,42 +86,103 @@ export function LandingProducts() {
             const imageLabel = t(`items.${product.id}.title`)
 
             return (
-              <Card
+              <CutoutCard
                 key={product.id}
-                className="group relative flex flex-col justify-between overflow-hidden pt-0 transition-all duration-200 hover:-translate-y-1 hover:border-border hover:shadow-md"
+                className={cn(cutoutCardSurfaceClassName, "flex flex-col")}
               >
-                <div className="relative aspect-video w-full overflow-hidden bg-muted">
-                  <Image
-                    src={product.image}
+                <CutoutCardMedia className="relative h-60 sm:h-64 w-full">
+                  <CutoutCardImage
                     alt={imageLabel}
-                    title={imageLabel}
-                    fill
-                    loading="lazy"
-                    sizes="(max-width: 1024px) 100vw, 33vw"
-                    className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    src={product.image}
                   />
-                </div>
+                  <CutoutCardOverlay />
+                  <CutoutCardInsetLabel className="bg-card bottom-0 left-0 rounded-tr-[20px] px-5 py-3">
+                    <span className="text-muted-foreground text-[11px] font-semibold tracking-widest uppercase">
+                      {product.badge}
+                    </span>
+                    <CutoutCorner className="text-card absolute -right-[31px] -bottom-px rotate-90" />
+                    <CutoutCorner className="text-card absolute -top-[31px] -left-px rotate-90" />
+                  </CutoutCardInsetLabel>
+                  <CutoutCardPin className="bg-primary text-primary-foreground shadow-foreground/10 ring-border/30 top-0 right-0 rounded-bl-[16px] px-4 py-2 text-xs font-semibold shadow-md ring-1">
+                    {product.pin}
+                    <CutoutCorner
+                      className="text-primary absolute top-0 -left-[23px] -rotate-90"
+                      size={24}
+                    />
+                    <CutoutCorner
+                      className="text-primary absolute right-0 -bottom-[23px] -rotate-90"
+                      size={24}
+                    />
+                  </CutoutCardPin>
+                </CutoutCardMedia>
 
-                <CardHeader>
-                  <CardAction>
-                    <Badge variant="secondary">{product.badge}</Badge>
-                  </CardAction>
-                  <CardTitle>{t(`items.${product.id}.title`)}</CardTitle>
-                  <CardDescription>
-                    {t(`items.${product.id}.description`)}
-                  </CardDescription>
-                </CardHeader>
+                <CutoutCardContent className="flex flex-1 flex-col justify-between">
+                  <motion.div
+                    animate="show"
+                    className="contents"
+                    initial="hidden"
+                    variants={stagger.container}
+                  >
+                    <div>
+                      <motion.h3
+                        className="text-card-foreground mb-2 text-xl font-bold leading-snug tracking-tight text-balance"
+                        variants={stagger.item}
+                      >
+                        <Link href={product.href} className="hover:underline">
+                          {t(`items.${product.id}.title`)}
+                        </Link>
+                      </motion.h3>
+                      <motion.p
+                        className="text-muted-foreground mb-6 text-sm leading-relaxed text-pretty"
+                        variants={stagger.item}
+                      >
+                        {t(`items.${product.id}.description`)}
+                      </motion.p>
+                    </div>
 
-                <CardFooter className="mt-auto pt-0">
-                  <Button
-                    className="w-full"
-                    nativeButton={false}
-                    render={<Link href={product.href} />}
+                    <motion.div variants={stagger.item}>
+                      <CutoutCardFooter className="border-border/80 border-t pt-4">
+                        <div className="flex items-center gap-3">
+                          <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-muted/80 ring-2 ring-card shadow-sm">
+                            <Image
+                              src={product.avatar}
+                              alt={product.footerTitle}
+                              fill
+                              sizes="32px"
+                              className={cn(
+                                "h-full w-full",
+                                product.avatarClassName
+                              )}
+                            />
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-card-foreground text-xs font-semibold leading-none mb-1">
+                              {product.footerTitle}
+                            </span>
+                            <span className="text-muted-foreground text-[11px] leading-none">
+                              {product.footerSubtitle}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="text-muted-foreground text-xs font-mono pr-2">
+                          {product.footerTag}
+                        </span>
+                      </CutoutCardFooter>
+                    </motion.div>
+                  </motion.div>
+                </CutoutCardContent>
+
+                <CutoutCardAction className="right-5 bottom-4">
+                  <Link
+                    href={product.href}
+                    className="bg-primary text-primary-foreground rounded-full px-4 py-2 text-xs font-semibold shadow-md transition-transform duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-primary/90 active:scale-[0.97] inline-flex items-center gap-1.5"
                   >
                     {t(`items.${product.id}.cta`)}
-                  </Button>
-                </CardFooter>
-              </Card>
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                </CutoutCardAction>
+              </CutoutCard>
             )
           })}
         </div>
@@ -104,3 +190,5 @@ export function LandingProducts() {
     </section>
   )
 }
+
+

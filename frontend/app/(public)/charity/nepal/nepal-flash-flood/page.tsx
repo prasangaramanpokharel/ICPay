@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   description: campaign.description,
   keywords: campaign.keywords,
   alternates: { canonical: campaign.href },
-  robots: { index: true, follow: true },
   openGraph: {
     title: campaign.h1,
     description: campaign.description,

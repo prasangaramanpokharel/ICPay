@@ -179,7 +179,39 @@ export function TransferScreen() {
           </Button>
         </View>
       </View>
-      <Input value={amount} onChangeText={setAmount} keyboardType="decimal-pad" placeholder={tc('amount')} size="amount" />
+      <View className="gap-2">
+        <View className="flex-row items-center justify-between">
+          <Text className="text-xs font-semibold text-foreground">{tc('amount')}</Text>
+          {balance != null ? (
+            <View className="rounded-full bg-muted/60 px-2.5 py-0.5">
+              <Text className="text-[11px] text-muted-foreground">
+                Balance: <Text className="font-semibold text-foreground">{formatAmount(balance)} ICP</Text>
+              </Text>
+            </View>
+          ) : null}
+        </View>
+        <Input value={amount} onChangeText={setAmount} keyboardType="decimal-pad" placeholder="0.00" size="amount" />
+        <View className="flex-row gap-1.5">
+          {[25, 50, 75, 100].map((pct) => (
+            <Pressable
+              key={pct}
+              disabled={balance == null || balance <= ICP_FEE}
+              onPress={() => {
+                const sendable = balance != null && balance > ICP_FEE ? balance - ICP_FEE : 0n
+                const val = (sendable * BigInt(pct)) / 100n
+                const whole = val / 100_000_000n
+                const fraction = (val % 100_000_000n).toString().padStart(8, '0').replace(/0+$/, '')
+                setAmount(fraction ? `${whole}.${fraction}` : `${whole}`)
+              }}
+              className="flex-1 items-center justify-center rounded-xl border border-border/50 bg-muted/30 py-2 active:bg-muted"
+            >
+              <Text className="text-xs font-semibold text-muted-foreground">
+                {pct === 100 ? 'Max' : `${pct}%`}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
       <FiatAmount usd={usd} />
       {balance != null ? (
         <Text className="text-xs text-muted-foreground">

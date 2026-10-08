@@ -7,7 +7,7 @@ import {
   CrownIcon,
   Download01Icon,
   Globe02Icon,
-  Home01Icon,
+  Home03Icon,
   JusticeScale01Icon,
   Message01Icon,
   Rocket01Icon,
@@ -32,30 +32,21 @@ export type SidebarNavSection = {
 
 export const SIDEBAR_FOOTER: SidebarNavItem[] = [
   {
-    href: "/governance",
-    labelKey: "settings.items.governance",
-    icon: JusticeScale01Icon,
-  },
-  {
     href: "/username",
     labelKey: "settings.items.buyPremium",
     icon: CrownIcon,
-    badgeKey: "settings.items.buyNameBadge",
-    badgeType: "gradient",
   },
   {
     href: "/icpay/presale",
     labelKey: "settings.items.icpayToken",
     icon: ShoppingBag01Icon,
-    badgeKey: "buyIcpay.liveBadge",
-    badgeType: "gradient",
   },
 ]
 
 export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
   {
     sectionKey: "overview",
-    items: [{ href: "/home", labelKey: "nav.home", icon: Home01Icon }],
+    items: [{ href: "/home", labelKey: "nav.home", icon: Home03Icon }],
   },
   {
     sectionKey: "payments",
@@ -91,8 +82,11 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
         href: "/channels",
         labelKey: "settings.items.community",
         icon: Message01Icon,
-        badgeKey: "settings.items.communityBadge",
-        badgeType: "gradient",
+      },
+      {
+        href: "/governance",
+        labelKey: "settings.items.governance",
+        icon: JusticeScale01Icon,
       },
     ],
   },

@@ -128,17 +128,24 @@ export function ChannelScreen() {
 
   return (
     <View className="flex-1 gap-3 pt-2">
-      <View className="flex-row items-center gap-3">
-        <CommunityAvatar slug={channel.slug} size={48} />
+      <View className="flex-row items-center gap-3.5 rounded-3xl border border-border/60 bg-card/60 p-4 shadow-sm">
+        <CommunityAvatar slug={channel.slug} size={50} />
         <View className="min-w-0 flex-1">
-          <Text className="text-lg font-bold" numberOfLines={1}>
-            {channel.name}
-          </Text>
-          <Text className="text-xs text-muted-foreground" numberOfLines={1}>
+          <View className="flex-row items-center gap-2">
+            <Text className="text-base font-bold text-foreground" numberOfLines={1}>
+              {channel.name}
+            </Text>
+            {paid ? (
+              <View className="rounded-full bg-amber-500/15 px-2 py-0.5">
+                <Text className="text-[10px] font-bold text-amber-500">PRO</Text>
+              </View>
+            ) : null}
+          </View>
+          <Text className="mt-0.5 text-xs text-muted-foreground" numberOfLines={1}>
             {ownerHandle(channel)} · {t('membersCount', { count: channel.memberCount.toString() })}
           </Text>
           {channel.bio ? (
-            <Text className="mt-1 text-xs text-muted-foreground" numberOfLines={2}>
+            <Text className="mt-1 text-xs text-muted-foreground/90" numberOfLines={2}>
               {channel.bio}
             </Text>
           ) : null}
@@ -175,7 +182,7 @@ export function ChannelScreen() {
             <FlatList
               data={[...messages].reverse()}
               keyExtractor={(item) => item.id.toString()}
-              contentContainerStyle={{ gap: 12, paddingBottom: 12 }}
+              contentContainerStyle={{ gap: 12, paddingBottom: 130 }}
               renderItem={({ item }) => (
                 <MessageRow
                   message={item}
@@ -189,7 +196,7 @@ export function ChannelScreen() {
             />
           )}
           {isOwner ? (
-            <View className="gap-2 border-t border-border/40 pt-3">
+            <View className="gap-2 border-t border-border/40 pt-2 pb-2">
               <Input
                 value={draft}
                 onChangeText={setDraft}
@@ -227,35 +234,52 @@ function MessageRow({
   const pinned = pinnedId === message.id
 
   return (
-    <View className="gap-2 rounded-2xl border border-border/50 bg-card px-3 py-3">
+    <View className="gap-2.5 rounded-2xl border border-border/60 bg-card p-4 shadow-sm">
       <View className="flex-row items-center justify-between gap-2">
-        <Text className="text-xs font-medium">{author}</Text>
+        <View className="flex-row items-center gap-2">
+          <Text className="text-xs font-semibold text-primary">{author}</Text>
+          {pinned ? (
+            <View className="rounded-full bg-primary/10 px-2 py-0.5">
+              <Text className="text-[10px] font-semibold text-primary">{t('pinned')}</Text>
+            </View>
+          ) : null}
+        </View>
         <Text className="text-[10px] text-muted-foreground">{formatMessageTime(message.createdAt)}</Text>
       </View>
-      {pinned ? <Text className="text-[10px] font-medium text-primary">{t('pinned')}</Text> : null}
-      <Text className="text-sm leading-relaxed">{message.text}</Text>
-      <View className="flex-row flex-wrap items-center gap-2">
+      <Text className="text-sm leading-relaxed text-foreground">{message.text}</Text>
+      <View className="flex-row flex-wrap items-center gap-1.5 pt-1">
         {REACTIONS.map((r) => {
           const count = message.reactions.find((row) => Number(row.code) === r.code)?.count ?? 0n
           if (count === 0n) return null
           return (
-            <Text key={r.code} className="text-xs text-muted-foreground">
-              {reactionEmoji(r.code)} {count.toString()}
-            </Text>
+            <Pressable
+              key={r.code}
+              onPress={() => onReact(r.code)}
+              className="flex-row items-center gap-1 rounded-full border border-border/60 bg-muted/60 px-2.5 py-1 active:bg-muted"
+            >
+              <Text className="text-xs">{reactionEmoji(r.code)}</Text>
+              <Text className="text-xs font-semibold tabular-nums text-foreground">{count.toString()}</Text>
+            </Pressable>
           )
         })}
-        {REACTIONS.map((r) => (
-          <Pressable key={r.code} onPress={() => onReact(r.code)} className="px-1">
-            <Text className="text-base">{r.emoji}</Text>
-          </Pressable>
-        ))}
+        <View className="flex-row items-center rounded-full border border-border/40 bg-muted/30 px-1 py-0.5">
+          {REACTIONS.map((r) => (
+            <Pressable
+              key={r.code}
+              onPress={() => onReact(r.code)}
+              className="size-7 items-center justify-center rounded-full active:bg-muted/80"
+            >
+              <Text className="text-sm">{r.emoji}</Text>
+            </Pressable>
+          ))}
+        </View>
       </View>
       {isOwner ? (
-        <View className="flex-row gap-3">
-          <Pressable onPress={onPin}>
+        <View className="flex-row gap-4 border-t border-border/30 pt-2">
+          <Pressable onPress={onPin} hitSlop={6}>
             <Text className="text-xs text-muted-foreground">{pinned ? t('unpin') : t('pin')}</Text>
           </Pressable>
-          <Pressable onPress={onDelete}>
+          <Pressable onPress={onDelete} hitSlop={6}>
             <Text className="text-xs text-destructive">{t('delete')}</Text>
           </Pressable>
         </View>

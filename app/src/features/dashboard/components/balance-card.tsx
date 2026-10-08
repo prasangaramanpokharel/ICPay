@@ -65,15 +65,44 @@ export function BalanceCard({
             />
           </Pressable>
         </View>
-        <View className="mt-6 flex-row items-end justify-between">
-          <View className="rounded-full bg-white/15 px-2.5 py-1">
+        <View className="mt-6 flex-row items-center justify-between gap-2">
+          <View className="rounded-full bg-white/15 px-3 py-1">
             <Text className="text-sm font-medium text-primary-foreground">
               {hidden || !fiat.formatted ? '••••' : `≈ ${fiat.symbol} ${fiat.formatted}`}
             </Text>
           </View>
-          <Text className="text-[11px] font-semibold uppercase tracking-widest text-primary-foreground/40">
-            Internet Computer
-          </Text>
+          {!hidden && price ? (
+            <View className="flex-row items-center gap-1.5">
+              <Text className="text-xs font-medium text-primary-foreground/80">
+                1 ICP = {price.usd.toLocaleString('en-US', {
+                  style: 'currency',
+                  currency: 'USD',
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 4,
+                })}
+              </Text>
+              {price.change24h !== 0 ? (
+                <View
+                  className={`rounded-md px-1.5 py-0.5 ${
+                    price.change24h > 0 ? 'bg-emerald-500/25' : 'bg-rose-500/25'
+                  }`}
+                >
+                  <Text
+                    className={`text-[11px] font-bold ${
+                      price.change24h > 0 ? 'text-emerald-300' : 'text-rose-300'
+                    }`}
+                  >
+                    {price.change24h > 0 ? '+' : ''}
+                    {price.change24h.toFixed(2)}%
+                  </Text>
+                </View>
+              ) : null}
+            </View>
+          ) : (
+            <Text className="text-[11px] font-semibold uppercase tracking-widest text-primary-foreground/40">
+              Internet Computer
+            </Text>
+          )}
         </View>
       </View>
     </View>

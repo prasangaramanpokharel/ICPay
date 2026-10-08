@@ -215,7 +215,6 @@ export function BucketFilesPanel({
         query={query}
         sort={sort}
         refreshing={refreshing}
-        canWrite={canWrite}
         onQueryChange={setQuery}
         onSortChange={setSort}
         onRefresh={() => void handleRefresh()}

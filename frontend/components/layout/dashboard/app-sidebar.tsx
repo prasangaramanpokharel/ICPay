@@ -34,6 +34,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
                   width={32}
                   height={32}
                   priority
+                  loading="eager"
                   className="size-8 object-cover"
                 />
               </span>
@@ -45,10 +46,9 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
       <SidebarContent className="gap-0 pt-1">
         <DashboardNavMain />
       </SidebarContent>
-      <SidebarFooter className="gap-1 border-t border-sidebar-border/60 p-2">
+      <SidebarFooter className="gap-1 border-t border-sidebar-border/60 p-2 pb-3">
         <DashboardNavFooter />
         <LanguageSwitch variant="row" />
-        <p className="px-2.5 pt-1 text-[11px] text-muted-foreground">ICPay</p>
       </SidebarFooter>
     </Sidebar>
   )

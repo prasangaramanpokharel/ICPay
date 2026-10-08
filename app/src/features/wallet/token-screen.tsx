@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { View } from 'react-native'
+import { Linking, Pressable, View } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
+import * as Clipboard from 'expo-clipboard'
 import { useTranslations } from '@/components/i18n/locale-provider'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Text } from '@/components/ui/text'
+import { AppIcon } from '@/components/ui/app-icon'
 import { TokenActionButton } from '@/components/wallet/token-action-button'
 import { TokenLogo } from '@/components/shared/token-logo'
 import { SendSuccess } from '@/components/shared/send-success'
@@ -14,6 +16,7 @@ import { useRefreshWallet, useTokenHolding } from '@/hooks/use-wallet-data'
 import { transfer, type TransferMode } from '@/services/transfer/transfer'
 import { isSwapToken } from '@/lib/swap-tokens'
 import { formatTokenAmount } from '@/lib/wallet-utils'
+import { ICP_LEDGER_ID } from '@/services/tokens'
 
 export function TokenScreen() {
   const t = useTranslations('token')
@@ -24,6 +27,7 @@ export function TokenScreen() {
   const refreshWallet = useRefreshWallet()
   const router = useRouter()
   const [sendOpen, setSendOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
   const [sent, setSent] = useState<{ amount: bigint; recipient: string; blockIndex: bigint; memo?: string } | null>(null)
 
   const handleSend = async (
@@ -46,6 +50,13 @@ export function TokenScreen() {
     return null
   }
 
+  const copyLedgerId = async () => {
+    if (!token) return
+    await Clipboard.setStringAsync(token.ledgerId)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   if (isLoading && !token) {
     return (
       <View className="gap-4 pt-2">
@@ -57,6 +68,9 @@ export function TokenScreen() {
   if (!token) {
     return (
       <View className="gap-4 pt-2">
+        <Button variant="ghost" size="sm" className="self-start" onPress={() => router.push('/wallet')}>
+          {t('back')}
+        </Button>
         <Alert variant="destructive">
           <AlertDescription>{t('notFound')}</AlertDescription>
         </Alert>
@@ -79,21 +93,28 @@ export function TokenScreen() {
   }
 
   const swap = isSwapToken(token.ledgerId)
+  const marketUrl = `https://app.icpswap.com/swap?input=${ICP_LEDGER_ID}&output=${token.ledgerId}`
 
   return (
     <View className="gap-6 pt-2">
-      <Button variant="ghost" size="sm" className="self-start" onPress={() => router.push('/wallet')}>
+      <Button variant="ghost" size="sm" className="self-start -ml-2" onPress={() => router.push('/wallet')}>
         {t('back')}
       </Button>
-      <View className="items-center gap-3">
-        <TokenLogo token={token} size={56} />
-        <Text className="text-3xl font-bold tabular-nums">
+
+      {/* Hero: Logo and Balance */}
+      <View className="items-center gap-2.5">
+        <TokenLogo token={token} size={64} />
+        <Text className="text-3xl font-bold tabular-nums tracking-tight">
           {formatTokenAmount(token.balance, token.decimals, token.decimals)}
         </Text>
-        <Text className="text-sm font-medium text-muted-foreground">{token.symbol}</Text>
-        {token.name !== token.symbol ? <Text className="text-xs text-muted-foreground">{token.name}</Text> : null}
+        <Text className="text-sm font-semibold text-muted-foreground">{token.symbol}</Text>
+        {token.name !== token.symbol ? (
+          <Text className="text-xs text-muted-foreground">{token.name}</Text>
+        ) : null}
       </View>
-      <View className="flex-row justify-center gap-10">
+
+      {/* Action buttons */}
+      <View className="flex-row justify-center gap-6">
         <TokenActionButton kind="send" label={t('send')} onPress={() => setSendOpen(true)} />
         <TokenActionButton
           kind="deposit"
@@ -103,7 +124,47 @@ export function TokenScreen() {
         {swap ? (
           <TokenActionButton kind="swap" label={t('swap')} onPress={() => router.push('/swap' as never)} />
         ) : null}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Market"
+          onPress={() => void Linking.openURL(marketUrl)}
+          className="items-center gap-2 active:opacity-80"
+        >
+          <View className="size-11 items-center justify-center rounded-full bg-muted/60 border border-border/50">
+            <AppIcon name="launch" size={18} />
+          </View>
+          <Text className="text-[11px] font-medium text-muted-foreground">Market</Text>
+        </Pressable>
       </View>
+
+      {/* Token Details Card */}
+      <View className="rounded-2xl border border-border/50 bg-card p-4 gap-3">
+        <View className="flex-row justify-between items-center">
+          <Text className="text-xs text-muted-foreground">Standard</Text>
+          <View className="rounded-full bg-muted/60 px-2 py-0.5">
+            <Text className="text-xs font-medium text-foreground">ICRC-1 / ICRC-2</Text>
+          </View>
+        </View>
+        <View className="flex-row justify-between items-center">
+          <Text className="text-xs text-muted-foreground">Transfer fee</Text>
+          <Text className="text-xs font-medium tabular-nums text-foreground">
+            {formatTokenAmount(token.fee, token.decimals)} {token.symbol}
+          </Text>
+        </View>
+        <View className="flex-row justify-between items-center">
+          <Text className="text-xs text-muted-foreground">Decimals</Text>
+          <Text className="text-xs font-medium tabular-nums text-foreground">{token.decimals}</Text>
+        </View>
+        <View className="flex-row justify-between items-center">
+          <Text className="text-xs text-muted-foreground">Ledger ID</Text>
+          <Pressable onPress={() => void copyLedgerId()} className="active:opacity-70">
+            <Text numberOfLines={1} className="text-xs font-mono text-primary max-w-[200px]">
+              {copied ? 'Copied!' : token.ledgerId}
+            </Text>
+          </Pressable>
+        </View>
+      </View>
+
       <SendTokenSheet open={sendOpen} onOpenChange={setSendOpen} token={token} onSend={handleSend} />
     </View>
   )

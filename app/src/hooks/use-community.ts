@@ -62,6 +62,9 @@ export function useInvalidateCommunityLists(slug?: string) {
   }, [identity, mutate, slug])
 }
 
+const EMPTY_CHANNELS: CommunityChannelPublic[] = []
+const EMPTY_MESSAGES: CommunityMessagePublic[] = []
+
 export function usePublicCommunityChannels() {
   const { identity } = useAuth()
   const { data, error, isLoading, mutate } = useSWR(
@@ -69,7 +72,7 @@ export function usePublicCommunityChannels() {
     () => listPublicCommunityChannels(identity),
     QUERY_OPTS,
   )
-  return { channels: data ?? [], error, isLoading, refresh: mutate }
+  return { channels: data ?? EMPTY_CHANNELS, error, isLoading, refresh: mutate }
 }
 
 export function useMyCommunityChannels() {
@@ -79,7 +82,7 @@ export function useMyCommunityChannels() {
     () => listMyCommunityChannels(identity),
     QUERY_OPTS,
   )
-  return { channels: data ?? [], error, isLoading, refresh: mutate }
+  return { channels: data ?? EMPTY_CHANNELS, error, isLoading, refresh: mutate }
 }
 
 export function useCommunityChannel(slug: string) {
@@ -99,7 +102,7 @@ export function useCommunityMessages(slug: string, enabled: boolean) {
     () => listCommunityMessages(identity, slug, 0n, 50),
     QUERY_OPTS,
   )
-  return { messages: data ?? [], error, isLoading, refresh: mutate }
+  return { messages: data ?? EMPTY_MESSAGES, error, isLoading, refresh: mutate }
 }
 
 export function useCommunityMembership(slug: string) {
