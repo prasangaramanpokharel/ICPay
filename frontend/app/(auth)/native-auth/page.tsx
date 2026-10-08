@@ -227,6 +227,7 @@ export default function NativeAuthBridgePage() {
           width={40}
           height={40}
           priority
+          loading="eager"
           className="size-10 object-contain"
         />
       </div>

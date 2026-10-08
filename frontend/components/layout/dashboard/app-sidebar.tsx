@@ -34,6 +34,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
                   width={32}
                   height={32}
                   priority
+                  loading="eager"
                   className="size-8 object-cover"
                 />
               </span>

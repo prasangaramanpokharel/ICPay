@@ -13,7 +13,7 @@ export type PackageIndex = {
 }
 
 const PACKAGE_INDEX_URL =
-  "https://raw.githubusercontent.com/prasangapokharel/icp-hub/refs/heads/master/index.json"
+  "https://gitlab.com/prasangapokharel/falconpkg/-/raw/main/index.json"
 
 export async function fetchFalconPackages(): Promise<FalconPackage[]> {
   const response = await fetch(PACKAGE_INDEX_URL, {
