@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef, useState, useCallback, useSyncExternalStore } from "react"
-// @ts-expect-error cobe module declarations
 import createGlobe, { type COBEOptions } from "cobe"
 import { useMotionValue, useSpring } from "motion/react"
 import { useTheme } from "next-themes"
