@@ -13,14 +13,7 @@ import { Particles } from "@/components/ui/particles"
 import { ShineBorder } from "@/components/ui/shine-border"
 
 import { cn } from "@/lib/ui/utils"
-
-function GitLabIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="currentColor" {...props}>
-      <path d="m23.6 9.58-1.02-3.14a.8.8 0 0 0-.3-.39.84.84 0 0 0-.49-.14.86.86 0 0 0-.5.15.82.82 0 0 0-.29.4L19.2 11.9H4.8L3 6.46a.82.82 0 0 0-.29-.4.86.86 0 0 0-.5-.15.84.84 0 0 0-.49.14.8.8 0 0 0-.3.39L.4 9.58a.9.9 0 0 0 .33 1l11.08 8.06a.37.37 0 0 0 .38 0L23.27 10.6a.9.9 0 0 0 .33-1.02Z"/>
-    </svg>
-  )
-}
+import { Gitlab } from "@dev.icons/react"
 
 export function HeroSection() {
   const t = useTranslations("publicSite.icfalcon.hero")
@@ -156,7 +149,7 @@ export function HeroSection() {
               />
             }
           >
-            <GitLabIcon />
+            <Gitlab size={16} />
             <span>GitLab</span>
           </Button>
           <Button

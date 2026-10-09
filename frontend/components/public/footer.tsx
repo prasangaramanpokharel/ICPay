@@ -6,15 +6,12 @@ import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
 import type { SiteLink } from "@/lib/public/site-links"
 import { ThemeToggle } from "@/components/public/theme-toggle"
 import { usePublicSiteLinks } from "@/hooks/i18n/use-public-site-links"
+import { Gitlab } from "@dev.icons/react"
 
 function getCommunityIcon(label: string, href: string) {
   const l = (label + href).toLowerCase()
   if (l.includes("gitlab")) {
-    return (
-      <svg viewBox="0 0 24 24" className="size-3.5 shrink-0 fill-current opacity-70 group-hover:opacity-100 transition-opacity">
-        <path d="m23.6 9.58-1.02-3.14a.8.8 0 0 0-.3-.39.84.84 0 0 0-.49-.14.86.86 0 0 0-.5.15.82.82 0 0 0-.29.4L19.2 11.9H4.8L3 6.46a.82.82 0 0 0-.29-.4.86.86 0 0 0-.5-.15.84.84 0 0 0-.49.14.8.8 0 0 0-.3.39L.4 9.58a.9.9 0 0 0 .33 1l11.08 8.06a.37.37 0 0 0 .38 0L23.27 10.6a.9.9 0 0 0 .33-1.02Z"/>
-      </svg>
-    )
+    return <Gitlab size={15} className="shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" />
   }
   if (l.includes("github")) {
     return (

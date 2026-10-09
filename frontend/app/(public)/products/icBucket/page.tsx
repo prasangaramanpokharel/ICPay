@@ -6,7 +6,7 @@ import { FeaturesSection } from "@/components/products/icbucket/features-section
 import { ArchitectureSection } from "@/components/products/icbucket/architecture-section"
 import { ComparisonSection } from "@/components/products/icbucket/comparison-section"
 import { PricingSection } from "@/components/products/icbucket/pricing-section"
-import { ApiGuideSection } from "@/components/products/icbucket/api-guide-section"
+import { IntegrateSection } from "@/components/products/icbucket/integrate-section"
 import { FaqSection } from "@/components/products/icbucket/faq-section"
 import { PAGE_IMAGES, pageImageUrl } from "@/lib/public/page-images"
 
@@ -69,13 +69,13 @@ export default function ICBucketPage() {
   return (
     <div className="min-h-screen">
       <HeroSection />
+      <IntegrateSection />
       <ProblemSolution />
       <TwitterSection />
       <FeaturesSection />
       <ArchitectureSection />
       <ComparisonSection />
       <PricingSection />
-      <ApiGuideSection />
       <FaqSection />
     </div>
   )

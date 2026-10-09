@@ -1,6 +1,5 @@
 import type { Metadata } from "next"
 import { HeroSection } from "@/components/products/icbucket/hero-section"
-import { InstallSection } from "@/components/products/icbucket/install-section"
 import { IntegrateSection } from "@/components/products/icbucket/integrate-section"
 import { ProblemSolution } from "@/components/products/icbucket/problem-solution"
 import { TwitterSection } from "@/components/products/icbucket/twitter-section"
@@ -8,7 +7,6 @@ import { FeaturesSection } from "@/components/products/icbucket/features-section
 import { ArchitectureSection } from "@/components/products/icbucket/architecture-section"
 import { ComparisonSection } from "@/components/products/icbucket/comparison-section"
 import { PricingSection } from "@/components/products/icbucket/pricing-section"
-import { ApiGuideSection } from "@/components/products/icbucket/api-guide-section"
 import { FaqSection } from "@/components/products/icbucket/faq-section"
 import { PAGE_IMAGES, pageImageUrl } from "@/lib/public/page-images"
 
@@ -114,7 +112,6 @@ export default function ICBucketPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <HeroSection />
-      <InstallSection />
       <IntegrateSection />
       <ProblemSolution />
       <PricingSection />
@@ -122,7 +119,6 @@ export default function ICBucketPage() {
       <FeaturesSection />
       <ArchitectureSection />
       <ComparisonSection />
-      <ApiGuideSection />
       <FaqSection />
     </div>
   )
