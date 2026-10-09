@@ -92,7 +92,7 @@ export function HomeOverviewCard({
                 <span
                   className={cn(
                     "text-sm font-semibold tabular-nums",
-                    price.change24h > 0 ? "text-green-600" : "text-red-600"
+                    price.change24h > 0 ? "text-success" : "text-destructive"
                   )}
                 >
                   {price.change24h > 0 ? "+" : ""}

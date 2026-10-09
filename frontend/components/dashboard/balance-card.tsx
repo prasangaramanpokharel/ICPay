@@ -42,74 +42,103 @@ export function BalanceCard({
   const fiat = useFiatValue(usdValue)
 
   return (
-    <div className="rounded-3xl bg-blue-200/80 pt-3 shadow-accent-foreground">
-      <div className="relative mt-2 rounded-3xl bg-primary p-3 text-primary-foreground shadow-lg">
-        {/* Chip + username */}
-        <div className="relative z-10 flex min-w-0 items-center gap-2.5">
+    <div className="relative overflow-hidden rounded-3xl bg-primary p-5 text-primary-foreground shadow-lg border border-primary/20 select-none sm:p-6">
+      {/* Ambient specular lighting using primary-foreground */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-12 -top-12 size-40 rounded-full bg-primary-foreground/10 blur-2xl"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -bottom-12 -left-12 size-36 rounded-full bg-primary-foreground/5 blur-2xl"
+      />
+
+      {/* Top row: Chip + username + Network label */}
+      <div className="relative z-10 flex min-w-0 items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2.5">
           <EmvChip />
 
-          {username && (
-            <span className="flex min-w-0 items-center gap-1 font-mono text-sm font-medium tracking-tight text-primary-foreground/80">
-              <span className="truncate">{username}</span>
+          {username ? (
+            <span className="flex min-w-0 items-center gap-1 font-mono text-sm font-semibold tracking-tight text-primary-foreground/90">
+              <span className="truncate">@{username}</span>
               <PremiumBadge name={username} className="size-3.5" />
+            </span>
+          ) : (
+            <span className="font-mono text-xs font-medium tracking-tight text-primary-foreground/75">
+              ICPay Wallet
             </span>
           )}
         </div>
 
-        {/* Balance */}
-        <div className="relative z-10 mt-6 flex items-baseline gap-2">
-          <Button
-            variant="ghost"
-            onClick={() => void onRefreshPrice()}
-            title="Click to refresh balance & price"
-            className="h-auto p-0 text-[clamp(1.75rem,9vw,2.75rem)] font-semibold leading-tight tracking-tight tabular-nums hover:bg-transparent hover:opacity-80 active:opacity-60 cursor-pointer"
-          >
-            {hidden ? "•• •••• ••••" : <FormattedBalance value={balance} />}
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            aria-label={hidden ? t("showBalance") : t("hideBalance")}
-            onClick={onToggleHidden}
-            className="text-primary-foreground/60 hover:bg-primary-foreground/15 hover:text-primary-foreground"
-          >
-            <HugeiconsIcon icon={hidden ? ViewOffIcon : EyeIcon} className="size-5" strokeWidth={1.75} />
-          </Button>
-        </div>
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-primary-foreground/50">
+          Internet Computer
+        </span>
+      </div>
 
-        {/* Fiat value */}
-        <div className="relative z-10 mt-1 flex items-center justify-between gap-2">
-          <button
-            type="button"
-            onClick={() => void onRefreshPrice()}
-            title="Click to refresh balance & price"
-            className="liquid-glass-primary inline-block rounded-full px-2.5 py-1 text-sm font-medium tabular-nums cursor-pointer transition hover:opacity-85 active:scale-95 border-0"
-          >
-            {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
-          </button>
-          <div className="flex items-center gap-1.5">
-            {!hidden && price && (
-              <span className="text-xs font-medium tabular-nums text-primary-foreground/70">
-                1 ICP = {price.usd.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 4,
-                })}
-              </span>
-            )}
-            {!hidden && price && price.change24h !== 0 && (
-              <span
-                className={cn(
-                  "text-xs font-semibold tabular-nums",
-                  price.change24h > 0 ? "text-green-400" : "text-red-400"
-                )}
-              >
-                {price.change24h > 0 ? "+" : ""}
-                {price.change24h.toFixed(2)}%
-              </span>
-            )}
-          </div>
+      {/* Center: Main Balance */}
+      <div className="relative z-10 mt-6 flex items-baseline justify-between gap-2">
+        <Button
+          variant="ghost"
+          onClick={() => void onRefreshPrice()}
+          title="Click to refresh balance & price"
+          className="h-auto p-0 text-[clamp(1.85rem,8.5vw,2.85rem)] font-bold leading-none tracking-tight tabular-nums hover:bg-transparent hover:opacity-85 active:opacity-60 cursor-pointer"
+        >
+          {hidden ? (
+            <span>••••••••</span>
+          ) : (
+            <span className="flex items-baseline">
+              <FormattedBalance value={balance} />
+              <span className="ml-1.5 text-xs sm:text-sm font-semibold text-primary-foreground/75">ICP</span>
+            </span>
+          )}
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          aria-label={hidden ? t("showBalance") : t("hideBalance")}
+          onClick={onToggleHidden}
+          className="size-8 shrink-0 rounded-full text-primary-foreground/70 hover:bg-primary-foreground/15 hover:text-primary-foreground"
+        >
+          <HugeiconsIcon icon={hidden ? ViewOffIcon : EyeIcon} className="size-4.5" strokeWidth={1.75} />
+        </Button>
+      </div>
+
+      {/* Bottom row: Fiat valuation + 24h market status */}
+      <div className="relative z-10 mt-4 flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-primary-foreground/10">
+        <button
+          type="button"
+          onClick={() => void onRefreshPrice()}
+          title="Click to refresh balance & price"
+          className="inline-flex items-center rounded-full bg-primary-foreground/15 hover:bg-primary-foreground/20 px-3 py-1 text-xs font-medium tabular-nums text-primary-foreground transition-all active:scale-95 cursor-pointer border border-primary-foreground/15 backdrop-blur-xs"
+        >
+          {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
+        </button>
+
+        <div className="flex items-center gap-1.5 text-xs">
+          {!hidden && price && (
+            <span className="font-medium tabular-nums text-primary-foreground/75">
+              1 ICP = {price.usd.toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 4,
+              })}
+            </span>
+          )}
+          {!hidden && price && price.change24h !== 0 && (
+            <span
+              className={cn(
+                "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold tabular-nums",
+                price.change24h > 0
+                  ? "text-success"
+                  : "text-destructive"
+              )}
+            >
+              {price.change24h > 0 ? "+" : ""}
+              {price.change24h.toFixed(2)}%
+            </span>
+          )}
         </div>
       </div>
     </div>
@@ -130,8 +159,8 @@ function FormattedBalance({ value }: { value: string }) {
 
   return (
     <>
-      {whole}
-      <span className="text-[0.55em] font-medium text-primary-foreground/50">{decimals}</span>
+      <span>{whole}</span>
+      <span className="text-[0.6em] font-medium text-primary-foreground/60">{decimals}</span>
     </>
   )
 }
@@ -139,11 +168,15 @@ function FormattedBalance({ value }: { value: string }) {
 /** Metallic EMV-style chip icon shown next to the username. */
 function EmvChip() {
   return (
-    <span className="relative flex h-6 w-8 shrink-0 overflow-hidden rounded-md bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_-1px_2px_rgba(120,80,10,0.4),0_1px_2px_rgba(0,0,0,0.25)]">
-      <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-amber-800/30" />
-      <span className="absolute inset-y-0 left-1/3 w-px bg-amber-800/30" />
-      <span className="absolute inset-y-0 left-2/3 w-px bg-amber-800/30" />
-      <span className="absolute left-0 top-1/2 h-2.5 w-full -translate-y-1/2 rounded-[2px] border border-amber-800/25" />
+    <span
+      aria-hidden="true"
+      className="relative flex h-5 w-7 shrink-0 items-center justify-center rounded-sm bg-gradient-to-br from-amber-200 via-amber-300 to-amber-400 p-0.5 shadow-xs border border-amber-500/40"
+    >
+      <span className="relative size-full rounded-[2px] border border-amber-700/30">
+        <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-amber-700/30" />
+        <span className="absolute inset-y-0 left-1/3 w-px bg-amber-700/30" />
+        <span className="absolute inset-y-0 right-1/3 w-px bg-amber-700/30" />
+      </span>
     </span>
   )
 }
