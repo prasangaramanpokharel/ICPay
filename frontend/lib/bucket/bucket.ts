@@ -1,6 +1,18 @@
 export const CAPACITY_TIERS_GB = [1, 5, 10, 25, 50, 100] as const
 
-export const FILES_PAGE_SIZE = 20
+export const FILES_PAGE_SIZE = 10
+
+export {
+  BUCKET_CDN_ORIGIN,
+  getBucketCdnBase,
+  bucketCdnBaseUrl,
+  bucketRawBaseUrl,
+  bucketCdnFileUrl,
+  bucketRawFileUrl,
+  toCdnUrl,
+  toRawCanisterUrl,
+  resolvePublicFileUrl,
+} from "@/lib/bucket/cdn"
 
 export {
   BUCKET_MAX_FILE_BYTES,

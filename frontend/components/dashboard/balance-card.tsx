@@ -61,7 +61,8 @@ export function BalanceCard({
           <Button
             variant="ghost"
             onClick={() => void onRefreshPrice()}
-            className="h-auto p-0 text-[clamp(1.75rem,9vw,2.75rem)] font-semibold leading-tight tracking-tight tabular-nums hover:bg-transparent hover:opacity-80 active:opacity-60"
+            title="Click to refresh balance & price"
+            className="h-auto p-0 text-[clamp(1.75rem,9vw,2.75rem)] font-semibold leading-tight tracking-tight tabular-nums hover:bg-transparent hover:opacity-80 active:opacity-60 cursor-pointer"
           >
             {hidden ? "•• •••• ••••" : <FormattedBalance value={balance} />}
           </Button>
@@ -78,9 +79,14 @@ export function BalanceCard({
 
         {/* Fiat value */}
         <div className="relative z-10 mt-1 flex items-center justify-between gap-2">
-          <span className="liquid-glass-primary inline-block rounded-full px-2.5 py-1 text-sm font-medium tabular-nums">
+          <button
+            type="button"
+            onClick={() => void onRefreshPrice()}
+            title="Click to refresh balance & price"
+            className="liquid-glass-primary inline-block rounded-full px-2.5 py-1 text-sm font-medium tabular-nums cursor-pointer transition hover:opacity-85 active:scale-95 border-0"
+          >
             {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
-          </span>
+          </button>
           <div className="flex items-center gap-1.5">
             {!hidden && price && (
               <span className="text-xs font-medium tabular-nums text-primary-foreground/70">

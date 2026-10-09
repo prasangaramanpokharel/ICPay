@@ -49,6 +49,7 @@ function sortEntries(
 
 export function BucketFilesPanel({
   bucketId,
+  bucketName,
   canWrite,
   prefix,
   onPrefixChange,
@@ -58,6 +59,7 @@ export function BucketFilesPanel({
   onCreateFolder,
 }: {
   bucketId: string
+  bucketName?: string
   canWrite: boolean
   prefix: string
   onPrefixChange: (prefix: string) => void
@@ -82,7 +84,8 @@ export function BucketFilesPanel({
   const search = useBucketSearch(searching ? bucketId : null, debouncedQuery, page)
   const active = searching ? search : browse
   const { files, total, totalPages, isLoading, refresh: refreshFiles } = active
-  const { refresh: refreshStats } = useBucketStats(bucketId)
+  const { stats: fetchedStats, refresh: refreshStats } = useBucketStats(bucketId)
+  const resolvedBucketName = bucketName || fetchedStats?.name
 
   const [prevFilter, setPrevFilter] = useState({ prefix, debouncedQuery })
   if (prevFilter.prefix !== prefix || prevFilter.debouncedQuery !== debouncedQuery) {
@@ -276,6 +279,7 @@ export function BucketFilesPanel({
           {previewFile ? (
             <BucketFilePreviewPane
               bucketId={bucketId}
+              bucketName={resolvedBucketName}
               file={previewFile}
               canWrite={canWrite}
               onDelete={handleDelete}

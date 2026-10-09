@@ -62,15 +62,21 @@ export function HomeOverviewCard({
           <Button
             variant="ghost"
             onClick={() => void onRefreshPrice()}
-            className="h-auto p-0 text-4xl font-semibold tracking-tight tabular-nums hover:bg-transparent hover:opacity-80 active:opacity-60"
+            title="Click to refresh balance & price"
+            className="h-auto p-0 text-4xl font-semibold tracking-tight tabular-nums hover:bg-transparent hover:opacity-80 active:opacity-60 cursor-pointer"
           >
             {hidden ? "•• •••• ••••" : balance}
             <span className="ml-2 text-lg font-medium text-muted-foreground">ICP</span>
           </Button>
           <div className="mt-1.5 flex items-center justify-between gap-2">
-            <p className="text-base font-medium tabular-nums text-foreground/80">
+            <button
+              type="button"
+              onClick={() => void onRefreshPrice()}
+              title="Click to refresh balance & price"
+              className="text-base font-medium tabular-nums text-foreground/80 hover:text-foreground cursor-pointer transition active:scale-95 text-left border-0 bg-transparent p-0"
+            >
               {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
-            </p>
+            </button>
             <div className="flex items-center gap-2">
               {!hidden && price && (
                 <span className="text-sm font-medium tabular-nums text-muted-foreground">

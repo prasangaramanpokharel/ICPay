@@ -323,6 +323,7 @@ export function BucketDetail() {
 
       <BucketFilesPanel
         bucketId={bucketId}
+        bucketName={stats.name}
         canWrite={canWrite}
         prefix={prefix}
         onPrefixChange={setPrefix}

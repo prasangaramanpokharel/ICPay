@@ -39,6 +39,7 @@ export const PUBLIC_RESOURCE_MENU_DEFS: NavMenuItemDef[] = [
 export const PUBLIC_LEGAL_MENU_DEFS: NavMenuItemDef[] = [
   { id: "charity", href: "/charity" },
   { id: "about", href: "/about" },
+  { id: "contact", href: "/contact" },
   { id: "faq", href: "/faq" },
   { id: "roadmap", href: "/roadmap" },
   { id: "brands", href: "/brand-protection" },
@@ -67,4 +68,5 @@ export const PUBLIC_COMMUNITY_LINK_DEFS: SiteLinkDef[] = [
   { id: "x", href: "https://x.com/IcpayOfficial", external: true },
   { id: "linkedin", href: "https://www.linkedin.com/company/icpayofficial", external: true },
   { id: "discord", href: "https://discord.gg/icpay", external: true },
+  { id: "contact", href: "mailto:contact@icpay.cloud", external: true },
 ]

@@ -44,6 +44,13 @@ function getCommunityIcon(label: string, href: string) {
       </svg>
     )
   }
+  if (l.includes("mailto") || l.includes("email") || l.includes("contact") || l.includes("support")) {
+    return (
+      <svg viewBox="0 0 24 24" className="size-3.5 shrink-0 fill-none stroke-current stroke-2 opacity-70 group-hover:opacity-100 transition-opacity">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+      </svg>
+    )
+  }
   return null
 }
 
@@ -52,8 +59,13 @@ function FooterLink({ link }: { link: SiteLink }) {
   const className = "group inline-flex items-center gap-2 text-sm text-muted-foreground/75 transition-colors hover:text-foreground"
 
   if (link.external) {
+    const isMailto = link.href.startsWith("mailto:")
     return (
-      <a href={link.href} target="_blank" rel="noopener noreferrer" className={className}>
+      <a
+        href={link.href}
+        {...(!isMailto ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        className={className}
+      >
         {icon}
         <span>{link.label}</span>
       </a>
@@ -134,6 +146,16 @@ export function PublicFooter() {
               <p className="mt-2 max-w-[10.5rem] text-[11px] leading-relaxed text-muted-foreground/80">
                 {footerLabels.copyright}
               </p>
+              <a
+                href="mailto:contact@icpay.cloud"
+                className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground/80 transition-colors hover:text-foreground"
+                title="Support & Inquiries"
+              >
+                <svg viewBox="0 0 24 24" className="size-3.5 shrink-0 fill-none stroke-current stroke-2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                </svg>
+                <span>contact@icpay.cloud</span>
+              </a>
             </div>
 
             <div className="mt-10 lg:mt-auto lg:pt-10">

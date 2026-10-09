@@ -32,6 +32,15 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "icpay-infrastructure-update-new-domains-icbucket",
+    title: "ICPay Infrastructure Update: New Domains icpay.cloud & onchainstorage.shop, Plus 268+ User Milestone",
+    description:
+      "A complete overview of ICPay's latest domain expansions with icpay.cloud and onchainstorage.shop, official contact channels, and crossing 268 on-chain usernames with live ICBucket storage metrics.",
+    publishedAt: "2026-10-09",
+    readingMinutes: 5,
+    category: "Infrastructure",
+  },
+  {
     slug: "on-chain-cloud-storage-icbucket-s3-guide",
     title: "icBucket: True On-Chain Cloud Storage with S3-Compatible API at 1 GB per ICP",
     description:

@@ -66,6 +66,7 @@ function loadAllPublicUrls(): string[] {
     "/canister/snapshots",
     "/topup",
     "/about",
+    "/contact",
     "/faq",
     "/terms",
     "/privacy",

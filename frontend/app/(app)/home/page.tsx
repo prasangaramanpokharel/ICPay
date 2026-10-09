@@ -14,14 +14,21 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { formatE8s } from "@/lib/wallet/utils"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
-import { useDashboard, useLiveBalance } from "@/hooks/wallet/useWalletData"
+import { useDashboard, useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 
 export default function DashboardPage() {
-  const { price, refresh } = useIcpPrice()
-  const { data, error, isLoading } = useDashboard()
+  const { price, refresh: refreshPrice } = useIcpPrice()
+  const { data, error, isLoading, refresh: refreshDashboard } = useDashboard()
   const liveBalance = useLiveBalance()
+  const refreshWallet = useRefreshWallet()
   const [hidden, setHidden] = useState(false)
   const t = useTranslations()
+
+  const handleRefreshBalanceAndPrice = async () => {
+    refreshWallet()
+    void refreshDashboard()
+    await refreshPrice()
+  }
 
   if (isLoading && !data) return <DashboardSkeleton />
 
@@ -53,7 +60,7 @@ export default function DashboardPage() {
           price={price}
           hidden={hidden}
           onToggleHidden={() => setHidden((v) => !v)}
-          onRefreshPrice={refresh}
+          onRefreshPrice={handleRefreshBalanceAndPrice}
           username={username}
         />
         <DashboardActions />
@@ -68,7 +75,7 @@ export default function DashboardPage() {
             price={price}
             hidden={hidden}
             onToggleHidden={() => setHidden((v) => !v)}
-            onRefreshPrice={refresh}
+            onRefreshPrice={handleRefreshBalanceAndPrice}
             username={username}
           />
           <HomeHoldingsCard />

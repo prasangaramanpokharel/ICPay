@@ -22,8 +22,10 @@ import {
   isBucketActive,
   isPublicVisibility,
   expiresAtToMs,
+  bucketCdnBaseUrl,
 } from "@/lib/bucket/bucket"
 import { copyText } from "@/lib/wallet/utils"
+import { toast } from "sonner"
 import type { BucketStats } from "@/services/bucket/types"
 
 export function BucketStatsHeader({
@@ -37,6 +39,9 @@ export function BucketStatsHeader({
   const active = isBucketActive(stats.status)
   const isPublic = isPublicVisibility(stats.visibility)
   const [copied, setCopied] = useState(false)
+  const [copiedBase, setCopiedBase] = useState(false)
+
+  const cdnBase = bucketCdnBaseUrl(stats.name)
 
   const usedBytes = stats.storageUsed
   const capacityBytes = stats.capacity
@@ -60,6 +65,13 @@ export function BucketStatsHeader({
     await copyText(stats.id)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleCopyBaseUrl = async () => {
+    await copyText(cdnBase)
+    setCopiedBase(true)
+    toast.success("CDN Base URL copied!")
+    setTimeout(() => setCopiedBase(false), 2000)
   }
 
   const planBarColor =
@@ -97,28 +109,48 @@ export function BucketStatsHeader({
                   <span>{isPublic ? t("public") : t("private")}</span>
                 </Badge>
               </div>
-              <p className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[11px] text-muted-foreground">
+              <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-muted-foreground">
                 <span>
                   {Number(stats.fileCount)} {t("files").toLowerCase()}
                 </span>
                 <span>·</span>
-                <span>
-                  ID: <span className="font-mono text-foreground/80">{stats.id}</span>
+                <span className="flex items-center gap-1">
+                  <span>ID: <span className="font-mono text-foreground/80">{stats.id}</span></span>
+                  <button
+                    type="button"
+                    onClick={handleCopyId}
+                    className="inline-flex size-4 items-center justify-center rounded text-muted-foreground hover:text-foreground transition-colors"
+                    aria-label="Copy bucket ID"
+                    title={copied ? "Copied!" : "Copy bucket ID"}
+                  >
+                    <HugeiconsIcon
+                      icon={copied ? Tick02Icon : Copy01Icon}
+                      className="size-3"
+                      strokeWidth={1.75}
+                    />
+                  </button>
                 </span>
-                <button
-                  type="button"
-                  onClick={handleCopyId}
-                  className="inline-flex size-4 items-center justify-center rounded text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label="Copy bucket ID"
-                  title={copied ? "Copied!" : "Copy bucket ID"}
-                >
-                  <HugeiconsIcon
-                    icon={copied ? Tick02Icon : Copy01Icon}
-                    className="size-3"
-                    strokeWidth={1.75}
-                  />
-                </button>
-              </p>
+                <span>·</span>
+                <span className="inline-flex items-center gap-1.5 rounded-md border border-border/50 bg-muted/40 px-2 py-0.5 font-mono text-[11px] text-foreground/90">
+                  <span className="font-sans font-medium text-[10.5px] text-muted-foreground">Base URL:</span>
+                  <span className="font-mono text-[10.5px] text-emerald-400 select-all truncate max-w-[200px] sm:max-w-xs">
+                    {cdnBase}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={handleCopyBaseUrl}
+                    className="inline-flex size-4 items-center justify-center rounded text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    aria-label="Copy CDN Base URL"
+                    title={copiedBase ? "Copied CDN URL!" : "Copy CDN Base URL"}
+                  >
+                    <HugeiconsIcon
+                      icon={copiedBase ? Tick02Icon : Copy01Icon}
+                      className="size-3 text-emerald-400"
+                      strokeWidth={1.75}
+                    />
+                  </button>
+                </span>
+              </div>
             </div>
           </div>
 
