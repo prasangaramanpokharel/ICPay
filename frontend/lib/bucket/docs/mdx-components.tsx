@@ -21,10 +21,22 @@ function extractCode(children: ReactNode): string {
   return ""
 }
 
+function extractLanguage(children: ReactNode): string {
+  if (children && typeof children === "object" && "props" in children) {
+    const props = children.props as { className?: string }
+    if (props.className && typeof props.className === "string") {
+      const match = props.className.match(/language-([a-zA-Z0-9_-]+)/)
+      if (match) return match[1]
+    }
+  }
+  return "bash"
+}
+
 function MdxPre({ children }: { children?: ReactNode }) {
   const code = extractCode(children)
   if (!code) return <pre>{children}</pre>
-  return <BucketCodeBlock code={code} className="my-4" />
+  const language = extractLanguage(children)
+  return <BucketCodeBlock code={code} language={language} className="my-5" />
 }
 
 function MdxCodeTabs({ section }: CodeTabsProps) {

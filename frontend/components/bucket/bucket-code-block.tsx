@@ -1,46 +1,23 @@
 "use client"
 
-import { useState } from "react"
-import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { copyText } from "@/lib/wallet/utils"
-import { cn } from "@/lib/ui/utils"
+import { CodeBlock } from "@/components/ui/code-block"
 
 type BucketCodeBlockProps = {
   code: string
+  language?: string
   className?: string
 }
 
-export function BucketCodeBlock({ code, className }: BucketCodeBlockProps) {
-  const t = useTranslations("bucket")
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = async () => {
-    await copyText(code)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
-
+export function BucketCodeBlock({
+  code,
+  language = "bash",
+  className,
+}: BucketCodeBlockProps) {
   return (
-    <Card size="sm" className={cn("relative bg-muted/30 py-0", className)}>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon-xs"
-        onClick={handleCopy}
-        aria-label={t("docsCopyCode")}
-        className="absolute top-2 right-2 z-10"
-      >
-        <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-3.5" />
-      </Button>
-      <CardContent className="overflow-x-auto p-3 pr-12 font-mono text-xs leading-relaxed text-foreground/90">
-        <pre>
-          <code>{code}</code>
-        </pre>
-      </CardContent>
-    </Card>
+    <CodeBlock
+      code={code}
+      language={language}
+      className={className}
+    />
   )
 }
