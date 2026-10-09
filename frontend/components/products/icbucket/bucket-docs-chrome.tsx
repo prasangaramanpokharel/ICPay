@@ -47,7 +47,7 @@ export function BucketDocsChrome({
               nativeButton={false}
               render={
                 <Link
-                  href="https://gitlab.com/prasangapokharel/icpay-bucket"
+                  href="https://gitlab.com/prasangapokharel/icbucket"
                   target="_blank"
                   rel="noopener noreferrer"
                 />

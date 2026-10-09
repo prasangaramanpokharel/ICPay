@@ -21,11 +21,13 @@ export const ICBUCKET_PACKAGE_LINKS: ProductPackageLink[] = [
 type ProductOpenSourceBannerProps = {
   packageLinks?: ProductPackageLink[]
   openSourceDescription?: string
+  repoUrl?: string
 }
 
 export function ProductOpenSourceBanner({
   packageLinks,
   openSourceDescription = "All ICPay products are open source and available on GitLab",
+  repoUrl = "https://gitlab.com/prasangapokharel/icpay",
 }: ProductOpenSourceBannerProps) {
   return (
     <section className="border-t bg-muted/30 py-12">
@@ -73,7 +75,7 @@ export function ProductOpenSourceBanner({
                 </div>
               ) : (
                 <Link
-                  href="https://gitlab.com/prasangapokharel/icpay"
+                  href={repoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
