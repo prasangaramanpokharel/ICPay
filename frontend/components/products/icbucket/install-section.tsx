@@ -58,10 +58,8 @@ export function InstallSection() {
               duration={10}
             />
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 shrink-0">
-                  <Terminal className="size-4.5" />
-                </div>
+              <div className="flex items-center gap-2.5">
+                <Terminal className="size-5 shrink-0 text-primary" />
                 <div>
                   <h3 className="text-sm font-semibold text-foreground tracking-tight sm:text-base">
                     Install ICPay & icBucket Developer Suite in one command:
@@ -71,7 +69,7 @@ export function InstallSection() {
                   </p>
                 </div>
               </div>
-              <div className="rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-[11px] font-medium text-primary w-fit shrink-0">
+              <div className="rounded-full border border-border/60 bg-muted/50 px-2.5 py-0.5 text-[11px] font-medium text-muted-foreground w-fit shrink-0">
                 macOS / Linux / WSL
               </div>
             </div>
