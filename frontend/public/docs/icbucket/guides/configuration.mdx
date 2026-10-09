@@ -1,0 +1,70 @@
+---
+title: "Configuration"
+description: "Configure client timeouts, automatic chunk retry strategies, Edge CDN domains, and environment settings."
+group: "Guides"
+order: 1
+---
+
+# Configuration
+
+The ICBucket client can be customized to match your infrastructure requirements, from serverless Next.js functions to long-running backup daemons.
+
+## Prerequisites
+
+- `icpay-bucket` installed in your project
+- A valid API key or Internet Identity identity
+
+## Steps
+
+### Client Options
+
+Initialize the client with custom network options:
+
+```typescript
+import { ICBucket } from "icpay-bucket"
+
+const bucket = new ICBucket({
+  bucketId: process.env.ICBUCKET_ID!,
+  apiKey: process.env.ICBUCKET_API_KEY!,
+  
+  // Custom Edge CDN domain (defaults to https://cdn.icpay.app)
+  cdnBase: "https://cdn.icpay.app",
+
+  // Chunk upload configuration
+  chunkSizeBytes: 2 * 1024 * 1024, // 2MB default per boundary node guidelines
+
+  // Timeout and retry parameters
+  timeoutMs: 30_000,
+  maxRetries: 3,
+  retryDelayMs: 1_000,
+})
+```
+
+### Environment Variables
+
+For zero-config framework setups (Next.js, Remix, Astro), define:
+
+```bash
+# Required
+ICBUCKET_ID=my-storage-bucket
+ICBUCKET_API_KEY=icp_live_sec_100234
+
+# Optional overrides
+ICBUCKET_CDN_BASE=https://cdn.icpay.app
+ICBUCKET_CANISTER_ID=6vbhm-nqaaa-aaaan-q6muq-cai
+```
+
+## Verification
+
+Verify client connectivity with a ping call:
+
+```typescript
+const isHealthy = await bucket.ping()
+console.log("Canister connection:", isHealthy ? "OK" : "FAILED")
+```
+
+## Related Pages
+
+- [Authentication](./authentication.mdx)
+- [Basic Usage](./basic-usage.mdx)
+- [Best Practices](./best-practices.mdx)

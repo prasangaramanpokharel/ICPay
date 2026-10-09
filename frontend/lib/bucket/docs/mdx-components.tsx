@@ -8,6 +8,7 @@ import { BUCKET_API_METHODS } from "@/lib/bucket/docsMethodList"
 import { WALLET_CANISTER_ID } from "@/services/icp"
 import { DocHubCards } from "@/lib/bucket/docs/doc-hub-cards"
 import { cn } from "@/lib/ui/utils"
+import { Gitlab } from "@dev.icons/react"
 
 type CodeTabsProps = { section: string }
 
@@ -93,7 +94,8 @@ function DocCard({ href, title, description }: DocCardProps) {
   )
 }
 
-function DocCardGrid({ items }: { items: DocCardProps[] }) {
+function DocCardGrid({ items = [] }: { items?: DocCardProps[] }) {
+  if (!items || !Array.isArray(items)) return null
   return (
     <div className="my-8 grid gap-4 sm:grid-cols-2">
       {items.map((item) => (
@@ -112,6 +114,27 @@ function Callout({ title, children }: { title?: string; children: ReactNode }) {
   )
 }
 
+function resolveMdxHref(href?: string): string {
+  if (!href) return "#"
+  if (
+    href.startsWith("http://") ||
+    href.startsWith("https://") ||
+    href.startsWith("//") ||
+    href.startsWith("mailto:") ||
+    href.startsWith("#")
+  ) {
+    return href
+  }
+  // Strip .mdx and .md extensions
+  let clean = href.replace(/\.mdx?$/, "")
+  // Normalize relative directory references like ../overview/installation or ./configuration
+  clean = clean.replace(/^\.\.\//, "").replace(/^\.\//, "")
+  if (!clean.startsWith("/bucket/docs") && !clean.startsWith("/")) {
+    clean = `/bucket/docs/${clean}`
+  }
+  return clean
+}
+
 export const bucketMdxComponents = {
   pre: MdxPre,
   CodeTabs: MdxCodeTabs,
@@ -122,6 +145,7 @@ export const bucketMdxComponents = {
   DocCardGrid,
   DocHubCards,
   Callout,
+  Gitlab,
   h2: ({ children, id }: { children?: ReactNode; id?: string }) => (
     <h2
       id={id}
@@ -158,12 +182,28 @@ export const bucketMdxComponents = {
   td: ({ children }: { children?: ReactNode }) => (
     <td className="border-t border-border/40 px-4 py-2.5 text-muted-foreground">{children}</td>
   ),
-  a: ({ href, children }: { href?: string; children?: ReactNode }) => (
-    <Link
-      href={href ?? "#"}
-      className={cn("font-medium text-primary underline-offset-4 hover:underline")}
-    >
-      {children}
-    </Link>
-  ),
+  a: ({ href, children }: { href?: string; children?: ReactNode }) => {
+    const resolved = resolveMdxHref(href)
+    const isExternal = resolved.startsWith("http://") || resolved.startsWith("https://")
+    if (isExternal) {
+      return (
+        <a
+          href={resolved}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium text-primary underline-offset-4 hover:underline"
+        >
+          {children}
+        </a>
+      )
+    }
+    return (
+      <Link
+        href={resolved}
+        className={cn("font-medium text-primary underline-offset-4 hover:underline")}
+      >
+        {children}
+      </Link>
+    )
+  },
 }

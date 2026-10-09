@@ -1,0 +1,47 @@
+---
+title: "Troubleshooting"
+description: "Resolve common integration hurdles: CORS errors, network timeouts, canister status, and boundary node routing."
+group: "Errors"
+order: 3
+---
+
+# Troubleshooting
+
+Diagnose and resolve the most common issues encountered when integrating with ICBucket.
+
+## Common Issues & Fixes
+
+### 1. "TypeError: NetworkError when attempting to fetch resource"
+
+**Symptom**: Browser console throws a NetworkError when calling external endpoints.
+
+**Cause**: Cross-Origin Resource Sharing (CORS) blocks direct browser fetch calls to external git repositories or unproxied gateways.
+
+**Solution**:
+- Ensure all client requests route through same-origin API routes (e.g. `/api/...`) or the official Edge CDN `https://cdn.icpay.app/cloud/` which emits explicit permissive CORS headers:
+```http
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, HEAD, OPTIONS
+```
+
+### 2. Canister Out of Cycles Warning
+
+**Symptom**: Calls return `Canister is out of cycles`.
+
+**Solution**:
+- Check cycle balance via `dfx canister status` or via the ICPay dashboard.
+- Upgrade or top up cycles using ICP from your wallet balance.
+
+### 3. File Chunk Upload Hanging
+
+**Symptom**: Large file upload freezes around 50%.
+
+**Solution**:
+- Reduce chunk size from 2MB to 1MB if running on cellular or unstable client network connections.
+- Ensure the upload session has not exceeded its 30-minute idle TTL.
+
+## Related Pages
+
+- [Error Codes](./error-codes.mdx)
+- [Error Handling](./error-handling.mdx)
+- [Local Development](../../deployment/local-development.mdx)

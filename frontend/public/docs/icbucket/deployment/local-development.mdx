@@ -1,0 +1,54 @@
+---
+title: "Local Development"
+description: "Run and test ICBucket integrations locally using dfx replica simulation and mock storage actors."
+group: "Deployment"
+order: 1
+---
+
+# Local Development
+
+Test your ICBucket storage integrations in local development environments without spending real ICP or burning mainnet cycles.
+
+## Prerequisites
+
+- DFINITY SDK (`dfx`) installed on macOS / Linux / WSL.
+- Local replica running via `dfx start --background`.
+
+## Steps
+
+### 1. Point the SDK to Local Replica
+
+Set the environment variables to point to your local replica:
+
+```bash
+NEXT_PUBLIC_IC_HOST=http://127.0.0.1:4943
+ICBUCKET_CANISTER_ID=bkyz2-fmaaa-aaaaa-qaaaq-cai
+ICBUCKET_CDN_BASE=http://localhost:3000
+```
+
+### 2. Fetch Root Key in Development
+
+When communicating with local replicas, instruct `@dfinity/agent` to fetch the root key:
+
+```typescript
+import { HttpAgent } from "@dfinity/agent"
+
+const agent = new HttpAgent({ host: "http://127.0.0.1:4943" })
+if (process.env.NODE_ENV !== "production") {
+  await agent.fetchRootKey()
+}
+```
+
+## Verification
+
+Upload a test text file and inspect local canister state:
+
+```bash
+dfx canister call icbucket listFiles '(record { page = 1; pageSize = 10 })'
+```
+
+## Related Pages
+
+- [Production Deployment](./production.mdx)
+- [Configuration Reference](../../reference/configuration.mdx)
+- [Troubleshooting](../../errors/troubleshooting.mdx)

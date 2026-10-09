@@ -21,6 +21,19 @@ export default (phase: string): NextConfig => ({
   },
   output: staticExport && phase === PHASE_PRODUCTION_BUILD ? "export" : undefined,
   images: { unoptimized: true },
+  async rewrites() {
+    if (staticExport) return []
+    return [
+      {
+        source: "/bucket/docs.md",
+        destination: "/api/bucket/docs-raw",
+      },
+      {
+        source: "/bucket/docs/:path*.md",
+        destination: "/api/bucket/docs-raw/:path*",
+      },
+    ]
+  },
 })
 
 

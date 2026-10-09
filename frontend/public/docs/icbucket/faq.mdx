@@ -1,0 +1,38 @@
+---
+title: "Frequently Asked Questions"
+description: "Answers to common questions regarding ICBucket pricing, storage durability, cycles billing, and security."
+group: "FAQ"
+order: 1
+---
+
+# Frequently Asked Questions
+
+Find answers to common questions about ICBucket pricing, performance, and architecture.
+
+## General Questions
+
+### What happens when my 30-day plan expires?
+
+Your bucket enters a 14-day grace period. Files remain intact and readable, but new file writes are paused until renewed via your ICPay balance.
+
+### Is ICBucket truly decentralized?
+
+Yes. Your files are stored in 64-bit stable memory inside canisters running on the decentralized Internet Computer network, governed by the Network Nervous System (NNS). No AWS, Google Cloud, or Azure servers are involved in storing your data.
+
+### Are reads free?
+
+Yes. Query calls on the Internet Computer and Edge CDN cache hits do not burn any cycles and cost 0 ICP.
+
+### What is the maximum file size?
+
+Single-call uploads support up to 2MB. Chunked uploads support files up to 50MB per file with automatic 2MB partitioning.
+
+### Can I use custom domain names?
+
+Yes. You can map custom subdomains (e.g. `cdn.yourbrand.io`) using CNAME records pointing to `cname.icpay.app`.
+
+## Related Pages
+
+- [Introduction](./overview/introduction.mdx)
+- [Quick Start](./overview/quick-start.mdx)
+- [Troubleshooting](./errors/troubleshooting.mdx)

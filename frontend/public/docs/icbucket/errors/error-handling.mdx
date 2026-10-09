@@ -1,0 +1,73 @@
+---
+title: "Error Handling"
+description: "Implement resilient client-side retry strategies, exponential backoff, and exception catching."
+group: "Errors"
+order: 2
+---
+
+# Error Handling
+
+Build production-grade applications with resilient network retry handling and typed error catching.
+
+## Prerequisites
+
+- Client configured with error interception.
+
+## Steps
+
+### 1. Typed Exception Catching
+
+The TypeScript SDK provides typed errors for granular recovery:
+
+```typescript
+import { ICBucket, BucketError } from "icpay-bucket"
+
+const bucket = new ICBucket({
+  bucketId: "my-assets",
+  apiKey: process.env.ICBUCKET_API_KEY!,
+})
+
+try {
+  await bucket.uploadFile("document.pdf", buffer)
+} catch (error) {
+  if (error instanceof BucketError) {
+    switch (error.code) {
+      case "ERR_PAYLOAD_TOO_LARGE":
+        console.warn("File is too large for single-call upload, switching to chunked upload...")
+        await bucket.uploadLargeFile("document.pdf", buffer)
+        break
+      case "ERR_QUOTA_EXCEEDED":
+        console.error("Storage limit reached! Please upgrade your tier.")
+        break
+      default:
+        console.error(`Bucket error [${error.code}]:`, error.message)
+    }
+  } else {
+    console.error("Unexpected error:", error)
+  }
+}
+```
+
+### 2. Exponential Backoff Pattern
+
+When handling transient network fluctuations or canister busy states:
+
+```typescript
+async function uploadWithRetry(fn: () => Promise<any>, maxAttempts = 3) {
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await fn()
+    } catch (err: any) {
+      if (attempt === maxAttempts || !err.isRetryable) throw err
+      const delay = Math.pow(2, attempt) * 500
+      await new Promise((resolve) => setTimeout(resolve, delay))
+    }
+  }
+}
+```
+
+## Related Pages
+
+- [Error Codes](./error-codes.mdx)
+- [Troubleshooting](./troubleshooting.mdx)
+- [Configuration Reference](../../reference/configuration.mdx)

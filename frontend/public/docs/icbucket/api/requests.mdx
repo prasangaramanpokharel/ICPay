@@ -1,0 +1,45 @@
+---
+title: "API Requests"
+description: "Specification of request headers, payload encodings, and multipart boundaries."
+group: "API Reference"
+order: 3
+---
+
+# API Requests
+
+This specification outlines the headers, payload formats, and query parameters accepted by ICBucket endpoints.
+
+## Prerequisites
+
+- HTTP/1.1 or HTTP/2 client capable of sending raw octet streams or JSON bodies.
+
+## Required Headers
+
+| Header | Description | Required |
+| :--- | :--- | :--- |
+| `Authorization` | Bearer token format: `Bearer <API_KEY>` | Yes (for mutations) |
+| `Content-Type` | MIME type of the uploaded asset (e.g., `image/webp`) | Yes (for uploads) |
+| `X-Bucket-Id` | Unique alphanumeric bucket identifier | Conditional |
+| `X-File-Tags` | Comma-separated tag list for index categorization | Optional |
+
+## Query Parameters for List Operations
+
+- `prefix`: string — Filter files by path prefix (e.g. `avatars/`)
+- `page`: integer — 1-based page index (defaults to `1`)
+- `pageSize`: integer — Number of items per page (defaults to `10`, max `50`)
+- `sort`: string — `name_asc` | `name_desc` | `date_asc` | `date_desc`
+
+## Example cURL Request
+
+```bash
+curl -X PUT "https://cdn.icpay.app/api/v1/bucket/my-assets/files/logo.svg" \
+  -H "Authorization: Bearer icp_live_sec_100234" \
+  -H "Content-Type: image/svg+xml" \
+  --data-binary "@logo.svg"
+```
+
+## Related Pages
+
+- [Endpoints](./endpoints.mdx)
+- [Responses](./responses.mdx)
+- [Troubleshooting](../../errors/troubleshooting.mdx)

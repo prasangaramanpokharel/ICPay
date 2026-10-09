@@ -1,0 +1,88 @@
+---
+title: "Installation"
+description: "Install the official ICBucket SDKs and CLI developer suite for Node.js, Python, Rust, and Go."
+group: "Overview"
+order: 3
+---
+
+# Installation
+
+ICBucket offers native SDK libraries across all major programming ecosystems and a single-command developer CLI suite. All source repositories are hosted publicly on GitLab.
+
+## Prerequisites
+
+- For Node.js / TypeScript: Node.js 18 or newer
+- For Python: Python 3.9 or newer with `pip`
+- For Rust: Rust 1.75 or newer with `cargo`
+- For Go: Go 1.21 or newer
+
+## Steps
+
+### Package Managers
+
+Install the client library using your ecosystem's package manager:
+
+```bash
+# npm
+npm install icpay-bucket
+
+# pnpm
+pnpm add icpay-bucket
+
+# yarn
+yarn add icpay-bucket
+
+# bun
+bun add icpay-bucket
+
+# Python
+pip install icpay-bucket
+
+# Rust
+cargo add icpay-bucket
+
+# Go
+go get gitlab.com/prasangapokharel/icpay-bucket-go
+```
+
+### One-Command CLI Developer Suite
+
+For terminal-based file uploads, backup cronjobs, and CI/CD pipelines, install the icBucket CLI tool:
+
+```bash
+curl -sSL https://icpay.app/bu/install.sh | bash
+```
+
+## Source Code & Community
+
+All ICBucket client SDKs, schemas, and bindings are open source:
+
+<div className="my-6 flex items-center gap-3 p-4 rounded-xl border border-border/60 bg-card/60">
+  <Gitlab size={24} className="text-primary shrink-0" />
+  <div className="flex-1 min-w-0">
+    <p className="font-semibold text-sm text-foreground">GitLab Repository</p>
+    <p className="text-xs text-muted-foreground">Inspect source code, file issues, and contribute pull requests.</p>
+  </div>
+  <a
+    href="https://gitlab.com/prasangapokharel/icpay-bucket"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+  >
+    View on GitLab ↗
+  </a>
+</div>
+
+## Verification
+
+Check that the CLI and libraries are recognized:
+
+```bash
+icbucket --version
+```
+
+## Related Pages
+
+- [Quick Start](../overview/quick-start.mdx)
+- [Configuration](../../guides/configuration.mdx)
+- [Basic Usage](../../guides/basic-usage.mdx)
