@@ -156,9 +156,9 @@ export function BucketFilePreviewPane({
         <div className="mx-4 mb-2 rounded-xl border border-border/70 bg-card/60 p-2.5 backdrop-blur-xs">
           <div className="flex items-center justify-between text-xs mb-1">
             <span className="flex items-center gap-1.5 font-medium text-foreground">
-              <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="size-1.5 rounded-full bg-success animate-pulse" />
               <span>CDN Link</span>
-              <span className="rounded bg-emerald-500/10 px-1 py-0.2 text-[9px] font-medium text-emerald-400">
+              <span className="rounded bg-success/15 px-1 py-0.2 text-[9px] font-medium text-success">
                 Fast & Cached
               </span>
             </span>
@@ -169,7 +169,7 @@ export function BucketFilePreviewPane({
             >
               <HugeiconsIcon
                 icon={copiedMode === "cdn" ? Tick02Icon : Copy01Icon}
-                className="size-3 text-emerald-400"
+                className="size-3 text-success"
               />
               <span>{copiedMode === "cdn" ? "Copied" : "Copy"}</span>
             </button>
@@ -227,13 +227,11 @@ export function BucketFilePreviewPane({
                   onClick={() => handleCopy(cdnUrl, "cdn")}
                   className="flex items-start gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-accent/80 transition-colors"
                 >
-                  <div className="flex size-7 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-400 shrink-0 mt-0.5">
-                    <HugeiconsIcon icon={FlashIcon} className="size-4" strokeWidth={1.75} />
-                  </div>
+                  <HugeiconsIcon icon={FlashIcon} className="size-4 shrink-0 mt-0.5 text-success" strokeWidth={1.75} />
                   <div className="flex flex-col min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
                       <span className="font-semibold text-xs text-foreground">Copy CDN Link</span>
-                      <span className="rounded bg-emerald-500/10 px-1 py-0.2 text-[9px] font-medium text-emerald-400">
+                      <span className="rounded bg-success/15 px-1 py-0.2 text-[9px] font-medium text-success">
                         Recommended
                       </span>
                     </div>
@@ -248,9 +246,7 @@ export function BucketFilePreviewPane({
                   onClick={() => handleCopy(rawUrl, "raw")}
                   className="flex items-start gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-accent/80 transition-colors"
                 >
-                  <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary shrink-0 mt-0.5">
-                    <HugeiconsIcon icon={Globe02Icon} className="size-4" strokeWidth={1.75} />
-                  </div>
+                  <HugeiconsIcon icon={Globe02Icon} className="size-4 shrink-0 mt-0.5 text-primary" strokeWidth={1.75} />
                   <div className="flex flex-col min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
                       <span className="font-semibold text-xs text-foreground">Copy Raw Canister Link</span>

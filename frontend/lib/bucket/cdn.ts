@@ -53,10 +53,10 @@ export function toRawCanisterUrl(url: string): string {
 
 /** Map any bucket URL form to the edge CDN /cloud/ URL. */
 export function toCdnUrl(url: string): string {
-  const tail = rawCloudTail(url)
   const cdnBase = getBucketCdnBase()
+  const tail = rawCloudTail(url)
   if (tail) return `${cdnBase}/cloud/${tail}`
-  return url
+  return url.replace(/https?:\/\/cloud\.icpay\.app\b/g, cdnBase)
 }
 
 export type BucketUrlMode = "cdn" | "raw"
