@@ -9,6 +9,9 @@ import {
   Lock,
   Database,
   Cloud,
+  ArrowUpRight,
+  ArrowDownRight,
+  Workflow,
 } from "lucide-react"
 import { Nodejs, Python, Go } from "@dev.icons/react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -33,8 +36,12 @@ export function ArchitectureSection() {
 
   return (
     <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 space-y-10">
+      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 space-y-12">
         <div className="space-y-3 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-xs">
+            <Workflow className="size-3.5 text-primary" />
+            <span>Storage Topography & Lifecycle</span>
+          </div>
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent md:text-5xl">
             {t("title")}
           </h2>
@@ -44,20 +51,19 @@ export function ArchitectureSection() {
         </div>
 
         {/* Animated Architecture Topology Card */}
-        <Card className="relative overflow-hidden rounded-2xl  bg-background">
-          {/* Card Top Status Bar */}
-
+        <Card className="relative overflow-hidden rounded-3xl border border-border/80 bg-card/60 backdrop-blur-xs shadow-xs">
+          {/* Subtle architectural dot grid background */}
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:24px_24px] opacity-60" />
+          {/* Ambient soft glow at center using globals primary token */}
+          <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 size-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-3xl" />
 
           <CardContent className="p-0">
             {/* Scrollable Canvas Container */}
             <div className="w-full overflow-x-auto">
               <div
                 ref={containerRef}
-                className="relative mx-auto flex min-w-[700px] max-w-4xl items-center justify-between gap-6 px-8 py-14 md:py-20"
+                className="relative mx-auto flex min-w-[720px] max-w-4xl items-center justify-between gap-6 px-8 py-16 md:py-20"
               >
-                {/* Background Ambient Radial Glow */}
-                <div className="pointer-events-none absolute inset-0 -z-10 bg-radial from-primary/5 via-transparent to-transparent opacity-70" />
-
                 {/* Animated Beams: Client Inputs → Canister Hub */}
                 <AnimatedBeam
                   containerRef={containerRef}
@@ -66,11 +72,11 @@ export function ArchitectureSection() {
                   curvature={-32}
                   duration={4}
                   delay={0}
-                  gradientStartColor="#ec4899"
-                  gradientStopColor="#a855f7"
-                  pathColor="#52525b"
-                  pathOpacity={0.25}
-                  pathWidth={2}
+                  gradientStartColor="var(--primary)"
+                  gradientStopColor="var(--primary)"
+                  pathColor="var(--border)"
+                  pathOpacity={0.7}
+                  pathWidth={1.5}
                 />
                 <AnimatedBeam
                   containerRef={containerRef}
@@ -79,11 +85,11 @@ export function ArchitectureSection() {
                   curvature={0}
                   duration={4}
                   delay={0.8}
-                  gradientStartColor="#ec4899"
-                  gradientStopColor="#a855f7"
-                  pathColor="#52525b"
-                  pathOpacity={0.25}
-                  pathWidth={2}
+                  gradientStartColor="var(--primary)"
+                  gradientStopColor="var(--primary)"
+                  pathColor="var(--border)"
+                  pathOpacity={0.7}
+                  pathWidth={1.5}
                 />
                 <AnimatedBeam
                   containerRef={containerRef}
@@ -92,11 +98,11 @@ export function ArchitectureSection() {
                   curvature={32}
                   duration={4}
                   delay={1.6}
-                  gradientStartColor="#ec4899"
-                  gradientStopColor="#a855f7"
-                  pathColor="#52525b"
-                  pathOpacity={0.25}
-                  pathWidth={2}
+                  gradientStartColor="var(--primary)"
+                  gradientStopColor="var(--primary)"
+                  pathColor="var(--border)"
+                  pathOpacity={0.7}
+                  pathWidth={1.5}
                 />
 
                 {/* Animated Beams: Canister Hub → Storage & CDN */}
@@ -107,11 +113,11 @@ export function ArchitectureSection() {
                   curvature={-32}
                   duration={4}
                   delay={0.4}
-                  gradientStartColor="#a855f7"
-                  gradientStopColor="#06b6d4"
-                  pathColor="#52525b"
-                  pathOpacity={0.25}
-                  pathWidth={2}
+                  gradientStartColor="var(--primary)"
+                  gradientStopColor="var(--primary)"
+                  pathColor="var(--border)"
+                  pathOpacity={0.7}
+                  pathWidth={1.5}
                 />
                 <AnimatedBeam
                   containerRef={containerRef}
@@ -120,11 +126,11 @@ export function ArchitectureSection() {
                   curvature={0}
                   duration={4}
                   delay={1.2}
-                  gradientStartColor="#a855f7"
-                  gradientStopColor="#06b6d4"
-                  pathColor="#52525b"
-                  pathOpacity={0.25}
-                  pathWidth={2}
+                  gradientStartColor="var(--primary)"
+                  gradientStopColor="var(--primary)"
+                  pathColor="var(--border)"
+                  pathOpacity={0.7}
+                  pathWidth={1.5}
                 />
                 <AnimatedBeam
                   containerRef={containerRef}
@@ -133,16 +139,16 @@ export function ArchitectureSection() {
                   curvature={32}
                   duration={4}
                   delay={2}
-                  gradientStartColor="#a855f7"
-                  gradientStopColor="#06b6d4"
-                  pathColor="#52525b"
-                  pathOpacity={0.25}
-                  pathWidth={2}
+                  gradientStartColor="var(--primary)"
+                  gradientStopColor="var(--primary)"
+                  pathColor="var(--border)"
+                  pathOpacity={0.7}
+                  pathWidth={1.5}
                 />
 
                 {/* Column 1: Client Apps & Integrations */}
                 <div className="flex flex-col items-center gap-8">
-                  <span className="rounded-full border border-border/60 bg-muted/40 px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span className="inline-flex items-center rounded-full border border-border/80 bg-background/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground shadow-2xs backdrop-blur-xs">
                     Your Application
                   </span>
 
@@ -151,13 +157,13 @@ export function ArchitectureSection() {
                     <div className="flex flex-col items-center gap-2 text-center">
                       <div
                         ref={browserRef}
-                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border/80 bg-card/95 shadow-md backdrop-blur-md transition-all duration-200 hover:border-primary/50 hover:shadow-primary/10"
+                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
                       >
-                        <Globe className="size-5 text-primary" />
+                        <Globe className="size-5 text-foreground" />
                       </div>
                       <div className="space-y-0.5">
-                        <p className="text-xs font-semibold text-foreground">Browser App</p>
-                        <span className="inline-block rounded bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+                        <p className="text-xs font-semibold tracking-tight text-foreground">Browser App</p>
+                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
                           Internet Identity
                         </span>
                       </div>
@@ -167,15 +173,15 @@ export function ArchitectureSection() {
                     <div className="flex flex-col items-center gap-2 text-center">
                       <div
                         ref={sdkRef}
-                        className="z-10 flex size-12 items-center justify-center gap-1 rounded-2xl border border-border/80 bg-card/95 px-1.5 shadow-md backdrop-blur-md transition-all duration-200 hover:border-primary/50 hover:shadow-primary/10"
+                        className="z-10 flex size-12 items-center justify-center gap-1.5 rounded-2xl border border-border bg-card px-2 shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
                       >
                         <Nodejs size={14} />
                         <Python size={14} />
                         <Go size={14} />
                       </div>
                       <div className="space-y-0.5">
-                        <p className="text-xs font-semibold text-foreground">Client SDKs</p>
-                        <span className="inline-block rounded bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+                        <p className="text-xs font-semibold tracking-tight text-foreground">Client SDKs</p>
+                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
                           Agent + API Key
                         </span>
                       </div>
@@ -185,13 +191,13 @@ export function ArchitectureSection() {
                     <div className="flex flex-col items-center gap-2 text-center">
                       <div
                         ref={ciRef}
-                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border/80 bg-card/95 shadow-md backdrop-blur-md transition-all duration-200 hover:border-primary/50 hover:shadow-primary/10"
+                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
                       >
                         <Terminal className="size-5 text-foreground" />
                       </div>
                       <div className="space-y-0.5">
-                        <p className="text-xs font-semibold text-foreground">CI & Automation</p>
-                        <span className="inline-block rounded bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+                        <p className="text-xs font-semibold tracking-tight text-foreground">CI & Automation</p>
+                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
                           Signed Updates
                         </span>
                       </div>
@@ -201,7 +207,7 @@ export function ArchitectureSection() {
 
                 {/* Column 2: On-Chain Core Canister Hub */}
                 <div className="flex flex-col items-center gap-8">
-                  <span className="rounded-full border border-border/60 bg-muted/40 px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span className="inline-flex items-center rounded-full border border-border/80 bg-background/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground shadow-2xs backdrop-blur-xs">
                     Internet Computer
                   </span>
 
@@ -209,14 +215,14 @@ export function ArchitectureSection() {
                     <div className="pointer-events-none absolute -inset-6 rounded-full bg-primary/15 blur-2xl" />
                     <div
                       ref={canisterRef}
-                      className="z-10 flex size-24 items-center justify-center rounded-3xl border-2 border-primary/50 bg-card/95 p-3 shadow-2xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-primary"
+                      className="z-10 relative flex size-24 items-center justify-center rounded-3xl border-2 border-primary/50 bg-card p-3 shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-primary"
                     >
                       <Image
                         src={APP_LOGO}
                         alt="ICPay Canister"
                         width={48}
                         height={48}
-                        className="size-12 rounded-2xl object-contain drop-shadow"
+                        className="size-12 rounded-2xl object-contain drop-shadow-sm"
                       />
                     </div>
                     <div className="space-y-1">
@@ -225,14 +231,14 @@ export function ArchitectureSection() {
                           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                           <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
                         </span>
-                        <p className="text-xs font-bold text-foreground">
+                        <p className="text-xs font-bold tracking-tight text-foreground">
                           ICPay Bucket Canister
                         </p>
                       </div>
                       <p className="font-mono text-[11px] text-muted-foreground">
                         Motoko Bucket Engine
                       </p>
-                      <span className="inline-block rounded-md border border-border/60 bg-muted/60 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                      <span className="inline-flex items-center rounded-md border border-border/80 bg-muted/50 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
                         Subaccount Isolated
                       </span>
                     </div>
@@ -241,7 +247,7 @@ export function ArchitectureSection() {
 
                 {/* Column 3: Storage & Delivery */}
                 <div className="flex flex-col items-center gap-8">
-                  <span className="rounded-full border border-border/60 bg-muted/40 px-3 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  <span className="inline-flex items-center rounded-full border border-border/80 bg-background/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground shadow-2xs backdrop-blur-xs">
                     Storage & Delivery
                   </span>
 
@@ -250,13 +256,13 @@ export function ArchitectureSection() {
                     <div className="flex flex-col items-center gap-2 text-center">
                       <div
                         ref={uploadRef}
-                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border/80 bg-card/95 shadow-md backdrop-blur-md transition-all duration-200 hover:border-primary/50 hover:shadow-primary/10"
+                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
                       >
-                        <Lock className="size-5 text-amber-500" />
+                        <Lock className="size-5 text-foreground" />
                       </div>
                       <div className="space-y-0.5">
-                        <p className="text-xs font-semibold text-foreground">Upload Session</p>
-                        <span className="inline-block rounded bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+                        <p className="text-xs font-semibold tracking-tight text-foreground">Upload Session</p>
+                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
                           Chunk → Encrypt
                         </span>
                       </div>
@@ -266,13 +272,13 @@ export function ArchitectureSection() {
                     <div className="flex flex-col items-center gap-2 text-center">
                       <div
                         ref={memoryRef}
-                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border/80 bg-card/95 shadow-md backdrop-blur-md transition-all duration-200 hover:border-primary/50 hover:shadow-primary/10"
+                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
                       >
-                        <Database className="size-5 text-cyan-400" />
+                        <Database className="size-5 text-foreground" />
                       </div>
                       <div className="space-y-0.5">
-                        <p className="text-xs font-semibold text-foreground">Stable Memory</p>
-                        <span className="inline-block rounded bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+                        <p className="text-xs font-semibold tracking-tight text-foreground">Stable Memory</p>
+                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
                           Encrypted Blobs
                         </span>
                       </div>
@@ -282,13 +288,13 @@ export function ArchitectureSection() {
                     <div className="flex flex-col items-center gap-2 text-center">
                       <div
                         ref={httpRef}
-                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border/80 bg-card/95 shadow-md backdrop-blur-md transition-all duration-200 hover:border-primary/50 hover:shadow-primary/10"
+                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
                       >
-                        <Cloud className="size-5 text-blue-400" />
+                        <Cloud className="size-5 text-foreground" />
                       </div>
                       <div className="space-y-0.5">
-                        <p className="text-xs font-semibold text-foreground">HTTPS Gateway</p>
-                        <span className="inline-block rounded bg-muted/60 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">
+                        <p className="text-xs font-semibold tracking-tight text-foreground">HTTPS Gateway</p>
+                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
                           *.raw.icp0.io · CDN
                         </span>
                       </div>
@@ -302,29 +308,64 @@ export function ArchitectureSection() {
 
         {/* Step-by-Step Technical Path Details */}
         <div className="grid gap-6 md:grid-cols-2">
-          <Card size="sm" className="rounded-2xl border-border/60 bg-card shadow-sm">
-            <CardContent className="space-y-3 pt-6">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">
-                {t("writePath")}
-              </h3>
-              <ol className="list-decimal space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
-                {UPLOAD_STEP_IDS.map((id) => (
-                  <li key={id}>{t(`uploadSteps.${id}`)}</li>
+          <Card className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs transition-colors">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-border/60 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 items-center justify-center rounded-lg border border-border bg-muted/50 text-primary">
+                    <ArrowUpRight className="size-4" />
+                  </div>
+                  <h3 className="text-sm font-semibold tracking-tight text-foreground">
+                    {t("writePath")}
+                  </h3>
+                </div>
+                <span className="rounded-md border border-border/60 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                  Upload & Encryption
+                </span>
+              </div>
+              <div className="space-y-3">
+                {UPLOAD_STEP_IDS.map((id, index) => (
+                  <div key={id} className="flex items-start gap-3 text-sm">
+                    <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-[11px] font-semibold text-primary">
+                      {index + 1}
+                    </span>
+                    <p className="leading-relaxed text-muted-foreground">
+                      {t(`uploadSteps.${id}`)}
+                    </p>
+                  </div>
                 ))}
-              </ol>
-            </CardContent>
+              </div>
+            </div>
           </Card>
-          <Card size="sm" className="rounded-2xl border-border/60 bg-card shadow-sm">
-            <CardContent className="space-y-3 pt-6">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">
-                {t("readPath")}
-              </h3>
-              <ol className="list-decimal space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
-                {READ_STEP_IDS.map((id) => (
-                  <li key={id}>{t(`readSteps.${id}`)}</li>
+
+          <Card className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs transition-colors">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-border/60 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 items-center justify-center rounded-lg border border-border bg-muted/50 text-primary">
+                    <ArrowDownRight className="size-4" />
+                  </div>
+                  <h3 className="text-sm font-semibold tracking-tight text-foreground">
+                    {t("readPath")}
+                  </h3>
+                </div>
+                <span className="rounded-md border border-border/60 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                  Decryption & Edge CDN
+                </span>
+              </div>
+              <div className="space-y-3">
+                {READ_STEP_IDS.map((id, index) => (
+                  <div key={id} className="flex items-start gap-3 text-sm">
+                    <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-[11px] font-semibold text-primary">
+                      {index + 1}
+                    </span>
+                    <p className="leading-relaxed text-muted-foreground">
+                      {t(`readSteps.${id}`)}
+                    </p>
+                  </div>
                 ))}
-              </ol>
-            </CardContent>
+              </div>
+            </div>
           </Card>
         </div>
       </div>
