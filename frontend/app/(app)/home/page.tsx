@@ -78,7 +78,7 @@ export default function DashboardPage() {
             onRefreshPrice={handleRefreshBalanceAndPrice}
             username={username}
           />
-          <HomeHoldingsCard />
+          <HomeHoldingsCard hidden={hidden} />
         </div>
         <div className="space-y-6">
           <DashboardActions />

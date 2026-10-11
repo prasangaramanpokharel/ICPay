@@ -17,15 +17,19 @@ import {
   formatBytes,
   formatUsageLabel,
   isBucketActive,
+  isBucketFrozen,
+  isBucketTombstoned,
   isPublicVisibility,
 } from "@/lib/bucket/bucket"
 import type { BucketPublic } from "@/services/bucket/types"
 
 export function BucketCard({ bucket }: { bucket: BucketPublic }) {
   const t = useTranslations("bucket")
-  const active = isBucketActive(bucket.status)
-  const isPublic = isPublicVisibility(bucket.visibility)
   const [now] = useState(() => Date.now())
+  const active = isBucketActive(bucket.status)
+  const isFrozen = isBucketFrozen(bucket.status, bucket.expiresAt, now)
+  const isTombstoned = isBucketTombstoned(bucket.status, bucket.expiresAt, now)
+  const isPublic = isPublicVisibility(bucket.visibility)
 
   const usagePct =
     bucket.capacity > 0n ? Math.min(100, Number((bucket.storageUsed * 100n) / bucket.capacity)) : 0
@@ -72,9 +76,21 @@ export function BucketCard({ bucket }: { bucket: BucketPublic }) {
       <TableCell>
         <Badge
           variant={active ? "outline" : "destructive"}
-          className="h-4.5 px-1.5 text-[10px] font-medium"
+          className={`h-4.5 px-1.5 text-[10px] font-medium ${
+            isFrozen
+              ? "border-amber-500/30 text-amber-500 bg-amber-500/10"
+              : isTombstoned
+              ? "border-red-500/30 text-red-500 bg-red-500/10"
+              : ""
+          }`}
         >
-          {active ? t("active") : t("expired")}
+          {active
+            ? t("active")
+            : isTombstoned
+            ? "Tombstoned"
+            : isFrozen
+            ? "Frozen"
+            : t("expired")}
         </Badge>
       </TableCell>
       <TableCell className="text-xs text-muted-foreground tabular-nums">
@@ -83,7 +99,9 @@ export function BucketCard({ bucket }: { bucket: BucketPublic }) {
             {t("daysLeft", { days: daysRemaining })}
           </span>
         ) : (
-          <span className="font-medium text-destructive">{t("expired")}</span>
+          <span className="font-medium text-destructive">
+            {isTombstoned ? "Tombstoned" : isFrozen ? "Frozen" : t("expired")}
+          </span>
         )}
       </TableCell>
       <TableCell className="text-right">

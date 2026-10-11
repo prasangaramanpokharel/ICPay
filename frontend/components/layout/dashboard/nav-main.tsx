@@ -23,7 +23,7 @@ import {
 import { prefetchAppRoute } from "@/lib/navigation/prefetchRoute"
 
 const itemClass =
-  "h-8 gap-2.5 rounded-lg px-2.5 text-[13px] font-normal text-foreground [&>svg]:size-4 data-active:bg-muted data-active:font-medium"
+  "h-8.5 gap-2.5 rounded-lg px-2.5 text-[13px] font-normal text-foreground [&>svg]:size-4.5 data-active:bg-muted data-active:font-medium"
 
 export function DashboardNavMain() {
   const pathname = usePathname()

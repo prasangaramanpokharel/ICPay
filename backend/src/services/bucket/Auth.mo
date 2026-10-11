@@ -2,6 +2,7 @@ import Principal "mo:core/Principal";
 import Text "mo:core/Text";
 import Time "mo:core/Time";
 import Types "../../types";
+import Config "../../config/Config";
 import BucketRepo "../../repositories/BucketRepository";
 import BucketStorage "../../storage/BucketStorage";
 import ApiKeyService "../ApiKeyService";
@@ -33,7 +34,24 @@ module {
     };
   };
 
+  public func isFrozen(bucket: Types.Bucket, now: Int) : Bool {
+    now >= bucket.expiresAt + Config.BUCKET_GRACE_PERIOD_NS and
+    now < bucket.expiresAt + Config.BUCKET_TOMBSTONE_DELAY_NS
+  };
+
+  public func isTombstoned(bucket: Types.Bucket, now: Int) : Bool {
+    now >= bucket.expiresAt + Config.BUCKET_TOMBSTONE_DELAY_NS
+  };
+
   public func canRead(bucket: Types.Bucket, caller: Principal) : Bool {
+    markExpiredIfNeeded(bucket);
+    let now = Time.now();
+    if (isTombstoned(bucket, now)) {
+      return false;
+    };
+    if (isFrozen(bucket, now)) {
+      return bucket.owner == caller;
+    };
     switch (bucket.visibility) {
       case (#Public) true;
       case (#Private) bucket.owner == caller;
@@ -46,7 +64,8 @@ module {
   };
 
   public func markExpiredIfNeeded(bucket: Types.Bucket) {
-    if (Time.now() >= bucket.expiresAt and bucket.status == #ACTIVE) {
+    let now = Time.now();
+    if (now >= bucket.expiresAt and bucket.status == #ACTIVE) {
       bucket.status := #EXPIRED;
     };
   };
@@ -97,6 +116,11 @@ module {
         #ok({ bucket })
       };
       case (?secret) {
+        markExpiredIfNeeded(bucket);
+        let now = Time.now();
+        if (isTombstoned(bucket, now) or isFrozen(bucket, now)) {
+          return #err("Bucket is frozen or tombstoned — lease expired");
+        };
         switch (ApiKeyService.validate(service.store, secret)) {
           case (#err(e)) { #err(e) };
           case (#ok(key)) {

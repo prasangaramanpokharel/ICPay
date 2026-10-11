@@ -185,6 +185,11 @@ module {
       return #err("Permission denied");
     };
 
+    Auth.refreshBucketStatus(service.store, service.names, bucket);
+    if (Auth.isTombstoned(bucket, Time.now())) {
+      return #err("Bucket tombstoned — files were permanently purged");
+    };
+
     let price = BillingService.calculatePrice(bucket.capacity);
     let destination = AccountHelper.defaultAccount(Principal.fromText(Config.TREASURY));
     let memo = ?Memo.bucketRenew(bucket.name);

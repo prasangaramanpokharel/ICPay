@@ -115,6 +115,8 @@ module {
       case (#err("Bucket not found")) { #err(textResponse(404, "text/plain", "Bucket not found")) };
       case (#err("File not found")) { #err(textResponse(404, "text/plain", "File not found")) };
       case (#err("Bucket is private")) { #err(textResponse(403, "text/plain", "Forbidden")) };
+      case (#err("Bucket frozen — lease expired")) { #err(textResponse(402, "text/plain", "Payment Required — Bucket Frozen")) };
+      case (#err("Bucket tombstoned — files purged")) { #err(textResponse(410, "text/plain", "Gone — Bucket Tombstoned")) };
       case (#err(_)) { #err(textResponse(500, "text/plain", "Error")) };
       case (#ok({ contentType; chunk; totalSize })) {
         if (totalSize <= Config.HTTP_MAX_BODY_BYTES) {
@@ -163,6 +165,8 @@ module {
       case (#err("Bucket not found")) { #err(textResponse(404, "text/plain", "Bucket not found")) };
       case (#err("File not found")) { #err(textResponse(404, "text/plain", "File not found")) };
       case (#err("Bucket is private")) { #err(textResponse(403, "text/plain", "Forbidden")) };
+      case (#err("Bucket frozen — lease expired")) { #err(textResponse(402, "text/plain", "Payment Required — Bucket Frozen")) };
+      case (#err("Bucket tombstoned — files purged")) { #err(textResponse(410, "text/plain", "Gone — Bucket Tombstoned")) };
       case (#err(_)) { #err(textResponse(500, "text/plain", "Error")) };
       case (#ok({ contentType; chunk; totalSize })) {
         if (totalSize <= Config.HTTP_MAX_BODY_BYTES) {

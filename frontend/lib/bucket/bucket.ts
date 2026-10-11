@@ -1,6 +1,6 @@
 export const CAPACITY_TIERS_GB = [1, 5, 10, 25, 50, 100] as const
 
-export const FILES_PAGE_SIZE = 10
+export const FILES_PAGE_SIZE = 20
 
 export {
   BUCKET_CDN_ORIGIN,
@@ -94,12 +94,39 @@ export type BucketVisibilityVariant =
 
 export type BucketStatusVariant = { ACTIVE: null } | { EXPIRED: null }
 
+export const BUCKET_GRACE_PERIOD_MS = 7 * 86_400 * 1000
+export const BUCKET_FROZEN_PERIOD_MS = 14 * 86_400 * 1000
+export const BUCKET_TOMBSTONE_DELAY_MS = 21 * 86_400 * 1000
+
 export function isPublicVisibility(v: BucketVisibilityVariant): boolean {
   return "Public" in v
 }
 
 export function isBucketActive(status: BucketStatusVariant): boolean {
   return "ACTIVE" in status
+}
+
+export function isBucketFrozen(status: BucketStatusVariant, expiresAt: bigint | number, now = Date.now()): boolean {
+  if (isBucketActive(status)) return false
+  const expiresMs = expiresAtToMs(expiresAt)
+  return now >= expiresMs + BUCKET_GRACE_PERIOD_MS && now < expiresMs + BUCKET_TOMBSTONE_DELAY_MS
+}
+
+export function isBucketTombstoned(status: BucketStatusVariant, expiresAt: bigint | number, now = Date.now()): boolean {
+  if (isBucketActive(status)) return false
+  const expiresMs = expiresAtToMs(expiresAt)
+  return now >= expiresMs + BUCKET_TOMBSTONE_DELAY_MS
+}
+
+export function getBucketStatusLabel(
+  status: BucketStatusVariant,
+  expiresAt: bigint | number,
+  now = Date.now()
+): "Active" | "Expired" | "Frozen" | "Tombstoned" {
+  if (isBucketActive(status)) return "Active"
+  if (isBucketTombstoned(status, expiresAt, now)) return "Tombstoned"
+  if (isBucketFrozen(status, expiresAt, now)) return "Frozen"
+  return "Expired"
 }
 
 export function formatBytes(bytes: bigint | number): string {
@@ -153,7 +180,8 @@ export function isAllowedUpload(file: File): boolean {
 /** @deprecated use isAllowedUpload */
 export const isAllowedImage = isAllowedUpload
 
-export function expiresAtToMs(expiresAt: bigint): number {
+export function expiresAtToMs(expiresAt: bigint | number): number {
+  if (typeof expiresAt === "number") return expiresAt
   return Number(expiresAt / 1_000_000n)
 }
 

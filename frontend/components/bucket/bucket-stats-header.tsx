@@ -20,6 +20,8 @@ import { Button } from "@/components/ui/button"
 import {
   formatBytes,
   isBucketActive,
+  isBucketFrozen,
+  isBucketTombstoned,
   isPublicVisibility,
   expiresAtToMs,
   bucketCdnBaseUrl,
@@ -36,7 +38,10 @@ export function BucketStatsHeader({
   onRenew: () => void
 }) {
   const t = useTranslations("bucket")
+  const [now] = useState(() => Date.now())
   const active = isBucketActive(stats.status)
+  const isFrozen = isBucketFrozen(stats.status, stats.expiresAt, now)
+  const isTombstoned = isBucketTombstoned(stats.status, stats.expiresAt, now)
   const isPublic = isPublicVisibility(stats.visibility)
   const [copied, setCopied] = useState(false)
   const [copiedBase, setCopiedBase] = useState(false)
@@ -97,9 +102,23 @@ export function BucketStatsHeader({
                 </span>
                 <Badge
                   variant={active ? "outline" : "destructive"}
-                  className="h-4.5 px-1.5 text-[10px] font-medium"
+                  className={`h-4.5 px-1.5 text-[10px] font-medium ${
+                    isFrozen
+                      ? "border-amber-500/30 text-amber-500 bg-amber-500/10"
+                      : isTombstoned
+                      ? "border-red-500/30 text-red-500 bg-red-500/10"
+                      : ""
+                  }`}
                 >
-                  {active ? (stats.isExpiringSoon ? t("expiringSoon") : t("active")) : t("expired")}
+                  {active
+                    ? stats.isExpiringSoon
+                      ? t("expiringSoon")
+                      : t("active")
+                    : isTombstoned
+                    ? "Tombstoned"
+                    : isFrozen
+                    ? "Frozen"
+                    : t("expired")}
                 </Badge>
                 <Badge
                   variant="secondary"

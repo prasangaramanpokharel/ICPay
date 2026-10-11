@@ -9,7 +9,7 @@ import { TokenLogo } from "@/components/token/token-logo"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { useTokenHoldings } from "@/hooks/wallet/useWalletData"
 
-export function HomeHoldingsCard() {
+export function HomeHoldingsCard({ hidden = false }: { hidden?: boolean }) {
   const t = useTranslations("wallet")
   const tDash = useTranslations("dashboard")
   const { holdings, isLoading } = useTokenHoldings()
@@ -47,8 +47,8 @@ export function HomeHoldingsCard() {
                   <p className="truncate text-sm font-medium">{token.symbol}</p>
                   <p className="truncate text-xs text-muted-foreground">{token.name}</p>
                 </div>
-                <p className="shrink-0 font-mono text-sm tabular-nums">
-                  {formatTokenAmount(token.balance, token.decimals, 4)}
+                <p className="shrink-0 font-mono text-sm tabular-nums text-foreground/90">
+                  {hidden ? "••••" : formatTokenAmount(token.balance, token.decimals, 4)}
                 </p>
               </Link>
             ))}

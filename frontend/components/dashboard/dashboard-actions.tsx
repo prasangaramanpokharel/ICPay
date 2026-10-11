@@ -62,7 +62,7 @@ export function DashboardActions() {
             <Button
               key={item.href}
               variant={item.labelKey === "common.swap" ? "default" : "outline"}
-              className="h-10 justify-start gap-2 rounded-xl px-3"
+              className="h-10 justify-start gap-2 rounded-xl px-3 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 active:scale-[0.98]"
               nativeButton={false}
               render={<Link href={item.href} />}
             >
