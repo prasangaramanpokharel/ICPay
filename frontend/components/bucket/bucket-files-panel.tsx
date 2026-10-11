@@ -19,6 +19,7 @@ import {
   listFolderEntries,
   nestedPrefix,
   pathsUnderFolder,
+  stripLeadingSlash,
 } from "@/lib/bucket/folderPath"
 import type { FileListPage, FilePublic } from "@/services/bucket/types"
 import type { FolderListEntry } from "@/lib/bucket/folderPath"
@@ -123,10 +124,11 @@ export function BucketFilesPanel({
   const allSelected = entryKeys.length > 0 && entryKeys.every((k) => selected.has(k))
 
   const removeFileFromCache = async (path: string) => {
+    const stripped = stripLeadingSlash(path)
     await refreshFiles(
       (current: FileListPage | undefined) => {
         if (!current) return current
-        const items = current.items.filter((f) => f.path !== path)
+        const items = current.items.filter((f) => stripLeadingSlash(f.path) !== stripped)
         const nextTotal = current.total > 0n ? current.total - 1n : 0n
         return { ...current, items, total: nextTotal }
       },
@@ -135,9 +137,50 @@ export function BucketFilesPanel({
     void refreshStats()
   }
 
+  const removePathsFromCache = async (deletedPaths: string[], deletedFolders: string[]) => {
+    const pathSet = new Set(deletedPaths.map(stripLeadingSlash))
+    const folderPrefixes = deletedFolders.map((f) => {
+      const p = stripLeadingSlash(f)
+      return p.endsWith("/") ? p : `${p}/`
+    })
+    const folderNames = new Set(
+      deletedFolders.map((f) => {
+        const segs = stripLeadingSlash(f).replace(/\/$/, "").split("/")
+        return segs[segs.length - 1]
+      })
+    )
+
+    await refreshFiles(
+      (current: FileListPage | undefined) => {
+        if (!current) return current
+        const items = current.items.filter((file) => {
+          const stripped = stripLeadingSlash(file.path)
+          if (pathSet.has(stripped)) return false
+          if (folderPrefixes.some((p) => stripped.startsWith(p))) return false
+          return true
+        })
+        const folders = (current.folders ?? []).filter((f) => !folderNames.has(f))
+        const removedItemsCount = BigInt(current.items.length - items.length)
+        const nextTotal = current.total >= removedItemsCount ? current.total - removedItemsCount : 0n
+        return {
+          ...current,
+          items,
+          folders,
+          total: nextTotal,
+        }
+      },
+      { revalidate: false }
+    )
+    void refreshStats()
+  }
+
   const handleDelete = async (path: string) => {
+    await removeFileFromCache(path)
     const err = await onDelete(path)
-    if (!err) await removeFileFromCache(path)
+    if (err) {
+      await refreshFiles()
+      void refreshStats()
+    }
     return err
   }
 
@@ -168,13 +211,21 @@ export function BucketFilesPanel({
   const confirmBulkDelete = async () => {
     const { paths, folderPaths } = resolveSelectedPaths()
     setDeleting(true)
+    const prevSelected = new Set(selected)
+    await removePathsFromCache(paths, folderPaths)
+    setSelected(new Set())
+
     const fileErr = paths.length > 0 ? await onDeletePaths(paths) : null
     const folderErr = !fileErr && folderPaths.length > 0 ? await onDeleteFolders(folderPaths) : null
     setDeleting(false)
     const err = fileErr ?? folderErr
-    if (err) return
+    if (err) {
+      setSelected(prevSelected)
+      await refreshFiles()
+      void refreshStats()
+      return
+    }
     setConfirmOpen(false)
-    setSelected(new Set())
     await refreshFiles()
     void refreshStats()
   }

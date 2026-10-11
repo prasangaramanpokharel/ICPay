@@ -1,6 +1,7 @@
 "use client"
 
 import { useTranslations } from "next-intl"
+import { Spinner } from "@/components/ui/spinner"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,12 +50,20 @@ export function BucketFileDeleteDialog({
           <AlertDialogAction
             variant="destructive"
             disabled={deleting}
+            className="gap-2"
             onClick={(e) => {
               e.preventDefault()
               void onConfirm()
             }}
           >
-            {deleting ? tc("loading") : t("delete")}
+            {deleting ? (
+              <>
+                <Spinner className="size-4 animate-spin text-current" />
+                <span>{tc("loading")}</span>
+              </>
+            ) : (
+              t("delete")
+            )}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
