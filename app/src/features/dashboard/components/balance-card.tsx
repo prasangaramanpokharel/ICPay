@@ -1,5 +1,7 @@
 import { Image } from 'expo-image'
 import { Pressable, View } from 'react-native'
+import { EyeIcon, ViewOffIcon } from '@hugeicons/core-free-icons'
+import { Icon } from '@/components/ui/icon'
 import { useTranslations } from '@/components/i18n/locale-provider'
 import { Text } from '@/components/ui/text'
 import { PremiumBadge } from '@/components/shared/premium-badge'
@@ -56,12 +58,13 @@ export function BalanceCard({
             accessibilityLabel={hidden ? t('showBalance') : t('hideBalance')}
             onPress={onToggleHidden}
             hitSlop={10}
-            className="items-center justify-center active:opacity-70"
+            className="size-8 items-center justify-center rounded-full active:opacity-70 active:bg-white/10"
           >
-            <Image
-              source={hidden ? icons.hide : icons.show}
-              style={{ width: 22, height: 22, opacity: hidden ? 0.7 : 1 }}
-              contentFit="contain"
+            <Icon
+              icon={hidden ? ViewOffIcon : EyeIcon}
+              size={20}
+              strokeWidth={1.8}
+              color="rgba(255,255,255,0.85)"
             />
           </Pressable>
         </View>

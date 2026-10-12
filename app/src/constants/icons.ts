@@ -20,7 +20,7 @@ export const icons = {
   instant: require('../../assets/Icons8/icons8-split-transaction-48.png'),
   refresh: require('../../assets/Icons8/interface/icons8-available-updates-48.png'),
   hide: require('../../assets/Icons8/interface/icons8-hide-48.png'),
-  show: require('../../assets/Icons8/interface/icons8-hide-48.png'),
+  show: require('../../assets/Icons8/files/icons8-view-48.png'),
   empty: require('../../assets/Icons8/icons8-bounced-check-48.png'),
   connect: require('../../assets/Icons8/icons8-pass-money-48.png'),
   about: require('../../assets/Icons8/symbols/icons8-information-48.png'),
