@@ -11,14 +11,24 @@ import { FaqSection } from "@/components/products/icbucket/faq-section"
 import { PAGE_IMAGES, pageImageUrl } from "@/lib/public/page-images"
 
 export const metadata: Metadata = {
-  title: "ICBucket - On-Chain Cloud Storage for Web3 | ICPay",
+  title: "ICBucket - S3 Compatible Storage & AWS S3 Pricing Alternative | On-Chain Cloud",
   description:
-    "ICBucket is decentralized cloud storage on the Internet Computer. Store files on-chain with API keys and SDKs — 30-day ICP plans from 0.5 ICP, no credit card. Perfect for dApps, NFT metadata, backups, and static hosting.",
+    "ICBucket is S3-compatible decentralized cloud storage on the Internet Computer. Predictable AWS S3 pricing alternative with zero egress fees, scoped API keys, and SDKs. 30-day ICP plans, no credit card required.",
   keywords: [
+    "AWS S3 pricing alternative",
+    "S3 compatible storage",
+    "cloud storage pricing",
+    "AWS S3 cost",
+    "best S3 compatible storage",
+    "cheapest S3 compatible storage",
+    "Cloudinary alternative",
+    "Google Cloud Storage pricing",
+    "s3 pricing",
     "ICBucket",
     "on-chain storage",
-    "decentralized storage",
-    "cloud storage",
+    "onchain storage",
+    "decentralized storage crypto",
+    "decentralized cloud storage",
     "Internet Computer storage",
     "ICP storage",
     "blockchain storage",
@@ -30,15 +40,14 @@ export const metadata: Metadata = {
     "file hosting",
     "static hosting",
     "serverless storage",
-    "30-day ICP storage plans",
     "censorship resistant",
     "immutable storage",
     "distributed storage",
   ],
   openGraph: {
-    title: "ICBucket - On-Chain Cloud Storage for Web3",
+    title: "ICBucket - S3 Compatible Storage & AWS S3 Pricing Alternative",
     description:
-      "Store files on-chain with API keys and SDKs. 30-day ICP plans — no servers, no AWS bills.",
+      "Store files on-chain with S3-compatible APIs and SDKs. Predictable 30-day ICP plans with zero AWS bills and zero egress fees.",
     url: "https://icpay.app/icbucket",
     siteName: "ICPay",
     images: [

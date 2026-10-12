@@ -32,6 +32,24 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "best-s3-compatible-storage-aws-pricing-alternative",
+    title: "Best S3 Compatible Storage 2026: AWS S3 Pricing Alternative & Cloud Cost Comparison",
+    description:
+      "Looking for the best S3-compatible storage and AWS S3 pricing alternative? We compare AWS S3 cost, Google Cloud Storage, Azure Blob, MinIO, and icBucket — highlighting hidden egress fees, API compatibility, and predictable $5/GB/year on-chain storage.",
+    publishedAt: "2026-10-12",
+    readingMinutes: 13,
+    category: "Infrastructure",
+  },
+  {
+    slug: "best-cloudinary-alternative-zero-egress-fees",
+    title: "Best Cloudinary Alternative 2026: Fast Image CDN & On-Chain S3 Storage (Zero Egress Taxes)",
+    description:
+      "Tired of expensive Cloudinary credit limits and surprise bandwidth invoices? Discover the best Cloudinary alternative in 2026: icBucket provides high-speed image & video CDN hosting, direct upload APIs, and predictable flat-rate storage with zero egress taxes.",
+    publishedAt: "2026-10-12",
+    readingMinutes: 12,
+    category: "Developers",
+  },
+  {
     slug: "on-chain-storage-explained",
     title: "On-Chain Storage Explained: Architecture, Costs & Why ICP Outperforms Sui, IPFS & Arweave",
     description:
