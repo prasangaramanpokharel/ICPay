@@ -30,8 +30,8 @@ export function BalanceCard({
   const fiat = useFiatValue(usdValue)
 
   return (
-    <View className="rounded-3xl bg-blue-200/80 pt-4 shadow-2xl">
-      <View className="relative mt-2 rounded-3xl bg-primary p-5 shadow-xl">
+    <View className="rounded-3xl bg-primary/25 pt-2 shadow-2xl">
+      <View className="relative mt-1 rounded-3xl bg-primary p-5 shadow-xl">
         <View className="flex-row items-center justify-between gap-3">
           <View className="min-w-0 flex-row items-center gap-2.5">
             <CardChip />

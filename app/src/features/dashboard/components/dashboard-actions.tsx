@@ -28,7 +28,7 @@ export function DashboardActions() {
           onPress={() => router.push(item.href as never)}
           className="items-center gap-1.5"
         >
-          <View className="size-11 items-center justify-center rounded-full bg-gray-800">
+          <View className="size-11 items-center justify-center rounded-full bg-muted border border-border/40">
             <Image source={item.imagePath} style={{ width: 20, height: 20 }} contentFit="contain"  />
           </View>
           <Text className="text-[11px] font-medium lowercase text-foreground">{t(item.label)}</Text>
