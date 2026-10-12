@@ -6,11 +6,19 @@ import {
 } from '@/lib/wallet/customTokens'
 import { subscribeKv } from '@/services/storage/kv'
 
+const EMPTY_IDS: string[] = []
+
 export function useCustomLedgerIds(principal: string | undefined) {
+  const getSnapshot = useCallback(
+    () => getCustomLedgerIdsSnapshot(principal),
+    [principal],
+  )
+  const getServerSnapshot = useCallback(() => EMPTY_IDS, [])
+
   const ids = useSyncExternalStore(
     subscribeKv,
-    () => (principal ? getCustomLedgerIdsSnapshot(principal) : []),
-    () => [],
+    getSnapshot,
+    getServerSnapshot,
   )
 
   const add = useCallback(
