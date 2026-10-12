@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Add01Icon, CloudIcon, Search01Icon } from "@hugeicons/core-free-icons"
+import { Add01Icon, Book02Icon, CloudIcon, PlayIcon, Search01Icon } from "@hugeicons/core-free-icons"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { BucketCard } from "@/components/bucket/bucket-card"
 import { BucketCreateForm } from "@/components/bucket/bucket-create-form"
@@ -50,6 +50,7 @@ export function BucketListPanel() {
   const [query, setQuery] = useState("")
   const [filter, setFilter] = useState<FilterTab>("all")
   const [createOpen, setCreateOpen] = useState(false)
+  const [guideOpen, setGuideOpen] = useState(false)
 
   useEffect(() => {
     clearLegacyBucketStorage()
@@ -86,10 +87,29 @@ export function BucketListPanel() {
       description={t("subtitle")}
       actions={
         <>
-          <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/bucket/docs" />}>
-            {t("docs")}
-          </Button>
-          <Button size="sm" onClick={() => setCreateOpen(true)}>
+          <div className="inline-flex items-center rounded-lg border border-border bg-muted/40 p-0.5 shadow-2xs">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 gap-1.5 px-3 text-xs font-medium text-foreground hover:bg-background hover:text-foreground"
+              nativeButton={false}
+              render={<Link href="/bucket/docs" />}
+            >
+              <HugeiconsIcon icon={Book02Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+              <span>Docs</span>
+            </Button>
+            <div className="h-4 w-px bg-border/80" />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 gap-1.5 px-3 text-xs font-medium text-foreground hover:bg-background hover:text-foreground"
+              onClick={() => setGuideOpen(true)}
+            >
+              <HugeiconsIcon icon={PlayIcon} className="size-3.5 text-primary fill-primary/20" strokeWidth={1.75} />
+              <span>{t("docs")}</span>
+            </Button>
+          </div>
+          <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1.5">
             <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={1.75} />
             {t("createCta")}
           </Button>
@@ -188,6 +208,29 @@ export function BucketListPanel() {
               <DialogDescription className="text-sm text-muted-foreground">{t("formSubtitle")}</DialogDescription>
             </DialogHeader>
             <BucketCreateForm onCreate={handleCreate} />
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={guideOpen} onOpenChange={setGuideOpen}>
+        <DialogContent className="max-w-2xl sm:max-w-3xl overflow-hidden p-0 border-border bg-background shadow-2xl">
+          <DialogHeader className="p-4 pb-3 border-b border-border/60">
+            <DialogTitle className="text-base font-semibold flex items-center gap-2">
+              <HugeiconsIcon icon={PlayIcon} className="size-4 text-primary fill-primary/20" strokeWidth={1.75} />
+              How to create an icBucket
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Step-by-step video guide to launching on-chain S3-compatible cloud storage on the Internet Computer.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="relative aspect-video w-full bg-black">
+            <video
+              src="https://res.cloudinary.com/dn2ycbmrc/video/upload/v1791783562/howtocreaticBucket_bxifwv.mp4"
+              controls
+              autoPlay
+              playsInline
+              className="h-full w-full object-contain"
+            />
           </div>
         </DialogContent>
       </Dialog>
