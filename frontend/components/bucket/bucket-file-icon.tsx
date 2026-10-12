@@ -84,45 +84,45 @@ export function getCategoryStyle(category: FileCategory | "folder") {
     case "folder":
       return {
         icon: Folder02Icon,
-        color: "text-amber-400",
-        badge: "bg-amber-500/10 text-amber-300 border-amber-500/20",
-        container: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+        color: "text-warning",
+        badge: "bg-warning/10 text-warning border-warning/20",
+        container: "bg-warning/10 text-warning border-warning/20",
       }
     case "images":
       return {
         icon: Image01Icon,
-        color: "text-emerald-400",
-        badge: "bg-emerald-500/10 text-emerald-300 border-emerald-500/20",
-        container: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+        color: "text-success",
+        badge: "bg-success/10 text-success border-success/20",
+        container: "bg-success/10 text-success border-success/20",
       }
     case "media":
       return {
         icon: Video01Icon,
-        color: "text-pink-400",
-        badge: "bg-pink-500/10 text-pink-300 border-pink-500/20",
-        container: "bg-pink-500/10 text-pink-400 border-pink-500/20",
+        color: "text-primary",
+        badge: "bg-primary/10 text-primary border-primary/20",
+        container: "bg-primary/10 text-primary border-primary/20",
       }
     case "code":
       return {
         icon: CodeIcon,
-        color: "text-sky-400",
-        badge: "bg-sky-500/10 text-sky-300 border-sky-500/20",
-        container: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+        color: "text-info",
+        badge: "bg-info/10 text-info border-info/20",
+        container: "bg-info/10 text-info border-info/20",
       }
     case "archives":
       return {
         icon: Zip01Icon,
-        color: "text-purple-400",
-        badge: "bg-purple-500/10 text-purple-300 border-purple-500/20",
-        container: "bg-purple-500/10 text-purple-400 border-purple-500/20",
+        color: "text-secondary-foreground",
+        badge: "bg-secondary text-secondary-foreground border-border",
+        container: "bg-secondary/60 text-secondary-foreground border-border",
       }
     case "documents":
     default:
       return {
         icon: Doc01Icon,
-        color: "text-blue-400",
-        badge: "bg-blue-500/10 text-blue-300 border-blue-500/20",
-        container: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+        color: "text-foreground",
+        badge: "bg-muted text-foreground border-border",
+        container: "bg-muted/60 text-foreground border-border",
       }
   }
 }
@@ -215,7 +215,7 @@ export function BucketFolderIcon({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex size-7 shrink-0 items-center justify-center rounded-md border border-amber-500/20 bg-amber-500/10 text-amber-400 transition-colors",
+        "flex size-7 shrink-0 items-center justify-center rounded-md border border-warning/20 bg-warning/10 text-warning transition-colors",
         className
       )}
     >

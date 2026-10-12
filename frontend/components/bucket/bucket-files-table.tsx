@@ -129,7 +129,7 @@ export function BucketFilesTable({
                     <div className="flex items-center gap-3">
                       <BucketFolderIcon />
                       <div className="min-w-0">
-                        <span className="truncate text-sm font-medium text-foreground group-hover:text-amber-300">
+                        <span className="truncate text-sm font-medium text-foreground group-hover:text-warning">
                           {entry.name}
                         </span>
                       </div>
@@ -138,7 +138,7 @@ export function BucketFilesTable({
                   <TableCell className="text-center">
                     <Badge
                       variant="outline"
-                      className="border-amber-500/25 bg-amber-500/10 font-mono text-[10px] font-semibold tracking-wider text-amber-300 uppercase"
+                      className="border-warning/25 bg-warning/10 font-mono text-[10px] font-semibold tracking-wider text-warning uppercase"
                     >
                       Folder
                     </Badge>

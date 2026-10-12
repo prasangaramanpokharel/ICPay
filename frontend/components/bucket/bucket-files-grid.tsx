@@ -65,7 +65,7 @@ export function BucketFilesGrid({
               tabIndex={0}
               onClick={() => onOpenFolder(entry.name)}
               className={cn(
-                "group relative flex flex-col justify-between overflow-hidden border-border/80 bg-card/60 p-3.5 transition-all duration-150 hover:border-amber-500/40 hover:bg-card hover:shadow-xs",
+                "group relative flex flex-col justify-between overflow-hidden border-border/80 bg-card/60 p-3.5 transition-all duration-150 hover:border-warning/40 hover:bg-card hover:shadow-xs",
                 isSelected && "border-primary bg-primary/5"
               )}
             >
@@ -90,7 +90,7 @@ export function BucketFilesGrid({
 
               <div className="my-3 flex flex-col items-center justify-center gap-2 py-2">
                 <BucketFolderIcon className="size-10 [&>svg]:size-6" />
-                <p className="max-w-full truncate text-center text-sm font-semibold text-foreground group-hover:text-amber-300">
+                <p className="max-w-full truncate text-center text-sm font-semibold text-foreground group-hover:text-warning">
                   {entry.name}
                 </p>
               </div>
@@ -98,7 +98,7 @@ export function BucketFilesGrid({
               <div className="flex items-center justify-between border-t border-border/40 pt-2 text-[11px] text-muted-foreground">
                 <Badge
                   variant="outline"
-                  className="border-amber-500/25 bg-amber-500/10 px-1.5 py-0 font-mono text-[9px] font-semibold text-amber-300 uppercase"
+                  className="border-warning/25 bg-warning/10 px-1.5 py-0 font-mono text-[9px] font-semibold text-warning uppercase"
                 >
                   Folder
                 </Badge>

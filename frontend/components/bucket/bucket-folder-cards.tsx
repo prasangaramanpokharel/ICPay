@@ -46,14 +46,14 @@ export function BucketFolderCards({
                   onOpenFolder(folder.name)
                 }
               }}
-              className="group relative flex cursor-pointer items-center justify-between gap-3 overflow-hidden border-border/80 bg-card/60 p-3.5 transition-all duration-150 hover:border-amber-500/40 hover:bg-card hover:shadow-xs active:scale-[0.99]"
+              className="group relative flex cursor-pointer items-center justify-between gap-3 overflow-hidden border-border/80 bg-card/60 p-3.5 transition-all duration-150 hover:border-warning/40 hover:bg-card hover:shadow-xs active:scale-[0.99]"
             >
               <div className="flex min-w-0 items-center gap-3">
-                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-amber-500/25 bg-amber-500/10 text-amber-400 transition-transform duration-150 group-hover:scale-105">
+                <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-warning/25 bg-warning/10 text-warning transition-transform duration-150 group-hover:scale-105">
                   <HugeiconsIcon icon={Folder02Icon} className="size-5" strokeWidth={1.75} />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-foreground group-hover:text-amber-300">
+                  <p className="truncate text-sm font-semibold text-foreground group-hover:text-warning">
                     {folder.name}
                   </p>
                   <p className="truncate text-xs text-muted-foreground tabular-nums">
