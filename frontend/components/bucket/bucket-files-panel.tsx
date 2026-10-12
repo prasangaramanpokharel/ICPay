@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent } from "@/components/ui/card"
@@ -20,6 +20,7 @@ import {
   joinObjectPath,
   listFolderEntries,
   nestedPrefix,
+  normalizePrefix,
   pathsUnderFolder,
   stripLeadingSlash,
 } from "@/lib/bucket/folderPath"
@@ -260,6 +261,36 @@ export function BucketFilesPanel({
     setConfirmOpen(true)
   }, [selected.size])
 
+  const navigatingFolderRef = useRef<string | null>(null)
+  const navigationTimestampRef = useRef<number>(0)
+
+  const handleOpenFolder = useCallback(
+    (folderName: string) => {
+      const now = Date.now()
+      // Ignore rapid double clicks on the same folder within 500ms
+      if (
+        navigatingFolderRef.current === folderName &&
+        now - navigationTimestampRef.current < 500
+      ) {
+        return
+      }
+
+      // If already navigated into this folder recently, avoid duplicate nested navigation
+      const normalized = normalizePrefix(prefix)
+      if (normalized.endsWith(`${folderName}/`) && now - navigationTimestampRef.current < 800) {
+        return
+      }
+
+      navigatingFolderRef.current = folderName
+      navigationTimestampRef.current = now
+
+      onPrefixChange(nestedPrefix(prefix, folderName))
+      setPreviewFile(null)
+      setQuery("")
+    },
+    [onPrefixChange, prefix]
+  )
+
   const handleRefresh = async () => {
     setRefreshing(true)
     try {
@@ -328,11 +359,7 @@ export function BucketFilesPanel({
           previewId={previewFile?.id}
           canWrite={canWrite}
           onToggleKey={toggleKey}
-          onOpenFolder={(name) => {
-            onPrefixChange(nestedPrefix(prefix, name))
-            setPreviewFile(null)
-            setQuery("")
-          }}
+          onOpenFolder={handleOpenFolder}
           onOpenFile={setPreviewFile}
           onDeleteFile={(p) => void handleDelete(p)}
           onDeleteFolder={(name) => void handleDeleteFolder(name)}
@@ -350,11 +377,7 @@ export function BucketFilesPanel({
           allSelected={allSelected}
           onToggleAll={(on) => setSelected(on ? new Set(entryKeys) : new Set())}
           onToggleKey={toggleKey}
-          onOpenFolder={(name) => {
-            onPrefixChange(nestedPrefix(prefix, name))
-            setPreviewFile(null)
-            setQuery("")
-          }}
+          onOpenFolder={handleOpenFolder}
           onOpenFile={setPreviewFile}
           onDeleteFile={(p) => void handleDelete(p)}
           onDeleteFolder={(name) => void handleDeleteFolder(name)}
