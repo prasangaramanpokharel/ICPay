@@ -11,7 +11,6 @@ import { BucketFileDeleteDialog } from "@/components/bucket/bucket-file-delete-d
 import { BucketSelectBar } from "@/components/bucket/bucket-select-bar"
 import { BucketFilesToolbar, type FileSortKey } from "@/components/bucket/bucket-files-toolbar"
 import { BucketFilesTable, entryKey } from "@/components/bucket/bucket-files-table"
-import { BucketFolderCards } from "@/components/bucket/bucket-folder-cards"
 import { BucketFilesGrid } from "@/components/bucket/bucket-files-grid"
 import { getFileCategory, type FileCategory } from "@/components/bucket/bucket-file-icon"
 import { useBucketExplorerHotkeys } from "@/hooks/bucket/useBucketExplorerHotkeys"
@@ -125,12 +124,6 @@ export function BucketFilesPanel({
       return getFileCategory(entry.file.contentType, entry.file.path) === category
     })
   }, [browse.folders, category, files, prefix, searching])
-
-  const folderEntries = useMemo(() => {
-    return listFolderEntries(files, prefix, browse.folders).filter(
-      (e): e is FolderListEntry<FilePublic> & { kind: "folder" } => e.kind === "folder"
-    )
-  }, [browse.folders, files, prefix])
 
   const visible = useMemo(
     () => sortEntries(entries, files, prefix, sort),
@@ -305,19 +298,6 @@ export function BucketFilesPanel({
         onViewModeChange={setViewMode}
         onRefresh={() => void handleRefresh()}
       />
-
-      {!searching && category === "all" && folderEntries.length > 0 ? (
-        <BucketFolderCards
-          files={files}
-          prefix={prefix}
-          folders={folderEntries}
-          onOpenFolder={(name) => {
-            onPrefixChange(nestedPrefix(prefix, name))
-            setPreviewFile(null)
-            setQuery("")
-          }}
-        />
-      ) : null}
 
       {canWrite ? (
         <BucketSelectBar

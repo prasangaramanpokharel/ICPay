@@ -2,12 +2,8 @@
 
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Grid02Icon,
-  ListViewIcon,
-  Refresh01Icon,
-  Search01Icon,
-} from "@hugeicons/core-free-icons"
+import { Refresh01Icon, Search01Icon } from "@hugeicons/core-free-icons"
+import { LayoutGrid, List } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -127,7 +123,7 @@ export function BucketFilesToolbar({
               aria-label="List view"
               onClick={() => onViewModeChange("list")}
             >
-              <HugeiconsIcon icon={ListViewIcon} className="size-3.5" strokeWidth={1.75} />
+              <List className="size-3.5" />
             </Button>
             <Button
               type="button"
@@ -137,7 +133,7 @@ export function BucketFilesToolbar({
               aria-label="Grid view"
               onClick={() => onViewModeChange("grid")}
             >
-              <HugeiconsIcon icon={Grid02Icon} className="size-3.5" strokeWidth={1.75} />
+              <LayoutGrid className="size-3.5" />
             </Button>
           </div>
         ) : null}

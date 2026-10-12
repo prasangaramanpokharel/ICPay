@@ -79,54 +79,6 @@ export function getFileCategory(contentType = "", path = ""): FileCategory {
   return "documents"
 }
 
-export function getCategoryStyle(category: FileCategory | "folder") {
-  switch (category) {
-    case "folder":
-      return {
-        icon: Folder02Icon,
-        color: "text-warning",
-        badge: "bg-warning/10 text-warning border-warning/20",
-        container: "bg-warning/10 text-warning border-warning/20",
-      }
-    case "images":
-      return {
-        icon: Image01Icon,
-        color: "text-success",
-        badge: "bg-success/10 text-success border-success/20",
-        container: "bg-success/10 text-success border-success/20",
-      }
-    case "media":
-      return {
-        icon: Video01Icon,
-        color: "text-primary",
-        badge: "bg-primary/10 text-primary border-primary/20",
-        container: "bg-primary/10 text-primary border-primary/20",
-      }
-    case "code":
-      return {
-        icon: CodeIcon,
-        color: "text-info",
-        badge: "bg-info/10 text-info border-info/20",
-        container: "bg-info/10 text-info border-info/20",
-      }
-    case "archives":
-      return {
-        icon: Zip01Icon,
-        color: "text-secondary-foreground",
-        badge: "bg-secondary text-secondary-foreground border-border",
-        container: "bg-secondary/60 text-secondary-foreground border-border",
-      }
-    case "documents":
-    default:
-      return {
-        icon: Doc01Icon,
-        color: "text-foreground",
-        badge: "bg-muted text-foreground border-border",
-        container: "bg-muted/60 text-foreground border-border",
-      }
-  }
-}
-
 function iconForExtension(ext: string) {
   switch (ext) {
     case "jpg":
@@ -213,20 +165,16 @@ function iconForExtension(ext: string) {
 
 export function BucketFolderIcon({ className }: { className?: string }) {
   return (
-    <div
-      className={cn(
-        "flex size-7 shrink-0 items-center justify-center rounded-md border border-warning/20 bg-warning/10 text-warning transition-colors",
-        className
-      )}
-    >
-      <HugeiconsIcon icon={Folder02Icon} className="size-4" strokeWidth={1.75} />
-    </div>
+    <HugeiconsIcon
+      icon={Folder02Icon}
+      className={cn("size-5 shrink-0 text-muted-foreground", className)}
+      strokeWidth={1.75}
+    />
   )
 }
 
 export function BucketFileIcon({
   path,
-  contentType,
   className,
 }: {
   path: string
@@ -234,20 +182,14 @@ export function BucketFileIcon({
   className?: string
 }) {
   const ext = pathExtension(path).toLowerCase()
-  const category = getFileCategory(contentType, path)
-  const style = getCategoryStyle(category)
   const IconComponent = iconForExtension(ext)
 
   return (
-    <div
-      className={cn(
-        "flex size-7 shrink-0 items-center justify-center rounded-md border transition-colors",
-        style.container,
-        className
-      )}
-    >
-      <HugeiconsIcon icon={IconComponent} className="size-4" strokeWidth={1.75} />
-    </div>
+    <HugeiconsIcon
+      icon={IconComponent}
+      className={cn("size-5 shrink-0 text-muted-foreground", className)}
+      strokeWidth={1.75}
+    />
   )
 }
 

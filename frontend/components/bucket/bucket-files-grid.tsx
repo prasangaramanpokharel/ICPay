@@ -6,8 +6,6 @@ import { Badge } from "@/components/ui/badge"
 import {
   BucketFileIcon,
   BucketFolderIcon,
-  getCategoryStyle,
-  getFileCategory,
 } from "@/components/bucket/bucket-file-icon"
 import {
   BucketFileRowActions,
@@ -65,7 +63,7 @@ export function BucketFilesGrid({
               tabIndex={0}
               onClick={() => onOpenFolder(entry.name)}
               className={cn(
-                "group relative flex flex-col justify-between overflow-hidden border-border/80 bg-card/60 p-3.5 transition-all duration-150 hover:border-warning/40 hover:bg-card hover:shadow-xs",
+                "group relative flex flex-col justify-between overflow-hidden border-border/80 bg-card/60 p-3.5 transition-all duration-150 hover:border-border hover:bg-card hover:shadow-xs",
                 isSelected && "border-primary bg-primary/5"
               )}
             >
@@ -89,16 +87,16 @@ export function BucketFilesGrid({
               </div>
 
               <div className="my-3 flex flex-col items-center justify-center gap-2 py-2">
-                <BucketFolderIcon className="size-10 [&>svg]:size-6" />
-                <p className="max-w-full truncate text-center text-sm font-semibold text-foreground group-hover:text-warning">
+                <BucketFolderIcon className="size-8" />
+                <p className="max-w-full truncate text-center text-sm font-semibold text-foreground">
                   {entry.name}
                 </p>
               </div>
 
               <div className="flex items-center justify-between border-t border-border/40 pt-2 text-[11px] text-muted-foreground">
                 <Badge
-                  variant="outline"
-                  className="border-warning/25 bg-warning/10 px-1.5 py-0 font-mono text-[9px] font-semibold text-warning uppercase"
+                  variant="secondary"
+                  className="px-1.5 py-0 font-mono text-[9px] text-muted-foreground uppercase"
                 >
                   Folder
                 </Badge>
@@ -108,8 +106,6 @@ export function BucketFilesGrid({
           )
         }
 
-        const cat = getFileCategory(entry.file.contentType, entry.file.path)
-        const style = getCategoryStyle(cat)
         const chip = fileTypeChip(entry.file.contentType, entry.file.path)
         const isImage = entry.file.contentType.startsWith("image/")
 
@@ -157,12 +153,11 @@ export function BucketFilesGrid({
               ) : (
                 <BucketFileIcon
                   path={entry.file.path}
-                  contentType={entry.file.contentType}
-                  className="size-11 [&>svg]:size-6"
+                  className="size-8"
                 />
               )}
               <p
-                className="max-w-full truncate text-center text-xs font-medium text-foreground group-hover:text-primary"
+                className="max-w-full truncate text-center text-xs font-medium text-foreground group-hover:text-foreground"
                 title={entry.file.path}
               >
                 {entry.file.path.split("/").pop()}
@@ -171,11 +166,8 @@ export function BucketFilesGrid({
 
             <div className="flex items-center justify-between border-t border-border/40 pt-2 text-[11px] text-muted-foreground">
               <Badge
-                variant="outline"
-                className={cn(
-                  "px-1.5 py-0 font-mono text-[9px] font-semibold uppercase",
-                  style.badge
-                )}
+                variant="secondary"
+                className="px-1.5 py-0 font-mono text-[9px] text-muted-foreground uppercase"
               >
                 {chip}
               </Badge>

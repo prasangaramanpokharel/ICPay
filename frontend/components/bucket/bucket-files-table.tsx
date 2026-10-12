@@ -15,8 +15,6 @@ import {
 import {
   BucketFileIcon,
   BucketFolderIcon,
-  getCategoryStyle,
-  getFileCategory,
 } from "@/components/bucket/bucket-file-icon"
 import {
   BucketFileRowActions,
@@ -25,7 +23,6 @@ import {
 import { formatFileSize } from "@/components/bucket/bucket-card"
 import { fileTypeChip } from "@/lib/bucket/allowedFiles"
 import { folderTotals, type FolderListEntry } from "@/lib/bucket/folderPath"
-import { cn } from "@/lib/ui/utils"
 import type { FilePublic } from "@/services/bucket/types"
 
 export function entryKey(entry: FolderListEntry<FilePublic>): string {
@@ -129,7 +126,7 @@ export function BucketFilesTable({
                     <div className="flex items-center gap-3">
                       <BucketFolderIcon />
                       <div className="min-w-0">
-                        <span className="truncate text-sm font-medium text-foreground group-hover:text-warning">
+                        <span className="truncate text-sm font-medium text-foreground">
                           {entry.name}
                         </span>
                       </div>
@@ -137,8 +134,8 @@ export function BucketFilesTable({
                   </TableCell>
                   <TableCell className="text-center">
                     <Badge
-                      variant="outline"
-                      className="border-warning/25 bg-warning/10 font-mono text-[10px] font-semibold tracking-wider text-warning uppercase"
+                      variant="secondary"
+                      className="font-mono text-[10px] tracking-wider text-muted-foreground uppercase"
                     >
                       Folder
                     </Badge>
@@ -161,8 +158,6 @@ export function BucketFilesTable({
               )
             }
 
-            const cat = getFileCategory(entry.file.contentType, entry.file.path)
-            const style = getCategoryStyle(cat)
             const chip = fileTypeChip(entry.file.contentType, entry.file.path)
 
             return (
@@ -184,9 +179,9 @@ export function BucketFilesTable({
                 ) : null}
                 <TableCell>
                   <div className="flex min-w-0 items-center gap-3">
-                    <BucketFileIcon path={entry.file.path} contentType={entry.file.contentType} />
+                    <BucketFileIcon path={entry.file.path} />
                     <span
-                      className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-primary"
+                      className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-foreground"
                       title={entry.file.path}
                     >
                       {entry.file.path.split("/").pop()}
@@ -195,11 +190,8 @@ export function BucketFilesTable({
                 </TableCell>
                 <TableCell className="text-center">
                   <Badge
-                    variant="outline"
-                    className={cn(
-                      "font-mono text-[10px] font-semibold tracking-wider uppercase",
-                      style.badge
-                    )}
+                    variant="secondary"
+                    className="font-mono text-[10px] tracking-wider text-muted-foreground uppercase"
                   >
                     {chip}
                   </Badge>
