@@ -31,6 +31,10 @@ const mergeLocale = (override: object): typeof en => ({
     ...en.myCanisters,
     ...((override as { myCanisters?: object }).myCanisters ?? {}),
   },
+  transactions: {
+    ...en.transactions,
+    ...((override as { transactions?: object }).transactions ?? {}),
+  },
 })
 
 const MESSAGES: Record<Locale, typeof en> = {
