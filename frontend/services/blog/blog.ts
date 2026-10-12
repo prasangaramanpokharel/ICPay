@@ -32,6 +32,24 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "on-chain-storage-explained",
+    title: "On-Chain Storage Explained: Architecture, Costs & Why ICP Outperforms Sui, IPFS & Arweave",
+    description:
+      "What is on-chain storage? A comprehensive technical guide comparing on-chain vs. off-chain storage, storage economics across Ethereum, Sui (Walrus), Arweave, Filecoin, and why Internet Computer (icBucket) achieves true on-chain HTTP streaming at $5/GB/year.",
+    publishedAt: "2026-10-12",
+    readingMinutes: 14,
+    category: "Explainers",
+  },
+  {
+    slug: "on-chain-storage-vs-centralized-cloud",
+    title: "On-Chain Storage vs. Centralized Cloud: The Hidden Risks of AWS, Supabase & The Sovereign Alternative",
+    description:
+      "Why storing critical documents and customer data exclusively on AWS S3 or Supabase is an existential business risk. Real-world analysis of account suspensions, the UniSuper cloud deletion disaster, legal liability gaps, and how on-chain storage (icBucket) provides sovereign immunity.",
+    publishedAt: "2026-10-12",
+    readingMinutes: 13,
+    category: "Infrastructure",
+  },
+  {
     slug: "icpay-infrastructure-update-new-domains-icbucket",
     title: "ICPay Infrastructure Update: New Domains icpay.cloud & onchainstorage.shop, Plus 268+ User Milestone",
     description:
