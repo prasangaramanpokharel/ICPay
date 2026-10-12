@@ -49,6 +49,8 @@ export const icons = {
   website: require('../../assets/Icons8/interface/icons8-webpage-48.png'),
   list: require('../../assets/Icons8/interface/icons8-list-48.png'),
   community: require('../../assets/Icons8/MESSAGING/icons8-chat-bubble-48.png'),
+  canister: require('../../assets/Icons8/files/icons8-file-configuration-48.png'),
+  canisterTopup: require('../../assets/Icons8/icons8-deposit-48.png'),
 } as const
 
 export type AppIconName = keyof typeof icons

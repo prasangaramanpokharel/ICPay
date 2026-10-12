@@ -49,6 +49,13 @@ export function SettingsScreen() {
       ],
     },
     {
+      key: 'canisters',
+      items: [
+        { href: '/canister', key: 'canisters', icon: 'canister', keywords: 'canister cycles subnet create manage snapshots topup developer' },
+        { href: '/canister', key: 'canisterTopup', icon: 'canisterTopup', keywords: 'topup cycles cmc canister fuel gas' },
+      ],
+    },
+    {
       key: 'activity',
       items: [
         { href: '/analytics', key: 'analytics', icon: 'analytics', keywords: 'analytics stats volume csv export tracking' },
