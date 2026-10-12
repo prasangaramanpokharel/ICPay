@@ -145,7 +145,7 @@ export function useBucketUpload({
   }, [runJob])
 
   const enqueue = useCallback(
-    (list: FileList) => {
+    (list: FileList | File[]) => {
       const jobs: UploadJob[] = []
       const added: BucketUploadItem[] = []
       for (const file of Array.from(list)) {
