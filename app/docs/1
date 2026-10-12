@@ -1,0 +1,101 @@
+Here is the comprehensive feature list and an all-in-one code architecture example for an app utilizing the official @icp-sdk ecosystem. [1] 
+------------------------------
+## Complete Feature List
+The modern @icp-sdk ecosystem consists of modular layers covering all essential dApp features: [2] 
+
+   1. @icp-sdk/core/agent: The foundational layer used to initialize an HttpAgent to handle secure data transfers via query (read-only) and update (state-changing) calls to any smart contract (canister).
+   2. @icp-sdk/core/identity: Cryptographic identity tools (like Ed25519KeyIdentity) used to sign queries and updates.
+   3. @icp-sdk/core/candid: The data serialization tool (IDL) used to encode arguments and decode returns dynamically when communicating with canisters.
+   4. @icp-sdk/core/principal: A parser for identifiers to explicitly reference text-based user accounts and canister locations.
+   5. @icp-sdk/auth: Seamless browser authentication connecting directly to Internet Identity to obtain verifiable user delegation certificates.
+   6. @icp-sdk/signer: Orchestration logic allowing apps to securely offload execution signing requests to non-custodial asset wallets (like OISY or NFID). [1, 2, 3] 
+
+------------------------------
+## Complete Application Code Example
+This clean, comprehensive module combines Authentication, Agent Creation, Data Encoding, and Canister Execution into an enterprise-ready pattern: [1] 
+
+import { HttpAgent } from '@icp-sdk/core/agent';import { Ed25519KeyIdentity } from '@icp-sdk/core/identity';import { IDL } from '@icp-sdk/core/candid';import { Principal } from '@icp-sdk/core/principal';import { AuthClient } from '@icp-sdk/auth';
+/**
+ * 1. Define the Interface (Candid IDL) 
+ * Describes a standard backend canister structure (e.g., a greeting service)
+ */const profileIdlFactory = () => {
+  return IDL.Service({
+    'greet': IDL.Func([IDL.Text], [IDL.Text], []),
+    'get_profile': IDL.Func([], [IDL.Record({ name: IDL.Text, age: IDL.Nat })], ['query']),
+  });
+};
+export async function initializeIcpApp() {
+  // Target Canister Identifier
+  const canisterId = Principal.fromText('uqqxf-5h777-77774-qaaaa-cai');
+  
+  /**
+   * 2. Manage Web Authentication (Internet Identity Setup)
+   */
+  const authClient = await AuthClient.create();
+  let identity = authClient.getIdentity();
+
+  // If the user isn't logged in, trigger the Internet Identity secure popup login
+  if (!await authClient.isAuthenticated()) {
+    await new Promise<void>((resolve, reject) => {
+      authClient.login({
+        identityProvider: 'https://identity.ic0.app',
+        onSuccess: () => {
+          identity = authClient.getIdentity();
+          resolve();
+        },
+        onError: (err) => reject(err),
+      });
+    });
+  }
+
+  /**
+   * 3. Construct the Agent
+   * Binds the cryptographically verified user identity to the network pipeline
+   */
+  const agent = await HttpAgent.create({
+    host: 'https://icp-api.io', // Global IC network boundary entry point
+    identity,
+  });
+
+  // Note: Only required for local local/testnet development setup
+  // await agent.fetchRootKey(); 
+
+  console.log(`Connected with user Principal: ${identity.getPrincipal().toText()}`);
+
+  /**
+   * 4. Execute a Transaction (Update Call)
+   * Encodes arguments with Candid IDL and dispatches a signed mutation transaction
+   */
+  const greetArgs = IDL.encode([IDL.Text], ['World']);
+  
+  const updateResult = await agent.call(canisterId, {
+    methodName: 'greet',
+    arg: greetArgs,
+  });
+
+  // Decode binary array response back into human-readable data
+  const [greetingText] = IDL.decode([IDL.Text], updateResult.reply);
+  console.log('Update Call Result:', greetingText);
+
+  /**
+   * 5. Execute a Query (Fast, Read-Only Call)
+   */
+  const queryResult = await agent.query(canisterId, {
+    methodName: 'get_profile',
+    arg: IDL.encode([], []),
+  });
+
+  if (queryResult.status === 'replied') {
+    const [profile] = IDL.decode(
+      [IDL.Record({ name: IDL.Text, age: IDL.Nat })], 
+      queryResult.reply
+    );
+    console.log('Query Call Profile:', profile);
+  }
+}
+
+Would you like me to generate a configuration for Webpack/Vite to handle the polyfills for this setup, or are you looking to use the @icp-sdk/bindgen plugin to auto-generate the Candid IDL files?
+
+[1] [https://www.npmjs.com](https://www.npmjs.com/package/@icp-sdk/core)
+[2] https://js.icp.build
+[3] [https://rareskills.io](https://rareskills.io/icp-for-evm-developers/the-icp-javascript-agent-library)

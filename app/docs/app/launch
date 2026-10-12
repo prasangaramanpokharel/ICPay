@@ -1,0 +1,211 @@
+# Google Play Store Launch Guide — ICPay Mobile
+
+This guide provides an end-to-end operational roadmap for publishing **ICPay Mobile** (`app.icpay.mobile`) to the **Google Play Store**. It covers account registration nuances, Google's strict 20-tester requirement, crypto/financial policy compliance, EAS cloud build pipelines, and production rollout.
+
+---
+
+## 1. Google Play Developer Account Setup & Requirements
+
+To publish on Google Play, you need a Google Play Developer Account ($25 one-time registration fee).
+
+### Personal Account vs. Organization Account (Critical Decision)
+
+| Aspect | Personal Developer Account | Organization (Company) Account |
+| :--- | :--- | :--- |
+| **Registration Fee** | $25 USD (one-time) | $25 USD (one-time) |
+| **Verification Requirements** | Government ID (Passport / National ID) + Proof of Address. | **D-U-N-S Number** (Dun & Bradstreet) + Official Company Registration Docs. |
+| **Mandatory Closed Testing Rule** | **REQUIRED**: Must recruit **20 distinct testers** who remain opted into closed testing continuously for at least **14 consecutive days** before production access is unlocked. | **EXEMPT**: Organizations are **not** subjected to the mandatory 20-tester/14-day closed testing block and can apply directly for production. |
+| **Public Developer Profile** | Shows personal legal name and physical address on the Play Store listing. | Shows corporate entity name and registered office address. |
+
+> [!IMPORTANT]
+> If registering as a **Personal Account**, Google strictly enforces the **20 testers for 14 days** rule. You cannot bypass this rule on personal accounts created after November 2023. If you have an established company or LLC, registering an **Organization Account** (with a D-U-N-S number) is significantly faster for going straight to production.
+
+---
+
+## 2. Crypto & Financial Policy Compliance (Avoid Instant Rejection)
+
+Google Play enforces strict guidelines for **Cryptocurrency & Web3 apps**:
+
+### A. Blockchain-Based Content Declaration
+- In Google Play Console under **Policy > App content > Financial features & Blockchain**:
+  - Declare that the app provides custodial/non-custodial cryptocurrency wallet services.
+  - Comply with Google's Blockchain Content Policy: ICPay must **never** promote cloud mining or unauthorized token sales on device.
+
+### B. App Access for Google Reviewers (Critical)
+- Because Google reviewers must test the app, you must provide clear login instructions under **App content > App access**:
+  - Provide a test Internet Identity / demo session instructions or test recovery seed so reviewers can log in without being blocked by hardware authentication.
+  - Include a 1-minute YouTube demo link or screen recording demonstrating how funds and wallet features work.
+
+### C. Permissions Declaration
+- `app.json` includes:
+  - `android.permission.USE_BIOMETRIC`
+  - `android.permission.USE_FINGERPRINT`
+- In Console, declare that biometrics are strictly utilized on-device for local app lock/unlock authentication.
+
+### D. Privacy Policy & Data Safety Form
+- **Privacy Policy URL**: `https://icpay.app/privacy`
+- **Data Safety Form Answers**:
+  - **Financial Info**: Account/Principal identifier (collected for app functionality).
+  - **Personal Info**: Optional custom username handles.
+  - **Data Encryption**: All data transmitted over secure HTTPS / IC replica protocol (TLS).
+  - **Data Deletion**: Explain how users can clear their account/session from local storage or request username unlinking.
+
+---
+
+## 3. Store Listing Assets Preparation
+
+Prepare these graphical and textual assets before creating the store listing:
+
+| Asset | Specifications | Purpose |
+| :--- | :--- | :--- |
+| **App Icon** | 512 x 512 px, 32-bit PNG, max 1024 KB, no alpha/transparency | Play Store icon |
+| **Feature Graphic** | 1024 x 500 px, JPG or 24-bit PNG, max 15 MB | Top banner on store listing |
+| **Phone Screenshots** | Min 2 (recommended 4–6), 16:9 or 9:16 aspect ratio (e.g. 1080 x 2400 px), PNG or JPEG | Displays wallet screens (Dashboard, Send, Swap, Buckets, Transactions) |
+| **App Title** | Up to 30 characters: `ICPay — Web3 ICP Wallet` | Main app title |
+| **Short Description** | Up to 80 characters: `Secure, fast custodial ICP wallet with custom handles, swap, and on-chain storage.` | Search snippet |
+| **Full Description** | Up to 4,000 characters: Detailed breakdown of features, security, zero gas fees, Internet Identity auth. | Full store text |
+
+---
+
+## 4. Building the Production Android App Bundle (.aab)
+
+Google Play requires the **Android App Bundle (.aab)** format (not raw `.apk`).
+
+### Step 1: Ensure EAS CLI is Installed and Authenticated
+From your terminal in `/home/prasanga/Desktop/icppay/app`:
+
+```bash
+# Install EAS CLI globally (if not already installed)
+npm install -g eas-cli
+
+# Log in to your Expo account
+npx eas-cli login
+```
+
+### Step 2: Verify `app.json` & `eas.json`
+`app/app.json` is already configured:
+- `package`: `"app.icpay.mobile"`
+- `version`: `"1.0.0"`
+- `eas.projectId`: `"d44cde4d-7588-4547-aab1-d460cfeb3da8"`
+
+`app/eas.json` is already configured for production:
+```json
+{
+  "build": {
+    "production": {
+      "autoIncrement": true,
+      "android": {
+        "buildType": "app-bundle"
+      }
+    }
+  }
+}
+```
+
+### Step 3: Trigger EAS Cloud Build
+Run the production build command:
+
+```bash
+cd /home/prasanga/Desktop/icppay/app
+npx eas-cli build --platform android --profile production
+```
+
+- When prompted:
+  - **Generate Android Keystore?** Choose **Yes, let EAS manage the credentials** (EAS securely creates and backs up your release keystore on Expo's servers).
+- EAS will compile the React Native project, assemble native assets, and generate the signed `.aab` bundle.
+- Once finished, EAS will print a URL to download your release bundle (e.g., `application-xxxxxxxx.aab`).
+
+---
+
+## 5. Google Play Console Configuration Walkthrough
+
+1. Open [Google Play Console](https://play.google.com/console).
+2. Click **Create app**:
+   - **App name**: `ICPay: ICP Crypto Wallet`
+   - **Default language**: English (United States)
+   - **App or game**: App
+   - **Free or paid**: Free
+   - Accept Declarations and click **Create app**.
+
+3. **Complete the "Set up your app" dashboard checklist**:
+   - **Privacy Policy**: Provide `https://icpay.app/privacy`.
+   - **App Access**: Choose *All or some functionality is restricted* and provide demo instructions (e.g. "User signs in with Internet Identity. If testing without II, use the provided demo test credentials/keys").
+   - **Ads**: Select *No, my app does not contain ads*.
+   - **Content Ratings**: Complete the IARC questionnaire (Utility / Financial / Blockchain). Usually rates PEGI 3 / Everyone.
+   - **Target Audience**: Select **18 and older**.
+   - **Financial Features**: Check *Cryptocurrency or virtual currency wallet*. Confirm regulatory and fraud compliance statements.
+   - **Data Safety**: Complete the questionnaire matching your privacy disclosures.
+   - **Government Apps**: No.
+   - **Financial Features Declaration**: Declare custodial wallet services for the Internet Computer ecosystem.
+
+4. **Set Up Store Presence**:
+   - Go to **Grow > Store presence > Main store listing**.
+   - Paste **Short Description** and **Full Description**.
+   - Upload **App Icon (512x512)** and **Feature Graphic (1024x500)**.
+   - Upload **Phone Screenshots (min 4 recommended)**.
+
+---
+
+## 6. Testing Track Strategy & Rollout Protocol
+
+```
+Internal Testing  ──>  Closed Testing (20 Testers x 14 Days)  ──>  Production Review  ──>  Live on Play Store
+  (Immediate)                 (Personal Accounts Only)                 (1–3 Days)
+```
+
+### Track 1: Internal Testing (Start Here)
+- Go to **Testing > Internal testing**.
+- Click **Create new release**, upload your downloaded `.aab` file from EAS.
+- Add yourself and your team's email addresses to the internal email list.
+- **Advantage**: Internal test releases are available within minutes without waiting for Google's app review team.
+
+### Track 2: Closed Testing (Fulfilling the 20 Testers Rule)
+*Required only if using a Personal Developer Account:*
+1. Go to **Testing > Closed testing**.
+2. Create a track (e.g. `Alpha` or `Closed Beta`).
+3. Create an email list of at least **20 trusted testers** (friends, colleagues, community members with Android devices).
+4. Create a release and upload the `.aab`.
+5. Share the opt-in web link with your 20 testers.
+6. **Mandatory Condition**: All 20 testers must click **"Become a tester"**, download the app, and keep it installed on their device for **14 consecutive days**.
+7. Google Play Console will display a progress tracker: *"X days remaining with 20 testers opted in"*.
+8. Once the 14 days lapse, the button **"Apply for production access"** becomes active.
+
+### Track 3: Production Rollout
+1. Once production access is unlocked (or immediately if using an Organization account):
+2. Go to **Release > Production**.
+3. Click **Create new release**.
+4. Select your approved release bundle from the library.
+5. Enter release notes (e.g., `Initial release of ICPay: Send, receive, swap tokens and manage on-chain storage on the Internet Computer.`).
+6. Click **Save** and **Review release**.
+7. Click **Start rollout to Production**.
+8. The app goes to Google review (typically takes 1 to 3 business days). Once approved, it is live worldwide on the Google Play Store!
+
+---
+
+## 7. Direct Automated Submission with EAS (`eas submit`)
+
+Once your Google Play Console app is set up, you can automate uploading future builds directly from your command line:
+
+1. In Google Cloud Console, create a **Service Account** with the **Google Play Android Developer** API enabled and generate a service account `.json` key file.
+2. In Google Play Console, invite this service account under **Users and permissions** with *Admin* or *Release Manager* role.
+3. Configure `app/eas.json` to reference the key, or pass it directly:
+   ```bash
+   npx eas-cli submit --platform android --path ./path-to-bundle.aab
+   ```
+   Or build and submit in a single continuous pipeline:
+   ```bash
+   npx eas-cli build --platform android --profile production --auto-submit
+   ```
+
+---
+
+## 8. Pre-Launch Quick Checklist
+
+- [ ] `app/app.json`: `package` set to `app.icpay.mobile`.
+- [ ] Version code increments automatically on each build (`autoIncrement: true`).
+- [ ] `https://icpay.app/privacy` is reachable and covers data safety declarations.
+- [ ] Google Play Console App Access contains reviewer login steps.
+- [ ] 512x512 app icon and 1024x500 feature graphic prepared.
+- [ ] At least 4 high-resolution mobile screenshots captured.
+- [ ] Content rating questionnaire and Financial Features declarations completed.
+- [ ] Production `.aab` compiled and verified on a physical Android device.
