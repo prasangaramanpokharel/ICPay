@@ -11,6 +11,9 @@ import { BucketFileDeleteDialog } from "@/components/bucket/bucket-file-delete-d
 import { BucketSelectBar } from "@/components/bucket/bucket-select-bar"
 import { BucketFilesToolbar, type FileSortKey } from "@/components/bucket/bucket-files-toolbar"
 import { BucketFilesTable, entryKey } from "@/components/bucket/bucket-files-table"
+import { BucketFolderCards } from "@/components/bucket/bucket-folder-cards"
+import { BucketFilesGrid } from "@/components/bucket/bucket-files-grid"
+import { getFileCategory, type FileCategory } from "@/components/bucket/bucket-file-icon"
 import { useBucketExplorerHotkeys } from "@/hooks/bucket/useBucketExplorerHotkeys"
 import { useBucketFiles, useBucketSearch, useBucketStats } from "@/hooks/bucket/useBucket"
 import {
@@ -78,6 +81,8 @@ export function BucketFilesPanel({
   const [query, setQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
   const [sort, setSort] = useState<FileSortKey>("name")
+  const [category, setCategory] = useState<FileCategory>("all")
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list")
   const [refreshing, setRefreshing] = useState(false)
   const searching = debouncedQuery.length > 0
 
@@ -110,11 +115,22 @@ export function BucketFilesPanel({
   }, [query])
 
   const entries = useMemo(() => {
-    if (searching) {
-      return files.map((file) => ({ kind: "file" as const, file }))
-    }
-    return listFolderEntries(files, prefix, browse.folders)
-  }, [browse.folders, files, prefix, searching])
+    const raw = searching
+      ? files.map((file) => ({ kind: "file" as const, file }))
+      : listFolderEntries(files, prefix, browse.folders)
+
+    if (category === "all") return raw
+    return raw.filter((entry) => {
+      if (entry.kind === "folder") return false
+      return getFileCategory(entry.file.contentType, entry.file.path) === category
+    })
+  }, [browse.folders, category, files, prefix, searching])
+
+  const folderEntries = useMemo(() => {
+    return listFolderEntries(files, prefix, browse.folders).filter(
+      (e): e is FolderListEntry<FilePublic> & { kind: "folder" } => e.kind === "folder"
+    )
+  }, [browse.folders, files, prefix])
 
   const visible = useMemo(
     () => sortEntries(entries, files, prefix, sort),
@@ -182,6 +198,18 @@ export function BucketFilesPanel({
       void refreshStats()
     }
     return err
+  }
+
+  const handleDeleteFolder = async (folderName: string) => {
+    const folderPath = joinObjectPath(prefix, `${folderName}/`)
+    const childPaths = pathsUnderFolder(files, prefix, folderName)
+    await removePathsFromCache(childPaths, [folderPath])
+    if (childPaths.length > 0) {
+      await onDeletePaths(childPaths)
+    }
+    await onDeleteFolders([folderPath])
+    await refreshFiles()
+    void refreshStats()
   }
 
   const toggleKey = (key: string, on: boolean) => {
@@ -264,15 +292,32 @@ export function BucketFilesPanel({
   const empty = !isLoading && files.length === 0 && (searching || entries.length === 0)
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <BucketFilesToolbar
         query={query}
         sort={sort}
+        category={category}
+        viewMode={viewMode}
         refreshing={refreshing}
         onQueryChange={setQuery}
         onSortChange={setSort}
+        onCategoryChange={setCategory}
+        onViewModeChange={setViewMode}
         onRefresh={() => void handleRefresh()}
       />
+
+      {!searching && category === "all" && folderEntries.length > 0 ? (
+        <BucketFolderCards
+          files={files}
+          prefix={prefix}
+          folders={folderEntries}
+          onOpenFolder={(name) => {
+            onPrefixChange(nestedPrefix(prefix, name))
+            setPreviewFile(null)
+            setQuery("")
+          }}
+        />
+      ) : null}
 
       {canWrite ? (
         <BucketSelectBar
@@ -292,8 +337,30 @@ export function BucketFilesPanel({
             {searching ? t("noFilterMatch") : t("noFiles")}
           </CardContent>
         </Card>
+      ) : viewMode === "grid" ? (
+        <BucketFilesGrid
+          bucketId={bucketId}
+          bucketName={resolvedBucketName}
+          files={files}
+          prefix={prefix}
+          visible={visible}
+          selected={selected}
+          previewId={previewFile?.id}
+          canWrite={canWrite}
+          onToggleKey={toggleKey}
+          onOpenFolder={(name) => {
+            onPrefixChange(nestedPrefix(prefix, name))
+            setPreviewFile(null)
+            setQuery("")
+          }}
+          onOpenFile={setPreviewFile}
+          onDeleteFile={(p) => void handleDelete(p)}
+          onDeleteFolder={(name) => void handleDeleteFolder(name)}
+        />
       ) : (
         <BucketFilesTable
+          bucketId={bucketId}
+          bucketName={resolvedBucketName}
           files={files}
           prefix={prefix}
           visible={visible}
@@ -309,6 +376,8 @@ export function BucketFilesPanel({
             setQuery("")
           }}
           onOpenFile={setPreviewFile}
+          onDeleteFile={(p) => void handleDelete(p)}
+          onDeleteFolder={(name) => void handleDeleteFolder(name)}
         />
       )}
 
