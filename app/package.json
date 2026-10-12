@@ -15,7 +15,7 @@
     "@dicebear/core": "^9.4.3",
     "@hugeicons/core-free-icons": "^4.2.3",
     "@hugeicons/react-native": "^1.0.15",
-    "@icp-sdk/core": "^6.1.0",
+    "@icp-sdk/core": "^6.1.1",
     "@noble/hashes": "^2.3.0",
     "@react-native-async-storage/async-storage": "2.2.0",
     "class-variance-authority": "^0.7.1",
