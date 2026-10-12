@@ -1,4 +1,10 @@
-# Python SDK
+# ICBucket - S3 Compatible On-Chain Storage (AWS S3 & Cloudinary Alternative)
+
+Official Python SDK (`icpay-bucket`) for [ICBucket](https://icpay.app/icbucket) on the Internet Computer. High-performance, S3-compatible cloud storage with zero egress fees and direct CDN delivery.
+
+- 🌐 **Homepage:** [https://icpay.app/icbucket](https://icpay.app/icbucket)
+- 📖 **Documentation:** [https://icpay.app/bucket/docs](https://icpay.app/bucket/docs)
+- 📦 **PyPI Package:** [https://libraries.io/pypi/icpay-bucket](https://libraries.io/pypi/icpay-bucket)
 
 ```bash
 pip install icpay-bucket
@@ -42,7 +48,7 @@ if "ok" in result:
     print(result["ok"].decode())
 ```
 
-## List & search
+## List & Search
 
 ```python
 client.list_files("my-app", page=0, page_size=50)
@@ -51,7 +57,7 @@ client.search_files("my-app", "file.txt", page=0, page_size=20)
 client.file_exists("my-app", "/docs/file.txt")
 ```
 
-## Move, copy, delete
+## Move, Copy, Delete
 
 ```python
 client.copy_file("my-app", "/a.txt", "/b.txt")
@@ -70,7 +76,7 @@ else:
     error = result["err"]
 ```
 
-## Run tests
+## Run Tests
 
 ```bash
 cd ../test

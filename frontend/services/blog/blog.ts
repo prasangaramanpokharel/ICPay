@@ -32,6 +32,24 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "cloud-storage-pricing-comparison-2026",
+    title: "Cloud Storage Pricing Comparison 2026: AWS vs Google vs Azure vs ICBucket",
+    description:
+      "Complete 2026 cloud storage pricing comparison guide. We break down storage costs, hidden egress bandwidth fees, request charges, and compare AWS S3, Google Cloud Storage, Microsoft Azure Blob, and on-chain ICBucket.",
+    publishedAt: "2026-10-12",
+    readingMinutes: 14,
+    category: "Infrastructure",
+  },
+  {
+    slug: "file-upload-api-s3-compatible",
+    title: "File Upload API 2026: S3-Compatible SDK & Direct Cloudinary Alternative | ICBucket",
+    description:
+      "Looking for a fast, reliable file upload API? Meet icpay-bucket: the S3-compatible TypeScript and Python SDK for on-chain cloud storage on the Internet Computer. Zero egress fees, chunked uploads, and instant public CDN delivery.",
+    publishedAt: "2026-10-12",
+    readingMinutes: 12,
+    category: "Developers",
+  },
+  {
     slug: "best-s3-compatible-storage-aws-pricing-alternative",
     title: "Best S3 Compatible Storage 2026: AWS S3 Pricing Alternative & Cloud Cost Comparison",
     description:
