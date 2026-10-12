@@ -12,6 +12,7 @@ import { Sheet } from '@/components/ui/sheet'
 import { BucketFileRow } from '@/features/bucket/bucket-file-row'
 import { BucketFilePreviewSheet } from '@/features/bucket/bucket-file-preview-sheet'
 import { BucketApiKeysSheet } from '@/features/bucket/bucket-api-keys-sheet'
+import { BucketConnectSheet } from '@/features/bucket/bucket-connect-sheet'
 import { useAuth } from '@/components/auth/auth-provider'
 import { useBucketFiles, useBucketStats, useInvalidateBucketCache } from '@/hooks/use-bucket'
 import { useRefreshWallet } from '@/hooks/use-wallet-data'
@@ -33,6 +34,7 @@ export function BucketDetailScreen() {
   const [category, setCategory] = useState<FileCategory>('all')
   const [renewOpen, setRenewOpen] = useState(false)
   const [keysOpen, setKeysOpen] = useState(false)
+  const [connectOpen, setConnectOpen] = useState(false)
   const [preview, setPreview] = useState<FilePublic | null>(null)
   const [copied, setCopied] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -111,6 +113,9 @@ export function BucketDetailScreen() {
           </Text>
         </View>
         <View className="flex-row items-center gap-2">
+          <Button variant="outline" size="sm" className="rounded-full px-3" onPress={() => setConnectOpen(true)}>
+            Connect
+          </Button>
           <Button variant="outline" size="sm" className="rounded-full px-3" onPress={() => setKeysOpen(true)}>
             API Keys
           </Button>
@@ -260,6 +265,13 @@ export function BucketDetailScreen() {
         onDelete={handleDelete}
       />
       <BucketApiKeysSheet bucketId={bucketId} open={keysOpen} onOpenChange={setKeysOpen} />
+      <BucketConnectSheet
+        bucketId={bucketId}
+        stats={stats}
+        open={connectOpen}
+        onOpenChange={setConnectOpen}
+        onOpenApiKeys={() => setKeysOpen(true)}
+      />
       <Sheet open={renewOpen} onOpenChange={setRenewOpen} title={t('renewTitle')} description={t('renewBody')}>
         <Text className="text-sm leading-relaxed text-muted-foreground">
           {t('renewConfirm', { price: formatAmount(stats.renewPriceE8s) })}

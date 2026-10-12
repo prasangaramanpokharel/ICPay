@@ -12,6 +12,7 @@ import {
   Folder02Icon,
   Key01Icon,
   MoreVerticalIcon,
+  Plug01Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -36,6 +37,7 @@ import { BucketFolderDialog } from "@/components/bucket/bucket-folder-dialog"
 import { BucketUploadControl } from "@/components/bucket/bucket-upload-control"
 import { BucketRenewDrawer } from "@/components/bucket/bucket-renew-drawer"
 import { BucketApiKeysModal } from "@/components/bucket/bucket-api-keys-modal"
+import { BucketConnectModal } from "@/components/bucket/bucket-connect-modal"
 import { BucketStatsHeader } from "@/components/bucket/bucket-stats-header"
 import {
   useBucketStats,
@@ -69,6 +71,7 @@ export function BucketDetail() {
   const { stats, isLoading: statsLoading, refresh: refreshStats } = useBucketStats(bucketId || null)
   const [renewOpen, setRenewOpen] = useState(false)
   const [apiKeysOpen, setApiKeysOpen] = useState(false)
+  const [connectOpen, setConnectOpen] = useState(false)
   const [prefix, setPrefix] = useState("")
   const [folderOpen, setFolderOpen] = useState(false)
 
@@ -231,6 +234,18 @@ export function BucketDetail() {
           type="button"
           variant="outline"
           size="sm"
+          onClick={() => setConnectOpen(true)}
+          className="gap-1.5"
+        >
+          <HugeiconsIcon icon={Plug01Icon} className="size-4" strokeWidth={1.75} />
+          <span>Connect</span>
+        </Button>
+      ) : null}
+      {stats ? (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
           onClick={() => setApiKeysOpen(true)}
           className="gap-1.5"
         >
@@ -267,6 +282,14 @@ export function BucketDetail() {
           <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" strokeWidth={1.75} />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => setConnectOpen(true)} className="gap-2">
+            <HugeiconsIcon
+              icon={Plug01Icon}
+              className="size-4 text-muted-foreground"
+              strokeWidth={1.75}
+            />
+            <span>Connect</span>
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/bucket/docs")} className="gap-2">
             <HugeiconsIcon
               icon={Book02Icon}
@@ -350,6 +373,14 @@ export function BucketDetail() {
         bucketId={bucketId}
         open={apiKeysOpen}
         onOpenChange={setApiKeysOpen}
+      />
+
+      <BucketConnectModal
+        bucketId={bucketId}
+        stats={stats}
+        open={connectOpen}
+        onOpenChange={setConnectOpen}
+        onOpenApiKeys={() => setApiKeysOpen(true)}
       />
     </AppPage>
   )
