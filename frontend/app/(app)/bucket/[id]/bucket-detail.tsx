@@ -8,6 +8,7 @@ import { useSWRConfig } from "swr"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   ArrowRight01Icon,
+  BellIcon,
   Book02Icon,
   Folder02Icon,
   Key01Icon,
@@ -40,6 +41,7 @@ import { BucketUploadControl } from "@/components/bucket/bucket-upload-control"
 import { BucketRenewDrawer } from "@/components/bucket/bucket-renew-drawer"
 import { BucketApiKeysModal } from "@/components/bucket/bucket-api-keys-modal"
 import { BucketConnectModal } from "@/components/bucket/bucket-connect-modal"
+import { BucketNotificationModal } from "@/components/bucket/bucket-notification-modal"
 import { BucketStatsHeader } from "@/components/bucket/bucket-stats-header"
 import {
   useBucketStats,
@@ -75,6 +77,7 @@ export function BucketDetail() {
   const [renewOpen, setRenewOpen] = useState(false)
   const [apiKeysOpen, setApiKeysOpen] = useState(false)
   const [connectOpen, setConnectOpen] = useState(false)
+  const [notifOpen, setNotifOpen] = useState(false)
   const [prefix, setPrefix] = useState("")
   const [folderOpen, setFolderOpen] = useState(false)
 
@@ -249,6 +252,19 @@ export function BucketDetail() {
           type="button"
           variant="outline"
           size="sm"
+          onClick={() => setNotifOpen(true)}
+          className="gap-1.5"
+          title="Configure expiry notification alerts"
+        >
+          <HugeiconsIcon icon={BellIcon} className="size-4" strokeWidth={1.75} />
+          <span>Alerts</span>
+        </Button>
+      ) : null}
+      {stats ? (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
           onClick={() => setApiKeysOpen(true)}
           className="gap-1.5"
         >
@@ -292,6 +308,14 @@ export function BucketDetail() {
               strokeWidth={1.75}
             />
             <span>Connect</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setNotifOpen(true)} className="gap-2">
+            <HugeiconsIcon
+              icon={BellIcon}
+              className="size-4 text-muted-foreground"
+              strokeWidth={1.75}
+            />
+            <span>Expiry Alerts</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/bucket/docs")} className="gap-2">
             <HugeiconsIcon
@@ -443,6 +467,13 @@ export function BucketDetail() {
         open={connectOpen}
         onOpenChange={setConnectOpen}
         onOpenApiKeys={() => setApiKeysOpen(true)}
+      />
+
+      <BucketNotificationModal
+        bucketId={bucketId}
+        bucketName={stats?.name}
+        open={notifOpen}
+        onOpenChange={setNotifOpen}
       />
     </AppPage>
   )

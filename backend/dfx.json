@@ -33,6 +33,12 @@
       "init_arg": "(principal \"6vbhm-nqaaa-aaaan-q6muq-cai\")",
       "metadata": [{ "name": "candid:service" }]
     },
+    "icpay_notifier": {
+      "type": "motoko",
+      "main": "notifier/src/main.mo",
+      "init_arg": "(principal \"6vbhm-nqaaa-aaaan-q6muq-cai\")",
+      "metadata": [{ "name": "candid:service" }]
+    },
     "internet_identity": {
       "type": "custom",
       "candid": "deps/local/internet_identity.did",
