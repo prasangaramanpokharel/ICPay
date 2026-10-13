@@ -9,6 +9,7 @@ import Timer "mo:core/Timer";
 import Error "mo:core/Error";
 import Types "./Types";
 import HttpOutcall "./HttpOutcall";
+import EmailTemplate "./EmailTemplate";
 
 persistent actor class Notifier(initBackendPrincipal: Principal) {
   var backendPrincipal = initBackendPrincipal;
@@ -119,13 +120,8 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
 
             // Scenario 1: Expiring Soon Warning (<= 3 days left and Active)
             if (stats.status == #ACTIVE and daysLeft <= 3 and sub.lastNotifiedStage != "soon") {
-              let subject = "⚠️ Urgent: ICPay Bucket '" # stats.name # "' expires in " # Nat.toText(daysLeft) # " day(s)";
-              let html = "<h2>ICPay Cloud Expiration Notice</h2>" #
-                "<p>Your bucket <strong>" # stats.name # "</strong> (ID: <code>" # stats.id # "</code>) will expire in <strong>" #
-                Nat.toText(daysLeft) # " day(s)</strong>.</p>" #
-                "<p>To avoid service disruption and prevent your storage from entering the read-only grace period, please renew your bucket now:</p>" #
-                "<p><a href=\"https://icpay.app/bucket/" # stats.id # "\" style=\"background:#10b981;color:white;padding:10px 16px;text-decoration:none;border-radius:6px;display:inline-block;\">Renew Bucket (1-Click)</a></p>" #
-                "<p><small>Tip: You can now choose the <strong>Annual Plan (365 days)</strong> to get 2 full months free and continuous protection.</small></p>";
+              let subject = "⚠️ Action Required: ICPay Bucket '" # stats.name # "' expires in " # Nat.toText(daysLeft) # " day(s)";
+              let html = EmailTemplate.renderExpirySoon(stats.name, stats.id, daysLeft);
 
               let sendRes = await HttpOutcall.sendResendEmail(
                 apiKey,
@@ -149,14 +145,7 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
             // Scenario 2: Plan Expired — Grace Period Warning (Day 1-7)
             else if (stats.status == #EXPIRED and sub.lastNotifiedStage != "grace") {
               let subject = "🚨 Plan Expired: ICPay Bucket '" # stats.name # "' is now in Read-Only Grace Period";
-              let html = "<h2>ICPay Cloud — Grace Period Warning</h2>" #
-                "<p>Your bucket <strong>" # stats.name # "</strong> has expired and is currently in its <strong>7-day read-only grace period</strong>.</p>" #
-                "<ul>" #
-                "<li>Existing files remain accessible via CDN.</li>" #
-                "<li>Uploads and file edits are temporarily disabled.</li>" #
-                "<li>If not renewed within 21 days, storage will be frozen and tombstoned.</li>" #
-                "</ul>" #
-                "<p><a href=\"https://icpay.app/bucket/" # stats.id # "\" style=\"background:#ef4444;color:white;padding:10px 16px;text-decoration:none;border-radius:6px;display:inline-block;\">Restore Full Access · Renew Bucket</a></p>";
+              let html = EmailTemplate.renderGracePeriod(stats.name, stats.id);
 
               let sendRes = await HttpOutcall.sendResendEmail(
                 apiKey,
