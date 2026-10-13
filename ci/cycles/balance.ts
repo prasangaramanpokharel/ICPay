@@ -7,6 +7,13 @@ import { OWNED_CANISTERS, arg, canisterIds, dfxOut, resolveOwnedCanister } from 
 const T = (n: number): string => `${(n / 1e12).toFixed(2)}T`
 
 function printBalance(name: string, label: string): void {
+  const canisterId = canisterIds()[name]?.ic
+  if (!canisterId) {
+    console.log(`\n=== ${label} (${name}) ===`)
+    console.log("Not yet deployed on mainnet")
+    return
+  }
+
   const status = dfxOut(["canister", "status", name])
 
   const field = (fieldName: string): number | undefined => {
