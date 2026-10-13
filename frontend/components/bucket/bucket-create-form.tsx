@@ -22,6 +22,8 @@ import { useLiveBalance } from "@/hooks/wallet/useWalletData"
 import { CAPACITY_TIERS_GB, mapBucketError, validateBucketName } from "@/lib/bucket/bucket"
 import { calculateListPriceE8s, calculateYearlyListPriceE8s } from "@/lib/bucket/pricing"
 import { ICP_FEE, formatAmount } from "@/lib/wallet/utils"
+import { Mail01Icon } from "@hugeicons/core-free-icons"
+import { HugeiconsIcon } from "@hugeicons/react"
 import { cn } from "@/lib/ui/utils"
 import type { BucketBillingPeriod, BucketVisibilityVariant } from "@/services/bucket/types"
 
@@ -32,7 +34,8 @@ export function BucketCreateForm({
     name: string,
     capacityGB: number,
     visibility: BucketVisibilityVariant,
-    period: BucketBillingPeriod
+    period: BucketBillingPeriod,
+    alertEmail?: string
   ) => Promise<string | null>
 }) {
   const t = useTranslations("bucket")
@@ -43,6 +46,8 @@ export function BucketCreateForm({
   const [capacityGB, setCapacityGB] = useState<number>(1)
   const [billingPeriod, setBillingPeriod] = useState<BucketBillingPeriod>("monthly")
   const [visibility, setVisibility] = useState<BucketVisibilityVariant>({ Public: null })
+  const [alertEmail, setAlertEmail] = useState("")
+  const [alertEmailError, setAlertEmailError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -60,9 +65,24 @@ export function BucketCreateForm({
 
   const handleSubmit = async () => {
     if (nameError || !canCreate) return
+    const trimmedEmail = alertEmail.trim()
+    if (trimmedEmail) {
+      const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)
+      if (!isValid) {
+        setAlertEmailError("Please enter a valid email address (or leave blank)")
+        return
+      }
+    }
+    setAlertEmailError(null)
     setSubmitting(true)
     setError(null)
-    const err = await onCreate(name.trim().toLowerCase(), capacityGB, visibility, billingPeriod)
+    const err = await onCreate(
+      name.trim().toLowerCase(),
+      capacityGB,
+      visibility,
+      billingPeriod,
+      trimmedEmail || undefined
+    )
     if (err) setError(mapBucketError(err, t))
     setSubmitting(false)
   }
@@ -197,6 +217,40 @@ export function BucketCreateForm({
               <span className="text-[10px] font-normal text-muted-foreground">365-day cycle</span>
             </button>
           </div>
+        </div>
+
+        {/* Expiry Alert Email (Optional) */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="bucket-alert-email" className="text-xs font-medium">
+              Expiry Alert Email <span className="text-muted-foreground font-normal">(Optional)</span>
+            </Label>
+            <span className="text-[11px] text-muted-foreground">3-day warning</span>
+          </div>
+          <div className="relative">
+            <Input
+              id="bucket-alert-email"
+              type="email"
+              value={alertEmail}
+              onChange={(e) => {
+                setAlertEmail(e.target.value)
+                if (alertEmailError) setAlertEmailError(null)
+              }}
+              placeholder="alerts@company.com"
+              autoComplete="email"
+              className="h-10 pr-9 text-xs font-mono"
+            />
+            <HugeiconsIcon
+              icon={Mail01Icon}
+              className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            />
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            Receive automated warnings before your plan expires so your storage is never interrupted.
+          </p>
+          {alertEmailError && (
+            <p className="text-xs text-destructive">{alertEmailError}</p>
+          )}
         </div>
 
         {/* Pricing Card with ShineBorder */}
