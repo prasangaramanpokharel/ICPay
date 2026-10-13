@@ -1,15 +1,12 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import {
   Book02Icon,
-  Copy01Icon,
   Key01Icon,
   Plug01Icon,
   TerminalIcon,
-  Tick02Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
@@ -23,8 +20,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { CodeBlock } from "@/components/ui/code-block"
-import { copyText } from "@/lib/wallet/utils"
+import { BucketCodeBlock } from "@/components/bucket/bucket-code-block"
 import { WALLET_CANISTER_ID } from "@/services/icp"
 import type { BucketStats } from "@/services/bucket/types"
 
@@ -42,16 +38,9 @@ export function BucketConnectModal({
   onOpenApiKeys?: () => void
 }) {
   const tc = useTranslations("common")
-  const [copiedInstall, setCopiedInstall] = useState<string | null>(null)
 
   const bucketName = stats?.name || bucketId
   const isPublic = Boolean(stats?.visibility && "open" in stats.visibility)
-
-  const handleCopyInstall = async (cmd: string, id: string) => {
-    await copyText(cmd)
-    setCopiedInstall(id)
-    setTimeout(() => setCopiedInstall(null), 2000)
-  }
 
   const icpSdkInstall = "npm i @icp-sdk/core"
   const s3Install = "npm i @aws-sdk/client-s3 dotenv"
@@ -121,13 +110,13 @@ curl -O "https://cloud.icpay.app/${bucketName}/sample.txt"`
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92vh] w-full sm:max-w-2xl overflow-y-auto">
-        <DialogHeader className="gap-2">
-          <div className="flex items-center gap-2">
-            <span className="flex size-8 items-center justify-center rounded-xl bg-primary/10 text-primary">
+      <DialogContent className="max-h-[90vh] w-full max-w-[calc(100vw-2rem)] sm:max-w-2xl overflow-y-auto overflow-x-hidden p-5 sm:p-6 min-w-0">
+        <DialogHeader className="gap-2 min-w-0 w-full">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
               <HugeiconsIcon icon={Plug01Icon} className="size-4.5" strokeWidth={1.75} />
             </span>
-            <DialogTitle className="text-lg">Connect to your bucket</DialogTitle>
+            <DialogTitle className="text-lg truncate">Connect to your bucket</DialogTitle>
           </div>
           <DialogDescription className="text-xs">
             Minimal, production-ready code snippets and credentials to integrate this bucket into
@@ -135,7 +124,7 @@ curl -O "https://cloud.icpay.app/${bucketName}/sample.txt"`
           </DialogDescription>
 
           {/* Quick Context Bar */}
-          <div className="mt-1 flex flex-wrap items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-3 py-2 text-xs">
+          <div className="mt-1 flex flex-wrap items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-3 py-2 text-xs min-w-0 w-full">
             <span className="text-muted-foreground">Bucket:</span>
             <span className="font-mono font-semibold text-foreground">{bucketName}</span>
             <span className="text-border">·</span>
@@ -148,98 +137,74 @@ curl -O "https://cloud.icpay.app/${bucketName}/sample.txt"`
           </div>
         </DialogHeader>
 
-        <div className="space-y-4 pt-1">
-          <Tabs defaultValue="sdk" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="sdk">@icp-sdk</TabsTrigger>
-              <TabsTrigger value="s3">S3 client</TabsTrigger>
-              <TabsTrigger value="env">.env</TabsTrigger>
-              <TabsTrigger value="curl">cURL</TabsTrigger>
+        <div className="space-y-4 pt-1 min-w-0 w-full">
+          <Tabs defaultValue="sdk" className="w-full min-w-0">
+            <TabsList className="grid w-full grid-cols-4 min-w-0">
+              <TabsTrigger value="sdk" className="text-xs truncate">@icp-sdk</TabsTrigger>
+              <TabsTrigger value="s3" className="text-xs truncate">S3 client</TabsTrigger>
+              <TabsTrigger value="env" className="text-xs truncate">.env</TabsTrigger>
+              <TabsTrigger value="curl" className="text-xs truncate">cURL</TabsTrigger>
             </TabsList>
 
             {/* TAB 1: @icp-sdk/core */}
-            <TabsContent value="sdk" className="space-y-3 pt-3">
-              {/* Install Bar */}
-              <div className="flex items-center justify-between gap-2 rounded-xl border border-border/70 bg-card px-3 py-2">
-                <div className="flex items-center gap-2 font-mono text-xs text-foreground">
-                  <HugeiconsIcon icon={TerminalIcon} className="size-4 text-muted-foreground" />
-                  <span>{icpSdkInstall}</span>
+            <TabsContent value="sdk" className="space-y-3.5 pt-3 min-w-0 w-full">
+              <div className="space-y-1.5 min-w-0 w-full">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                  <HugeiconsIcon icon={TerminalIcon} className="size-3.5" />
+                  <span>Install client library</span>
                 </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="xs"
-                  onClick={() => handleCopyInstall(icpSdkInstall, "sdk-install")}
-                  className="gap-1 text-xs"
-                >
-                  <HugeiconsIcon
-                    icon={copiedInstall === "sdk-install" ? Tick02Icon : Copy01Icon}
-                    className="size-3.5 text-muted-foreground"
-                  />
-                  <span>{copiedInstall === "sdk-install" ? "Copied" : "Copy install command"}</span>
-                </Button>
+                <BucketCodeBlock code={icpSdkInstall} language="bash" />
               </div>
 
-              {/* Code Preview */}
-              <div className="overflow-hidden rounded-xl border border-border/60">
-                <CodeBlock code={icpSdkCode} language="typescript" />
+              <div className="space-y-1.5 min-w-0 w-full">
+                <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
+                  <span>Client initialization</span>
+                  <span className="font-mono text-[11px] text-muted-foreground/75">client.ts</span>
+                </div>
+                <BucketCodeBlock code={icpSdkCode} language="typescript" />
               </div>
             </TabsContent>
 
             {/* TAB 2: S3 Client */}
-            <TabsContent value="s3" className="space-y-3 pt-3">
-              {/* Install Bar */}
-              <div className="flex items-center justify-between gap-2 rounded-xl border border-border/70 bg-card px-3 py-2">
-                <div className="flex items-center gap-2 font-mono text-xs text-foreground">
-                  <HugeiconsIcon icon={TerminalIcon} className="size-4 text-muted-foreground" />
-                  <span>{s3Install}</span>
+            <TabsContent value="s3" className="space-y-3.5 pt-3 min-w-0 w-full">
+              <div className="space-y-1.5 min-w-0 w-full">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                  <HugeiconsIcon icon={TerminalIcon} className="size-3.5" />
+                  <span>Install S3 client</span>
                 </div>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="xs"
-                  onClick={() => handleCopyInstall(s3Install, "s3-install")}
-                  className="gap-1 text-xs"
-                >
-                  <HugeiconsIcon
-                    icon={copiedInstall === "s3-install" ? Tick02Icon : Copy01Icon}
-                    className="size-3.5 text-muted-foreground"
-                  />
-                  <span>{copiedInstall === "s3-install" ? "Copied" : "Copy install command"}</span>
-                </Button>
+                <BucketCodeBlock code={s3Install} language="bash" />
               </div>
 
-              {/* Code Preview */}
-              <div className="overflow-hidden rounded-xl border border-border/60">
-                <CodeBlock code={s3ClientCode} language="typescript" />
+              <div className="space-y-1.5 min-w-0 w-full">
+                <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
+                  <span>S3 integration</span>
+                  <span className="font-mono text-[11px] text-muted-foreground/75">s3-client.ts</span>
+                </div>
+                <BucketCodeBlock code={s3ClientCode} language="typescript" />
               </div>
             </TabsContent>
 
             {/* TAB 3: .env */}
-            <TabsContent value="env" className="space-y-3 pt-3">
+            <TabsContent value="env" className="space-y-3 pt-3 min-w-0 w-full">
               <p className="text-xs text-muted-foreground">
                 Copy and paste these environment variables into your project’s{" "}
                 <code className="rounded bg-muted px-1 py-0.5 font-mono text-foreground">.env</code> file.
               </p>
-              <div className="overflow-hidden rounded-xl border border-border/60">
-                <CodeBlock code={envCode} language="bash" />
-              </div>
+              <BucketCodeBlock code={envCode} language="bash" />
             </TabsContent>
 
             {/* TAB 4: cURL */}
-            <TabsContent value="curl" className="space-y-3 pt-3">
+            <TabsContent value="curl" className="space-y-3 pt-3 min-w-0 w-full">
               <p className="text-xs text-muted-foreground">
                 Interact with the bucket directly from your terminal or CI/CD pipelines via standard HTTP.
               </p>
-              <div className="overflow-hidden rounded-xl border border-border/60">
-                <CodeBlock code={curlCode} language="bash" />
-              </div>
+              <BucketCodeBlock code={curlCode} language="bash" />
             </TabsContent>
           </Tabs>
         </div>
 
-        <DialogFooter className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between border-t border-border/50 pt-3">
-          <div className="flex items-center gap-2">
+        <DialogFooter className="mt-4 flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-between border-t border-border/50 pt-3 min-w-0 w-full">
+          <div className="flex flex-wrap items-center gap-2">
             {onOpenApiKeys ? (
               <Button
                 type="button"

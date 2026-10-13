@@ -28,10 +28,8 @@ export function CodeBlock({
   const [activeTab, setActiveTab] = useState(0)
   const [copied, setCopied] = useState(false)
   const [direction, setDirection] = useState(0)
-  const preRef = useRef<HTMLPreElement>(null)
   const tabsContainerRef = useRef<HTMLDivElement>(null)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
-  const [hasOverflow, setHasOverflow] = useState(false)
   const [indicator, setIndicator] = useState<{
     left: number
     width: number
@@ -66,28 +64,6 @@ export function CodeBlock({
 
   const currentCode = codeContent[activeTab]?.code || ""
 
-  // Check overflow when tab changes or content updates
-  // biome-ignore lint/correctness/useExhaustiveDependencies: activeTab is needed to recheck overflow when content changes
-  useLayoutEffect(() => {
-    const checkOverflow = () => {
-      if (preRef.current) {
-        const hasHorizontalOverflow =
-          preRef.current.scrollWidth > preRef.current.clientWidth
-        setHasOverflow(hasHorizontalOverflow)
-      }
-    }
-
-    checkOverflow()
-    const resizeObserver = new ResizeObserver(checkOverflow)
-    if (preRef.current) {
-      resizeObserver.observe(preRef.current)
-    }
-
-    return () => {
-      resizeObserver.disconnect()
-    }
-  }, [activeTab])
-
   useLayoutEffect(() => {
     measureIndicator()
 
@@ -110,9 +86,15 @@ export function CodeBlock({
   }, [measureIndicator])
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText(currentCode)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+    try {
+      if (typeof navigator !== "undefined" && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(currentCode)
+      }
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // clipboard access fallback
+    }
   }
 
   const handleTabChange = (index: number) => {
@@ -125,7 +107,7 @@ export function CodeBlock({
   return (
     <div
       className={cn(
-        "group relative overflow-hidden rounded-2xl border p-0.5",
+        "group relative w-full min-w-0 max-w-full overflow-hidden rounded-2xl border p-0.5",
         "border-border/70 dark:border-white/10",
         "bg-card/75 dark:bg-card/50 backdrop-blur-xs",
         "text-foreground",
@@ -191,7 +173,7 @@ export function CodeBlock({
       )}
 
       {/* Code Content */}
-      <div className="relative overflow-hidden">
+      <div className="relative w-full min-w-0 max-w-full overflow-hidden">
         {/* Copy Button */}
         <motion.button
           onClick={handleCopy}
@@ -238,25 +220,21 @@ export function CodeBlock({
           <span>{copied ? "Copied" : "Copy"}</span>
         </motion.button>
         <pre
-          ref={preRef}
           className={cn(
-            "m-0 p-4 font-mono text-xs sm:text-sm leading-relaxed",
+            "m-0 w-full min-w-0 p-4 pr-24 font-mono text-xs sm:text-sm leading-relaxed",
             "bg-muted/30 dark:bg-black/35",
             codeContent.length > 1 ? "rounded-b-2xl" : "rounded-2xl",
-            hasOverflow ? "overflow-x-auto" : "overflow-x-hidden",
-            hasOverflow && "scrollbar-thin scrollbar-thumb-rounded",
-            hasOverflow &&
-              "scrollbar-thumb-black/15 hover:scrollbar-thumb-black/20",
-            hasOverflow &&
-              "dark:scrollbar-thumb-white/20 dark:hover:scrollbar-thumb-white/25",
-            hasOverflow && "[&::-webkit-scrollbar]:h-2",
-            hasOverflow && "[&::-webkit-scrollbar-thumb]:rounded-full",
-            hasOverflow && "[&::-webkit-scrollbar-thumb]:bg-black/15",
-            hasOverflow && "[&::-webkit-scrollbar-thumb]:dark:bg-white/20",
-            hasOverflow && "[&::-webkit-scrollbar-thumb]:hover:bg-black/20",
-            hasOverflow &&
-              "[&::-webkit-scrollbar-thumb:hover]:dark:bg-white/25",
-            hasOverflow && "[&::-webkit-scrollbar-track]:bg-transparent"
+            "overflow-x-auto",
+            "scrollbar-thin scrollbar-thumb-rounded",
+            "scrollbar-thumb-black/15 hover:scrollbar-thumb-black/20",
+            "dark:scrollbar-thumb-white/20 dark:hover:scrollbar-thumb-white/25",
+            "[&::-webkit-scrollbar]:h-2",
+            "[&::-webkit-scrollbar-thumb]:rounded-full",
+            "[&::-webkit-scrollbar-thumb]:bg-black/15",
+            "[&::-webkit-scrollbar-thumb]:dark:bg-white/20",
+            "[&::-webkit-scrollbar-thumb]:hover:bg-black/20",
+            "[&::-webkit-scrollbar-thumb:hover]:dark:bg-white/25",
+            "[&::-webkit-scrollbar-track]:bg-transparent"
           )}
         >
           <AnimatePresence mode="wait" initial={false} custom={direction}>
@@ -282,7 +260,7 @@ export function CodeBlock({
                 duration: 0.15,
                 ease: "easeOut",
               }}
-              className="block font-mono whitespace-pre text-foreground"
+              className="block w-fit min-w-full font-mono whitespace-pre text-foreground"
             >
               {currentCode}
             </motion.code>
