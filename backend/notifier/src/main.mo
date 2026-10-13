@@ -13,7 +13,7 @@ import HttpOutcall "./HttpOutcall";
 persistent actor class Notifier(initBackendPrincipal: Principal) {
   var backendPrincipal = initBackendPrincipal;
   var apiKey : Text = "";
-  var fromEmail : Text = "ICPay Cloud <notifications@icpay.app>";
+  var fromEmail : Text = "ICPay Cloud <alerts@alert.icpay.app>";
   var totalEmailsSent : Nat = 0;
   var lastSweepAt : Int = 0;
   var timerActive : Bool = true;
