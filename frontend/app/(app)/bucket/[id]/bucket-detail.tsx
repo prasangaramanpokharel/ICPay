@@ -13,6 +13,8 @@ import {
   Key01Icon,
   MoreVerticalIcon,
   Plug01Icon,
+  RefreshIcon,
+  Alert02Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -54,7 +56,7 @@ import {
   deleteFolder,
 } from "@/services/bucket/bucket"
 import type { BucketBillingPeriod } from "@/services/bucket/types"
-import { isBucketActive } from "@/lib/bucket/bucket"
+import { isBucketActive, isBucketFrozen, isBucketTombstoned } from "@/lib/bucket/bucket"
 import { joinObjectPath, nestedPrefix, prefixSegments, apiListFolderPrefix } from "@/lib/bucket/folderPath"
 import { clearLegacyBucketStorage } from "@/lib/bucket/legacyStorage"
 import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
@@ -339,11 +341,70 @@ export function BucketDetail() {
 
       <BucketStatsHeader stats={stats} onRenew={() => setRenewOpen(true)} />
 
-      {!canWrite && (
-        <Alert>
-          <AlertDescription>{t("readOnly")}</AlertDescription>
-        </Alert>
-      )}
+      {!canWrite && (() => {
+        const frozen = isBucketFrozen(stats.status, stats.expiresAt)
+        const tombstoned = isBucketTombstoned(stats.status, stats.expiresAt)
+        if (tombstoned) {
+          return (
+            <Alert variant="destructive" className="flex items-start gap-3">
+              <HugeiconsIcon icon={Alert02Icon} className="size-5 shrink-0 text-destructive mt-0.5" />
+              <div className="space-y-1">
+                <div className="text-xs font-semibold tracking-tight">Bucket Tombstoned (21+ Days Overdue)</div>
+                <AlertDescription className="text-xs">
+                  This bucket has exceeded the 21-day grace period without renewal and is marked for deletion. Files can no longer be recovered.
+                </AlertDescription>
+              </div>
+            </Alert>
+          )
+        }
+        if (frozen) {
+          return (
+            <Alert variant="destructive" className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <HugeiconsIcon icon={Alert02Icon} className="size-5 shrink-0 text-destructive mt-0.5" />
+                <div className="space-y-1">
+                  <div className="text-xs font-semibold tracking-tight">Bucket Frozen (Day 8–21 Past Expiry)</div>
+                  <AlertDescription className="text-xs">
+                    Public CDN access is suspended. Renew now to unfreeze your storage and prevent permanent tombstoning after day 21.
+                  </AlertDescription>
+                </div>
+              </div>
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={() => setRenewOpen(true)}
+                className="shrink-0 h-8 gap-1.5 text-xs font-semibold"
+              >
+                <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
+                <span>Renew to Unfreeze</span>
+              </Button>
+            </Alert>
+          )
+        }
+        return (
+          <Alert className="border-amber-500/30 bg-amber-500/10 text-amber-500 dark:text-amber-400 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start gap-3">
+              <HugeiconsIcon icon={Alert02Icon} className="size-5 shrink-0 text-amber-500 mt-0.5" />
+              <div className="space-y-1">
+                <div className="text-xs font-semibold tracking-tight text-amber-500 dark:text-amber-300">
+                  Plan Expired · Read-Only Grace Period (Day 1–7)
+                </div>
+                <AlertDescription className="text-xs text-foreground/85">
+                  Your bucket plan has expired. Files remain accessible on CDN, but new uploads are blocked. Renew to restore full upload capabilities.
+                </AlertDescription>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              onClick={() => setRenewOpen(true)}
+              className="shrink-0 h-8 gap-1.5 text-xs font-semibold bg-amber-500 hover:bg-amber-600 text-white"
+            >
+              <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
+              <span>Renew Bucket</span>
+            </Button>
+          </Alert>
+        )
+      })()}
 
       <BucketFilesPanel
         bucketId={bucketId}
