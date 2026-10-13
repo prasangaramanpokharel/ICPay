@@ -3,8 +3,8 @@ import { IDL } from "@icp-sdk/core/candid"
 import { createAgent } from "@/services/icp"
 import type { NotifierActor } from "@/services/notifier/types"
 
-const NOTIFIER_CANISTER_ID =
-  process.env.NEXT_PUBLIC_NOTIFIER_CANISTER_ID ?? ""
+export const NOTIFIER_CANISTER_ID =
+  process.env.NEXT_PUBLIC_NOTIFIER_CANISTER_ID || "2hvuh-xiaaa-aaaan-q6uua-cai"
 
 export const notifierIdlFactory: IDL.InterfaceFactory = ({ IDL }) => {
   const Result = IDL.Variant({
