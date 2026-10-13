@@ -64,10 +64,9 @@ module {
     expiresAt: Int;
     daysRemaining: Nat;
     isExpiringSoon: Bool;
-    renewPriceE8s: Nat64;
+    renewPriceE8s: Nat;
     periodDays: Nat;
     publicBaseUrl: ?Text;
-    storageCanisterId: ?Text;
   };
 
   public type WalletBackend = actor {

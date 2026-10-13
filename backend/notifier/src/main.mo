@@ -6,7 +6,6 @@ import Int "mo:core/Int";
 import Time "mo:core/Time";
 import Map "mo:core/Map";
 import Timer "mo:core/Timer";
-import Error "mo:core/Error";
 import Types "./Types";
 import HttpOutcall "./HttpOutcall";
 import EmailTemplate "./EmailTemplate";
@@ -22,7 +21,9 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
   // Stable registry: bucketId -> NotificationSubscriber
   let subscribers = Map.empty<Text, Types.NotificationSubscriber>();
 
-  let walletBackend : Types.WalletBackend = actor(Principal.toText(backendPrincipal));
+  func getWalletBackend() : Types.WalletBackend {
+    actor(Principal.toText(backendPrincipal))
+  };
 
   // -------------------------------------------------------------------------
   // Access Control
@@ -46,28 +47,25 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
       return #err("Invalid email address format");
     };
 
-    // Verify ownership via backend stats call
-    try {
-      let statsRes = await walletBackend.getBucketStats(bucketId);
-      switch (statsRes) {
-        case (#err(e)) return #err("Bucket verification failed: " # e);
-        case (#ok(_stats)) {
-          // Store or update subscriber
-          let sub : Types.NotificationSubscriber = {
-            bucketId = bucketId;
-            owner = caller;
-            email = email;
-            createdAt = Time.now();
-            var lastNotifiedAt = 0;
-            var lastNotifiedStage = "none";
-          };
-          subscribers.add(bucketId, sub);
-          #ok(())
+    switch (subscribers.get(bucketId)) {
+      case (?existing) {
+        if (existing.owner != caller and not isController(caller)) {
+          return #err("Unauthorized: bucket already registered by another owner");
         };
       };
-    } catch (e) {
-      return #err("Failed to connect to backend: " # Error.message(e));
-    }
+      case (null) ();
+    };
+
+    let sub : Types.NotificationSubscriber = {
+      bucketId = bucketId;
+      owner = caller;
+      email = email;
+      createdAt = Time.now();
+      var lastNotifiedAt = 0;
+      var lastNotifiedStage = "none";
+    };
+    subscribers.add(bucketId, sub);
+    #ok(())
   };
 
   public shared(msg) func unregisterEmail(bucketId: Text) : async { #ok: (); #err: Text } {
@@ -112,7 +110,7 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
     let entries = subscribers.entries();
     for ((_bId, sub) in entries) {
       try {
-        let statsRes = await walletBackend.getBucketStats(sub.bucketId);
+        let statsRes = await getWalletBackend().getBucketStats(sub.bucketId);
         switch (statsRes) {
           case (#err(_)) (); // Bucket not found or query error, skip
           case (#ok(stats)) {

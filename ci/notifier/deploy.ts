@@ -30,7 +30,7 @@ if (deployed) {
     "--mode",
     "upgrade",
     "--wasm-memory-persistence",
-    "keep",
+    "replace",
     "--argument",
     initArg,
     "--yes",
