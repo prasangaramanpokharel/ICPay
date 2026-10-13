@@ -363,7 +363,7 @@ export function BucketDetail() {
         {headerActions}
       </div>
 
-      <BucketStatsHeader stats={stats} onRenew={() => setRenewOpen(true)} />
+      <BucketStatsHeader stats={stats} onRenew={() => setRenewOpen(true)} onRefresh={refreshStats} />
 
       {!canWrite && (() => {
         const frozen = isBucketFrozen(stats.status, stats.expiresAt)

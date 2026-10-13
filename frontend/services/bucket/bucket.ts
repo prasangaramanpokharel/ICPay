@@ -380,3 +380,21 @@ export function regenerateApiKey(
     actor.regenerateApiKey(bucketId, keyId) as Promise<Outcome<ApiKeyCreateResult>>
   )
 }
+
+export function updateBucket(
+  identity: Identity | undefined,
+  bucketId: string,
+  opts: {
+    name?: string
+    visibility?: BucketVisibilityVariant
+  }
+): Promise<Outcome<BucketPublic>> {
+  return call(identity, "Failed to update bucket", (actor) => {
+    if (!actor.updateBucket) throw new Error("updateBucket not supported")
+    return actor.updateBucket(
+      bucketId,
+      opts.name !== undefined ? [opts.name] : [],
+      opts.visibility !== undefined ? [opts.visibility] : []
+    ) as Promise<Outcome<BucketPublic>>
+  })
+}

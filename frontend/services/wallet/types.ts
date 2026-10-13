@@ -80,6 +80,11 @@ export interface WalletActor {
   getRenewQuote: (bucketId: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   getRenewQuotePlan?: (bucketId: string, period: { Monthly: null } | { Yearly: null }) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   listBuckets: () => Promise<{ ok: Record<string, unknown>[]; err?: never } | { err: string; ok?: never }>
+  updateBucket?: (
+    bucketId: string,
+    name: [] | [string],
+    visibility: [] | [{ Public: null } | { Private: null }]
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   uploadFile: (
     bucketId: string,
     path: string,

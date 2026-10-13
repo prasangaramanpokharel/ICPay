@@ -194,7 +194,7 @@ export function BucketListPanel() {
             </TableHeader>
             <TableBody>
               {filtered.map((bucket) => (
-                <BucketCard key={bucket.id} bucket={bucket} />
+                <BucketCard key={bucket.id} bucket={bucket} onRefresh={refresh} />
               ))}
             </TableBody>
           </Table>

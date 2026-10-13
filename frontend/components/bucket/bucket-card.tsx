@@ -11,7 +11,12 @@ import {
   LockIcon,
 } from "@hugeicons/core-free-icons"
 import { Badge } from "@/components/ui/badge"
+import { Switch } from "@/components/ui/switch"
 import { TableCell, TableRow } from "@/components/ui/table"
+import { useAuth } from "@/components/auth/auth-provider"
+import { updateBucket } from "@/services/bucket/bucket"
+import { toast } from "sonner"
+import { cn } from "@/lib/ui/utils"
 import {
   expiresAtToMs,
   formatBytes,
@@ -21,15 +26,46 @@ import {
   isBucketTombstoned,
   isPublicVisibility,
 } from "@/lib/bucket/bucket"
-import type { BucketPublic } from "@/services/bucket/types"
+import type { BucketPublic, BucketVisibilityVariant } from "@/services/bucket/types"
 
-export function BucketCard({ bucket }: { bucket: BucketPublic }) {
+export function BucketCard({
+  bucket,
+  onRefresh,
+}: {
+  bucket: BucketPublic
+  onRefresh?: () => void
+}) {
   const t = useTranslations("bucket")
+  const { identity } = useAuth()
+  const [toggling, setToggling] = useState(false)
   const [now] = useState(() => Date.now())
   const active = isBucketActive(bucket.status)
   const isFrozen = isBucketFrozen(bucket.status, bucket.expiresAt, now)
   const isTombstoned = isBucketTombstoned(bucket.status, bucket.expiresAt, now)
   const isPublic = isPublicVisibility(bucket.visibility)
+
+  const handleToggle = async (nextPublic: boolean) => {
+    if (toggling) return
+    setToggling(true)
+    try {
+      const nextVisibility: BucketVisibilityVariant = nextPublic ? { Public: null } : { Private: null }
+      const res = await updateBucket(identity, bucket.id, { visibility: nextVisibility })
+      if ("ok" in res) {
+        toast.success(
+          nextPublic
+            ? `Bucket "${bucket.name}" is now Public! Files accessible via CDN.`
+            : `Bucket "${bucket.name}" is now Private. CDN public access disabled.`
+        )
+        onRefresh?.()
+      } else {
+        toast.error(res.err || "Failed to update bucket visibility")
+      }
+    } catch {
+      toast.error("Failed to update bucket visibility")
+    } finally {
+      setToggling(false)
+    }
+  }
 
   const usagePct =
     bucket.capacity > 0n ? Math.min(100, Number((bucket.storageUsed * 100n) / bucket.capacity)) : 0
@@ -51,14 +87,26 @@ export function BucketCard({ bucket }: { bucket: BucketPublic }) {
           <span className="truncate text-sm font-medium">{bucket.name}</span>
         </Link>
       </TableCell>
-      <TableCell>
-        <Badge
-          variant="secondary"
-          className="h-4.5 gap-1 px-1.5 text-[10px] font-medium text-muted-foreground"
-        >
-          <HugeiconsIcon icon={isPublic ? Globe02Icon : LockIcon} className="size-2.5" />
-          <span>{isPublic ? t("public") : t("private")}</span>
-        </Badge>
+      <TableCell onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center gap-2">
+          <Badge
+            variant="secondary"
+            className="h-4.5 gap-1 px-1.5 text-[10px] font-medium text-muted-foreground"
+          >
+            <HugeiconsIcon
+              icon={isPublic ? Globe02Icon : LockIcon}
+              className={cn("size-2.5", isPublic ? "text-emerald-500" : "text-amber-500")}
+            />
+            <span>{isPublic ? t("public") : t("private")}</span>
+          </Badge>
+          <Switch
+            size="sm"
+            checked={isPublic}
+            onCheckedChange={handleToggle}
+            disabled={toggling || !active}
+            title={isPublic ? "Switch to Private" : "Switch to Public CDN"}
+          />
+        </div>
       </TableCell>
       <TableCell>
         <div className="space-y-1 max-w-[140px]">

@@ -17,6 +17,10 @@ import {
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
+import { useAuth } from "@/components/auth/auth-provider"
+import { updateBucket } from "@/services/bucket/bucket"
+import { cn } from "@/lib/ui/utils"
 import {
   formatBytes,
   isBucketActive,
@@ -28,16 +32,20 @@ import {
 } from "@/lib/bucket/bucket"
 import { copyText } from "@/lib/wallet/utils"
 import { toast } from "sonner"
-import type { BucketStats } from "@/services/bucket/types"
+import type { BucketStats, BucketVisibilityVariant } from "@/services/bucket/types"
 
 export function BucketStatsHeader({
   stats,
   onRenew,
+  onRefresh,
 }: {
   stats: BucketStats
   onRenew: () => void
+  onRefresh?: () => void
 }) {
+  const { identity } = useAuth()
   const t = useTranslations("bucket")
+  const [togglingVisibility, setTogglingVisibility] = useState(false)
   const [now] = useState(() => Date.now())
   const active = isBucketActive(stats.status)
   const isFrozen = isBucketFrozen(stats.status, stats.expiresAt, now)
@@ -77,6 +85,29 @@ export function BucketStatsHeader({
     setCopiedBase(true)
     toast.success("CDN Base URL copied!")
     setTimeout(() => setCopiedBase(false), 2000)
+  }
+
+  const handleToggleVisibility = async (nextPublic: boolean) => {
+    if (togglingVisibility) return
+    setTogglingVisibility(true)
+    try {
+      const nextVisibility: BucketVisibilityVariant = nextPublic ? { Public: null } : { Private: null }
+      const res = await updateBucket(identity, stats.id, { visibility: nextVisibility })
+      if ("ok" in res) {
+        toast.success(
+          nextPublic
+            ? `Bucket "${stats.name}" is now Public! Files accessible via CDN.`
+            : `Bucket "${stats.name}" is now Private. CDN public access disabled.`
+        )
+        onRefresh?.()
+      } else {
+        toast.error(res.err || "Failed to update bucket visibility")
+      }
+    } catch {
+      toast.error("Failed to update bucket visibility")
+    } finally {
+      setTogglingVisibility(false)
+    }
   }
 
   const planBarColor =
@@ -173,16 +204,36 @@ export function BucketStatsHeader({
             </div>
           </div>
 
-          <Button
-            type="button"
-            variant={stats.isExpiringSoon || !active ? "default" : "outline"}
-            size="sm"
-            onClick={onRenew}
-            className="h-8 shrink-0 gap-1.5 text-xs"
-          >
-            <HugeiconsIcon icon={RefreshIcon} className="size-3.5" strokeWidth={1.75} />
-            <span>{t("renew")}</span>
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2 rounded-lg border border-border/70 bg-muted/40 px-2.5 py-1 text-xs">
+              <HugeiconsIcon
+                icon={isPublic ? Globe02Icon : LockIcon}
+                className={cn("size-3.5", isPublic ? "text-emerald-500" : "text-amber-500")}
+                strokeWidth={1.75}
+              />
+              <span className="text-[11px] font-medium text-foreground">
+                {isPublic ? "Public CDN" : "Private"}
+              </span>
+              <Switch
+                size="sm"
+                checked={isPublic}
+                onCheckedChange={handleToggleVisibility}
+                disabled={togglingVisibility || !active}
+                title={isPublic ? "Switch to Private" : "Switch to Public CDN"}
+              />
+            </div>
+
+            <Button
+              type="button"
+              variant={stats.isExpiringSoon || !active ? "default" : "outline"}
+              size="sm"
+              onClick={onRenew}
+              className="h-8 shrink-0 gap-1.5 text-xs"
+            >
+              <HugeiconsIcon icon={RefreshIcon} className="size-3.5" strokeWidth={1.75} />
+              <span>{t("renew")}</span>
+            </Button>
+          </div>
         </div>
 
         {/* Dual Progress Bars Grid */}
