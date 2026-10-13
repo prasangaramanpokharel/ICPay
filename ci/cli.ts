@@ -43,6 +43,7 @@ const COMMANDS: Record<string, string> = {
   "notifier:build": "notifier/build.ts",
   "notifier:deploy": "notifier/deploy.ts",
   "notifier:hash": "notifier/hash.ts",
+  "notifier:config": "notifier/config.ts",
   "frontend:build": "frontend/build.ts",
   "frontend:deploy": "frontend/deploy.ts",
   "canister:list": "canister/list.ts",

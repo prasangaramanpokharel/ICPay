@@ -50,3 +50,5 @@ if (deployed) {
 step("RESULT")
 console.log(`before: ${before}`)
 console.log(`after:  ${moduleHash(CANISTER_NAME)}`)
+console.log(`\nTo push Resend credentials to the live canister, run:`)
+console.log(`  npm run ci notifier:config`)
