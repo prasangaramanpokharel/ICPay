@@ -72,10 +72,13 @@ export interface WalletActor {
   addBookmark: (targetUserId: string) => Promise<ApiResult_17>
   removeBookmark: (targetUserId: string) => Promise<ApiResult_19>
   getBucketPrice: (capacityGB: bigint) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
+  getBucketYearlyPrice?: (capacityGB: bigint) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
   createBucket: (name: string, capacityGB: bigint, visibility: { Public: null } | { Private: null }) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
+  createBucketPlan?: (name: string, capacityGB: bigint, visibility: { Public: null } | { Private: null }, period: { Monthly: null } | { Yearly: null }) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
   getBucket: (id: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   getBucketStats: (id: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   getRenewQuote: (bucketId: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  getRenewQuotePlan?: (bucketId: string, period: { Monthly: null } | { Yearly: null }) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   listBuckets: () => Promise<{ ok: Record<string, unknown>[]; err?: never } | { err: string; ok?: never }>
   uploadFile: (
     bucketId: string,
@@ -152,6 +155,7 @@ export interface WalletActor {
     apiKey: [] | [string]
   ) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
   renewBucket: (bucketId: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  renewBucketPlan?: (bucketId: string, period: { Monthly: null } | { Yearly: null }) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   getBucketCycleStatus: () => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   createApiKey: (
     bucketId: string,

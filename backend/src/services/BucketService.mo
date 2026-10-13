@@ -12,12 +12,16 @@ module {
 
   public let resolveBucketId = Bucket.resolveBucketId;
   public let getPrice = Bucket.getPrice;
+  public let getYearlyPrice = Bucket.getYearlyPrice;
   public let createBucket = Bucket.createBucket;
+  public let createBucketWithPeriod = Bucket.createBucketWithPeriod;
   public let getBucket = Bucket.getBucket;
   public let getBucketStats = Bucket.getBucketStats;
   public let getRenewQuote = Bucket.getRenewQuote;
+  public let getRenewQuoteWithPeriod = Bucket.getRenewQuoteWithPeriod;
   public let listBuckets = Bucket.listBuckets;
   public let renewBucket = Bucket.renewBucket;
+  public let renewBucketWithPeriod = Bucket.renewBucketWithPeriod;
   public let updateBucket = Bucket.updateBucket;
   public let deleteBucket = Bucket.deleteBucket;
 

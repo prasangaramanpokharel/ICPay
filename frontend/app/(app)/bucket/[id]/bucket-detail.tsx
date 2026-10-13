@@ -53,6 +53,7 @@ import {
   createFolder,
   deleteFolder,
 } from "@/services/bucket/bucket"
+import type { BucketBillingPeriod } from "@/services/bucket/types"
 import { isBucketActive } from "@/lib/bucket/bucket"
 import { joinObjectPath, nestedPrefix, prefixSegments, apiListFolderPrefix } from "@/lib/bucket/folderPath"
 import { clearLegacyBucketStorage } from "@/lib/bucket/legacyStorage"
@@ -168,8 +169,8 @@ export function BucketDetail() {
     return null
   }
 
-  const handleRenew = async () => {
-    const res = await renewBucket(identity, bucketId)
+  const handleRenew = async (period: BucketBillingPeriod = "monthly") => {
+    const res = await renewBucket(identity, bucketId, period)
     if ("err" in res) return res.err
     refreshWallet()
     await Promise.all([refreshStats(), invalidateBucketCache()])

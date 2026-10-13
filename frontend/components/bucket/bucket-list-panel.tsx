@@ -34,6 +34,7 @@ import { clearLegacyBucketStorage } from "@/lib/bucket/legacyStorage"
 import { useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import { isBucketActive } from "@/lib/bucket/bucket"
 import { createBucket } from "@/services/bucket/bucket"
+import type { BucketBillingPeriod } from "@/services/bucket/types"
 
 type FilterTab = "all" | "active" | "expired"
 
@@ -71,8 +72,9 @@ export function BucketListPanel() {
     name: string,
     capacityGB: number,
     visibility: Parameters<typeof createBucket>[3],
+    period: BucketBillingPeriod = "monthly"
   ): Promise<string | null> => {
-    const result = await createBucket(identity, name, capacityGB, visibility)
+    const result = await createBucket(identity, name, capacityGB, visibility, period)
     if ("err" in result) return result.err
     refreshWallet()
     await Promise.all([refresh(), invalidateBucketCache()])

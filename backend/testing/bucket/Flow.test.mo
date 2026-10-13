@@ -223,6 +223,18 @@ switch (BucketService.getPrice(25)) {
   case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: price: " # e) };
 };
 
+switch (BucketService.getYearlyPrice(1)) {
+  case (#ok(yearlyPrice)) {
+    let monthlyPrice = switch (BucketService.getPrice(1)) {
+      case (#ok(p)) p;
+      case (#err(_)) 0;
+    };
+    assert (yearlyPrice == monthlyPrice * 10);
+    Debug.print("PASS [FLOW]: yearly pricing 10x monthly (2 months free)");
+  };
+  case (#err(e)) { assert false; Debug.print("FAIL [FLOW]: yearly price: " # e) };
+};
+
 switch (BucketService.getPrice(3)) {
   case (#ok(_)) { assert false; Debug.print("FAIL [FLOW]: invalid tier accepted") };
   case (#err(_)) { Debug.print("PASS [FLOW]: invalid capacity rejected") };

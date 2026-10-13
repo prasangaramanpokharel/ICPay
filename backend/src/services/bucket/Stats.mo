@@ -93,8 +93,26 @@ module {
     }
   };
 
+  public func periodNs(period: Types.BucketBillingPeriod) : Int {
+    switch (period) {
+      case (#Monthly) Config.BUCKET_PERIOD_NS;
+      case (#Yearly) Config.BUCKET_PERIOD_YEAR_NS;
+    }
+  };
+
+  public func periodDays(period: Types.BucketBillingPeriod) : Nat {
+    switch (period) {
+      case (#Monthly) Config.BUCKET_PERIOD_DAYS;
+      case (#Yearly) Config.BUCKET_PERIOD_YEAR_DAYS;
+    }
+  };
+
   public func nextExpiresAt(now: Int, currentExpiresAt: Int) : Int {
     Duration.extendFrom(now, currentExpiresAt, Config.BUCKET_PERIOD_NS)
+  };
+
+  public func nextExpiresAtWithPeriod(now: Int, currentExpiresAt: Int, period: Types.BucketBillingPeriod) : Int {
+    Duration.extendFrom(now, currentExpiresAt, periodNs(period))
   };
 
   public func paginateFiles(

@@ -10,9 +10,6 @@ import {
   bucketCycleKey,
   bucketFilesKey,
   bucketListKey,
-  bucketPriceKey,
-  bucketPricingTableKey,
-  bucketRenewQuoteKey,
   bucketSearchKey,
   bucketStatsKey,
   isBucketCacheKey,
@@ -20,19 +17,24 @@ import {
 import { CAPACITY_TIERS_GB } from "@/lib/bucket/bucket"
 import {
   buildEstimatedPricingTiers,
+  buildEstimatedYearlyPricingTiers,
   buildPricingTier,
+  buildYearlyPricingTier,
   calculatePriceE8s,
+  calculateYearlyPriceE8s,
   type BucketPricingTier,
 } from "@/lib/bucket/pricing"
 import {
   getBucketCycleStatus,
   getBucketPrice,
+  getBucketYearlyPrice,
   getBucketStats,
   getRenewQuote,
   listBuckets,
   listFolder,
   searchFiles,
 } from "@/services/bucket/bucket"
+import type { BucketBillingPeriod } from "@/services/bucket/types"
 import { apiListFolderPrefix } from "@/lib/bucket/folderPath"
 
 export const BUCKET_QUERY = {
@@ -137,12 +139,20 @@ export function useBucketSearch(
   }
 }
 
-export function useBucketPrice(capacityGB: number | null) {
+export function useBucketPrice(
+  capacityGB: number | null,
+  period: BucketBillingPeriod = "monthly"
+) {
   const { identity } = useAuth()
 
   const { data, isLoading } = useSWR(
-    capacityGB !== null ? bucketPriceKey(capacityGB) : null,
-    () => getBucketPrice(identity, capacityGB!),
+    capacityGB !== null ? ["bucket-price", String(capacityGB), period] as const : null,
+    async () => {
+      if (period === "yearly") {
+        return getBucketYearlyPrice(identity, capacityGB!)
+      }
+      return getBucketPrice(identity, capacityGB!)
+    },
     { ...BUCKET_QUERY, dedupingInterval: 60_000 }
   )
 
@@ -150,7 +160,9 @@ export function useBucketPrice(capacityGB: number | null) {
     data && "ok" in data
       ? data.ok
       : capacityGB !== null
-        ? calculatePriceE8s(capacityGB)
+        ? period === "yearly"
+          ? calculateYearlyPriceE8s(capacityGB)
+          : calculatePriceE8s(capacityGB)
         : null
   const priceError = data && "err" in data ? data.err : null
   const fromCanister = Boolean(data && "ok" in data)
@@ -163,14 +175,20 @@ export function useBucketPrice(capacityGB: number | null) {
   }
 }
 
-export function useBucketPricingTiers() {
+export function useBucketPricingTiers(period: BucketBillingPeriod = "monthly") {
   const { identity } = useAuth()
 
   const { data, error, isLoading } = useSWRImmutable(
-    bucketPricingTableKey(),
+    ["bucket-pricing-table", period] as const,
     async (): Promise<BucketPricingTier[]> => {
       const rows = await Promise.all(
         CAPACITY_TIERS_GB.map(async (gb) => {
+          if (period === "yearly") {
+            const res = await getBucketYearlyPrice(identity, gb)
+            const priceE8s =
+              "ok" in res ? res.ok : calculateYearlyPriceE8s(gb)
+            return buildYearlyPricingTier(gb, priceE8s)
+          }
           const res = await getBucketPrice(identity, gb)
           const priceE8s =
             "ok" in res ? res.ok : calculatePriceE8s(gb)
@@ -179,22 +197,39 @@ export function useBucketPricingTiers() {
       )
       return rows
     },
-    { ...BUCKET_QUERY, dedupingInterval: 300_000, fallbackData: buildEstimatedPricingTiers() }
+    {
+      ...BUCKET_QUERY,
+      dedupingInterval: 300_000,
+      fallbackData:
+        period === "yearly"
+          ? buildEstimatedYearlyPricingTiers()
+          : buildEstimatedPricingTiers(),
+    }
   )
 
   return {
-    tiers: data ?? buildEstimatedPricingTiers(),
+    tiers:
+      data ??
+      (period === "yearly"
+        ? buildEstimatedYearlyPricingTiers()
+        : buildEstimatedPricingTiers()),
     error,
     isLoading: isLoading && !data,
   }
 }
 
-export function useRenewQuote(bucketId: string | null, enabled: boolean) {
+export function useRenewQuote(
+  bucketId: string | null,
+  enabled: boolean,
+  period: BucketBillingPeriod = "monthly"
+) {
   const { identity } = useAuth()
 
   const { data, isLoading, mutate } = useSWR(
-    enabled && bucketId ? bucketRenewQuoteKey(identity, bucketId) : null,
-    () => getRenewQuote(identity!, bucketId!),
+    enabled && bucketId
+      ? (["bucket-renew-quote", bucketId, period, identity?.getPrincipal().toText()] as const)
+      : null,
+    () => getRenewQuote(identity!, bucketId!, period),
     { ...BUCKET_QUERY, dedupingInterval: 5_000 }
   )
 

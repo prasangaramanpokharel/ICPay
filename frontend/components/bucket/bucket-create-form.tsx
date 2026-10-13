@@ -20,10 +20,10 @@ import { ShineBorder } from "@/components/ui/shine-border"
 import { useBucketCycleStatus, useBucketPrice } from "@/hooks/bucket/useBucket"
 import { useLiveBalance } from "@/hooks/wallet/useWalletData"
 import { CAPACITY_TIERS_GB, mapBucketError, validateBucketName } from "@/lib/bucket/bucket"
-import { calculateListPriceE8s } from "@/lib/bucket/pricing"
+import { calculateListPriceE8s, calculateYearlyListPriceE8s } from "@/lib/bucket/pricing"
 import { ICP_FEE, formatAmount } from "@/lib/wallet/utils"
 import { cn } from "@/lib/ui/utils"
-import type { BucketVisibilityVariant } from "@/services/bucket/types"
+import type { BucketBillingPeriod, BucketVisibilityVariant } from "@/services/bucket/types"
 
 export function BucketCreateForm({
   onCreate,
@@ -31,7 +31,8 @@ export function BucketCreateForm({
   onCreate: (
     name: string,
     capacityGB: number,
-    visibility: BucketVisibilityVariant
+    visibility: BucketVisibilityVariant,
+    period: BucketBillingPeriod
   ) => Promise<string | null>
 }) {
   const t = useTranslations("bucket")
@@ -40,12 +41,16 @@ export function BucketCreateForm({
 
   const [name, setName] = useState("")
   const [capacityGB, setCapacityGB] = useState<number>(1)
+  const [billingPeriod, setBillingPeriod] = useState<BucketBillingPeriod>("monthly")
   const [visibility, setVisibility] = useState<BucketVisibilityVariant>({ Public: null })
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const { price, isLoading: priceLoading } = useBucketPrice(capacityGB)
-  const listPrice = calculateListPriceE8s(capacityGB)
+  const { price, isLoading: priceLoading } = useBucketPrice(capacityGB, billingPeriod)
+  const listPrice =
+    billingPeriod === "yearly"
+      ? calculateYearlyListPriceE8s(capacityGB)
+      : calculateListPriceE8s(capacityGB)
 
   const nameError = useMemo(() => validateBucketName(name), [name])
   const canCreate = cycleStatus?.canAcceptNewBuckets !== false
@@ -57,7 +62,7 @@ export function BucketCreateForm({
     if (nameError || !canCreate) return
     setSubmitting(true)
     setError(null)
-    const err = await onCreate(name.trim().toLowerCase(), capacityGB, visibility)
+    const err = await onCreate(name.trim().toLowerCase(), capacityGB, visibility, billingPeriod)
     if (err) setError(mapBucketError(err, t))
     setSubmitting(false)
   }
@@ -149,6 +154,51 @@ export function BucketCreateForm({
           </RadioGroup>
         </div>
 
+        {/* Billing Period Selector */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label className="text-xs font-medium">Billing Cycle</Label>
+            <span className="text-[11px] font-medium text-emerald-500">
+              {billingPeriod === "yearly"
+                ? "Save ~17% · 2 Months Free"
+                : "Standard 30-day renewal"}
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-border/80 bg-muted/40 p-1">
+            <button
+              type="button"
+              onClick={() => setBillingPeriod("monthly")}
+              className={cn(
+                "flex flex-col items-center justify-center gap-0.5 rounded-lg py-2 px-3 text-xs font-medium transition-all",
+                billingPeriod === "monthly"
+                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-border"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <span>Monthly</span>
+              <span className="text-[10px] font-normal text-muted-foreground">30-day cycle</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setBillingPeriod("yearly")}
+              className={cn(
+                "relative flex flex-col items-center justify-center gap-0.5 rounded-lg py-2 px-3 text-xs font-medium transition-all",
+                billingPeriod === "yearly"
+                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-primary/40"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <span className="flex items-center gap-1.5">
+                <span>Annual</span>
+                <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-bold text-emerald-500">
+                  2 MO FREE
+                </span>
+              </span>
+              <span className="text-[10px] font-normal text-muted-foreground">365-day cycle</span>
+            </button>
+          </div>
+        </div>
+
         {/* Pricing Card with ShineBorder */}
         <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-b from-primary/10 via-background to-background p-4 shadow-sm">
           <ShineBorder
@@ -161,13 +211,21 @@ export function BucketCreateForm({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-primary">
-                  {capacityGB} GB Plan
+                  {capacityGB} GB · {billingPeriod === "yearly" ? "Annual Plan" : "Monthly Plan"}
                 </span>
-                <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-500">
-                  50% OFF
-                </span>
+                {billingPeriod === "yearly" ? (
+                  <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-500">
+                    2 MONTHS FREE
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-500">
+                    50% OFF
+                  </span>
+                )}
               </div>
-              <span className="text-xs text-muted-foreground">30-day cycle</span>
+              <span className="text-xs text-muted-foreground">
+                {billingPeriod === "yearly" ? "365-day cycle" : "30-day cycle"}
+              </span>
             </div>
 
             <div className="flex items-baseline justify-between border-t border-border/50 pt-2.5">
@@ -178,7 +236,7 @@ export function BucketCreateForm({
                 <BucketPriceLabel
                   priceE8s={price}
                   listPriceE8s={listPrice}
-                  perMonth={t("perMonth")}
+                  perMonth={billingPeriod === "yearly" ? "/ year" : t("perMonth")}
                   showUsd={true}
                 />
               )}
@@ -226,7 +284,7 @@ export function BucketCreateForm({
             ? t("creating")
             : insufficient
             ? t("insufficientBalance")
-            : `${t("create")} · ${capacityGB} GB`}
+            : `${t("create")} · ${capacityGB} GB (${billingPeriod === "yearly" ? "Annual" : "Monthly"})`}
         </Button>
       </div>
     </div>

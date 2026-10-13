@@ -94,8 +94,9 @@ module {
   // canister froze partway through.
   public let MIN_CYCLE_RESERVE: Nat = 5_000_000_000_000; // 5T
 
-  // ICPay Cloud bucket billing period (30 days, nanoseconds).
+  // ICPay Cloud bucket billing period (30 days vs 365 days, nanoseconds).
   public let BUCKET_PERIOD_NS: Int = 2_592_000_000_000_000; // 30 days
+  public let BUCKET_PERIOD_YEAR_NS: Int = 31_536_000_000_000_000; // 365 days
   public let BUCKET_GRACE_PERIOD_NS: Int = 604_800_000_000_000; // 7 days read-only grace period
   public let BUCKET_FROZEN_PERIOD_NS: Int = 1_209_600_000_000_000; // 14 days frozen period (402 Payment Required)
   public let BUCKET_TOMBSTONE_DELAY_NS: Int = 1_814_400_000_000_000; // 21 days after expiry: tombstone & purge blobs
@@ -145,6 +146,7 @@ module {
   public let BUCKET_EXPIRING_SOON_DAYS: Nat = 3;
 
   public let BUCKET_PERIOD_DAYS: Nat = 30;
+  public let BUCKET_PERIOD_YEAR_DAYS: Nat = 365;
 
   // IC http_request response limit is 2 MB; stay under for headers margin.
   public let HTTP_MAX_BODY_BYTES: Nat = 1_900_000;
