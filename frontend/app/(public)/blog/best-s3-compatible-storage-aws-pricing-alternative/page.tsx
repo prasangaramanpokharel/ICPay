@@ -323,20 +323,22 @@ export default function BestS3CompatibleStoragePage() {
         </p>
 
         <div className="rounded-xl border border-border bg-muted/60 p-4 font-mono text-xs overflow-x-auto text-foreground">
-          <pre>{`// Uploading files to icBucket with scoped API keys
-import { storeFile } from "@icpay/bucket-sdk"
+          <pre>{`// Uploading files to icBucket using official icpay-bucket package
+import { BucketClient } from "icpay-bucket"
 
-const result = await storeFile({
-  bucketId: "my-production-bucket",
-  path: "/uploads/avatar.png",
-  file: imageBuffer,
-  contentType: "image/png",
-  apiKey: process.env.ICBUCKET_API_KEY,
-  onProgress: (pct) => console.log(\`Upload: \${pct}%\`),
+const client = new BucketClient({
+  apiKey: process.env.IC_API_KEY!, // icp_cloud_...
 })
 
-// Direct public access via edge CDN:
-// https://cdn.icpay.app/my-production-bucket/uploads/avatar.png`}</pre>
+const result = await client.uploadFile({
+  bucketId: "my-production-bucket",
+  path: "/uploads/avatar.png",
+  data: imageBuffer,
+  contentType: "image/png",
+})
+
+// Direct public access via global edge CDN:
+// https://cloud.icpay.app/my-production-bucket/uploads/avatar.png`}</pre>
         </div>
       </section>
 

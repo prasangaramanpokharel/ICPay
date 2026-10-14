@@ -17,7 +17,7 @@ import { copyText } from '@/lib/wallet-utils'
 import { WALLET_CANISTER_ID } from '@/constants/images'
 import type { BucketStats } from '@/services/bucket/types'
 
-type TabKey = 'sdk' | 's3' | 'env' | 'curl'
+type TabKey = 'node' | 'python' | 'curl' | 'env'
 
 export function BucketConnectSheet({
   bucketId,
@@ -32,7 +32,7 @@ export function BucketConnectSheet({
   onOpenChange: (open: boolean) => void
   onOpenApiKeys?: () => void
 }) {
-  const [tab, setTab] = useState<TabKey>('sdk')
+  const [tab, setTab] = useState<TabKey>('node')
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
 
   const bucketName = stats?.name || bucketId
@@ -44,65 +44,61 @@ export function BucketConnectSheet({
     setTimeout(() => setCopiedKey(null), 2000)
   }
 
-  const icpSdkInstall = 'npm i @icp-sdk/core'
-  const s3Install = 'npm i @aws-sdk/client-s3 dotenv'
+  const nodeInstall = 'npm i icpay-bucket'
+  const pythonInstall = 'pip install icpay-bucket ic-py'
 
-  const icpSdkCode = `import { HttpAgent, Actor } from "@icp-sdk/core/agent";
-import { IDL } from "@icp-sdk/core/candid";
-import { Principal } from "@icp-sdk/core/principal";
+  const nodeCode = `import { BucketClient } from "icpay-bucket";
 
-const CANISTER_ID = "${WALLET_CANISTER_ID}";
-const BUCKET_NAME = "${bucketName}";
-const API_KEY = process.env.IC_API_KEY || "YOUR_API_KEY";
-
-// Initialize IC HTTP Agent
-const agent = await HttpAgent.create({ host: "https://icp0.io" });
-
-// Direct public file URL (CDN):
-// https://cloud.icpay.app/${bucketName}/uploads/avatar.png`
-
-  const s3ClientCode = `import "dotenv/config";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-
-const s3 = new S3Client({
-  endpoint: "https://cloud.icpay.app/s3",
-  region: "auto",
-  credentials: {
-    accessKeyId: "${bucketName}",
-    secretAccessKey: process.env.IC_API_KEY || "YOUR_API_KEY",
-  },
+// Initialize client with your API key
+const client = new BucketClient({
+  apiKey: process.env.IC_API_KEY || "YOUR_API_KEY",
 });
 
-// Upload an object
-await s3.send(
-  new PutObjectCommand({
-    Bucket: "${bucketName}",
-    Key: "uploads/hello.txt",
-    Body: "Hello from ICPay Cloud!",
-  })
-);`
+// Upload file
+const upload = await client.uploadFile({
+  bucketId: "${bucketName}",
+  path: "/uploads/hello.txt",
+  data: new TextEncoder().encode("Hello from ICPay Cloud!"),
+  contentType: "text/plain",
+});
+console.log("Upload result:", upload);
+
+// List files
+const files = await client.listFiles("${bucketName}", 0, 20);
+console.log("Files:", files);`
+
+  const pythonCode = `import os
+from icpay_bucket import BucketClient
+
+# Initialize client with your API key
+client = BucketClient(api_key=os.environ.get("IC_API_KEY", "YOUR_API_KEY"))
+
+# Upload file
+res = client.upload_file(
+    bucket_id="${bucketName}",
+    path="/uploads/hello.txt",
+    data=b"Hello from ICPay Cloud!",
+    content_type="text/plain",
+)
+print("Upload result:", res)
+
+# List files
+files = client.list_files("${bucketName}", page=0, page_size=20)
+print("Files:", files)`
 
   const envCode = `# ICPay Cloud Storage Config
 IC_CANISTER_ID="${WALLET_CANISTER_ID}"
 IC_BUCKET_ID="${bucketId}"
 IC_BUCKET_NAME="${bucketName}"
+IC_API_KEY="YOUR_API_KEY"
 IC_HOST="https://icp0.io"
-IC_CDN_URL="https://cloud.icpay.app"
+IC_CDN_URL="https://cloud.icpay.app"`
 
-# S3 Compatibility
-AWS_ENDPOINT_URL_S3="https://cloud.icpay.app/s3"
-AWS_ACCESS_KEY_ID="${bucketName}"
-AWS_SECRET_ACCESS_KEY="YOUR_API_KEY"
-AWS_REGION="auto"`
+  const curlCode = `# Download / View file directly from global CDN
+curl -O "https://cloud.icpay.app/${bucketName}/uploads/hello.txt"
 
-  const curlCode = `# Upload file via HTTP API
-curl -X PUT "https://cloud.icpay.app/${bucketName}/file.txt" \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: text/plain" \\
-  --data-binary @file.txt
-
-# Download public file directly
-curl -O "https://cloud.icpay.app/${bucketName}/file.txt"`
+# Direct on-chain Canister gateway download
+curl -O "https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${bucketName}/uploads/hello.txt"`
 
   return (
     <Sheet
@@ -128,10 +124,10 @@ curl -O "https://cloud.icpay.app/${bucketName}/file.txt"`
         <View className="flex-row rounded-full bg-muted p-1">
           {(
             [
-              { key: 'sdk', label: '@icp-sdk' },
-              { key: 's3', label: 'S3 client' },
-              { key: 'env', label: '.env' },
+              { key: 'node', label: 'Node' },
+              { key: 'python', label: 'Python' },
               { key: 'curl', label: 'cURL' },
+              { key: 'env', label: '.env' },
             ] as const
           ).map((item) => (
             <Pressable
@@ -152,21 +148,21 @@ curl -O "https://cloud.icpay.app/${bucketName}/file.txt"`
           ))}
         </View>
 
-        {/* Tab Contents */}
-        {tab === 'sdk' ? (
+        {/* Tab Contents: Node */}
+        {tab === 'node' ? (
           <View className="gap-3">
             {/* Install Bar */}
             <View className="flex-row items-center justify-between rounded-2xl border border-border/70 bg-card p-3">
               <View className="flex-row items-center gap-2">
                 <Icon icon={TerminalIcon} size={15} color="#888" />
-                <Text className="font-mono text-xs text-foreground">{icpSdkInstall}</Text>
+                <Text className="font-mono text-xs text-foreground">{nodeInstall}</Text>
               </View>
               <Pressable
-                onPress={() => void handleCopy(icpSdkInstall, 'install-sdk')}
+                onPress={() => void handleCopy(nodeInstall, 'install-node')}
                 className="rounded-lg bg-muted px-2.5 py-1 active:opacity-70"
               >
                 <Text className="text-[11px] font-medium text-foreground">
-                  {copiedKey === 'install-sdk' ? 'Copied' : 'Copy'}
+                  {copiedKey === 'install-node' ? 'Copied' : 'Copy'}
                 </Text>
               </Pressable>
             </View>
@@ -176,42 +172,43 @@ curl -O "https://cloud.icpay.app/${bucketName}/file.txt"`
               <View className="mb-2 flex-row items-center justify-between">
                 <Text className="text-[11px] font-medium text-muted-foreground">client.ts</Text>
                 <Pressable
-                  onPress={() => void handleCopy(icpSdkCode, 'code-sdk')}
+                  onPress={() => void handleCopy(nodeCode, 'code-node')}
                   className="flex-row items-center gap-1 rounded-md bg-card px-2 py-0.5 border border-border/60"
                 >
                   <Icon
-                    icon={copiedKey === 'code-sdk' ? Tick02Icon : Copy01Icon}
+                    icon={copiedKey === 'code-node' ? Tick02Icon : Copy01Icon}
                     size={12}
                     color="#888"
                   />
                   <Text className="text-[10px] font-medium text-foreground">
-                    {copiedKey === 'code-sdk' ? 'Copied' : 'Copy code'}
+                    {copiedKey === 'code-node' ? 'Copied' : 'Copy code'}
                   </Text>
                 </Pressable>
               </View>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <Text className="font-mono text-[11px] leading-relaxed text-foreground">
-                  {icpSdkCode}
+                  {nodeCode}
                 </Text>
               </ScrollView>
             </View>
           </View>
         ) : null}
 
-        {tab === 's3' ? (
+        {/* Tab Contents: Python */}
+        {tab === 'python' ? (
           <View className="gap-3">
             {/* Install Bar */}
             <View className="flex-row items-center justify-between rounded-2xl border border-border/70 bg-card p-3">
               <View className="flex-row items-center gap-2">
                 <Icon icon={TerminalIcon} size={15} color="#888" />
-                <Text className="font-mono text-xs text-foreground">{s3Install}</Text>
+                <Text className="font-mono text-xs text-foreground">{pythonInstall}</Text>
               </View>
               <Pressable
-                onPress={() => void handleCopy(s3Install, 'install-s3')}
+                onPress={() => void handleCopy(pythonInstall, 'install-py')}
                 className="rounded-lg bg-muted px-2.5 py-1 active:opacity-70"
               >
                 <Text className="text-[11px] font-medium text-foreground">
-                  {copiedKey === 'install-s3' ? 'Copied' : 'Copy'}
+                  {copiedKey === 'install-py' ? 'Copied' : 'Copy'}
                 </Text>
               </Pressable>
             </View>
@@ -219,24 +216,24 @@ curl -O "https://cloud.icpay.app/${bucketName}/file.txt"`
             {/* Code Snippet Box */}
             <View className="rounded-2xl border border-border/70 bg-muted/40 p-3.5">
               <View className="mb-2 flex-row items-center justify-between">
-                <Text className="text-[11px] font-medium text-muted-foreground">s3-client.ts</Text>
+                <Text className="text-[11px] font-medium text-muted-foreground">client.py</Text>
                 <Pressable
-                  onPress={() => void handleCopy(s3ClientCode, 'code-s3')}
+                  onPress={() => void handleCopy(pythonCode, 'code-py')}
                   className="flex-row items-center gap-1 rounded-md bg-card px-2 py-0.5 border border-border/60"
                 >
                   <Icon
-                    icon={copiedKey === 'code-s3' ? Tick02Icon : Copy01Icon}
+                    icon={copiedKey === 'code-py' ? Tick02Icon : Copy01Icon}
                     size={12}
                     color="#888"
                   />
                   <Text className="text-[10px] font-medium text-foreground">
-                    {copiedKey === 'code-s3' ? 'Copied' : 'Copy code'}
+                    {copiedKey === 'code-py' ? 'Copied' : 'Copy code'}
                   </Text>
                 </Pressable>
               </View>
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 <Text className="font-mono text-[11px] leading-relaxed text-foreground">
-                  {s3ClientCode}
+                  {pythonCode}
                 </Text>
               </ScrollView>
             </View>

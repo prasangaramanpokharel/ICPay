@@ -40,6 +40,7 @@ const COMMANDS: Record<string, string> = {
   "cnsmangment:hash": "cns/hash.ts",
   "blob:deploy": "blob/deploy.ts",
   "blob:status": "blob/status.ts",
+  "blob:audit": "blob/audit.ts",
   "notifier:build": "notifier/build.ts",
   "notifier:deploy": "notifier/deploy.ts",
   "notifier:hash": "notifier/hash.ts",

@@ -42,71 +42,67 @@ export function BucketConnectModal({
   const bucketName = stats?.name || bucketId
   const isPublic = Boolean(stats?.visibility && "open" in stats.visibility)
 
-  const icpSdkInstall = "npm i @icp-sdk/core"
-  const s3Install = "npm i @aws-sdk/client-s3 dotenv"
+  const nodeInstall = "npm i icpay-bucket"
+  const pythonInstall = "pip install icpay-bucket ic-py"
 
-  const icpSdkCode = `import { HttpAgent, Actor } from "@icp-sdk/core/agent";
-import { IDL } from "@icp-sdk/core/candid";
-import { Principal } from "@icp-sdk/core/principal";
+  const nodeCode = `import { BucketClient } from "icpay-bucket";
 
-const CANISTER_ID = "${WALLET_CANISTER_ID}";
-const BUCKET_NAME = "${bucketName}";
-const API_KEY = process.env.IC_API_KEY || "YOUR_API_KEY"; // Generate in API Keys
-
-// 1. Initialize IC HTTP Agent
-const agent = await HttpAgent.create({ host: "https://icp0.io" });
-
-// 2. Direct public file URL via global CDN:
-// https://cloud.icpay.app/${bucketName}/uploads/example.png
-
-console.log("Connected to bucket:", BUCKET_NAME);`
-
-  const s3ClientCode = `import "dotenv/config";
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
-
-// Initialize S3 client pointing to ICPay Cloud Gateway
-const s3 = new S3Client({
-  endpoint: "https://cloud.icpay.app/s3",
-  region: "auto",
-  credentials: {
-    accessKeyId: "${bucketName}",
-    secretAccessKey: process.env.IC_API_KEY || "YOUR_API_KEY",
-  },
+// 1. Initialize client with your API key
+const client = new BucketClient({
+  apiKey: process.env.IC_API_KEY || "YOUR_API_KEY", // e.g. icp_cloud_...
 });
 
-// Upload an object
-await s3.send(
-  new PutObjectCommand({
-    Bucket: "${bucketName}",
-    Key: "uploads/hello.txt",
-    Body: "Hello from ICPay Cloud on Internet Computer!",
-    ContentType: "text/plain",
-  })
-);
+// 2. Upload file to your bucket
+const upload = await client.uploadFile({
+  bucketId: "${bucketName}",
+  path: "/uploads/hello.txt",
+  data: new TextEncoder().encode("Hello from ICPay Cloud!"),
+  contentType: "text/plain",
+});
+console.log("Upload result:", upload);
 
-console.log("File uploaded successfully.");`
+// 3. List files in your bucket
+const files = await client.listFiles("${bucketName}", 0, 20);
+console.log("Files:", files);
+
+// 4. Download file bytes
+const fileBytes = await client.downloadFile("${bucketName}", "/uploads/hello.txt");`
+
+  const pythonCode = `import os
+from icpay_bucket import BucketClient
+
+# 1. Initialize client with your API key
+client = BucketClient(api_key=os.environ.get("IC_API_KEY", "YOUR_API_KEY"))
+
+# 2. Upload file to your bucket
+res = client.upload_file(
+    bucket_id="${bucketName}",
+    path="/uploads/hello.txt",
+    data=b"Hello from ICPay Cloud on Internet Computer!",
+    content_type="text/plain",
+)
+print("Upload result:", res)
+
+# 3. List files in bucket
+files = client.list_files("${bucketName}", page=0, page_size=20)
+print("Files:", files)
+
+# 4. Download file bytes
+content = client.download_file("${bucketName}", "/uploads/hello.txt")`
 
   const envCode = `# ICPay Cloud Storage Configuration
 IC_CANISTER_ID="${WALLET_CANISTER_ID}"
 IC_BUCKET_ID="${bucketId}"
 IC_BUCKET_NAME="${bucketName}"
+IC_API_KEY="YOUR_API_KEY" # Generate in API Keys (e.g. icp_cloud_...)
 IC_HOST="https://icp0.io"
-IC_CDN_URL="https://cloud.icpay.app"
+IC_CDN_URL="https://cloud.icpay.app"`
 
-# S3 Compatibility (AWS SDK / MinIO / rclone)
-AWS_ENDPOINT_URL_S3="https://cloud.icpay.app/s3"
-AWS_ACCESS_KEY_ID="${bucketName}"
-AWS_SECRET_ACCESS_KEY="YOUR_API_KEY" # Generate in API Keys
-AWS_REGION="auto"`
+  const curlCode = `# 1. Download / View file directly from global CDN
+curl -O "https://cloud.icpay.app/${bucketName}/uploads/hello.txt"
 
-  const curlCode = `# 1. Upload a file via HTTP API
-curl -X PUT "https://cloud.icpay.app/${bucketName}/sample.txt" \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: text/plain" \\
-  --data-binary @sample.txt
-
-# 2. Download / View public file directly from CDN
-curl -O "https://cloud.icpay.app/${bucketName}/sample.txt"`
+# 2. Direct on-chain Canister gateway download
+curl -O "https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${bucketName}/uploads/hello.txt"`
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -138,67 +134,67 @@ curl -O "https://cloud.icpay.app/${bucketName}/sample.txt"`
         </DialogHeader>
 
         <div className="space-y-4 pt-1 min-w-0 w-full">
-          <Tabs defaultValue="sdk" className="w-full min-w-0">
+          <Tabs defaultValue="node" className="w-full min-w-0">
             <TabsList className="grid w-full grid-cols-4 min-w-0">
-              <TabsTrigger value="sdk" className="text-xs truncate">@icp-sdk</TabsTrigger>
-              <TabsTrigger value="s3" className="text-xs truncate">S3 client</TabsTrigger>
-              <TabsTrigger value="env" className="text-xs truncate">.env</TabsTrigger>
+              <TabsTrigger value="node" className="text-xs truncate">Node (NPM)</TabsTrigger>
+              <TabsTrigger value="python" className="text-xs truncate">Python (PIP)</TabsTrigger>
               <TabsTrigger value="curl" className="text-xs truncate">cURL</TabsTrigger>
+              <TabsTrigger value="env" className="text-xs truncate">.env</TabsTrigger>
             </TabsList>
 
-            {/* TAB 1: @icp-sdk/core */}
-            <TabsContent value="sdk" className="space-y-3.5 pt-3 min-w-0 w-full">
+            {/* TAB 1: Node.js (icpay-bucket) */}
+            <TabsContent value="node" className="space-y-3.5 pt-3 min-w-0 w-full">
               <div className="space-y-1.5 min-w-0 w-full">
                 <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                   <HugeiconsIcon icon={TerminalIcon} className="size-3.5" />
-                  <span>Install client library</span>
+                  <span>Install client library (npm)</span>
                 </div>
-                <BucketCodeBlock code={icpSdkInstall} language="bash" />
+                <BucketCodeBlock code={nodeInstall} language="bash" />
               </div>
 
               <div className="space-y-1.5 min-w-0 w-full">
                 <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
-                  <span>Client initialization</span>
+                  <span>Client initialization & upload</span>
                   <span className="font-mono text-[11px] text-muted-foreground/75">client.ts</span>
                 </div>
-                <BucketCodeBlock code={icpSdkCode} language="typescript" />
+                <BucketCodeBlock code={nodeCode} language="typescript" />
               </div>
             </TabsContent>
 
-            {/* TAB 2: S3 Client */}
-            <TabsContent value="s3" className="space-y-3.5 pt-3 min-w-0 w-full">
+            {/* TAB 2: Python (icpay-bucket / ic-py) */}
+            <TabsContent value="python" className="space-y-3.5 pt-3 min-w-0 w-full">
               <div className="space-y-1.5 min-w-0 w-full">
                 <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
                   <HugeiconsIcon icon={TerminalIcon} className="size-3.5" />
-                  <span>Install S3 client</span>
+                  <span>Install Python client (pip)</span>
                 </div>
-                <BucketCodeBlock code={s3Install} language="bash" />
+                <BucketCodeBlock code={pythonInstall} language="bash" />
               </div>
 
               <div className="space-y-1.5 min-w-0 w-full">
                 <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
-                  <span>S3 integration</span>
-                  <span className="font-mono text-[11px] text-muted-foreground/75">s3-client.ts</span>
+                  <span>Client initialization & upload</span>
+                  <span className="font-mono text-[11px] text-muted-foreground/75">client.py</span>
                 </div>
-                <BucketCodeBlock code={s3ClientCode} language="typescript" />
+                <BucketCodeBlock code={pythonCode} language="python" />
               </div>
             </TabsContent>
 
-            {/* TAB 3: .env */}
+            {/* TAB 3: cURL */}
+            <TabsContent value="curl" className="space-y-3 pt-3 min-w-0 w-full">
+              <p className="text-xs text-muted-foreground">
+                Download or inspect public files directly from the global CDN or on-chain canister HTTP gateway.
+              </p>
+              <BucketCodeBlock code={curlCode} language="bash" />
+            </TabsContent>
+
+            {/* TAB 4: .env */}
             <TabsContent value="env" className="space-y-3 pt-3 min-w-0 w-full">
               <p className="text-xs text-muted-foreground">
                 Copy and paste these environment variables into your project’s{" "}
                 <code className="rounded bg-muted px-1 py-0.5 font-mono text-foreground">.env</code> file.
               </p>
               <BucketCodeBlock code={envCode} language="bash" />
-            </TabsContent>
-
-            {/* TAB 4: cURL */}
-            <TabsContent value="curl" className="space-y-3 pt-3 min-w-0 w-full">
-              <p className="text-xs text-muted-foreground">
-                Interact with the bucket directly from your terminal or CI/CD pipelines via standard HTTP.
-              </p>
-              <BucketCodeBlock code={curlCode} language="bash" />
             </TabsContent>
           </Tabs>
         </div>

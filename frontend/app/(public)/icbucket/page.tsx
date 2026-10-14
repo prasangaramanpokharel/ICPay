@@ -89,8 +89,8 @@ const jsonLd = {
         "@type": "AggregateOffer",
         "priceCurrency": "ICP",
         "lowPrice": "0.5",
-        "highPrice": "2.0",
-        "offerCount": "3",
+        "highPrice": "40.5",
+        "offerCount": "6",
       },
     },
     {
