@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useId, useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -32,7 +32,6 @@ export function BucketUploadControl({
   onSuccess?: () => void
 }) {
   const t = useTranslations("bucket")
-  const inputId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
   const { desktopOnly } = useBucketUploadDesktopOnly()
   const blocked = disabled || desktopOnly
@@ -126,7 +125,7 @@ export function BucketUploadControl({
     <>
       <input
         ref={inputRef}
-        id={inputId}
+        id="bucket-upload-input"
         type="file"
         accept={FILE_ACCEPT}
         multiple

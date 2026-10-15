@@ -77,7 +77,7 @@ export function BucketCard({
     <TableRow className="cursor-pointer">
       <TableCell>
         <Link
-          href={`/bucket/${encodeURIComponent(bucket.id)}`}
+          href={`/bucket?id=${encodeURIComponent(bucket.id)}`}
           prefetch
           className="flex items-center gap-2.5"
         >
@@ -95,7 +95,7 @@ export function BucketCard({
           >
             <HugeiconsIcon
               icon={isPublic ? Globe02Icon : LockIcon}
-              className={cn("size-2.5", isPublic ? "text-emerald-500" : "text-amber-500")}
+              className={cn("size-2.5", isPublic && "text-primary")}
             />
             <span>{isPublic ? t("public") : t("private")}</span>
           </Badge>
@@ -126,9 +126,9 @@ export function BucketCard({
           variant={active ? "outline" : "destructive"}
           className={`h-4.5 px-1.5 text-[10px] font-medium ${
             isFrozen
-              ? "border-amber-500/30 text-amber-500 bg-amber-500/10"
+              ? "border-warning/30 text-warning bg-warning/10"
               : isTombstoned
-              ? "border-red-500/30 text-red-500 bg-red-500/10"
+              ? "border-destructive/30 text-destructive bg-destructive/10"
               : ""
           }`}
         >
@@ -143,7 +143,7 @@ export function BucketCard({
       </TableCell>
       <TableCell className="text-xs text-muted-foreground tabular-nums">
         {active ? (
-          <span className={daysRemaining <= 7 ? "font-medium text-amber-500" : ""}>
+          <span className={daysRemaining <= 7 ? "font-medium text-warning" : ""}>
             {t("daysLeft", { days: daysRemaining })}
           </span>
         ) : (
@@ -153,7 +153,7 @@ export function BucketCard({
         )}
       </TableCell>
       <TableCell className="text-right">
-        <Link href={`/bucket/${encodeURIComponent(bucket.id)}`} prefetch aria-label={bucket.name}>
+        <Link href={`/bucket?id=${encodeURIComponent(bucket.id)}`} prefetch aria-label={bucket.name}>
           <HugeiconsIcon
             icon={ArrowRight01Icon}
             className="size-4 text-muted-foreground"

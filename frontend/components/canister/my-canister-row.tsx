@@ -41,7 +41,12 @@ export function MyCanisterRow({
         <TableCell>
           <div className="min-w-0 space-y-0.5">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="truncate text-sm font-medium text-foreground">{label}</span>
+              <Link
+                href={`/canister?id=${id}`}
+                className="truncate text-sm font-medium text-foreground hover:underline"
+              >
+                {label}
+              </Link>
               {statusLoading && !status ? (
                 <Skeleton className="h-5 w-16 rounded-full" />
               ) : status?.kind === "ok" ? (
@@ -71,7 +76,14 @@ export function MyCanisterRow({
                 </Badge>
               ) : null}
             </div>
-            <p className="w-full truncate font-mono text-[10px] text-muted-foreground">{id}</p>
+            <p className="w-full truncate font-mono text-[10px]">
+              <Link
+                href={`/canister?id=${id}`}
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {id}
+              </Link>
+            </p>
             {(countries && countries.length > 0) || place ? (
               <div className="flex min-w-0 items-center gap-1.5">
                 {countries && countries.length > 0 ? (
@@ -98,7 +110,7 @@ export function MyCanisterRow({
                     nativeButton={false}
                     variant="ghost"
                     size="icon-sm"
-                    render={<Link href={`/canister/${id}`} />}
+                    render={<Link href={`/canister?id=${id}`} />}
                     aria-label={t("view")}
                   >
                     <HugeiconsIcon icon={ViewIcon} className="size-4" strokeWidth={1.75} />

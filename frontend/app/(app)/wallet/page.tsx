@@ -1,6 +1,7 @@
 "use client"
 
-import { useMemo } from "react"
+import { Suspense, useMemo } from "react"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { E8S } from "@/lib/wallet/utils"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
@@ -12,8 +13,11 @@ import { TokenList } from "@/components/wallet/token-list"
 import { WalletBalanceCard } from "@/components/wallet/wallet-balance-card"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 
-export default function WalletPage() {
+function WalletPageContent() {
   const t = useTranslations("wallet")
+  const searchParams = useSearchParams()
+  const tokenQuery = searchParams.get("token")
+
   const { identity } = useAuth()
   const principal = identity?.getPrincipal().toText()
   const { ids: customIds, add: addCustomId } = useCustomLedgerIds(principal)
@@ -35,11 +39,20 @@ export default function WalletPage() {
         holdings={holdings}
         isLoading={holdingsLoading}
         existingLedgerIds={existingLedgerIds}
+        initialSelectedLedgerId={tokenQuery}
         onAddCustom={(ledgerId, meta) => {
           addCustomId(ledgerId, meta)
           void refresh()
         }}
       />
     </AppPage>
+  )
+}
+
+export default function WalletPage() {
+  return (
+    <Suspense fallback={null}>
+      <WalletPageContent />
+    </Suspense>
   )
 }

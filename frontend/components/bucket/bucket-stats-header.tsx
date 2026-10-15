@@ -114,8 +114,8 @@ export function BucketStatsHeader({
     !active || daysRemaining <= 3
       ? "bg-destructive"
       : daysRemaining <= 7
-        ? "bg-amber-500"
-        : "bg-emerald-500"
+        ? "bg-warning"
+        : "bg-primary"
 
   return (
     <Card className="overflow-hidden border border-border/70 bg-gradient-to-b from-card/80 to-card/40 shadow-xs">
@@ -135,9 +135,9 @@ export function BucketStatsHeader({
                   variant={active ? "outline" : "destructive"}
                   className={`h-4.5 px-1.5 text-[10px] font-medium ${
                     isFrozen
-                      ? "border-amber-500/30 text-amber-500 bg-amber-500/10"
+                      ? "border-warning/30 text-warning bg-warning/10"
                       : isTombstoned
-                      ? "border-red-500/30 text-red-500 bg-red-500/10"
+                      ? "border-destructive/30 text-destructive bg-destructive/10"
                       : ""
                   }`}
                 >
@@ -155,7 +155,7 @@ export function BucketStatsHeader({
                   variant="secondary"
                   className="h-4.5 gap-1 px-1.5 text-[10px] font-medium text-muted-foreground"
                 >
-                  <HugeiconsIcon icon={isPublic ? Globe02Icon : LockIcon} className="size-2.5" />
+                  <HugeiconsIcon icon={isPublic ? Globe02Icon : LockIcon} className={cn("size-2.5", isPublic && "text-primary")} />
                   <span>{isPublic ? t("public") : t("private")}</span>
                 </Badge>
               </div>
@@ -183,7 +183,7 @@ export function BucketStatsHeader({
                 <span>·</span>
                 <span className="inline-flex items-center gap-1.5 rounded-md border border-border/50 bg-muted/40 px-2 py-0.5 font-mono text-[11px] text-foreground/90">
                   <span className="font-sans font-medium text-[10.5px] text-muted-foreground">Base URL:</span>
-                  <span className="font-mono text-[10.5px] text-emerald-400 select-all truncate max-w-[200px] sm:max-w-xs">
+                  <span className="font-mono text-[10.5px] text-foreground font-medium select-all truncate max-w-[200px] sm:max-w-xs">
                     {cdnBase}
                   </span>
                   <button
@@ -195,7 +195,7 @@ export function BucketStatsHeader({
                   >
                     <HugeiconsIcon
                       icon={copiedBase ? Tick02Icon : Copy01Icon}
-                      className="size-3 text-emerald-400"
+                      className="size-3 text-muted-foreground hover:text-foreground"
                       strokeWidth={1.75}
                     />
                   </button>
@@ -208,7 +208,7 @@ export function BucketStatsHeader({
             <div className="flex items-center gap-2 rounded-lg border border-border/70 bg-muted/40 px-2.5 py-1 text-xs">
               <HugeiconsIcon
                 icon={isPublic ? Globe02Icon : LockIcon}
-                className={cn("size-3.5", isPublic ? "text-emerald-500" : "text-amber-500")}
+                className={cn("size-3.5", isPublic ? "text-primary" : "text-muted-foreground")}
                 strokeWidth={1.75}
               />
               <span className="text-[11px] font-medium text-foreground">
@@ -268,7 +268,7 @@ export function BucketStatsHeader({
                   icon={stats.isExpiringSoon || !active ? Alert02Icon : Calendar01Icon}
                   className={
                     stats.isExpiringSoon || !active
-                      ? "size-3.5 text-amber-500"
+                      ? "size-3.5 text-warning"
                       : "size-3.5 text-primary"
                   }
                 />
@@ -282,7 +282,7 @@ export function BucketStatsHeader({
                         daysRemaining <= 3
                           ? "font-semibold text-destructive"
                           : daysRemaining <= 7
-                            ? "font-semibold text-amber-500"
+                            ? "font-semibold text-warning"
                             : "text-foreground"
                       }
                     >

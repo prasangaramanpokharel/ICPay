@@ -1,22 +1,26 @@
 "use client"
 
 import { useMemo } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import useSWR from "swr"
-import { MyCanisterDetails } from "@/components/canister/details"
+import { MyCanisterDetails, type CanisterDetailTab } from "@/components/canister/details"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useCanisterStatus } from "@/hooks/canister/useCanisterStatus"
 import { useSavedCanisterEntries } from "@/hooks/canister/useSavedCanisters"
 import { fetchCanisterIndexMeta } from "@/services/canister/controlledCanisters"
 
-export function CanisterSettingsView() {
+export function CanisterDetailView({ canisterId: canisterIdProp }: { canisterId?: string } = {}) {
   const { identity, isAuthenticated } = useAuth()
-  const params = useParams()
-  const router = useRouter()
-  const canisterId = (params?.id as string) ?? ""
-  const principal = identity?.getPrincipal().toText() ?? null
+  const searchParams = useSearchParams()
 
+  const canisterId = canisterIdProp || searchParams.get("id") || ""
+
+  const tabParam = searchParams.get("tab") as CanisterDetailTab | null
+  const defaultTab: CanisterDetailTab =
+    tabParam === "settings" || tabParam === "snapshots" ? tabParam : "overview"
+
+  const principal = identity?.getPrincipal().toText() ?? null
   const entries = useSavedCanisterEntries(principal)
   const nameById = useMemo(() => new Map(entries.map((e) => [e.id, e.name])), [entries])
   const localName = canisterId ? nameById.get(canisterId) ?? "" : ""
@@ -43,12 +47,7 @@ export function CanisterSettingsView() {
             localName={localName}
             meta={meta}
             status={status}
-            defaultTab="settings"
-            onTabChange={(tab) => {
-              if (tab === "overview") {
-                router.push(`/canister/${canisterId}`)
-              }
-            }}
+            defaultTab={defaultTab}
             onCopyId={() => void navigator.clipboard.writeText(canisterId)}
             onRefresh={() => status.refresh()}
           />

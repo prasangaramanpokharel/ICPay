@@ -60,7 +60,7 @@
     },
     {
       "source": "/bucket/:id",
-      "destination": "/bucket/id"
+      "destination": "/bucket?id=:id"
     },
     {
       "source": "/transactions/:id",

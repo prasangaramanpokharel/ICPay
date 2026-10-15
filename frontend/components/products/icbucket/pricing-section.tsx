@@ -12,7 +12,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   CheckmarkCircle02Icon,
   ArrowRight01Icon,
-  FlashIcon,
   Layers01Icon,
   Key01Icon,
   Clock01Icon,
@@ -188,21 +187,16 @@ export function PricingSection() {
     viewFilter === "featured"
       ? ALL_PLANS.slice(0, 3)
       : viewFilter === "highCapacity"
-      ? ALL_PLANS.slice(3, 6)
-      : ALL_PLANS
+        ? ALL_PLANS.slice(3, 6)
+        : ALL_PLANS
 
   return (
     <section className="border-b border-border/60 bg-background relative overflow-hidden" id="pricing">
-      {/* Background ambient radial glow */}
-      <div className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 size-[650px] rounded-full bg-primary/5 blur-[140px]" />
 
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-24 relative z-10">
         {/* Section Header */}
         <div className="mb-12 space-y-4 text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1 text-xs font-semibold text-primary">
-            <HugeiconsIcon icon={FlashIcon} className="size-3.5" />
-            <span>100% On-Chain Canister Storage · Principal Sovereignty</span>
-          </div>
+
 
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground md:text-5xl">
             {t("title") || "Storage Economics"}

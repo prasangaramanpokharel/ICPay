@@ -88,7 +88,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
   return (
     <li>
       <Link
-        href={`/transactions/${encodeURIComponent(tx.id)}`}
+        href={`/transactions?id=${encodeURIComponent(tx.id)}`}
         prefetch
         className="group flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/50 active:bg-muted/70"
       >

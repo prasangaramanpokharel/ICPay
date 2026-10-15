@@ -3,13 +3,14 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useSWRConfig } from "swr"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   ArrowRight01Icon,
   BellIcon,
   Book02Icon,
+  Coins01Icon,
   Folder02Icon,
   Key01Icon,
   MoreVerticalIcon,
@@ -18,6 +19,7 @@ import {
   Alert02Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { AppPage } from "@/components/layout/dashboard/app-page"
@@ -63,16 +65,22 @@ import { joinObjectPath, nestedPrefix, prefixSegments, apiListFolderPrefix } fro
 import { clearLegacyBucketStorage } from "@/lib/bucket/legacyStorage"
 import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
 
-export function BucketDetail() {
+export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } = {}) {
   const t = useTranslations("bucket")
   const tNav = useTranslations("settings.sections")
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
   const invalidateBucketCache = useInvalidateBucketCache()
   const { mutate } = useSWRConfig()
 
-  const bucketId = useRewrittenLastSegment()
+  const rawLastSegment = useRewrittenLastSegment()
+  const bucketId =
+    bucketIdProp ||
+    searchParams.get("id") ||
+    (rawLastSegment && rawLastSegment !== "id" && rawLastSegment !== "bucket" ? rawLastSegment : "")
+
   const { stats, isLoading: statsLoading, refresh: refreshStats } = useBucketStats(bucketId || null)
   const [renewOpen, setRenewOpen] = useState(false)
   const [apiKeysOpen, setApiKeysOpen] = useState(false)
@@ -235,98 +243,107 @@ export function BucketDetail() {
 
   const headerActions = (
     <div className="flex flex-wrap items-center justify-end gap-2">
-      {stats ? (
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setConnectOpen(true)}
-          className="gap-1.5"
-        >
-          <HugeiconsIcon icon={Plug01Icon} className="size-4" strokeWidth={1.75} />
-          <span>Connect</span>
-        </Button>
-      ) : null}
-      {stats ? (
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setNotifOpen(true)}
-          className="gap-1.5"
-          title="Configure expiry notification alerts"
-        >
-          <HugeiconsIcon icon={BellIcon} className="size-4" strokeWidth={1.75} />
-          <span>Alerts</span>
-        </Button>
-      ) : null}
-      {stats ? (
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setApiKeysOpen(true)}
-          className="gap-1.5"
-        >
-          <HugeiconsIcon icon={Key01Icon} className="size-4" strokeWidth={1.75} />
-          <span>{t("apiKeysShort")}</span>
-        </Button>
-      ) : null}
-      {canWrite ? (
-        <>
-          <Button type="button" variant="outline" size="sm" onClick={() => setFolderOpen(true)}>
-            <HugeiconsIcon icon={Folder02Icon} className="size-4" strokeWidth={1.75} />
-            {t("createFolder")}
-          </Button>
-          <BucketUploadControl
-            disabled={!canWrite}
-            pathPrefix={prefix}
-            onUpload={handleUpload}
-            onSuccess={handleUploadSuccess}
-          />
-        </>
-      ) : null}
-      <DropdownMenu>
-        <DropdownMenuTrigger
-          render={
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              aria-label={tNav("more")}
-              title={tNav("more")}
-              className="shrink-0"
-            />
-          }
-        >
-          <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" strokeWidth={1.75} />
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => setConnectOpen(true)} className="gap-2">
-            <HugeiconsIcon
-              icon={Plug01Icon}
-              className="size-4 text-muted-foreground"
-              strokeWidth={1.75}
-            />
+      <ButtonGroup>
+        {stats ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setConnectOpen(true)}
+            className="gap-1.5"
+          >
+            <HugeiconsIcon icon={Plug01Icon} className="size-4" strokeWidth={1.75} />
             <span>Connect</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setNotifOpen(true)} className="gap-2">
-            <HugeiconsIcon
-              icon={BellIcon}
-              className="size-4 text-muted-foreground"
-              strokeWidth={1.75}
-            />
-            <span>Expiry Alerts</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push("/bucket/docs")} className="gap-2">
-            <HugeiconsIcon
-              icon={Book02Icon}
-              className="size-4 text-muted-foreground"
-              strokeWidth={1.75}
-            />
-            <span>{t("docs")}</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          </Button>
+        ) : null}
+        {stats ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setNotifOpen(true)}
+            className="gap-1.5"
+            title="Configure expiry notification alerts"
+          >
+            <HugeiconsIcon icon={BellIcon} className="size-4" strokeWidth={1.75} />
+            <span>Alerts</span>
+          </Button>
+        ) : null}
+        {stats ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setApiKeysOpen(true)}
+            className="gap-1.5"
+          >
+            <HugeiconsIcon icon={Key01Icon} className="size-4" strokeWidth={1.75} />
+            <span>{t("apiKeysShort")}</span>
+          </Button>
+        ) : null}
+        {canWrite ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => setFolderOpen(true)}
+            className="gap-1.5"
+          >
+            <HugeiconsIcon icon={Folder02Icon} className="size-4" strokeWidth={1.75} />
+            <span>{t("createFolder")}</span>
+          </Button>
+        ) : null}
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="outline"
+                size="icon-sm"
+                aria-label={tNav("more")}
+                title={tNav("more")}
+                className="shrink-0"
+              />
+            }
+          >
+            <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" strokeWidth={1.75} />
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => router.push("/bucket/docs")} className="gap-2">
+              <HugeiconsIcon
+                icon={Book02Icon}
+                className="size-4 text-muted-foreground"
+                strokeWidth={1.75}
+              />
+              <span>{t("docs")}</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/bucket/pricing")} className="gap-2">
+              <HugeiconsIcon
+                icon={Coins01Icon}
+                className="size-4 text-muted-foreground"
+                strokeWidth={1.75}
+              />
+              <span>{t("pricingLink")}</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => void refreshStats()} className="gap-2">
+              <HugeiconsIcon
+                icon={RefreshIcon}
+                className="size-4 text-muted-foreground"
+                strokeWidth={1.75}
+              />
+              <span>{t("refresh")}</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </ButtonGroup>
+
+      {canWrite ? (
+        <BucketUploadControl
+          disabled={!canWrite}
+          pathPrefix={prefix}
+          onUpload={handleUpload}
+          onSuccess={handleUploadSuccess}
+        />
+      ) : null}
     </div>
   )
 
@@ -370,26 +387,30 @@ export function BucketDetail() {
         const tombstoned = isBucketTombstoned(stats.status, stats.expiresAt)
         if (tombstoned) {
           return (
-            <Alert variant="destructive" className="flex items-start gap-3">
-              <HugeiconsIcon icon={Alert02Icon} className="size-5 shrink-0 text-destructive mt-0.5" />
-              <div className="space-y-1">
-                <div className="text-xs font-semibold tracking-tight">Bucket Tombstoned (21+ Days Overdue)</div>
-                <AlertDescription className="text-xs">
-                  This bucket has exceeded the 21-day grace period without renewal and is marked for deletion. Files can no longer be recovered.
-                </AlertDescription>
+            <Alert variant="destructive" className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <HugeiconsIcon icon={Alert02Icon} className="size-5 shrink-0 mt-0.5" />
+                <div className="space-y-1">
+                  <div className="text-xs font-semibold tracking-tight">Bucket Tombstoned (Day 31+)</div>
+                  <AlertDescription className="text-xs">
+                    This bucket has been deleted due to non-renewal. Data cannot be recovered.
+                  </AlertDescription>
+                </div>
               </div>
             </Alert>
           )
         }
         if (frozen) {
           return (
-            <Alert variant="destructive" className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <Alert className="border-amber-500/40 bg-amber-500/10 text-amber-500 dark:text-amber-400 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-start gap-3">
-                <HugeiconsIcon icon={Alert02Icon} className="size-5 shrink-0 text-destructive mt-0.5" />
+                <HugeiconsIcon icon={Alert02Icon} className="size-5 shrink-0 text-amber-500 mt-0.5" />
                 <div className="space-y-1">
-                  <div className="text-xs font-semibold tracking-tight">Bucket Frozen (Day 8–21 Past Expiry)</div>
-                  <AlertDescription className="text-xs">
-                    Public CDN access is suspended. Renew now to unfreeze your storage and prevent permanent tombstoning after day 21.
+                  <div className="text-xs font-semibold tracking-tight text-amber-500 dark:text-amber-300">
+                    Bucket Frozen (Day 8–30)
+                  </div>
+                  <AlertDescription className="text-xs text-foreground/85">
+                    Grace period expired. All file downloads and uploads are frozen. Renew now before permanent deletion on Day 31.
                   </AlertDescription>
                 </div>
               </div>

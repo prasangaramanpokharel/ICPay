@@ -13,7 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { DashboardNavFooter, DashboardNavMain } from "@/components/layout/dashboard/nav-main"
-import { SidebarBlogCard } from "@/components/layout/dashboard/sidebar-blog-card"
+import { SidebarUserFooter } from "@/components/layout/dashboard/sidebar-user-footer"
 import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
 import { SIDEBAR_FOOTER } from "@/lib/navigation/app-sidebar-nav"
 
@@ -53,7 +53,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
             <DashboardNavFooter />
           </div>
         ) : null}
-        <SidebarBlogCard />
+        <SidebarUserFooter />
       </SidebarFooter>
     </Sidebar>
   )

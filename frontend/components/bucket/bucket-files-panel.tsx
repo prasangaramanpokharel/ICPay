@@ -3,7 +3,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Card, CardContent } from "@/components/ui/card"
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyContent,
+} from "@/components/ui/empty"
+import { Button } from "@/components/ui/button"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Folder02Icon, Upload01Icon } from "@hugeicons/core-free-icons"
 import { Drawer, DrawerContent } from "@/components/ui/drawer"
 import { BucketFilePagination } from "@/components/bucket/bucket-file-pagination"
 import { BucketFilePreviewPane } from "@/components/bucket/bucket-file-preview-pane"
@@ -343,11 +353,47 @@ export function BucketFilesPanel({
       {isLoading && files.length === 0 ? (
         <Skeleton className="h-40 w-full rounded-2xl" />
       ) : empty ? (
-        <Card className="border-dashed">
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
-            {searching ? t("noFilterMatch") : t("noFiles")}
-          </CardContent>
-        </Card>
+        <Empty className="border border-dashed border-border/80 bg-card/20 py-14">
+          <EmptyHeader>
+            <EmptyMedia
+              variant="icon"
+              className="size-12 rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-xs"
+            >
+              <HugeiconsIcon icon={Folder02Icon} className="size-6" strokeWidth={1.75} />
+            </EmptyMedia>
+            <EmptyTitle className="text-base font-semibold text-foreground">
+              {searching ? t("noFilterMatch") : t("noFiles")}
+            </EmptyTitle>
+            <EmptyDescription className="max-w-xs text-xs text-muted-foreground">
+              {searching
+                ? "No files or folders matched your search filters."
+                : "Drag and drop files anywhere to upload, or use the buttons below to add files or folders."}
+            </EmptyDescription>
+          </EmptyHeader>
+          {!searching && canWrite ? (
+            <EmptyContent className="flex flex-row items-center justify-center gap-2 pt-2">
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => document.getElementById("bucket-upload-input")?.click()}
+                className="gap-1.5"
+              >
+                <HugeiconsIcon icon={Upload01Icon} className="size-4" strokeWidth={1.75} />
+                <span>{t("upload")}</span>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onCreateFolder}
+                className="gap-1.5"
+              >
+                <HugeiconsIcon icon={Folder02Icon} className="size-4" strokeWidth={1.75} />
+                <span>{t("createFolder")}</span>
+              </Button>
+            </EmptyContent>
+          ) : null}
+        </Empty>
       ) : viewMode === "grid" ? (
         <BucketFilesGrid
           bucketId={bucketId}

@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { TransactionList } from "@/components/transactions/transaction-list"
 import { AppPage } from "@/components/layout/dashboard/app-page"
@@ -9,8 +10,10 @@ import { useTransactions } from "@/hooks/wallet/useWalletData"
 
 const PAGE_SIZE = 20
 
-export default function TransactionsPage() {
+function TransactionsPageContent() {
   const t = useTranslations("transactions")
+  const searchParams = useSearchParams()
+  const txIdQuery = searchParams.get("id")
   const [page, setPage] = useState(0)
   const { items, total, isLoading } = useTransactions(page, PAGE_SIZE)
 
@@ -28,9 +31,18 @@ export default function TransactionsPage() {
           total={total}
           page={page}
           pageSize={PAGE_SIZE}
+          initialSelectedTxId={txIdQuery}
           onPageChange={setPage}
         />
       )}
     </AppPage>
+  )
+}
+
+export default function TransactionsPage() {
+  return (
+    <Suspense fallback={null}>
+      <TransactionsPageContent />
+    </Suspense>
   )
 }

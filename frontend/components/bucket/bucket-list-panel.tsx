@@ -84,7 +84,7 @@ export function BucketListPanel() {
     refreshWallet()
     await Promise.all([refresh(), invalidateBucketCache()])
     setCreateOpen(false)
-    router.push(`/bucket/${encodeURIComponent(result.ok)}`)
+    router.push(`/bucket?id=${encodeURIComponent(result.ok)}`)
     return null
   }
 
