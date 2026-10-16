@@ -126,7 +126,8 @@ export function TokenHistoryList({
           disabled={loadingMore}
           onClick={() => void onLoadMore()}
         >
-          {loadingMore ? <Spinner className="size-3.5" /> : t("loadMore")}
+          {loadingMore && <Spinner data-icon="inline-start" />}
+          {t("loadMore")}
         </Button>
       ) : null}
     </div>

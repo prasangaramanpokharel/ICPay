@@ -13,12 +13,18 @@ import {
 } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
+import { useChannelSlug, useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
 import { joinCommunityChannel } from "@/services/community/community"
 
 export function CommunityJoinScreen() {
-  const slug = useRewrittenLastSegment()
+  const channelSlug = useChannelSlug()
+  const rewritten = useRewrittenLastSegment()
   const searchParams = useSearchParams()
+  const slug =
+    searchParams.get("id") ||
+    searchParams.get("slug") ||
+    channelSlug ||
+    (rewritten !== "join" && rewritten !== "slug" ? rewritten : "")
   const code = searchParams.get("code") ?? ""
   const t = useTranslations("community")
   const router = useRouter()
@@ -32,7 +38,7 @@ export function CommunityJoinScreen() {
     started.current = true
     joinCommunityChannel(identity, slug, code)
       .then(() => {
-        router.replace(`/channels/${encodeURIComponent(slug)}`)
+        router.replace(`/channels?id=${encodeURIComponent(slug)}`)
       })
       .catch((e) => {
         setError(e instanceof Error ? e.message : t("joinFailed"))
@@ -62,7 +68,7 @@ export function CommunityJoinScreen() {
           </CardFooter>
         ) : error ? (
           <CardFooter>
-            <Button className="w-full" onClick={() => router.push(`/channels/${encodeURIComponent(slug)}`)}>
+            <Button className="w-full" onClick={() => router.push(`/channels?id=${encodeURIComponent(slug)}`)}>
               {t("openChannel")}
             </Button>
           </CardFooter>

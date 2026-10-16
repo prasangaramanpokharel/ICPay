@@ -42,15 +42,15 @@ export function BalanceCard({
   const fiat = useFiatValue(usdValue)
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-primary p-5 text-primary-foreground shadow-lg border border-primary/20 select-none sm:p-6">
-      {/* Ambient specular lighting using primary-foreground */}
+    <div className="relative overflow-hidden rounded-3xl bg-card dark:bg-background p-5 text-foreground   dark:border-primary/20 select-none sm:p-6">
+      {/* Ambient specular lighting */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-12 -top-12 size-40 rounded-full bg-primary-foreground/10 blur-2xl"
+        className="pointer-events-none absolute -right-12 -top-12 size-40 rounded-full bg-primary/10 blur-2xl"
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-12 -left-12 size-36 rounded-full bg-primary-foreground/5 blur-2xl"
+        className="pointer-events-none absolute -bottom-12 -left-12 size-36 rounded-full bg-primary/5 blur-2xl"
       />
 
       {/* Top row: Chip + username + Network label */}
@@ -59,18 +59,18 @@ export function BalanceCard({
           <EmvChip />
 
           {username ? (
-            <span className="flex min-w-0 items-center gap-1 font-mono text-sm font-semibold tracking-tight text-primary-foreground/90">
+            <span className="flex min-w-0 items-center gap-1 font-mono text-sm font-semibold tracking-tight text-foreground">
               <span className="truncate">@{username}</span>
               <PremiumBadge name={username} className="size-3.5" />
             </span>
           ) : (
-            <span className="font-mono text-xs font-medium tracking-tight text-primary-foreground/75">
+            <span className="font-mono text-xs font-medium tracking-tight text-muted-foreground">
               ICPay Wallet
             </span>
           )}
         </div>
 
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-primary-foreground/50">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
           Internet Computer
         </span>
       </div>
@@ -81,14 +81,14 @@ export function BalanceCard({
           variant="ghost"
           onClick={() => void onRefreshPrice()}
           title="Click to refresh balance & price"
-          className="h-auto p-0 text-[clamp(1.85rem,8.5vw,2.85rem)] font-bold leading-none tracking-tight tabular-nums hover:bg-transparent hover:opacity-85 active:opacity-60 cursor-pointer"
+          className="h-auto p-0 text-[clamp(1.85rem,8.5vw,2.85rem)] font-bold leading-none tracking-tight tabular-nums hover:bg-transparent hover:opacity-85 active:opacity-60 cursor-pointer text-foreground"
         >
           {hidden ? (
             <span>••••••••</span>
           ) : (
             <span className="flex items-baseline">
               <FormattedBalance value={balance} />
-              <span className="ml-1.5 text-xs sm:text-sm font-semibold text-primary-foreground/75">ICP</span>
+              <span className="ml-1.5 text-xs sm:text-sm font-semibold text-muted-foreground">ICP</span>
             </span>
           )}
         </Button>
@@ -98,26 +98,26 @@ export function BalanceCard({
           size="icon-xs"
           aria-label={hidden ? t("showBalance") : t("hideBalance")}
           onClick={onToggleHidden}
-          className="size-8 shrink-0 rounded-full text-primary-foreground/70 hover:bg-primary-foreground/15 hover:text-primary-foreground"
+          className="size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
         >
           <HugeiconsIcon icon={hidden ? ViewOffIcon : EyeIcon} className="size-4.5" strokeWidth={1.75} />
         </Button>
       </div>
 
       {/* Bottom row: Fiat valuation + 24h market status */}
-      <div className="relative z-10 mt-4 flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-primary-foreground/10">
+      <div className="relative z-10 mt-4 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border/60">
         <button
           type="button"
           onClick={() => void onRefreshPrice()}
           title="Click to refresh balance & price"
-          className="inline-flex items-center rounded-full bg-primary-foreground/15 hover:bg-primary-foreground/20 px-3 py-1 text-xs font-medium tabular-nums text-primary-foreground transition-all active:scale-95 cursor-pointer border border-primary-foreground/15 backdrop-blur-xs"
+          className="inline-flex items-center rounded-full bg-muted/60 hover:bg-muted px-3 py-1 text-xs font-medium tabular-nums text-foreground transition-all cursor-pointer border border-border/40"
         >
           {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
         </button>
 
         <div className="flex items-center gap-1.5 text-xs">
           {!hidden && price && (
-            <span className="font-medium tabular-nums text-primary-foreground/75">
+            <span className="font-medium tabular-nums text-muted-foreground">
               1 ICP = {price.usd.toLocaleString("en-US", {
                 style: "currency",
                 currency: "USD",
@@ -159,8 +159,8 @@ function FormattedBalance({ value }: { value: string }) {
 
   return (
     <>
-      <span>{whole}</span>
-      <span className="text-[0.6em] font-medium text-primary-foreground/60">{decimals}</span>
+      <span className="text-foreground">{whole}</span>
+      <span className="text-[0.6em] font-medium text-muted-foreground">{decimals}</span>
     </>
   )
 }

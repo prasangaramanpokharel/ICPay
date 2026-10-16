@@ -103,20 +103,14 @@ export function TradeConfirmDrawer({
         )}
 
         <DrawerFooter className="pb-6">
-          {trading ? (
-            <div
-              className="flex h-11 w-full items-center justify-center gap-2.5 rounded-xl bg-primary text-primary-foreground"
-              aria-busy="true"
-              aria-live="polite"
-            >
-              <Spinner className="size-4 shrink-0 text-primary-foreground" />
-              <span className="text-sm font-semibold">{t("trading")}</span>
-            </div>
-          ) : (
-            <Button className="h-11 w-full rounded-xl" onClick={onConfirm}>
-              {t("confirmTrade")}
-            </Button>
-          )}
+          <Button
+            className="h-11 w-full rounded-xl"
+            onClick={onConfirm}
+            disabled={trading}
+          >
+            {trading && <Spinner data-icon="inline-start" />}
+            {trading ? t("trading") : t("confirmTrade")}
+          </Button>
         </DrawerFooter>
       </DrawerContent>
     </Drawer>

@@ -42,7 +42,7 @@ export function BucketSelectBar({
             onClick={onDelete}
           >
             {deleting ? (
-              <Spinner className="size-4 animate-spin text-current" />
+              <Spinner data-icon="inline-start" />
             ) : (
               <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
             )}

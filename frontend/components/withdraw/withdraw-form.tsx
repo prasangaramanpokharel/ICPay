@@ -118,7 +118,7 @@ export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
       )}
 
       <Button type="submit" className="w-full" disabled={!canSubmit}>
-        {loading && <Spinner className="size-4" />}
+        {loading && <Spinner data-icon="inline-start" />}
         {loading ? t("sending") : t("submit")}
       </Button>
     </form>

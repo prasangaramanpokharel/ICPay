@@ -234,7 +234,7 @@ export default function UsernamePage() {
             disabled={!canBuy}
             onClick={handleBuy}
           >
-            {buying ? <Spinner className="size-4" /> : null}
+            {buying ? <Spinner data-icon="inline-start" /> : null}
             {buying ? t("buying") : insufficient ? t("insufficient") : t("buy")}
           </Button>
 

@@ -36,7 +36,7 @@
   "rewrites": [
     {
       "source": "/icpverse/:username",
-      "destination": "/icpverse/profile"
+      "destination": "/icpverse?id=:username"
     },
     {
       "source": "/token/:ledgerId/deposit",
@@ -71,16 +71,16 @@
       "destination": "/live/id"
     },
     {
-      "source": "/channels/join/:slug",
-      "destination": "/channels/join/:slug"
+      "source": "/channels/join/:id",
+      "destination": "/channels/join?id=:id"
     },
     {
-      "source": "/channels/:slug/:messageId",
-      "destination": "/channels/:slug/:messageId"
+      "source": "/channels/:id/:messageId",
+      "destination": "/channels?id=:id&messageId=:messageId"
     },
     {
-      "source": "/channels/:slug",
-      "destination": "/channels/:slug"
+      "source": "/channels/:id((?!new$|join$).*)",
+      "destination": "/channels?id=:id"
     },
     {
       "source": "/:username([A-Za-z0-9_]{1,8})",

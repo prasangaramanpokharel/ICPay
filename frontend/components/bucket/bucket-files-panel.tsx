@@ -86,7 +86,12 @@ export function BucketFilesPanel({
   const [page, setPage] = useState(0)
   const [previewFile, setPreviewFile] = useState<FilePublic | null>(null)
   const [selected, setSelected] = useState<Set<string>>(new Set())
-  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<
+    | { type: "file"; path: string; name: string }
+    | { type: "folder"; name: string }
+    | { type: "bulk"; count: number }
+    | null
+  >(null)
   const [deleting, setDeleting] = useState(false)
   const [query, setQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
@@ -257,9 +262,32 @@ export function BucketFilesPanel({
       void refreshStats()
       return
     }
-    setConfirmOpen(false)
+    setDeleteTarget(null)
     await refreshFiles()
     void refreshStats()
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return
+    if (deleteTarget.type === "bulk") {
+      await confirmBulkDelete()
+    } else if (deleteTarget.type === "file") {
+      setDeleting(true)
+      try {
+        await handleDelete(deleteTarget.path)
+      } finally {
+        setDeleting(false)
+        setDeleteTarget(null)
+      }
+    } else if (deleteTarget.type === "folder") {
+      setDeleting(true)
+      try {
+        await handleDeleteFolder(deleteTarget.name)
+      } finally {
+        setDeleting(false)
+        setDeleteTarget(null)
+      }
+    }
   }
 
   const selectAll = useCallback(() => {
@@ -268,7 +296,7 @@ export function BucketFilesPanel({
 
   const requestDelete = useCallback(() => {
     if (selected.size === 0) return
-    setConfirmOpen(true)
+    setDeleteTarget({ type: "bulk", count: selected.size })
   }, [selected.size])
 
   const navigatingFolderRef = useRef<string | null>(null)
@@ -314,12 +342,12 @@ export function BucketFilesPanel({
     enabled: true,
     canWrite,
     selectedCount: selected.size,
-    confirmOpen,
+    confirmOpen: deleteTarget !== null,
     onSelectAll: selectAll,
     onRequestDelete: requestDelete,
     onCreateFolder,
     onConfirmDelete: () => {
-      if (!deleting) void confirmBulkDelete()
+      if (!deleting) void handleConfirmDelete()
     },
   })
 
@@ -346,7 +374,11 @@ export function BucketFilesPanel({
           canWrite={canWrite}
           deleting={deleting}
           onClear={() => setSelected(new Set())}
-          onDelete={() => setConfirmOpen(true)}
+          onDelete={() => {
+            if (selected.size > 0) {
+              setDeleteTarget({ type: "bulk", count: selected.size })
+            }
+          }}
         />
       ) : null}
 
@@ -407,8 +439,13 @@ export function BucketFilesPanel({
           onToggleKey={toggleKey}
           onOpenFolder={handleOpenFolder}
           onOpenFile={setPreviewFile}
-          onDeleteFile={(p) => void handleDelete(p)}
-          onDeleteFolder={(name) => void handleDeleteFolder(name)}
+          onDeleteFile={(p) => {
+            const name = p.split("/").pop() ?? p
+            setDeleteTarget({ type: "file", path: p, name })
+          }}
+          onDeleteFolder={(name) => {
+            setDeleteTarget({ type: "folder", name })
+          }}
         />
       ) : (
         <BucketFilesTable
@@ -425,8 +462,13 @@ export function BucketFilesPanel({
           onToggleKey={toggleKey}
           onOpenFolder={handleOpenFolder}
           onOpenFile={setPreviewFile}
-          onDeleteFile={(p) => void handleDelete(p)}
-          onDeleteFolder={(name) => void handleDeleteFolder(name)}
+          onDeleteFile={(p) => {
+            const name = p.split("/").pop() ?? p
+            setDeleteTarget({ type: "file", path: p, name })
+          }}
+          onDeleteFolder={(name) => {
+            setDeleteTarget({ type: "folder", name })
+          }}
         />
       )}
 
@@ -459,12 +501,19 @@ export function BucketFilesPanel({
       </Drawer>
 
       <BucketFileDeleteDialog
-        open={confirmOpen}
-        onOpenChange={setConfirmOpen}
-        fileName=""
-        count={selected.size}
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleting) setDeleteTarget(null)
+        }}
+        fileName={
+          deleteTarget?.type === "file" || deleteTarget?.type === "folder"
+            ? deleteTarget.name
+            : ""
+        }
+        isFolder={deleteTarget?.type === "folder"}
+        count={deleteTarget?.type === "bulk" ? deleteTarget.count : 1}
         deleting={deleting}
-        onConfirm={confirmBulkDelete}
+        onConfirm={handleConfirmDelete}
       />
     </div>
   )

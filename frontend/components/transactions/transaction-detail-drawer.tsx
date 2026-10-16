@@ -151,7 +151,7 @@ function TransactionDrawerBody({ tx }: { tx: TransactionPublic }) {
 
         <p className="mt-3 flex items-center justify-center gap-1 text-sm font-semibold">
           {handle ? (
-            <Link href={`/icpverse/${handle}`} className="hover:underline text-foreground">
+            <Link href={`/icpverse?id=${encodeURIComponent(handle)}`} className="hover:underline text-foreground">
               @{handle}
             </Link>
           ) : (

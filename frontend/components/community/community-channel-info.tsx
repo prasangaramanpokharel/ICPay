@@ -52,8 +52,8 @@ export function CommunityChannelInfo({
   const isMobile = useIsMobile()
   const channelUrl =
     typeof window !== "undefined"
-      ? `${window.location.origin}/channels/${encodeURIComponent(slug)}`
-      : `icpay.app/channels/${slug}`
+      ? `${window.location.origin}/channels?id=${encodeURIComponent(slug)}`
+      : `icpay.app/channels?id=${slug}`
   const bio = channel.bio.trim()
   const members = channel.memberCount.toString()
 

@@ -1,7 +1,6 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,7 +20,7 @@ import { useBucketCycleStatus, useBucketPrice } from "@/hooks/bucket/useBucket"
 import { useLiveBalance } from "@/hooks/wallet/useWalletData"
 import { CAPACITY_TIERS_GB, mapBucketError, validateBucketName } from "@/lib/bucket/bucket"
 import { calculateListPriceE8s, calculateYearlyListPriceE8s } from "@/lib/bucket/pricing"
-import { ICP_FEE, formatAmount } from "@/lib/wallet/utils"
+import { ICP_FEE } from "@/lib/wallet/utils"
 import { Mail01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { cn } from "@/lib/ui/utils"
@@ -301,20 +300,6 @@ export function BucketCreateForm({
             </div>
           </div>
         </div>
-
-        {insufficient && (
-          <div className="flex items-center justify-between rounded-xl border border-destructive/20 bg-destructive/10 p-3 text-xs text-destructive">
-            <span>
-              {t("insufficientBalance")} ({formatAmount(balance ?? 0n)} / {formatAmount(totalCost ?? 0n)} ICP)
-            </span>
-            <Link
-              href="/deposit"
-              className="font-medium underline hover:opacity-80"
-            >
-              Deposit ICP →
-            </Link>
-          </div>
-        )}
 
         {error && (
           <Alert variant="destructive">

@@ -14,7 +14,9 @@ import {
 } from "@hugeicons/core-free-icons"
 import { ChevronDownIcon } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { cn } from "@/lib/ui/utils"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -190,21 +192,36 @@ export function BucketFilePreviewPane({
       )}
 
       <DrawerFooter className="border-t pt-4">
-        <div className="grid grid-cols-2 gap-2">
-          <Button type="button" variant="outline" size="sm" disabled={downloading} onClick={handleDownload}>
-            <HugeiconsIcon icon={Download01Icon} className="size-4" strokeWidth={1.75} />
-            {t("download")}
-          </Button>
+        <div className="flex flex-col gap-2">
+          <ButtonGroup className="w-full flex">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={downloading}
+              onClick={handleDownload}
+              className="flex-1 justify-center gap-1.5"
+            >
+              <HugeiconsIcon icon={Download01Icon} className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+              <span>{downloading ? "Downloading…" : t("download")}</span>
+            </Button>
 
-          {isPublic && cdnUrl && rawUrl ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button type="button" variant="outline" size="sm" className="gap-1.5 cursor-pointer justify-between">
-                    <div className="flex items-center gap-1.5 truncate">
+            {isPublic && (cdnUrl || rawUrl) ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 justify-center gap-1.5 cursor-pointer"
+                    >
                       <HugeiconsIcon
                         icon={copiedMode ? Tick02Icon : Copy01Icon}
-                        className="size-4 shrink-0 text-primary"
+                        className={cn(
+                          "size-4 shrink-0 transition-colors",
+                          copiedMode ? "text-primary" : "text-muted-foreground"
+                        )}
                         strokeWidth={1.75}
                       />
                       <span className="truncate">
@@ -214,78 +231,82 @@ export function BucketFilePreviewPane({
                             ? "Copied Raw!"
                             : t("copyUrl")}
                       </span>
+                      <ChevronDownIcon className="size-3 shrink-0 text-muted-foreground opacity-70" />
+                    </Button>
+                  }
+                />
+                <DropdownMenuContent
+                  align="end"
+                  className="w-72 p-1.5 rounded-2xl border-border/70 bg-popover/95 backdrop-blur-md shadow-2xl"
+                >
+                  <DropdownMenuItem
+                    onClick={() => handleCopy(cdnUrl, "cdn")}
+                    className="flex items-start gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-accent/80 transition-colors"
+                  >
+                    <HugeiconsIcon icon={FlashIcon} className="size-4 shrink-0 mt-0.5 text-success" strokeWidth={1.75} />
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-semibold text-xs text-foreground">Copy CDN Link</span>
+                        <span className="rounded bg-success/15 px-1 py-0.2 text-[9px] font-medium text-success">
+                          Recommended
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">Fast edge cache · cdn.icpay.app</span>
+                      <span className="mt-1 font-mono text-[10px] text-foreground/80 truncate">{cdnUrl}</span>
                     </div>
-                    <ChevronDownIcon className="size-3 text-muted-foreground ml-auto opacity-70 shrink-0" />
-                  </Button>
-                }
-              />
-              <DropdownMenuContent
-                align="end"
-                className="w-72 p-1.5 rounded-2xl border-border/70 bg-popover/95 backdrop-blur-md shadow-2xl"
+                  </DropdownMenuItem>
+
+                  <DropdownMenuSeparator className="my-1" />
+
+                  <DropdownMenuItem
+                    onClick={() => handleCopy(rawUrl, "raw")}
+                    className="flex items-start gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-accent/80 transition-colors"
+                  >
+                    <HugeiconsIcon icon={Globe02Icon} className="size-4 shrink-0 mt-0.5 text-primary" strokeWidth={1.75} />
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-semibold text-xs text-foreground">Copy Raw Canister Link</span>
+                        <span className="rounded bg-muted px-1 py-0.2 text-[9px] font-medium text-muted-foreground">
+                          On-Chain
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground">Direct canister · raw.icp0.io</span>
+                      <span className="mt-1 font-mono text-[10px] text-muted-foreground truncate">{rawUrl}</span>
+                    </div>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : null}
+          </ButtonGroup>
+
+          <ButtonGroup className="w-full flex">
+            {isPublic && (cdnUrl || rawUrl) ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleOpen}
+                className="flex-1 justify-center gap-1.5"
               >
-                <DropdownMenuItem
-                  onClick={() => handleCopy(cdnUrl, "cdn")}
-                  className="flex items-start gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-accent/80 transition-colors"
-                >
-                  <HugeiconsIcon icon={FlashIcon} className="size-4 shrink-0 mt-0.5 text-success" strokeWidth={1.75} />
-                  <div className="flex flex-col min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-semibold text-xs text-foreground">Copy CDN Link</span>
-                      <span className="rounded bg-success/15 px-1 py-0.2 text-[9px] font-medium text-success">
-                        Recommended
-                      </span>
-                    </div>
-                    <span className="text-[10px] text-muted-foreground">Fast edge cache · cdn.icpay.app</span>
-                    <span className="mt-1 font-mono text-[10px] text-foreground/80 truncate">{cdnUrl}</span>
-                  </div>
-                </DropdownMenuItem>
+                <HugeiconsIcon icon={LinkSquare02Icon} className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+                <span>{t("openInNewTab")}</span>
+              </Button>
+            ) : null}
 
-                <DropdownMenuSeparator className="my-1" />
-
-                <DropdownMenuItem
-                  onClick={() => handleCopy(rawUrl, "raw")}
-                  className="flex items-start gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-accent/80 transition-colors"
-                >
-                  <HugeiconsIcon icon={Globe02Icon} className="size-4 shrink-0 mt-0.5 text-primary" strokeWidth={1.75} />
-                  <div className="flex flex-col min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-semibold text-xs text-foreground">Copy Raw Canister Link</span>
-                      <span className="rounded bg-muted px-1 py-0.2 text-[9px] font-medium text-muted-foreground">
-                        On-Chain
-                      </span>
-                    </div>
-                    <span className="text-[10px] text-muted-foreground">Direct canister · raw.icp0.io</span>
-                    <span className="mt-1 font-mono text-[10px] text-muted-foreground truncate">{rawUrl}</span>
-                  </div>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : null}
-
-          {isPublic && (cdnUrl || rawUrl) ? (
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={handleOpen}
-            >
-              <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" strokeWidth={1.75} />
-              {t("openInNewTab")}
-            </Button>
-          ) : null}
-
-          {canWrite ? (
-            <Button
-              type="button"
-              variant="destructive"
-              size="sm"
-              disabled={deleting}
-              onClick={() => setDeleteOpen(true)}
-            >
-              <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
-              {t("delete")}
-            </Button>
-          ) : null}
+            {canWrite ? (
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                disabled={deleting}
+                onClick={() => setDeleteOpen(true)}
+                className="flex-1 justify-center gap-1.5"
+              >
+                <HugeiconsIcon icon={Delete02Icon} className="size-4 shrink-0 text-destructive" strokeWidth={1.75} />
+                <span>{t("delete")}</span>
+              </Button>
+            ) : null}
+          </ButtonGroup>
         </div>
       </DrawerFooter>
 

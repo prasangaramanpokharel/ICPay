@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import { Suspense, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
@@ -16,8 +17,9 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { prefetchUsernameProfile } from "@/lib/navigation/prefetchRoute"
 import { useUserSearch } from "@/hooks/wallet/useWalletData"
 import { useDebounced } from "@/hooks/ui/useDebounced"
+import { ProfileView } from "@/components/icpverse/profile-view"
 
-export default function IcpversePage() {
+function IcpverseSearch() {
   const t = useTranslations("icpverse")
   const tNav = useTranslations("nav")
   const { identity } = useAuth()
@@ -63,7 +65,7 @@ export default function IcpversePage() {
                 return (
                   <Link
                     key={u.id}
-                    href={`/icpverse/${encodeURIComponent(name)}`}
+                    href={`/icpverse?id=${encodeURIComponent(name)}`}
                     prefetch
                     onMouseEnter={() => prefetchUsernameProfile(name, identity)}
                     onFocus={() => prefetchUsernameProfile(name, identity)}
@@ -112,5 +114,27 @@ function UserListSkeleton() {
         </div>
       ))}
     </div>
+  )
+}
+
+function IcpversePageContent() {
+  const searchParams = useSearchParams()
+  const targetUser =
+    searchParams.get("id") ||
+    searchParams.get("user") ||
+    searchParams.get("username")
+
+  if (targetUser) {
+    return <ProfileView username={targetUser} />
+  }
+
+  return <IcpverseSearch />
+}
+
+export default function IcpversePage() {
+  return (
+    <Suspense fallback={null}>
+      <IcpversePageContent />
+    </Suspense>
   )
 }

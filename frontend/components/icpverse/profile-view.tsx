@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -15,17 +15,28 @@ import { SocialLinkIcons } from "@/components/profile/social-link-icons"
 import { BookmarkButton } from "@/components/bookmark/bookmark-drawer"
 import { avatarUriFor } from "@/lib/profile/avatar"
 import { copyText, shortPrincipal } from "@/lib/wallet/utils"
-import { useResolvedUsername, useLiveBalance, useRefreshWallet, useOwnProfile, useRecipientProfile } from "@/hooks/wallet/useWalletData"
+import {
+  useResolvedUsername,
+  useLiveBalance,
+  useRefreshWallet,
+  useOwnProfile,
+  useRecipientProfile,
+} from "@/hooks/wallet/useWalletData"
 import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
 import { tip } from "@/services/transfer/transfer"
 import { useAuth } from "@/components/auth/auth-provider"
 
 type Tipped = { amount: bigint; blockIndex: bigint; memo?: string }
 
-export function ProfileView() {
+interface ProfileViewProps {
+  username?: string
+}
+
+export function ProfileView({ username: propUsername }: ProfileViewProps = {}) {
   const t = useTranslations("profileView")
   const tc = useTranslations("common")
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { identity } = useAuth()
   const balance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
@@ -37,9 +48,15 @@ export function ProfileView() {
   const [tipped, setTipped] = useState<Tipped | null>(null)
   const [copied, setCopied] = useState(false)
 
-  // Vercel rewrites /icpverse/<name> onto the /icpverse/profile shell; read the
-  // real handle from the browser URL, not usePathname() (which reports "profile").
-  const username = useRewrittenLastSegment()
+  // Resolve target username from prop, query parameter (?id=, ?user=, ?username=), or legacy rewritten URL
+  const rewritten = useRewrittenLastSegment()
+  const paramUsername =
+    searchParams.get("id") ||
+    searchParams.get("user") ||
+    searchParams.get("username")
+  const rawTarget = propUsername || paramUsername || (rewritten !== "profile" ? rewritten : "")
+  const username = (rawTarget || "").replace(/^@/, "").trim()
+
   const { principal, isLoading } = useResolvedUsername(username)
   const recipientProfile = useRecipientProfile(username, principal ?? null)
   const socialLinks = recipientProfile?.socialLinks?.[0] ?? []
@@ -60,14 +77,18 @@ export function ProfileView() {
     return null
   }
 
-  // An empty username means the mid-transition frame described above. Holding
+  const handleBack = () => {
+    router.push("/icpverse")
+  }
+
+  // An empty username means the mid-transition frame. Holding
   // the skeleton avoids asserting the account does not exist.
   if (isLoading || !username) return <ProfileSkeleton />
 
   if (!principal) {
     return (
       <div className="space-y-4 pt-4">
-        <BackButton onClick={() => router.back()} />
+        <BackButton onClick={handleBack} />
         <Alert variant="destructive">
           <AlertDescription>
             {t("notFound", { name: username })}
@@ -94,7 +115,7 @@ export function ProfileView() {
 
   return (
     <div className="pt-2">
-      <BackButton onClick={() => router.back()} />
+      <BackButton onClick={handleBack} />
 
       <div className="flex flex-col items-center pt-6">
         <Avatar className="size-24">

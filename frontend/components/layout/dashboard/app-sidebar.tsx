@@ -11,6 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
 } from "@/components/ui/sidebar"
 import { DashboardNavFooter, DashboardNavMain } from "@/components/layout/dashboard/nav-main"
 import { SidebarUserFooter } from "@/components/layout/dashboard/sidebar-user-footer"
@@ -55,6 +56,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
         ) : null}
         <SidebarUserFooter />
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   )
 }

@@ -44,7 +44,7 @@ export function DashboardActions() {
             className="flex flex-col items-center gap-1.5 transition-transform active:scale-95"
           >
             <span className="flex size-11 items-center justify-center rounded-full bg-muted text-foreground">
-              <HugeiconsIcon icon={item.icon} className="size-5" strokeWidth={1.75} />
+              <HugeiconsIcon icon={item.icon} className="size-5 text-primary" strokeWidth={1.75} />
             </span>
             <span className="text-[11px] font-medium lowercase text-foreground">
               {t(item.labelKey)}

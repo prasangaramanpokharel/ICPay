@@ -5,7 +5,9 @@ import {
   isChannelIndexable,
 } from "@/lib/community/seo"
 import { getCachedPublicChannelSnapshot } from "@/lib/community/publicCache"
+import { Suspense } from "react"
 import { ChannelSlugView } from "@/components/community/channel-slug-view"
+import { Spinner } from "@/components/ui/spinner"
 
 export function generateStaticParams() {
   return [{ slug: "slug", messageId: "message" }]
@@ -40,6 +42,19 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ChannelMessagePublicPage({ params }: PageProps) {
   const { slug } = await params
+  if (slug === "slug") {
+    return (
+      <Suspense
+        fallback={
+          <div className="flex min-h-svh items-center justify-center">
+            <Spinner className="size-6 text-muted-foreground" />
+          </div>
+        }
+      >
+        <ChannelSlugView slug={slug} channel={null} />
+      </Suspense>
+    )
+  }
   const channel = await getChannelWithTimeout(slug)
   const jsonLd =
     channel && isChannelIndexable(channel) ? channelJsonLd(slug, channel) : null
@@ -52,7 +67,15 @@ export default async function ChannelMessagePublicPage({ params }: PageProps) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       ) : null}
-      <ChannelSlugView slug={slug} channel={channel} />
+      <Suspense
+        fallback={
+          <div className="flex min-h-svh items-center justify-center">
+            <Spinner className="size-6 text-muted-foreground" />
+          </div>
+        }
+      >
+        <ChannelSlugView key={slug} slug={slug} channel={channel} />
+      </Suspense>
     </>
   )
 }
