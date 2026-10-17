@@ -21,8 +21,14 @@ export function replacePathExtension(path: string, ext: string): string {
   return `${stem}${ext.startsWith(".") ? ext : `.${ext}`}`
 }
 
-/** Build final upload path — WebP for compressed rasters, original ext otherwise. */
-export function buildUploadPath(normalized: File, asWebp: boolean): string {
+/** Build final upload path — target ext for compressed rasters, original ext otherwise. */
+export function buildUploadPath(
+  normalized: File,
+  targetExtOrAsWebp: boolean | string = false
+): string {
   const base = uploadPathForFile(normalized)
-  return asWebp ? replacePathExtension(base, ".webp") : base
+  if (typeof targetExtOrAsWebp === "string") {
+    return replacePathExtension(base, targetExtOrAsWebp)
+  }
+  return targetExtOrAsWebp ? replacePathExtension(base, ".webp") : base
 }

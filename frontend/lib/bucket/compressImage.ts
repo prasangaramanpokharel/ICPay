@@ -1,6 +1,13 @@
 import imageCompression from "browser-image-compression"
 import { pathExtension } from "@/lib/bucket/allowedFiles"
-import { blobHasWebpHeader, validateWebpHeader } from "@/lib/bucket/imageBytes"
+import {
+  blobHasJpegHeader,
+  blobHasPngHeader,
+  blobHasWebpHeader,
+  validateJpegHeader,
+  validatePngHeader,
+  validateWebpHeader,
+} from "@/lib/bucket/imageBytes"
 import { sanitizeUploadFilename } from "@/lib/bucket/uploadPath"
 import { shouldConvertRasterToWebp } from "@/lib/bucket/rasterFormats"
 import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/uploadChunk"
@@ -15,6 +22,62 @@ export type RasterCompression = {
   originalBytes: number
   compressedBytes: number
   originalExt: string
+  targetExt: string
+  targetMime: string
+}
+
+export type TargetRasterFormat = {
+  mime: "image/webp" | "image/jpeg" | "image/png"
+  ext: "webp" | "jpg" | "png"
+}
+
+let cachedCanvasWebpSupport: boolean | null = null
+
+/**
+ * Safari / WebKit does not support encoding WebP via HTML5 Canvas (falls back to PNG).
+ * Feature-detect so Safari can gracefully degrade to hardware-accelerated JPEG or PNG.
+ */
+export function isCanvasWebpSupported(): boolean {
+  if (cachedCanvasWebpSupport !== null) return cachedCanvasWebpSupport
+  if (typeof document === "undefined") return false
+  try {
+    const canvas = document.createElement("canvas")
+    canvas.width = 1
+    canvas.height = 1
+    cachedCanvasWebpSupport = canvas.toDataURL("image/webp").startsWith("data:image/webp")
+  } catch {
+    cachedCanvasWebpSupport = false
+  }
+  return cachedCanvasWebpSupport
+}
+
+export function resolveTargetFormat(file: File): TargetRasterFormat {
+  if (isCanvasWebpSupported()) {
+    return { mime: "image/webp", ext: "webp" }
+  }
+  const ext = pathExtension(file.name)
+  if (ext === "png" || file.type === "image/png") {
+    return { mime: "image/png", ext: "png" }
+  }
+  return { mime: "image/jpeg", ext: "jpg" }
+}
+
+async function blobMatchesTargetHeader(
+  blob: Blob,
+  target: TargetRasterFormat
+): Promise<boolean> {
+  if (target.mime === "image/webp") return blobHasWebpHeader(blob)
+  if (target.mime === "image/jpeg") return blobHasJpegHeader(blob)
+  return blobHasPngHeader(blob)
+}
+
+function bytesMatchTargetHeader(
+  bytes: Uint8Array,
+  target: TargetRasterFormat
+): boolean {
+  if (target.mime === "image/webp") return validateWebpHeader(bytes)
+  if (target.mime === "image/jpeg") return validateJpegHeader(bytes)
+  return validatePngHeader(bytes)
 }
 
 export class ImageConvertError extends Error {
@@ -26,7 +89,8 @@ export class ImageConvertError extends Error {
 
 export function formatCompressionSummary(
   originalBytes: number,
-  compressedBytes: number
+  compressedBytes: number,
+  formatLabel = "WebP"
 ): string {
   const fmt = (n: number) =>
     n >= 1_000_000
@@ -36,7 +100,7 @@ export function formatCompressionSummary(
         : `${n} B`
   const ratio =
     originalBytes > 0 ? Math.round((1 - compressedBytes / originalBytes) * 100) : 0
-  return `${fmt(originalBytes)} → ${fmt(compressedBytes)} WebP (−${ratio}%)`
+  return `${fmt(originalBytes)} → ${fmt(compressedBytes)} ${formatLabel} (−${ratio}%)`
 }
 
 function isSvgFile(file: File): boolean {
@@ -45,8 +109,11 @@ function isSvgFile(file: File): boolean {
   return ext === "svg" || mime === "image/svg+xml"
 }
 
-/** Rasterize vector SVG to WebP via canvas — raw SVG is never uploaded. */
-async function rasterizeSvgToWebp(file: File): Promise<Blob | null> {
+/** Rasterize vector SVG via canvas — raw SVG markup is never uploaded. */
+async function rasterizeSvg(
+  file: File,
+  target: TargetRasterFormat
+): Promise<Blob | null> {
   if (typeof document === "undefined") return null
 
   const url = URL.createObjectURL(file)
@@ -76,9 +143,9 @@ async function rasterizeSvgToWebp(file: File): Promise<Blob | null> {
     ctx.drawImage(img, 0, 0, w, h)
 
     const blob = await new Promise<Blob | null>((resolve) => {
-      canvas.toBlob(resolve, "image/webp", COMPRESSION_INITIAL_QUALITY)
+      canvas.toBlob(resolve, target.mime, COMPRESSION_INITIAL_QUALITY)
     })
-    if (!blob || !(await blobHasWebpHeader(blob))) return null
+    if (!blob || !(await blobMatchesTargetHeader(blob, target))) return null
     return blob
   } catch {
     return null
@@ -87,9 +154,12 @@ async function rasterizeSvgToWebp(file: File): Promise<Blob | null> {
   }
 }
 
-async function encodeRasterToWebp(file: File): Promise<Blob | null> {
+async function encodeRaster(
+  file: File,
+  target: TargetRasterFormat
+): Promise<Blob | null> {
   if (isSvgFile(file)) {
-    return rasterizeSvgToWebp(file)
+    return rasterizeSvg(file, target)
   }
 
   const attempts = [
@@ -104,10 +174,10 @@ async function encodeRasterToWebp(file: File): Promise<Blob | null> {
         maxSizeMB: attempt.maxSizeMB,
         maxWidthOrHeight: COMPRESSION_MAX_EDGE,
         useWebWorker: true,
-        fileType: "image/webp",
+        fileType: target.mime,
         initialQuality: attempt.initialQuality,
       })
-      if (await blobHasWebpHeader(blob)) return blob
+      if (await blobMatchesTargetHeader(blob, target)) return blob
     } catch {
       // try next quality tier
     }
@@ -116,36 +186,73 @@ async function encodeRasterToWebp(file: File): Promise<Blob | null> {
   return null
 }
 
-function webpFileFromBlob(source: File, blob: Blob): File {
+function compressedFileFromBlob(
+  source: File,
+  blob: Blob,
+  target: TargetRasterFormat
+): File {
   const stem = sanitizeUploadFilename(
     source.name.replace(/\.[^.]+$/, "") || "photo"
-  ).replace(/\.webp$/, "")
-  return new File([blob], `${stem}.webp`, {
-    type: "image/webp",
+  )
+    .replace(/\.webp$/, "")
+    .replace(/\.jpe?g$/, "")
+    .replace(/\.png$/, "")
+  return new File([blob], `${stem}.${target.ext}`, {
+    type: target.mime,
     lastModified: source.lastModified,
   })
 }
 
 /**
- * Raster uploads → real WebP bytes on the client before the canister sees them.
- * Throws when conversion is required but fails — never uploads raw JPEG/PNG/SVG.
+ * Raster uploads → compressed bytes (WebP on supporting browsers, JPEG/PNG on Safari).
+ * Throws when conversion fails and original file is invalid or too large.
  */
 export async function compressRasterToWebp(file: File): Promise<RasterCompression> {
   if (!shouldConvertRasterToWebp(file)) {
     throw new ImageConvertError("Could not process this photo")
   }
 
-  const blob = await encodeRasterToWebp(file)
+  const target = resolveTargetFormat(file)
+  const blob = await encodeRaster(file, target)
+
   if (!blob) {
+    // Fallback: if compression failed (e.g. worker/canvas quirk), check if original file
+    // is already a valid raster under the canister size cap. Never reject valid photos.
+    const head = new Uint8Array(await file.slice(0, 16).arrayBuffer())
+    const ext = pathExtension(file.name)
+    const isValidOrig =
+      ((ext === "jpg" || ext === "jpeg") && validateJpegHeader(head)) ||
+      (ext === "png" && validatePngHeader(head)) ||
+      (ext === "webp" && validateWebpHeader(head))
+
+    if (isValidOrig && file.size > 0 && file.size <= BUCKET_MAX_FILE_BYTES) {
+      const origExt = ext === "jpeg" ? "jpg" : ext
+      const origMime =
+        file.type ||
+        (ext === "png"
+          ? "image/png"
+          : ext === "webp"
+            ? "image/webp"
+            : "image/jpeg")
+      return {
+        file,
+        originalBytes: file.size,
+        compressedBytes: file.size,
+        originalExt: ext || "image",
+        targetExt: origExt,
+        targetMime: origMime,
+      }
+    }
+
     throw new ImageConvertError("Could not process this photo")
   }
 
   const bytes = new Uint8Array(await blob.arrayBuffer())
-  if (!validateWebpHeader(bytes)) {
+  if (!bytesMatchTargetHeader(bytes, target)) {
     throw new ImageConvertError("Could not process this photo")
   }
 
-  const out = webpFileFromBlob(file, blob)
+  const out = compressedFileFromBlob(file, blob, target)
   if (out.size <= 0 || out.size > BUCKET_MAX_FILE_BYTES) {
     throw new ImageConvertError("File too large after compression")
   }
@@ -155,5 +262,7 @@ export async function compressRasterToWebp(file: File): Promise<RasterCompressio
     originalBytes: file.size,
     compressedBytes: out.size,
     originalExt: pathExtension(file.name) || "image",
+    targetExt: target.ext,
+    targetMime: target.mime,
   }
 }

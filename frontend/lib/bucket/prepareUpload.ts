@@ -41,8 +41,11 @@ export async function prepareUploadFile(
     const compressed = await compressRasterToWebp(normalized)
     return {
       file: compressed.file,
-      path: joinObjectPath(prefix, buildUploadPath(normalized, true)),
-      contentType: "image/webp",
+      path: joinObjectPath(
+        prefix,
+        buildUploadPath(normalized, `.${compressed.targetExt}`)
+      ),
+      contentType: compressed.targetMime,
       compression: {
         originalBytes: compressed.originalBytes,
         compressedBytes: compressed.compressedBytes,

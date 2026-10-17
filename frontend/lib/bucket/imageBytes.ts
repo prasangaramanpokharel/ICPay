@@ -31,3 +31,20 @@ export async function blobHasWebpHeader(blob: Blob): Promise<boolean> {
   const head = new Uint8Array(await blob.slice(0, 12).arrayBuffer())
   return validateWebpHeader(head)
 }
+
+/** Match backend FileValidator.mo — SOI (0xFF, 0xD8) + start of next marker. */
+export function validateJpegHeader(bytes: Uint8Array): boolean {
+  if (bytes.length < 3) return false
+  return bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff
+}
+
+export async function blobHasJpegHeader(blob: Blob): Promise<boolean> {
+  const head = new Uint8Array(await blob.slice(0, 3).arrayBuffer())
+  return validateJpegHeader(head)
+}
+
+export async function blobHasPngHeader(blob: Blob): Promise<boolean> {
+  const head = new Uint8Array(await blob.slice(0, 8).arrayBuffer())
+  return validatePngHeader(head)
+}
+
