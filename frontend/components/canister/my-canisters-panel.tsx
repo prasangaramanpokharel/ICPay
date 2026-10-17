@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Cancel01Icon,
+  ConnectIcon,
   Copy01Icon,
   InformationCircleIcon,
   Package01Icon,
@@ -32,6 +33,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
+import { ConnectControllerDialog } from "@/components/canister/connect-controller-dialog"
 import { MyCanisterRow } from "@/components/canister/my-canister-row"
 import { MyCanisterTopupDialog } from "@/components/canister/my-canister-topup-dialog"
 import { AppPage } from "@/components/layout/dashboard/app-page"
@@ -94,7 +96,13 @@ export function MyCanistersPanel() {
   const [draftId, setDraftId] = useState("")
   const [draftName, setDraftName] = useState("")
   const [linkOpen, setLinkOpen] = useState(false)
+  const [connectOpen, setConnectOpen] = useState(false)
   const [linkedOk, setLinkedOk] = useState<{ id: string; name: string } | null>(null)
+
+  const knownCanisters = useMemo(
+    () => mine.ids.map((id) => ({ id, name: nameById.get(id) })),
+    [mine.ids, nameById]
+  )
 
   const previews = useMineStatusMap(
     identity,
@@ -143,10 +151,19 @@ export function MyCanistersPanel() {
         <AlertTitle>{t("yourPrincipal")}</AlertTitle>
         <AlertDescription>
           <p className="break-all font-mono text-xs text-foreground">{principal ?? "—"}</p>
-          <p className="mt-1 text-[11px]">{t("principalHint")}</p>
         </AlertDescription>
         {principal ? (
-          <AlertAction>
+          <AlertAction className="flex items-center gap-1.5">
+            <Button
+              type="button"
+              variant="outline"
+              size="xs"
+              className="h-7 gap-1 px-2.5 text-xs font-medium"
+              onClick={() => setConnectOpen(true)}
+            >
+              <HugeiconsIcon icon={ConnectIcon} className="size-3.5 text-primary" />
+              <span>Connect</span>
+            </Button>
             <Button
               type="button"
               variant="ghost"
@@ -351,6 +368,13 @@ export function MyCanistersPanel() {
           }}
         />
       )}
+
+      <ConnectControllerDialog
+        open={connectOpen}
+        onOpenChange={setConnectOpen}
+        principal={principal}
+        canisters={knownCanisters}
+      />
     </AppPage>
   )
 }
