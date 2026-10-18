@@ -32,6 +32,7 @@ interface ConnectControllerDialogProps {
   onOpenChange: (open: boolean) => void
   principal: string | null
   canisters?: KnownCanister[]
+  initialCanisterId?: string | null
 }
 
 export function ConnectControllerDialog({
@@ -39,10 +40,31 @@ export function ConnectControllerDialog({
   onOpenChange,
   principal,
   canisters = [],
+  initialCanisterId,
 }: ConnectControllerDialogProps) {
   const [targetId, setTargetId] = useState("")
   const [copiedCmd, setCopiedCmd] = useState(false)
   const [copiedPrincipal, setCopiedPrincipal] = useState(false)
+
+  // Synchronize targetId when dialog opens or initialCanisterId changes without cascading effect renders
+  const [prevOpen, setPrevOpen] = useState(open)
+  const [prevInitial, setPrevInitial] = useState(initialCanisterId)
+
+  if (open !== prevOpen || initialCanisterId !== prevInitial) {
+    setPrevOpen(open)
+    setPrevInitial(initialCanisterId)
+    if (open) {
+      if (initialCanisterId) {
+        setTargetId(initialCanisterId)
+      } else if (canisters.length > 0) {
+        setTargetId(canisters[0].id)
+      } else {
+        setTargetId("")
+      }
+    }
+  }
+
+  const isReady = targetId.trim().length > 0
 
   const activeCanisterId = useMemo(() => {
     const trimmed = targetId.trim()
@@ -55,6 +77,10 @@ export function ConnectControllerDialog({
   }, [activeCanisterId, principal])
 
   const handleCopyCommand = async () => {
+    if (!isReady) {
+      toast.error("Please choose or enter a canister ID first")
+      return
+    }
     try {
       await navigator.clipboard.writeText(generatedCommand)
       setCopiedCmd(true)
@@ -79,7 +105,7 @@ export function ConnectControllerDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg gap-5">
+      <DialogContent className="max-w-lg gap-5 w-full min-w-0 overflow-hidden">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -93,25 +119,25 @@ export function ConnectControllerDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 min-w-0 max-w-full">
           {/* Target Canister Field */}
-          <Field className="gap-2">
+          <Field className="gap-2 min-w-0 max-w-full">
             <FieldLabel htmlFor="connect-canister-id" className="text-xs font-medium">
               Choose or enter Canister ID
             </FieldLabel>
-            <div className="relative">
+            <div className="relative min-w-0 max-w-full">
               <Input
                 id="connect-canister-id"
                 value={targetId}
                 onChange={(e) => setTargetId(e.target.value)}
-                placeholder="e.g. 6vbhm-nqaaa-aaaan-q6muq-cai"
-                className="font-mono text-xs pr-8"
+                placeholder="Enter or select a Canister ID..."
+                className="font-mono text-xs pr-8 w-full min-w-0"
               />
               {targetId && (
                 <button
                   type="button"
                   onClick={() => setTargetId("")}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
                 >
                   <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
                 </button>
@@ -120,7 +146,7 @@ export function ConnectControllerDialog({
 
             {/* Quick Pick Chips */}
             {canisters.length > 0 && (
-              <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              <div className="flex flex-wrap items-center gap-1.5 pt-1 min-w-0 max-w-full">
                 <span className="text-[11px] text-muted-foreground">Quick select:</span>
                 {canisters.map((c) => {
                   const isSelected = targetId === c.id
@@ -131,14 +157,13 @@ export function ConnectControllerDialog({
                       type="button"
                       onClick={() => setTargetId(c.id)}
                       className={cn(
-                        "inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-[11px] transition-colors",
+                        "inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] transition-colors cursor-pointer bg-transparent",
                         isSelected
-                          ? "border-primary bg-primary/10 font-medium text-primary"
-                          : "border-border/60 bg-muted/30 text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+                          ? "border-foreground/50 text-foreground font-medium"
+                          : "border-border/60 text-muted-foreground hover:border-foreground/30 hover:text-foreground"
                       )}
                     >
                       {label}
-                      {isSelected && <HugeiconsIcon icon={Tick02Icon} className="size-3 text-primary" />}
                     </button>
                   )
                 })}
@@ -147,7 +172,7 @@ export function ConnectControllerDialog({
           </Field>
 
           {/* Generated dfx Command */}
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1.5 min-w-0 max-w-full">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-foreground">Generated Command</span>
               <Button
@@ -156,6 +181,7 @@ export function ConnectControllerDialog({
                 size="xs"
                 className="h-6 gap-1 px-2 text-[11px]"
                 onClick={handleCopyCommand}
+                disabled={!isReady}
               >
                 <HugeiconsIcon
                   icon={copiedCmd ? Tick02Icon : Copy01Icon}
@@ -165,19 +191,25 @@ export function ConnectControllerDialog({
               </Button>
             </div>
 
-            <div className="relative rounded-lg border border-border/60 bg-zinc-950 p-3 text-zinc-100 dark:border-zinc-800 dark:bg-black/50">
-              <pre className="overflow-x-auto font-mono text-xs leading-relaxed text-zinc-200">
+            <div className="relative rounded-lg border border-border/60 bg-zinc-950 p-3 text-zinc-100 dark:border-zinc-800 dark:bg-black/50 min-w-0 max-w-full overflow-hidden">
+              <pre className="w-full min-w-0 max-w-full overflow-x-auto whitespace-pre-wrap break-all font-mono text-xs leading-relaxed text-zinc-200">
                 <code>{generatedCommand}</code>
               </pre>
             </div>
-            <p className="text-[11px] text-muted-foreground">
-              Run this in your terminal using your operator identity (e.g. <code>default</code>).
-            </p>
+            {!isReady ? (
+              <p className="text-[11px] text-amber-500 font-medium">
+                Choose a canister from the list above or enter a canister ID to complete the command.
+              </p>
+            ) : (
+              <p className="text-[11px] text-muted-foreground">
+                Run this in your terminal using your operator identity (e.g. <code>default</code>).
+              </p>
+            )}
           </div>
 
           {/* Your Internet Identity Info */}
-          <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/20 px-3 py-2 text-xs">
-            <div className="min-w-0 flex-1 pr-2">
+          <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/20 px-3 py-2 text-xs min-w-0 max-w-full gap-2">
+            <div className="min-w-0 flex-1">
               <span className="text-[11px] text-muted-foreground block">Your Internet Identity Principal:</span>
               <span className="font-mono text-xs font-medium text-foreground truncate block">
                 {principal ?? "—"}
@@ -211,6 +243,7 @@ export function ConnectControllerDialog({
           <Button
             type="button"
             className="gap-1.5"
+            disabled={!isReady}
             onClick={handleCopyCommand}
           >
             <HugeiconsIcon icon={copiedCmd ? Tick02Icon : Copy01Icon} className="size-3.5" />
