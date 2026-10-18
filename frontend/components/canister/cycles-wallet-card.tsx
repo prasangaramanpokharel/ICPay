@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { LinkSquare02Icon, ZapIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -257,6 +258,7 @@ export function CyclesWalletCard() {
                     disabled={submitting || amountE8s == null || mintError != null}
                     onClick={() => void onMint()}
                   >
+                    {submitting && <Spinner data-icon="inline-start" />}
                     {submitting
                       ? flowStep === "send"
                         ? t("sending")
@@ -323,6 +325,7 @@ export function CyclesWalletCard() {
                   }
                   onClick={() => void onWithdraw()}
                 >
+                  {submitting && <Spinner data-icon="inline-start" />}
                   {submitting ? t("withdrawing") : t("withdraw")}
                 </Button>
               </TabsContent>

@@ -11,7 +11,6 @@ import {
   ArrowLeft02Icon,
   CheckmarkCircle02Icon,
   Copy01Icon,
-  FuelStationIcon,
   InformationCircleIcon,
   Link01Icon,
   Settings02Icon,
@@ -27,9 +26,7 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 
 import { MyCanisterControls } from "@/components/canister/details/my-canister-controls"
-import { MyCanisterTopupDialog } from "@/components/canister/details/my-canister-topup-dialog"
 import { SubnetCountryFlags } from "@/components/canister/subnet-country-flags"
-import { CanisterOverviewGuide } from "@/components/canister/details/canister-overview-guide"
 import { CanisterSnapshotsGuide } from "@/components/canister/details/canister-snapshots-guide"
 import { SnapshotsCard } from "@/components/canister/details/snapshots-card"
 import { CanisterSettingsView } from "@/components/canister/settings"
@@ -75,8 +72,7 @@ export function MyCanisterDetails({
   const principal = identity?.getPrincipal().toText() ?? null
   const [activeTab, setActiveTab] = useState<string>(defaultTab)
   const [copied, setCopied] = useState(false)
-  const [technicalOpen, setTechnicalOpen] = useState(false)
-  const [topupOpen, setTopupOpen] = useState(false)
+  const [technicalOpen, setTechnicalOpen] = useState(true)
 
   const handleTabSelect = (tab: string) => {
     setActiveTab(tab)
@@ -156,20 +152,14 @@ export function MyCanisterDetails({
             <>
               <span
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium",
+                  "inline-flex items-center rounded-lg border border-border/50 bg-muted/30 px-2.5 py-1 text-xs font-medium",
                   runStatus === "running"
-                    ? "border-success/20 bg-success/10 text-success"
+                    ? "text-success"
                     : runStatus === "stopped"
-                      ? "border-border bg-muted text-muted-foreground"
-                      : "border-destructive/20 bg-destructive/10 text-destructive"
+                      ? "text-muted-foreground"
+                      : "text-destructive"
                 )}
               >
-                <span
-                  className={cn(
-                    "size-1.5 rounded-full",
-                    runStatus === "running" ? "bg-success animate-pulse" : "bg-muted-foreground"
-                  )}
-                />
                 {runStatus === "running"
                   ? "Running"
                   : runStatus === "stopped"
@@ -242,17 +232,6 @@ export function MyCanisterDetails({
                   </p>
                 </HoverCardContent>
               </HoverCard>
-
-              <Button
-                size="sm"
-                variant="outline"
-                type="button"
-                onClick={() => setTopupOpen(true)}
-                className="h-7 gap-1.5 px-2.5 text-xs font-medium cursor-pointer"
-              >
-                <HugeiconsIcon icon={FuelStationIcon} className="size-3.5 text-primary" strokeWidth={1.75} />
-                <span>Top up</span>
-              </Button>
             </div>
 
             {status.kind === "ok" ? (
@@ -434,9 +413,6 @@ export function MyCanisterDetails({
             )}
           </div>
 
-          {/* Overview Architecture Guide Card (Below the fold) */}
-          <CanisterOverviewGuide />
-
           {/* Technical Details Collapsible Card */}
           <Collapsible
             open={technicalOpen}
@@ -612,12 +588,6 @@ export function MyCanisterDetails({
         </TabsContent>
       </Tabs>
 
-      <MyCanisterTopupDialog
-        open={topupOpen}
-        onOpenChange={setTopupOpen}
-        canisterId={canisterId}
-        onDone={onRefresh}
-      />
     </div>
   )
 }

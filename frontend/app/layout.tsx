@@ -158,6 +158,10 @@ export default function RootLayout({
       className={cn("antialiased", fontMono.variable, fontSans.variable, "font-sans")}
     >
       <head>
+        <link rel="preconnect" href="https://icp0.io" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://icp0.io" />
+        <link rel="preconnect" href="https://ic0.app" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://ic0.app" />
         <ThemeColorScript />
         {/* IC asset canister only — skip on Vercel so login LCP is not blocked. */}
         <script

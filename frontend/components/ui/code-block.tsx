@@ -1,8 +1,9 @@
 "use client"
 
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react"
-import { Check, Copy } from "lucide-react"
 import { AnimatePresence, motion } from "motion/react"
+import { toast } from "sonner"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 
 import { cn } from "@/lib/ui/utils"
 
@@ -91,9 +92,10 @@ export function CodeBlock({
         await navigator.clipboard.writeText(currentCode)
       }
       setCopied(true)
+      toast.success("Successfully copied")
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // clipboard access fallback
+      toast.error("Failed to copy")
     }
   }
 
@@ -191,32 +193,7 @@ export function CodeBlock({
           )}
           aria-label="Copy code"
         >
-          <span className="relative size-3.5">
-            <motion.div
-              initial={false}
-              animate={{
-                scale: copied ? 0 : 1,
-                opacity: copied ? 0 : 1,
-                rotate: copied ? 90 : 0,
-              }}
-              transition={{ duration: 0.2 }}
-              className="absolute inset-0"
-            >
-              <Copy className="size-full" />
-            </motion.div>
-            <motion.div
-              initial={false}
-              animate={{
-                scale: copied ? 1 : 0,
-                opacity: copied ? 1 : 0,
-                rotate: copied ? 0 : -90,
-              }}
-              transition={{ duration: 0.2 }}
-              className="absolute inset-0"
-            >
-              <Check className="size-full text-success" />
-            </motion.div>
-          </span>
+          <CopyIconIndicator copied={copied} iconClassName="size-3.5" />
           <span>{copied ? "Copied" : "Copy"}</span>
         </motion.button>
         <pre

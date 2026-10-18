@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon, ArrowUpDownIcon } from "@hugeicons/core-free-icons"
+import { Copy01Icon, ArrowUpDownIcon } from "@hugeicons/core-free-icons"
 import {
   Markdown,
   Openai,
@@ -12,6 +12,7 @@ import {
   VisualStudioCode,
 } from "@dev.icons/react"
 import { Button } from "@/components/ui/button"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -78,7 +79,7 @@ export function BucketDocsCopyMenu({ markdown, title = "ICBucket Documentation" 
       2
     )
     await copyText(mcpConfig)
-    toast.success("MCP server JSON config copied to clipboard!")
+    toast.success("Successfully copied")
   }
 
   const handleConnectVSCode = async () => {
@@ -95,19 +96,19 @@ export function BucketDocsCopyMenu({ markdown, title = "ICBucket Documentation" 
       2
     )
     await copyText(vscodeSnippet)
-    toast.success("VSCode MCP configuration copied!")
+    toast.success("Successfully copied")
   }
 
   const handleConnectClaudeCode = async () => {
     const command = "claude mcp add icbucket -- npx -y @icpay/icbucket-mcp"
     await copyText(command)
-    toast.success("Claude Code command copied!")
+    toast.success("Successfully copied")
   }
 
   const handleConnectCodex = async () => {
     const codexConfig = "codex mcp add icbucket npx -y @icpay/icbucket-mcp"
     await copyText(codexConfig)
-    toast.success("Codex configuration command copied!")
+    toast.success("Successfully copied")
   }
 
   return (
@@ -121,7 +122,7 @@ export function BucketDocsCopyMenu({ markdown, title = "ICBucket Documentation" 
           />
         }
       >
-        <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-3.5 text-primary" />
+        <CopyIconIndicator copied={copied} iconClassName="size-3.5" />
         <span>{copied ? "Copied" : "Copy"}</span>
         <HugeiconsIcon icon={ArrowUpDownIcon} className="size-3 text-muted-foreground ml-0.5 opacity-60" />
       </DropdownMenuTrigger>

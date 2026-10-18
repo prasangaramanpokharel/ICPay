@@ -110,7 +110,7 @@ export function BucketFilesTable({
               return (
                 <TableRow
                   key={key}
-                  className="group cursor-pointer border-border/40 transition-colors hover:bg-muted/40"
+                  className="group cursor-pointer border-border/40 transition-colors hover:bg-muted/40 [content-visibility:auto] [contain-intrinsic-size:auto_52px]"
                   data-state={selected.has(key) ? "selected" : undefined}
                   onClick={() => onOpenFolder(entry.name)}
                 >
@@ -163,7 +163,7 @@ export function BucketFilesTable({
             return (
               <TableRow
                 key={key}
-                className="group cursor-pointer border-border/40 transition-colors hover:bg-muted/40"
+                className="group cursor-pointer border-border/40 transition-colors hover:bg-muted/40 [content-visibility:auto] [contain-intrinsic-size:auto_52px]"
                 data-state={
                   selected.has(key) || previewId === entry.file.id ? "selected" : undefined
                 }

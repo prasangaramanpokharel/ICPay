@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState, type ReactNode } from "react"
+import { useMemo, type ReactNode } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { createAvatar } from "@dicebear/core"
@@ -9,11 +9,10 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Cancel01Icon,
   CheckmarkCircle02Icon,
-  Copy01Icon,
-  Tick02Icon,
 } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { CopyButton } from "@/components/ui/copy-button"
 import {
   Drawer,
   DrawerContent,
@@ -28,7 +27,6 @@ import { useLedgerSymbol, useTransactionDetail } from "@/hooks/wallet/useWalletD
 import { useIsMobile } from "@/hooks/use-mobile"
 import type { TransactionPublic } from "@/services/types"
 import {
-  copyText,
   explorerTxUrl,
   formatDetailTime,
   formatTokenAmount,
@@ -272,13 +270,6 @@ function DetailValue({
   href?: string
 }) {
   const tc = useTranslations("common")
-  const [copied, setCopied] = useState(false)
-
-  const onCopy = async () => {
-    await copyText(value)
-    setCopied(true)
-    window.setTimeout(() => setCopied(false), 2000)
-  }
 
   return (
     <div className="flex min-w-0 items-start justify-end gap-1.5">
@@ -300,20 +291,12 @@ function DetailValue({
         </span>
       )}
       {copyable ? (
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-xs"
-          onClick={() => void onCopy()}
-          className="shrink-0 size-5 text-muted-foreground hover:text-foreground cursor-pointer"
+        <CopyButton
+          value={value}
           aria-label={tc("copy")}
-        >
-          <HugeiconsIcon
-            icon={copied ? Tick02Icon : Copy01Icon}
-            className="size-3"
-            strokeWidth={2}
-          />
-        </Button>
+          className="size-5 text-muted-foreground hover:text-foreground"
+          iconClassName="size-3"
+        />
       ) : null}
     </div>
   )

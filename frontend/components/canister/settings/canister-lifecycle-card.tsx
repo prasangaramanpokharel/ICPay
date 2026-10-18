@@ -13,6 +13,7 @@ import {
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -131,7 +132,11 @@ export function CanisterLifecycleCard({
                 onClick={() => handleToggleState("start")}
                 className="shrink-0"
               >
-                <HugeiconsIcon icon={PlayIcon} data-icon="inline-start" />
+                {busyAction === "start" ? (
+                  <Spinner data-icon="inline-start" />
+                ) : (
+                  <HugeiconsIcon icon={PlayIcon} data-icon="inline-start" />
+                )}
                 {busyAction === "start" ? "Starting…" : "Start Canister"}
               </Button>
             )}
@@ -177,6 +182,7 @@ export function CanisterLifecycleCard({
               disabled={busyAction === "stop"}
               onClick={() => handleToggleState("stop")}
             >
+              {busyAction === "stop" && <Spinner data-icon="inline-start" />}
               {busyAction === "stop" ? "Stopping…" : "Stop Canister"}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -201,6 +207,7 @@ export function CanisterLifecycleCard({
               disabled={busyAction === "delete"}
               onClick={handleDelete}
             >
+              {busyAction === "delete" && <Spinner data-icon="inline-start" />}
               {busyAction === "delete" ? "Deleting…" : "Delete Permanently"}
             </AlertDialogAction>
           </AlertDialogFooter>

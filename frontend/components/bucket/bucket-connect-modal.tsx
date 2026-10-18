@@ -108,12 +108,10 @@ curl -O "https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${bucketName}/uploads/h
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] w-full max-w-[calc(100vw-2rem)] sm:max-w-2xl overflow-y-auto overflow-x-hidden p-5 sm:p-6 min-w-0">
         <DialogHeader className="gap-2 min-w-0 w-full">
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <HugeiconsIcon icon={Plug01Icon} className="size-4.5" strokeWidth={1.75} />
-            </span>
-            <DialogTitle className="text-lg truncate">Connect to your bucket</DialogTitle>
-          </div>
+          <DialogTitle className="flex items-center gap-2 text-lg">
+            <HugeiconsIcon icon={Plug01Icon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+            <span className="truncate">Connect to your bucket</span>
+          </DialogTitle>
           <DialogDescription className="text-xs">
             Minimal, production-ready code snippets and credentials to integrate this bucket into
             your application or backend services.

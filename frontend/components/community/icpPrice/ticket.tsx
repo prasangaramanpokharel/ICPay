@@ -35,8 +35,8 @@ export function IcpPriceTicket({ className }: { className?: string }) {
         {price ? (
           <span
             className={cn(
-              "rounded-full px-1.5 py-px text-[10px] font-semibold leading-none tabular-nums text-black",
-              up ? "bg-emerald-400" : "bg-red-500"
+              "rounded-full px-1.5 py-px text-[10px] font-semibold leading-none tabular-nums",
+              up ? "bg-success text-primary-foreground" : "bg-destructive text-destructive-foreground"
             )}
           >
             {formattedChange}

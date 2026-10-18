@@ -31,11 +31,9 @@ export function CanisterGuideCard({
         className
       )}
     >
-      <CollapsibleTrigger className="flex w-full items-center justify-between p-4 sm:p-5 text-left hover:bg-primary/10 transition-colors cursor-pointer">
+      <CollapsibleTrigger className="flex w-full items-center justify-between p-4 sm:p-5 text-left hover:bg-muted/50 transition-colors cursor-pointer">
         <div className="flex items-center gap-3">
-          <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
-            <HugeiconsIcon icon={Book02Icon} className="size-5" />
-          </div>
+          <HugeiconsIcon icon={Book02Icon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
           <div>
             <h3 className="text-sm font-semibold text-foreground">
               Internet Computer Canister Architecture Guide
@@ -93,7 +91,7 @@ export function CanisterGuideCard({
 
           <div className="space-y-1.5 rounded-xl border border-border/40 bg-card/60 p-3.5">
             <div className="flex items-center gap-2 text-foreground font-semibold">
-              <HugeiconsIcon icon={EyeIcon} className="size-4 text-emerald-500" />
+              <HugeiconsIcon icon={EyeIcon} className="size-4 text-success" strokeWidth={1.75} />
               <span>Log Visibility</span>
             </div>
             <p>

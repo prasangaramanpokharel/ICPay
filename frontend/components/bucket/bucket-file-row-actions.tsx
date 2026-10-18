@@ -67,10 +67,10 @@ export function BucketFileRowActions({
       ? toRawCanisterUrl(publicRaw)
       : null
 
-  const handleCopy = async (url: string | null, label: string) => {
+  const handleCopy = async (url: string | null) => {
     if (!url) return
     await copyText(url)
-    toast.success(`${label} copied to clipboard!`)
+    toast.success("Successfully copied")
   }
 
   const handleDownload = async () => {
@@ -114,14 +114,14 @@ export function BucketFileRowActions({
           </DropdownMenuItem>
 
           {cdnUrl ? (
-            <DropdownMenuItem onClick={() => void handleCopy(cdnUrl, "CDN Link")} className="gap-2 text-xs">
+            <DropdownMenuItem onClick={() => void handleCopy(cdnUrl)} className="gap-2 text-xs">
               <HugeiconsIcon icon={Copy01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
               <span>Copy CDN Link</span>
             </DropdownMenuItem>
           ) : null}
 
           {rawUrl ? (
-            <DropdownMenuItem onClick={() => void handleCopy(rawUrl, "Raw Canister URL")} className="gap-2 text-xs">
+            <DropdownMenuItem onClick={() => void handleCopy(rawUrl)} className="gap-2 text-xs">
               <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
               <span>Copy Raw Link</span>
             </DropdownMenuItem>

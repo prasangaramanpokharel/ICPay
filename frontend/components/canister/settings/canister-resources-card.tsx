@@ -7,6 +7,7 @@ import { CpuIcon, FloppyDiskIcon } from "@hugeicons/core-free-icons"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
 import {
   FieldGroup,
@@ -195,7 +196,11 @@ export function CanisterResourcesCard({
           {isController && (
             <div className="flex justify-end pt-2">
               <Button type="submit" disabled={saving} size="sm">
-                <HugeiconsIcon icon={FloppyDiskIcon} data-icon="inline-start" />
+                {saving ? (
+                  <Spinner data-icon="inline-start" />
+                ) : (
+                  <HugeiconsIcon icon={FloppyDiskIcon} data-icon="inline-start" />
+                )}
                 {saving ? "Saving…" : "Save Resource Limits"}
               </Button>
             </div>

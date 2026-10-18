@@ -245,4 +245,34 @@
         rgba(255, 255, 255, 0.08) 80%,
         rgba(255, 255, 255, 0.22) 100%);
   }
+
+  /* Sonner close button styling as inline small button */
+  [data-sonner-toast] [data-close-button] {
+    position: static !important;
+    order: 3 !important;
+    margin-left: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+    width: auto !important;
+    height: 1.5rem !important;
+    padding: 0 0.5rem !important;
+    font-size: 0.6875rem !important;
+    font-weight: 500 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 0.375rem !important;
+    border: 1px solid var(--border) !important;
+    background: var(--muted) !important;
+    color: var(--muted-foreground) !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease !important;
+  }
+
+  [data-sonner-toast] [data-close-button]:hover {
+    background: var(--accent) !important;
+    color: var(--accent-foreground) !important;
+  }
 }

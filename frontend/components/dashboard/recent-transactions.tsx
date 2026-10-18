@@ -3,8 +3,7 @@
 import Link from "next/link"
 import { useMemo } from "react"
 import { useTranslations } from "next-intl"
-import { createAvatar } from "@dicebear/core"
-import { adventurer } from "@dicebear/collection"
+import { avatarUriFor } from "@/lib/profile/avatar"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { InboxIcon, Message01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -37,7 +36,7 @@ export function RecentTransactions({ transactions, embedded }: RecentTransaction
     <section className={embedded ? "space-y-0" : "space-y-3"}>
       {!embedded && (
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold">{t("latestTransactions")}</h2>
+          <h2 className="text-sm font-semibold text-balance">{t("latestTransactions")}</h2>
           {hasTransactions && (
             <Button
               variant="ghost"
@@ -80,13 +79,10 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
   const handle = counterparty.startsWith("@") ? counterparty.slice(1) : null
   const memo = tx.memo?.[0]
 
-  const avatarUri = useMemo(
-    () => createAvatar(adventurer, { seed: counterparty }).toDataUri(),
-    [counterparty]
-  )
+  const avatarUri = useMemo(() => avatarUriFor(counterparty), [counterparty])
 
   return (
-    <li>
+    <li className="[content-visibility:auto] [contain-intrinsic-size:auto_64px]">
       <Link
         href={`/transactions?id=${encodeURIComponent(tx.id)}`}
         prefetch
@@ -122,7 +118,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
             <p
               className={cn(
                 "font-mono text-sm font-semibold tabular-nums",
-                incoming ? "text-emerald-500 dark:text-emerald-400" : "text-foreground",
+                incoming ? "text-success" : "text-foreground",
               )}
             >
               {incoming ? "+" : "−"}

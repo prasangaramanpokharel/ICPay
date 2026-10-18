@@ -146,7 +146,7 @@ export function ContactView() {
               title={copiedEmail ? "Copied!" : "Copy email address"}
               className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
             >
-              {copiedEmail ? <Check className="size-3.5 text-emerald-500" /> : <Copy className="size-3.5" />}
+              {copiedEmail ? <Check className="size-3.5 text-success" /> : <Copy className="size-3.5" />}
             </Button>
             <a
               href={`mailto:${CONTACT_EMAIL}`}
@@ -292,7 +292,7 @@ export function ContactView() {
                 onClick={handleCopyDraft}
                 className="h-8 gap-1.5 text-xs"
               >
-                {copiedDraft ? <Check className="size-3 text-emerald-500" /> : <Copy className="size-3" />}
+                {copiedDraft ? <Check className="size-3 text-success" /> : <Copy className="size-3" />}
                 <span>{copiedDraft ? "Copied" : "Copy Draft"}</span>
               </Button>
               <a

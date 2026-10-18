@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -330,6 +331,7 @@ export function CyclesTopUpCard() {
                   disabled={isLoading || connecting}
                   onClick={() => void onConnect()}
                 >
+                  {(connecting || isLoading) && <Spinner data-icon="inline-start" />}
                   {connecting || isLoading ? t("connecting") : t("signIn")}
                 </Button>
               ) : (
@@ -340,6 +342,7 @@ export function CyclesTopUpCard() {
                   disabled={!canSubmit}
                   onClick={() => void onTopUp()}
                 >
+                  {submitting && <Spinner data-icon="inline-start" />}
                   {submitting
                     ? flowStep === "send"
                       ? t("sending")

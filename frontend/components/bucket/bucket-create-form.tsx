@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -177,7 +178,7 @@ export function BucketCreateForm({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label className="text-xs font-medium">Billing Cycle</Label>
-            <span className="text-[11px] font-medium text-emerald-500">
+            <span className="text-[11px] font-medium text-success">
               {billingPeriod === "yearly"
                 ? "Save ~17% · 2 Months Free"
                 : "Standard 30-day renewal"}
@@ -209,7 +210,7 @@ export function BucketCreateForm({
             >
               <span className="flex items-center gap-1.5">
                 <span>Annual</span>
-                <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-bold text-emerald-500">
+                <span className="rounded-full bg-success/15 px-1.5 py-0.5 text-[9px] font-bold text-success">
                   2 MO FREE
                 </span>
               </span>
@@ -267,11 +268,11 @@ export function BucketCreateForm({
                   {capacityGB} GB · {billingPeriod === "yearly" ? "Annual Plan" : "Monthly Plan"}
                 </span>
                 {billingPeriod === "yearly" ? (
-                  <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-semibold text-emerald-500">
+                  <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold text-success">
                     2 MONTHS FREE
                   </span>
                 ) : (
-                  <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold text-emerald-500">
+                  <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold text-success">
                     50% OFF
                   </span>
                 )}
@@ -295,7 +296,7 @@ export function BucketCreateForm({
               )}
             </div>
             <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-              <span className="size-1.5 rounded-full bg-emerald-500" />
+              <span className="size-1.5 rounded-full bg-success" />
               <span>Dedicated 400 GB EOP Canister · Instant Boundary CDN</span>
             </div>
           </div>
@@ -319,6 +320,7 @@ export function BucketCreateForm({
           }
           onClick={handleSubmit}
         >
+          {submitting && <Spinner data-icon="inline-start" />}
           {submitting
             ? t("creating")
             : insufficient

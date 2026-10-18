@@ -6,7 +6,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Cancel01Icon,
   ConnectIcon,
-  Copy01Icon,
   Tick02Icon,
 } from "@hugeicons/core-free-icons"
 import {
@@ -17,12 +16,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Separator } from "@/components/ui/separator"
 import { Spinner } from "@/components/ui/spinner"
 import { CodeBlock } from "@/components/ui/code-block"
+import { toast } from "sonner"
 import { useAuth } from "@/components/auth/auth-provider"
 import { parseCanisterId } from "@/services/cycles/topUp"
 import { rememberCanister } from "@/lib/canister/savedCanisters"
@@ -156,6 +157,7 @@ export function LinkCanisterDialog({
     try {
       await navigator.clipboard.writeText(parsedDraft)
       setCopiedId(true)
+      toast.success("Successfully copied")
       setTimeout(() => setCopiedId(false), 2000)
     } catch {
       // ignore
@@ -275,7 +277,7 @@ export function LinkCanisterDialog({
                           aria-invalid={draftInvalid}
                           className={cn(
                             "pr-9 font-mono text-xs",
-                            draftValid && "border-emerald-500/60 focus-visible:ring-emerald-500/30",
+                            draftValid && "border-success/60 focus-visible:ring-success/30",
                             draftInvalid && "border-destructive focus-visible:ring-destructive/30"
                           )}
                         />
@@ -285,7 +287,7 @@ export function LinkCanisterDialog({
                               icon={draftValid ? Tick02Icon : Cancel01Icon}
                               className={cn(
                                 "size-3.5",
-                                draftValid ? "text-emerald-500" : "text-destructive"
+                                draftValid ? "text-success" : "text-destructive"
                               )}
                             />
                           </span>
@@ -421,14 +423,8 @@ export function LinkCanisterDialog({
                       disabled={isVerifying}
                       className="cursor-pointer font-medium"
                     >
-                      {isVerifying ? (
-                        <span className="flex items-center gap-1.5">
-                          <Spinner data-icon="inline-start" className="size-3.5" />
-                          <span>Verifying...</span>
-                        </span>
-                      ) : (
-                        "Verify Controller"
-                      )}
+                      {isVerifying && <Spinner data-icon="inline-start" />}
+                      {isVerifying ? "Verifying..." : "Verify Controller"}
                     </Button>
                   </div>
 
@@ -456,10 +452,8 @@ export function LinkCanisterDialog({
                 className="flex flex-col items-center justify-center text-center py-2"
               >
                 {/* Payment Success Tick SVG */}
-                <div className="animate-in fade-in zoom-in-75 mb-3 flex size-18 items-center justify-center rounded-full bg-success/10 duration-300 ease-out">
-                  <span className="flex size-13 items-center justify-center rounded-full bg-success text-background shadow-md">
-                    <HugeiconsIcon icon={Tick02Icon} className="size-8" strokeWidth={3} />
-                  </span>
+                <div className="animate-in fade-in zoom-in-75 mb-3 flex items-center justify-center text-success duration-200">
+                  <HugeiconsIcon icon={Tick02Icon} className="size-12" strokeWidth={2.5} />
                 </div>
 
                 <h3 className="text-lg font-semibold tracking-tight text-foreground">
@@ -491,7 +485,7 @@ export function LinkCanisterDialog({
                         className="size-6 text-muted-foreground hover:text-foreground cursor-pointer"
                         title="Copy canister ID"
                       >
-                        <HugeiconsIcon icon={copiedId ? Tick02Icon : Copy01Icon} className="size-3" />
+                        <CopyIconIndicator copied={copiedId} iconClassName="size-3" />
                       </Button>
                     </div>
                   </div>

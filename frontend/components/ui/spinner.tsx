@@ -14,3 +14,4 @@ function Spinner({ className, ...props }: React.ComponentProps<typeof LoaderIcon
 }
 
 export { Spinner }
+export { SpinnerBadge } from "./spinner-badge"

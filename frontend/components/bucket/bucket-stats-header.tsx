@@ -5,18 +5,17 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Calendar01Icon,
-  Copy01Icon,
   Database01Icon,
   Folder02Icon,
   Globe02Icon,
   LockIcon,
   RefreshIcon,
-  Tick02Icon,
   Alert02Icon,
 } from "@hugeicons/core-free-icons"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { Switch } from "@/components/ui/switch"
 import { useAuth } from "@/components/auth/auth-provider"
 import { updateBucket } from "@/services/bucket/bucket"
@@ -77,13 +76,14 @@ export function BucketStatsHeader({
   const handleCopyId = async () => {
     await copyText(stats.id)
     setCopied(true)
+    toast.success("Successfully copied")
     setTimeout(() => setCopied(false), 2000)
   }
 
   const handleCopyBaseUrl = async () => {
     await copyText(cdnBase)
     setCopiedBase(true)
-    toast.success("CDN Base URL copied!")
+    toast.success("Successfully copied")
     setTimeout(() => setCopiedBase(false), 2000)
   }
 
@@ -123,9 +123,7 @@ export function BucketStatsHeader({
         {/* Top bar: Name, Badges & Actions */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
-              <HugeiconsIcon icon={Database01Icon} className="size-4.5" strokeWidth={1.75} />
-            </div>
+            <HugeiconsIcon icon={Database01Icon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-semibold tracking-tight text-foreground">
@@ -169,15 +167,11 @@ export function BucketStatsHeader({
                   <button
                     type="button"
                     onClick={handleCopyId}
-                    className="inline-flex size-4 items-center justify-center rounded text-muted-foreground hover:text-foreground transition-colors"
+                    className="inline-flex size-4 items-center justify-center rounded text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                     aria-label="Copy bucket ID"
                     title={copied ? "Copied!" : "Copy bucket ID"}
                   >
-                    <HugeiconsIcon
-                      icon={copied ? Tick02Icon : Copy01Icon}
-                      className="size-3"
-                      strokeWidth={1.75}
-                    />
+                    <CopyIconIndicator copied={copied} iconClassName="size-3" />
                   </button>
                 </span>
                 <span>·</span>
@@ -193,11 +187,7 @@ export function BucketStatsHeader({
                     aria-label="Copy CDN Base URL"
                     title={copiedBase ? "Copied CDN URL!" : "Copy CDN Base URL"}
                   >
-                    <HugeiconsIcon
-                      icon={copiedBase ? Tick02Icon : Copy01Icon}
-                      className="size-3 text-muted-foreground hover:text-foreground"
-                      strokeWidth={1.75}
-                    />
+                    <CopyIconIndicator copied={copiedBase} iconClassName="size-3" />
                   </button>
                 </span>
               </div>

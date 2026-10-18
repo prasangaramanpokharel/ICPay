@@ -19,7 +19,28 @@ frontend/.agents/skills/vercel-react-best-practices
 # Only the README screenshots and the command reference are public. git will not
 # descend into an excluded directory, so this excludes the contents rather than
 # the directory itself -- otherwise the negations below could never match.
-/docs/
+/docs/*
+!/docs/agy/
+!/docs/agy/**
+!/docs/command/
+!/docs/command/**
+!/docs/demo/
+!/docs/demo/**
+!/docs/icFrame/
+!/docs/icFrame/**
+!/docs/icpay/
+!/docs/icpay/**
+!/docs/language/
+!/docs/language/**
+!/docs/marketing/
+!/docs/marketing/**
+!/docs/phase/
+!/docs/phase/**
+!/docs/sdk/
+!/docs/sdk/**
+!/docs/security/
+!/docs/security/**
+!/docs/workflow.md
 
 # docs/bucket/ stays local (PDF exports, not committed)
 

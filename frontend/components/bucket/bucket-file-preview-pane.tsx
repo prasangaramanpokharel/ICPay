@@ -91,7 +91,7 @@ export function BucketFilePreviewPane({
     if (!url) return
     await copyText(url)
     setCopiedMode(mode)
-    toast.success(mode === "cdn" ? "CDN link copied to clipboard!" : "Raw canister link copied!")
+    toast.success("Successfully copied")
     setTimeout(() => setCopiedMode(null), 2000)
   }
 
@@ -158,7 +158,7 @@ export function BucketFilePreviewPane({
         <div className="mx-4 mb-2 rounded-xl border border-border/70 bg-card/60 p-2.5 backdrop-blur-xs">
           <div className="flex items-center justify-between text-xs mb-1">
             <span className="flex items-center gap-1.5 font-medium text-foreground">
-              <span className="size-1.5 rounded-full bg-success animate-pulse" />
+              <span className="size-1.5 rounded-full bg-success" />
               <span>CDN Link</span>
               <span className="rounded bg-success/15 px-1 py-0.2 text-[9px] font-medium text-success">
                 Fast & Cached

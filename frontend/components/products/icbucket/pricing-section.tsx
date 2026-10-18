@@ -232,7 +232,7 @@ export function PricingSection() {
                 )}
               >
                 <span>Annual (365 days)</span>
-                <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-bold text-emerald-500 animate-pulse">
+                <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-bold text-success">
                   2 MO FREE · SAVE 17%
                 </span>
               </button>
@@ -399,7 +399,7 @@ export function PricingSection() {
                         </div>
 
                         {isYearly && (
-                          <p className="text-[11px] text-emerald-500 font-medium tabular-nums">
+                          <p className="text-[11px] text-success font-medium tabular-nums">
                             ≈ {formatMonthlyEquiv(priceE8s, currency, usdPerIcp)} / month
                           </p>
                         )}
@@ -511,7 +511,7 @@ export function PricingSection() {
                         <td className="py-4 px-4 tabular-nums">
                           <div className="font-semibold text-foreground text-sm flex items-center gap-1.5">
                             <span>{formatPlanPrice(yearlyE8s, currency, usdPerIcp)}</span>
-                            <span className="rounded bg-emerald-500/15 text-emerald-500 text-[9px] font-bold px-1.5 py-0.5">
+                            <span className="rounded bg-success/15 text-success text-[9px] font-bold px-1.5 py-0.5">
                               SAVE 17%
                             </span>
                           </div>
@@ -521,7 +521,7 @@ export function PricingSection() {
                         </td>
 
                         <td className="py-4 px-4">
-                          <span className="font-bold text-emerald-500">$0.00</span>
+                          <span className="font-bold text-success">$0.00</span>
                           <span className="text-[10px] text-muted-foreground block">Zero egress taxes</span>
                         </td>
 

@@ -83,7 +83,7 @@ export function BucketPricingView() {
             )}
           >
             <span>Annual (365 days)</span>
-            <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-bold text-emerald-500">
+            <span className="rounded-full bg-success/15 px-1.5 py-0.5 text-[9px] font-bold text-success">
               2 MO FREE
             </span>
           </button>

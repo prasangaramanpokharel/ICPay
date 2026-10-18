@@ -108,7 +108,7 @@ export function MediumArticleCard({
           <Badge variant="secondary" className="text-[11px] font-medium">
             4 min read
           </Badge>
-          <Badge variant="outline" className="text-[11px] font-medium text-emerald-600 dark:text-emerald-400 border-emerald-500/30">
+          <Badge variant="outline" className="text-[11px] font-medium text-success border-success/30">
             Original Post
           </Badge>
         </div>

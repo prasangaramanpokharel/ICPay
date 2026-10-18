@@ -6,8 +6,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Cancel01Icon,
   ConnectIcon,
-  Copy01Icon,
-  Tick02Icon,
 } from "@hugeicons/core-free-icons"
 import {
   Dialog,
@@ -18,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { Input } from "@/components/ui/input"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { cn } from "@/lib/ui/utils"
@@ -84,7 +83,7 @@ export function ConnectControllerDialog({
     try {
       await navigator.clipboard.writeText(generatedCommand)
       setCopiedCmd(true)
-      toast.success("Command copied to clipboard")
+      toast.success("Successfully copied")
       setTimeout(() => setCopiedCmd(false), 2000)
     } catch {
       toast.error("Failed to copy command")
@@ -96,7 +95,7 @@ export function ConnectControllerDialog({
     try {
       await navigator.clipboard.writeText(principal)
       setCopiedPrincipal(true)
-      toast.success("Principal copied")
+      toast.success("Successfully copied")
       setTimeout(() => setCopiedPrincipal(false), 2000)
     } catch {
       toast.error("Failed to copy principal")
@@ -107,12 +106,10 @@ export function ConnectControllerDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg gap-5 w-full min-w-0 overflow-hidden">
         <DialogHeader>
-          <div className="flex items-center gap-2">
-            <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <HugeiconsIcon icon={ConnectIcon} className="size-4" />
-            </div>
-            <DialogTitle>Connect Canister via CLI</DialogTitle>
-          </div>
+          <DialogTitle className="flex items-center gap-2">
+            <HugeiconsIcon icon={ConnectIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+            <span>Connect Canister via CLI</span>
+          </DialogTitle>
           <DialogDescription>
             Run this command on your machine to add your Internet Identity as a controller.
             Once added, ICPay can monitor live cycles, status, and manage the canister.
@@ -183,10 +180,7 @@ export function ConnectControllerDialog({
                 onClick={handleCopyCommand}
                 disabled={!isReady}
               >
-                <HugeiconsIcon
-                  icon={copiedCmd ? Tick02Icon : Copy01Icon}
-                  className={cn("size-3", copiedCmd && "text-emerald-500")}
-                />
+                <CopyIconIndicator copied={copiedCmd} iconClassName="size-3" />
                 <span>{copiedCmd ? "Copied" : "Copy command"}</span>
               </Button>
             </div>
@@ -223,10 +217,7 @@ export function ConnectControllerDialog({
                 aria-label="Copy Principal"
                 onClick={handleCopyPrincipal}
               >
-                <HugeiconsIcon
-                  icon={copiedPrincipal ? Tick02Icon : Copy01Icon}
-                  className={cn("size-3.5", copiedPrincipal && "text-emerald-500")}
-                />
+                <CopyIconIndicator copied={copiedPrincipal} iconClassName="size-3.5" />
               </Button>
             )}
           </div>
@@ -246,7 +237,7 @@ export function ConnectControllerDialog({
             disabled={!isReady}
             onClick={handleCopyCommand}
           >
-            <HugeiconsIcon icon={copiedCmd ? Tick02Icon : Copy01Icon} className="size-3.5" />
+            <CopyIconIndicator copied={copiedCmd} iconClassName="size-3.5" />
             <span>{copiedCmd ? "Copied!" : "Copy Command"}</span>
           </Button>
         </DialogFooter>

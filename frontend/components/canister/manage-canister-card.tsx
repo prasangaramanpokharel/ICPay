@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   AlertDialog,
@@ -162,6 +163,7 @@ export function ManageCanisterCard() {
                   disabled={!canAct || busy !== null}
                   onClick={() => void run("start")}
                 >
+                  {busy === "start" && <Spinner data-icon="inline-start" />}
                   {busy === "start" ? t("starting") : t("start")}
                 </Button>
                 <Button
@@ -169,6 +171,7 @@ export function ManageCanisterCard() {
                   disabled={!canAct || busy !== null}
                   onClick={() => setStopOpen(true)}
                 >
+                  {busy === "stop" && <Spinner data-icon="inline-start" />}
                   {busy === "stop" ? t("stopping") : t("stop")}
                 </Button>
                 <Button
@@ -176,6 +179,7 @@ export function ManageCanisterCard() {
                   disabled={!canAct || busy !== null}
                   onClick={() => void onLogs()}
                 >
+                  {busy === "logs" && <Spinner data-icon="inline-start" />}
                   {busy === "logs" ? t("loadingLogs") : t("fetchLogs")}
                 </Button>
                 <Button variant="ghost" nativeButton={false} render={<Link href="/topup" />}>

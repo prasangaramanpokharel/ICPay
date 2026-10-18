@@ -66,6 +66,22 @@ function resolveDfxMocPath(): string {
   })
   const path = res.stdout?.trim()
   if (res.status === 0 && path) return path
+
+  const dfxCache = spawnSync("dfx", ["cache", "show"], { encoding: "utf8" })
+  if (dfxCache.status === 0 && dfxCache.stdout) {
+    const lines = dfxCache.stdout.trim().split("\n")
+    const cacheDir = lines[lines.length - 1]?.trim()
+    if (cacheDir) {
+      const dfxMoc = resolve(cacheDir, "moc")
+      try {
+        accessSync(dfxMoc, constants.X_OK)
+        return dfxMoc
+      } catch {
+        // ignore — fall through to error
+      }
+    }
+  }
+
   console.error(
     "dfx needs a Motoko compiler. Run:\n  cd backend && mops toolchain use moc 1.13.0\n" +
       "If your shell sets DFX_MOC_PATH=moc-wrapper, run: unset DFX_MOC_PATH",

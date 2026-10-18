@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/components/auth/auth-provider"
 import {
   getBucketEmail,
@@ -123,18 +124,14 @@ export function BucketNotificationModal({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-md gap-4 sm:max-w-lg">
-        <DialogHeader>
-          <div className="flex items-center gap-2">
-            <div className="flex size-9 items-center justify-center rounded-lg border border-border/60 bg-muted/40">
-              <HugeiconsIcon icon={BellIcon} className="size-5 text-primary" strokeWidth={1.75} />
-            </div>
-            <div>
-              <DialogTitle className="text-lg">Expiry Alerts</DialogTitle>
-              <DialogDescription className="text-xs">
-                Email notifications for <span className="font-semibold text-foreground">{displayName}</span>
-              </DialogDescription>
-            </div>
-          </div>
+        <DialogHeader className="gap-1.5">
+          <DialogTitle className="flex items-center gap-2 text-lg">
+            <HugeiconsIcon icon={BellIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+            <span>Expiry Alerts</span>
+          </DialogTitle>
+          <DialogDescription className="text-xs">
+            Email notifications for <span className="font-semibold text-foreground">{displayName}</span>
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-1 text-sm">
@@ -144,21 +141,21 @@ export function BucketNotificationModal({
               Loading notification status...
             </div>
           ) : currentEmail ? (
-            <div className="flex items-center justify-between rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs">
+            <div className="flex items-center justify-between rounded-lg border border-success/30 bg-success/5 p-3 text-xs">
               <div className="flex items-center gap-2">
                 <HugeiconsIcon
                   icon={CheckmarkCircle01Icon}
-                  className="size-4 text-emerald-500"
+                  className="size-4 text-success"
                   strokeWidth={2}
                 />
                 <div>
-                  <div className="font-medium text-emerald-600 dark:text-emerald-400">
+                  <div className="font-medium text-success">
                     Alerts Active
                   </div>
                   <div className="text-muted-foreground">{currentEmail}</div>
                 </div>
               </div>
-              <Badge variant="outline" className="border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
+              <Badge variant="outline" className="border-success/30 text-success">
                 Monitored
               </Badge>
             </div>
@@ -215,7 +212,11 @@ export function BucketNotificationModal({
                   disabled={removing || saving}
                   className="text-destructive hover:bg-destructive/10 hover:text-destructive gap-1.5 text-xs mr-auto"
                 >
-                  <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                  {removing ? (
+                    <Spinner data-icon="inline-start" />
+                  ) : (
+                    <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                  )}
                   {removing ? "Removing..." : "Remove Email"}
                 </Button>
               ) : null}
@@ -225,6 +226,7 @@ export function BucketNotificationModal({
                 disabled={saving || removing || !emailInput.trim()}
                 className="gap-1.5 text-xs"
               >
+                {saving && <Spinner data-icon="inline-start" />}
                 {saving ? "Saving..." : currentEmail ? "Update Email" : "Enable Alerts"}
               </Button>
             </DialogFooter>

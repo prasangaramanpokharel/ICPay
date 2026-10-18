@@ -2,9 +2,8 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import {
   Collapsible,
@@ -19,6 +18,7 @@ import {
   InputGroupText,
 } from "@/components/ui/input-group"
 import { copyText } from "@/lib/wallet/utils"
+import { toast } from "sonner"
 import {
   getBucketCdnBase,
   resolvePublicFileUrl,
@@ -37,6 +37,7 @@ export function BucketPublicCdn({ publicBaseUrl }: { publicBaseUrl: string }) {
   const handleCopy = async () => {
     await copyText(displayBase)
     setCopied(true)
+    toast.success("Successfully copied")
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -99,11 +100,7 @@ export function BucketPublicCdn({ publicBaseUrl }: { publicBaseUrl: string }) {
                 aria-label={copied ? tc("copied") : tc("copy")}
                 onClick={handleCopy}
               >
-                <HugeiconsIcon
-                  icon={copied ? Tick02Icon : Copy01Icon}
-                  className="size-3.5"
-                  strokeWidth={1.75}
-                />
+                <CopyIconIndicator copied={copied} iconClassName="size-3.5" />
               </InputGroupButton>
             </InputGroupAddon>
           </InputGroup>

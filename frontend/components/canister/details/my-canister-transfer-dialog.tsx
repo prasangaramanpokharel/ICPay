@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { SentIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import {
   Dialog,
   DialogClose,
@@ -133,16 +134,14 @@ export function MyCanisterTransferDialog({
         }}
       >
         <DialogContent className="sm:max-w-md">
-          <DialogHeader className="gap-2">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
-              <HugeiconsIcon icon={SentIcon} className="size-5" />
-            </div>
-            <div>
-              <DialogTitle className="text-lg font-semibold">{t("transferTitle")}</DialogTitle>
-              <DialogDescription className="text-xs text-muted-foreground mt-1">
-                {t("transferHint")}
-              </DialogDescription>
-            </div>
+          <DialogHeader className="gap-1.5">
+            <DialogTitle className="flex items-center gap-2 text-lg font-semibold">
+              <HugeiconsIcon icon={SentIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+              <span>{t("transferTitle")}</span>
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              {t("transferHint")}
+            </DialogDescription>
           </DialogHeader>
 
           <FieldGroup className="gap-4 py-2">
@@ -235,6 +234,7 @@ export function MyCanisterTransferDialog({
               }
               onClick={() => void onConfirm()}
             >
+              {submitting && <Spinner data-icon="inline-start" />}
               {submitting ? t("transferring") : t("transferConfirm")}
             </Button>
           </DialogFooter>

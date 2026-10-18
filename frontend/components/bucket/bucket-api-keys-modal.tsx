@@ -2,9 +2,10 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { Copy01Icon, Delete02Icon, Key01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { Delete02Icon, Key01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@/components/ui/button"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Input } from "@/components/ui/input"
 import {
@@ -41,6 +42,7 @@ import {
 import { Spinner } from "@/components/ui/spinner"
 import { mapBucketError } from "@/lib/bucket/bucket"
 import { copyText } from "@/lib/wallet/utils"
+import { toast } from "sonner"
 import { useBucketApiKeys } from "@/hooks/bucket/useBucketApiKeys"
 import { useOwnProfile } from "@/hooks/wallet/useWalletData"
 import { isPremiumHandle } from "@/lib/verified/premiumTick"
@@ -111,6 +113,7 @@ export function BucketApiKeysModal({
     if (!created) return
     await copyText(created.secret)
     setCopied(true)
+    toast.success("Successfully copied")
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -119,6 +122,7 @@ export function BucketApiKeysModal({
   const handleCopyHint = async (key: ApiKeyPublic) => {
     await copyText(key.keyHint)
     setCopiedHintId(key.id)
+    toast.success("Successfully copied")
     setTimeout(() => setCopiedHintId(null), 2000)
   }
 
@@ -179,14 +183,11 @@ export function BucketApiKeysModal({
                         <button
                           type="button"
                           onClick={() => void handleCopyHint(key)}
-                          className="inline-flex size-3.5 items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                          className="inline-flex size-3.5 items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                           aria-label="Copy key prefix"
                           title={copiedHintId === key.id ? "Copied!" : "Copy key prefix"}
                         >
-                          <HugeiconsIcon
-                            icon={copiedHintId === key.id ? Tick02Icon : Copy01Icon}
-                            className="size-3"
-                          />
+                          <CopyIconIndicator copied={copiedHintId === key.id} iconClassName="size-3" />
                         </button>
                       </div>
                       <div className="mt-1 flex flex-wrap items-center gap-1">
@@ -364,7 +365,7 @@ export function BucketApiKeysModal({
                 type="submit"
                 disabled={busy || !name.trim() || (!read && !write && !del)}
               >
-                {busy && <Spinner className="size-3.5" />}
+                {busy && <Spinner data-icon="inline-start" />}
                 {busy ? t("apiKeyCreating") : t("apiKeyCreate")}
               </Button>
             </DialogFooter>
@@ -391,11 +392,7 @@ export function BucketApiKeysModal({
                 aria-label={copied ? tc("copied") : tc("copy")}
                 onClick={handleCopySecret}
               >
-                <HugeiconsIcon
-                  icon={copied ? Tick02Icon : Copy01Icon}
-                  className="size-4"
-                  strokeWidth={1.75}
-                />
+                <CopyIconIndicator copied={copied} iconClassName="size-4" />
               </Button>
             </ButtonGroup>
             </CardContent>

@@ -86,7 +86,7 @@ export function BucketRenewDrawer({
             >
               <span className="flex items-center gap-1.5">
                 <span>+365 Days</span>
-                <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-bold text-emerald-500">
+                <span className="rounded-full bg-success/15 px-1.5 py-0.5 text-[9px] font-bold text-success">
                   2 MO FREE
                 </span>
               </span>
@@ -127,6 +127,7 @@ export function BucketRenewDrawer({
         </div>
         <DrawerFooter>
           <Button size="sm" disabled={submitting || isLoading || !quote} onClick={handleRenew}>
+            {submitting && <Spinner data-icon="inline-start" />}
             {submitting ? t("renewing") : t("renewConfirm", { price: quote ? formatAmount(quote.priceE8s) : "—" })}
           </Button>
           <DrawerClose render={<Button variant="outline" size="sm">{tc("cancel")}</Button>} />

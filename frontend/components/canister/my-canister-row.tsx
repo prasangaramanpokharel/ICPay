@@ -53,23 +53,14 @@ export function MyCanisterRow({
                 <Skeleton className="h-5 w-16 rounded-full" />
               ) : status?.kind === "ok" ? (
                 <Badge
-                  variant={
+                  variant="outline"
+                  className={cn(
+                    "h-5 px-1.5 text-[10px] font-medium capitalize",
                     status.data.runStatus === "running"
-                      ? "default"
-                      : status.data.runStatus === "stopped"
-                        ? "outline"
-                        : "secondary"
-                  }
-                  className="h-5 gap-1 px-1.5 text-[10px]"
+                      ? "text-success border-success/30"
+                      : "text-muted-foreground border-border/60"
+                  )}
                 >
-                  <span
-                    className={cn(
-                      "size-1.5 rounded-full",
-                      status.data.runStatus === "running"
-                        ? "bg-emerald-400"
-                        : "bg-muted-foreground"
-                    )}
-                  />
                   {ts(`run.${status.data.runStatus}`)}
                 </Badge>
               ) : status?.kind === "denied" ? (

@@ -79,11 +79,9 @@ export function BucketCard({
         <Link
           href={`/bucket?id=${encodeURIComponent(bucket.id)}`}
           prefetch
-          className="flex items-center gap-2.5"
+          className="group flex items-center gap-2"
         >
-          <div className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary ring-1 ring-primary/20">
-            <HugeiconsIcon icon={Database01Icon} className="size-3.5" strokeWidth={1.75} />
-          </div>
+          <HugeiconsIcon icon={Database01Icon} className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" strokeWidth={1.75} />
           <span className="truncate text-sm font-medium">{bucket.name}</span>
         </Link>
       </TableCell>

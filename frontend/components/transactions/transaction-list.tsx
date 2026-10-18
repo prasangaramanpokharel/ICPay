@@ -2,8 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
-import { createAvatar } from "@dicebear/core"
-import { adventurer } from "@dicebear/collection"
+import { avatarUriFor } from "@/lib/profile/avatar"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowRight01Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -78,7 +77,7 @@ export function TransactionList({
       <div className="space-y-5">
         {groups.map((group) => (
           <section key={group.key}>
-            <h2 className="mb-2 px-1 text-xs font-semibold tracking-wide text-muted-foreground">
+            <h2 className="mb-2 px-1 text-xs font-semibold tracking-wide text-muted-foreground text-balance">
               {formatTransactionDateGroup(group.items[0].createdAt, dateLabels)}
             </h2>
             <div className="divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/60 bg-card">
@@ -120,7 +119,6 @@ export function TransactionList({
         </div>
       )}
 
-      {/* On-chain compatible Transaction Detail Drawer */}
       <TransactionDetailDrawer
         tx={selectedTx}
         txId={effectiveTxId}
@@ -148,10 +146,7 @@ function TransactionRow({
   const memo = tx.memo?.[0]
   const { symbol, decimals } = useLedgerSymbol(tx.ledgerId)
 
-  const avatarUri = useMemo(
-    () => createAvatar(adventurer, { seed: counterparty }).toDataUri(),
-    [counterparty]
-  )
+  const avatarUri = useMemo(() => avatarUriFor(counterparty), [counterparty])
 
   const handle = counterparty.startsWith("@") ? counterparty.slice(1) : null
 
@@ -159,7 +154,7 @@ function TransactionRow({
     <button
       type="button"
       onClick={onSelect}
-      className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-muted/40 active:bg-muted/60 cursor-pointer select-none"
+      className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-muted/40 active:bg-muted/60 cursor-pointer select-none [content-visibility:auto] [contain-intrinsic-size:auto_68px]"
     >
       <Avatar className="size-11 shrink-0">
         <AvatarImage src={avatarUri} alt="" />
