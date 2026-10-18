@@ -166,7 +166,9 @@ export function isControllerDenied(err: unknown): boolean {
     lower.includes("only controllers") ||
     lower.includes("unauthorized") ||
     lower.includes("not authorized") ||
-    lower.includes("not allowed to call") ||
+    lower.includes("not allowed to") ||
+    lower.includes("is not allowed to") ||
+    (lower.includes("caller") && lower.includes("canister status")) ||
     (lower.includes("caller") && lower.includes("controller"))
   ) {
     return true

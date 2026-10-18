@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { FuelStationIcon, ViewIcon } from "@hugeicons/core-free-icons"
+import { ConnectIcon, FuelStationIcon, ViewIcon } from "@hugeicons/core-free-icons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -22,6 +22,7 @@ export function MyCanisterRow({
   status,
   statusLoading,
   onTopUp,
+  onConnect,
 }: {
   id: string
   label: string
@@ -31,6 +32,7 @@ export function MyCanisterRow({
   status?: MineRowStatus
   statusLoading?: boolean
   onTopUp: () => void
+  onConnect?: () => void
 }) {
   const t = useTranslations("myCanisters")
   const ts = useTranslations("canisterStatus")
@@ -71,9 +73,21 @@ export function MyCanisterRow({
                   {ts(`run.${status.data.runStatus}`)}
                 </Badge>
               ) : status?.kind === "denied" ? (
-                <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
-                  {t("rowDenied")}
-                </Badge>
+                onConnect ? (
+                  <button
+                    type="button"
+                    onClick={onConnect}
+                    title="Click to connect controller via CLI"
+                    className="cursor-pointer inline-flex items-center gap-1 rounded-full border border-destructive/30 bg-destructive/10 px-2 py-0.5 text-[10px] font-medium text-destructive hover:bg-destructive/20 transition-colors"
+                  >
+                    <span>{t("rowDenied")}</span>
+                    <span className="underline underline-offset-2">Connect</span>
+                  </button>
+                ) : (
+                  <Badge variant="outline" className="h-5 px-1.5 text-[10px]">
+                    {t("rowDenied")}
+                  </Badge>
+                )
               ) : null}
             </div>
             <p className="w-full truncate font-mono text-[10px]">
@@ -103,6 +117,24 @@ export function MyCanisterRow({
         </TableCell>
         <TableCell className="w-[100px] text-right align-middle">
           <div className="flex items-center justify-end gap-1">
+            {status?.kind === "denied" && onConnect ? (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={onConnect}
+                      aria-label="Connect Canister"
+                    >
+                      <HugeiconsIcon icon={ConnectIcon} className="size-4 text-primary" strokeWidth={1.75} />
+                    </Button>
+                  }
+                />
+                <TooltipContent side="top">Connect controller via CLI</TooltipContent>
+              </Tooltip>
+            ) : null}
             <Tooltip>
               <TooltipTrigger
                 render={
