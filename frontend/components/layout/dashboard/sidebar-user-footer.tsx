@@ -4,13 +4,14 @@ import { useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  Cloud,
-  Coins,
-  LogOut,
-  MoreVertical,
-  UserCircle,
-} from "lucide-react"
+  CloudIcon,
+  Coins01Icon,
+  Logout01Icon,
+  MoreVerticalIcon,
+  UserCircleIcon,
+} from "@hugeicons/core-free-icons"
 
 import { PremiumBadge } from "@/components/verified/premium-badge"
 import {
@@ -87,7 +88,7 @@ export function NavUser({ user }: NavUserProps) {
                     {subtitle}
                   </span>
                 </div>
-                <MoreVertical className="ml-auto size-4" />
+                <HugeiconsIcon icon={MoreVerticalIcon} className="ml-auto size-4" />
               </SidebarMenuButton>
             }
           />
@@ -119,21 +120,21 @@ export function NavUser({ user }: NavUserProps) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => router.push("/profile")}>
-                <UserCircle />
+                <HugeiconsIcon icon={UserCircleIcon} className="size-4" />
                 Account
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/bucket")}>
-                <Cloud />
+                <HugeiconsIcon icon={CloudIcon} className="size-4" />
                 Bucket
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/wallet")}>
-                <Coins />
+                <HugeiconsIcon icon={Coins01Icon} className="size-4" />
                 Tokens
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => void logout()}>
-              <LogOut />
+              <HugeiconsIcon icon={Logout01Icon} className="size-4" />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

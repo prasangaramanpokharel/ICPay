@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
+  ArrowDown01Icon,
   Copy01Icon,
   Delete02Icon,
   Download01Icon,
@@ -12,7 +13,6 @@ import {
   LinkSquare02Icon,
   Tick02Icon,
 } from "@hugeicons/core-free-icons"
-import { ChevronDownIcon } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { cn } from "@/lib/ui/utils"
 import { Button } from "@/components/ui/button"
@@ -231,7 +231,7 @@ export function BucketFilePreviewPane({
                             ? "Copied Raw!"
                             : t("copyUrl")}
                       </span>
-                      <ChevronDownIcon className="size-3 shrink-0 text-muted-foreground opacity-70" />
+                      <HugeiconsIcon icon={ArrowDown01Icon} className="size-3 shrink-0 text-muted-foreground opacity-70" />
                     </Button>
                   }
                 />
