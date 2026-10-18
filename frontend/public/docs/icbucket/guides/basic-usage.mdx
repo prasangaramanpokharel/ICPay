@@ -1,0 +1,77 @@
+---
+title: "Basic Usage"
+description: "Perform essential storage operations: file upload, download, folder listing, file deletion, and metadata tagging."
+group: "Guides"
+order: 3
+---
+
+# Basic Usage
+
+This guide covers the core operations supported by ICBucket: uploading files (small and large chunked files), downloading, folder navigation, tagging, and deletion.
+
+## Prerequisites
+
+- An initialized `ICBucket` instance with write permissions.
+
+## Steps
+
+### 1. Uploading Files
+
+For files smaller than 2MB, single-call upload is instantaneous:
+
+```typescript
+const result = await bucket.uploadFile("docs/spec.pdf", pdfBuffer, {
+  contentType: "application/pdf",
+  tags: ["documentation", "v1.2"],
+  visibility: "public",
+})
+
+console.log("Edge URL:", result.publicUrl)
+```
+
+For large files (up to 50MB+), the SDK automatically chunks data into 2MB fragments:
+
+```typescript
+const session = await bucket.uploadLargeFile("videos/demo.mp4", videoStream, {
+  contentType: "video/mp4",
+  onProgress: (percent) => console.log(`Upload: ${percent}%`),
+})
+```
+
+### 2. Listing Files and Folders
+
+Navigate folders with built-in pagination (10 items per page):
+
+```typescript
+const page = await bucket.listFiles({
+  prefix: "images/",
+  page: 1,
+  pageSize: 10,
+})
+
+console.log("Total files:", page.total)
+page.items.forEach((file) => console.log(file.name, file.sizeBytes))
+```
+
+### 3. Deleting Files
+
+Permanently purge an asset and free up allocated canister quota:
+
+```typescript
+await bucket.deleteFile("temp/scratch.png")
+```
+
+## Verification
+
+Confirm the file exists and is indexed:
+
+```typescript
+const file = await bucket.getFileInfo("docs/spec.pdf")
+console.log("File size:", file.sizeBytes, "Uploaded at:", file.createdAt)
+```
+
+## Related Pages
+
+- [Best Practices](./best-practices.mdx)
+- [Endpoints Reference](../../api/endpoints.mdx)
+- [Error Handling](../../errors/error-handling.mdx)

@@ -12,10 +12,12 @@ import { Sheet } from '@/components/ui/sheet'
 import { BucketFileRow } from '@/features/bucket/bucket-file-row'
 import { BucketFilePreviewSheet } from '@/features/bucket/bucket-file-preview-sheet'
 import { BucketApiKeysSheet } from '@/features/bucket/bucket-api-keys-sheet'
+import { BucketConnectSheet } from '@/features/bucket/bucket-connect-sheet'
 import { useAuth } from '@/components/auth/auth-provider'
 import { useBucketFiles, useBucketStats, useInvalidateBucketCache } from '@/hooks/use-bucket'
 import { useRefreshWallet } from '@/hooks/use-wallet-data'
 import { deleteFile, renewBucket } from '@/services/bucket/bucket'
+import { getFileCategory, type FileCategory } from '@/lib/bucket/file-category'
 import { formatBytes, isBucketActive, optionalText } from '@/lib/bucket/bucket'
 import { normalizePublicFileUrl } from '@/lib/bucket/file-preview'
 import { copyText, formatAmount } from '@/lib/wallet-utils'
@@ -29,8 +31,10 @@ export function BucketDetailScreen() {
   const { identity } = useAuth()
   const { stats, isLoading, refresh } = useBucketStats(bucketId || null)
   const { files, refresh: refreshFiles } = useBucketFiles(bucketId || null, 0)
+  const [category, setCategory] = useState<FileCategory>('all')
   const [renewOpen, setRenewOpen] = useState(false)
   const [keysOpen, setKeysOpen] = useState(false)
+  const [connectOpen, setConnectOpen] = useState(false)
   const [preview, setPreview] = useState<FilePublic | null>(null)
   const [copied, setCopied] = useState(false)
   const [busy, setBusy] = useState(false)
@@ -63,6 +67,11 @@ export function BucketDetailScreen() {
   const daysRemaining = Number(stats.daysRemaining)
   const periodDays = Number(stats.periodDays || 30n)
   const expiryPct = active ? Math.min(100, Math.max(2, (daysRemaining / periodDays) * 100)) : 0
+
+  const filteredFiles = files.filter((f) => {
+    if (category === 'all') return true
+    return getFileCategory(f.contentType, f.path) === category
+  })
 
   const confirmRenew = async () => {
     setBusy(true)
@@ -104,6 +113,9 @@ export function BucketDetailScreen() {
           </Text>
         </View>
         <View className="flex-row items-center gap-2">
+          <Button variant="outline" size="sm" className="rounded-full px-3" onPress={() => setConnectOpen(true)}>
+            Connect
+          </Button>
           <Button variant="outline" size="sm" className="rounded-full px-3" onPress={() => setKeysOpen(true)}>
             API Keys
           </Button>
@@ -187,16 +199,56 @@ export function BucketDetailScreen() {
         <View className="flex-row items-center justify-between">
           <Text className="text-base font-bold text-foreground">{t('files')}</Text>
           <Text className="text-xs text-muted-foreground tabular-nums">
-            {files.length} {files.length === 1 ? 'file' : 'files'}
+            {filteredFiles.length} {filteredFiles.length === 1 ? 'file' : 'files'}
           </Text>
         </View>
-        {files.length === 0 ? (
+
+        {/* Category Filter Chips */}
+        {files.length > 0 ? (
+          <View className="flex-row flex-wrap gap-1.5">
+            {(
+              [
+                { key: 'all', label: 'All' },
+                { key: 'images', label: 'Images' },
+                { key: 'documents', label: 'Docs' },
+                { key: 'media', label: 'Media' },
+                { key: 'code', label: 'Code' },
+                { key: 'archives', label: 'Archives' },
+              ] as const
+            ).map((cat) => {
+              const activeCat = category === cat.key
+              return (
+                <Pressable
+                  key={cat.key}
+                  onPress={() => setCategory(cat.key)}
+                  className={`rounded-full px-3 py-1 border ${
+                    activeCat
+                      ? 'bg-primary border-primary'
+                      : 'bg-muted/40 border-border/60 active:bg-muted'
+                  }`}
+                >
+                  <Text
+                    className={`text-xs font-semibold ${
+                      activeCat ? 'text-primary-foreground' : 'text-muted-foreground'
+                    }`}
+                  >
+                    {cat.label}
+                  </Text>
+                </Pressable>
+              )
+            })}
+          </View>
+        ) : null}
+
+        {filteredFiles.length === 0 ? (
           <View className="items-center justify-center rounded-2xl border border-dashed border-border/60 bg-muted/20 py-10">
-            <Text className="text-sm font-medium text-muted-foreground">{t('noFiles')}</Text>
+            <Text className="text-sm font-medium text-muted-foreground">
+              {files.length === 0 ? t('noFiles') : 'No files in this category'}
+            </Text>
           </View>
         ) : (
           <View className="gap-2">
-            {files.map((file) => (
+            {filteredFiles.map((file) => (
               <BucketFileRow key={file.id} file={file} onPreview={setPreview} />
             ))}
           </View>
@@ -213,6 +265,13 @@ export function BucketDetailScreen() {
         onDelete={handleDelete}
       />
       <BucketApiKeysSheet bucketId={bucketId} open={keysOpen} onOpenChange={setKeysOpen} />
+      <BucketConnectSheet
+        bucketId={bucketId}
+        stats={stats}
+        open={connectOpen}
+        onOpenChange={setConnectOpen}
+        onOpenApiKeys={() => setKeysOpen(true)}
+      />
       <Sheet open={renewOpen} onOpenChange={setRenewOpen} title={t('renewTitle')} description={t('renewBody')}>
         <Text className="text-sm leading-relaxed text-muted-foreground">
           {t('renewConfirm', { price: formatAmount(stats.renewPriceE8s) })}

@@ -30,12 +30,41 @@ module {
     }
   };
 
+  public func getYearlyPrice(capacityGB: Nat) : Types.ApiResult<Nat> {
+    switch (BillingService.capacityBytesFromGB(capacityGB)) {
+      case (null) { #err("Invalid capacity — choose 1, 5, 10, 25, 50, 100, 250, or 500 GB") };
+      case (?bytes) { #ok(BillingService.calculateYearlyPrice(bytes)) };
+    }
+  };
+
   public func createBucket(
     service: Context.BucketService,
     caller: Principal,
     name: Text,
     capacityGB: Nat,
     visibility: Types.BucketVisibility,
+  ) : async Types.ApiResult<Types.BucketId> {
+    await createBucketInternal(service, caller, name, capacityGB, visibility, #Monthly)
+  };
+
+  public func createBucketWithPeriod(
+    service: Context.BucketService,
+    caller: Principal,
+    name: Text,
+    capacityGB: Nat,
+    visibility: Types.BucketVisibility,
+    period: Types.BucketBillingPeriod,
+  ) : async Types.ApiResult<Types.BucketId> {
+    await createBucketInternal(service, caller, name, capacityGB, visibility, period)
+  };
+
+  private func createBucketInternal(
+    service: Context.BucketService,
+    caller: Principal,
+    name: Text,
+    capacityGB: Nat,
+    visibility: Types.BucketVisibility,
+    period: Types.BucketBillingPeriod,
   ) : async Types.ApiResult<Types.BucketId> {
     if (not RateLimitService.allow(service.createLimits, caller, Config.RATE_BUCKET_CREATE, Time.now())) {
       return #err(RateLimitService.message(Config.RATE_BUCKET_CREATE));
@@ -65,7 +94,7 @@ module {
       case (?_) {};
     };
 
-    let price = BillingService.calculatePrice(capacityBytes);
+    let price = BillingService.calculatePriceForPeriod(capacityBytes, period);
     let destination = AccountHelper.defaultAccount(Principal.fromText(Config.TREASURY));
     let memo = ?Memo.bucketCreate(name, capacityGB);
 
@@ -85,6 +114,7 @@ module {
 
     let now = Time.now();
     let bucketId = service.nextId();
+    let expires = now + Stats.periodNs(period);
     let bucket : Types.Bucket = {
       id = bucketId;
       owner = caller;
@@ -93,7 +123,7 @@ module {
       var storageUsed = 0;
       var visibility = visibility;
       var status = #ACTIVE;
-      var expiresAt = now + Config.BUCKET_PERIOD_NS;
+      var expiresAt = expires;
       createdAt = now;
     };
     BucketRepo.save(service.store, service.names, bucket);
@@ -139,6 +169,24 @@ module {
     caller: Principal,
     bucketId: Types.BucketId,
   ) : Types.ApiResult<Types.BucketRenewQuote> {
+    getRenewQuoteInternal(service, caller, bucketId, #Monthly)
+  };
+
+  public func getRenewQuoteWithPeriod(
+    service: Context.BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    period: Types.BucketBillingPeriod,
+  ) : Types.ApiResult<Types.BucketRenewQuote> {
+    getRenewQuoteInternal(service, caller, bucketId, period)
+  };
+
+  private func getRenewQuoteInternal(
+    service: Context.BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    period: Types.BucketBillingPeriod,
+  ) : Types.ApiResult<Types.BucketRenewQuote> {
     switch (Auth.requireBucket(service, bucketId)) {
       case (#err(e)) { #err(e) };
       case (#ok(bucket)) {
@@ -147,12 +195,12 @@ module {
         };
         Auth.refreshBucketStatus(service.store, service.names, bucket);
         let now = Time.now();
-        let price = BillingService.calculatePrice(bucket.capacity);
+        let price = BillingService.calculatePriceForPeriod(bucket.capacity, period);
         #ok({
           bucketId = bucket.id;
           priceE8s = price;
           currentExpiresAt = bucket.expiresAt;
-          newExpiresAt = Stats.nextExpiresAt(now, bucket.expiresAt);
+          newExpiresAt = Stats.nextExpiresAtWithPeriod(now, bucket.expiresAt, period);
           status = bucket.status;
         })
       };
@@ -172,6 +220,24 @@ module {
     caller: Principal,
     bucketId: Types.BucketId,
   ) : async Types.ApiResult<Types.BucketRenewResult> {
+    await renewBucketInternal(service, caller, bucketId, #Monthly)
+  };
+
+  public func renewBucketWithPeriod(
+    service: Context.BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    period: Types.BucketBillingPeriod,
+  ) : async Types.ApiResult<Types.BucketRenewResult> {
+    await renewBucketInternal(service, caller, bucketId, period)
+  };
+
+  private func renewBucketInternal(
+    service: Context.BucketService,
+    caller: Principal,
+    bucketId: Types.BucketId,
+    period: Types.BucketBillingPeriod,
+  ) : async Types.ApiResult<Types.BucketRenewResult> {
     if (not RateLimitService.allow(service.renewLimits, caller, Config.RATE_BUCKET_RENEW, Time.now())) {
       return #err(RateLimitService.message(Config.RATE_BUCKET_RENEW));
     };
@@ -185,7 +251,12 @@ module {
       return #err("Permission denied");
     };
 
-    let price = BillingService.calculatePrice(bucket.capacity);
+    Auth.refreshBucketStatus(service.store, service.names, bucket);
+    if (Auth.isTombstoned(bucket, Time.now())) {
+      return #err("Bucket tombstoned — files were permanently purged");
+    };
+
+    let price = BillingService.calculatePriceForPeriod(bucket.capacity, period);
     let destination = AccountHelper.defaultAccount(Principal.fromText(Config.TREASURY));
     let memo = ?Memo.bucketRenew(bucket.name);
 
@@ -204,7 +275,7 @@ module {
     };
 
     let now = Time.now();
-    let newExpires = Stats.nextExpiresAt(now, bucket.expiresAt);
+    let newExpires = Stats.nextExpiresAtWithPeriod(now, bucket.expiresAt, period);
     bucket.expiresAt := newExpires;
     bucket.status := #ACTIVE;
     BucketRepo.save(service.store, service.names, bucket);

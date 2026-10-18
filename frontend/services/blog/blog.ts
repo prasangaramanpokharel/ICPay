@@ -32,6 +32,69 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "cloud-storage-pricing-comparison-2026",
+    title: "Cloud Storage Pricing Comparison 2026: AWS vs Google vs Azure vs ICBucket",
+    description:
+      "Complete 2026 cloud storage pricing comparison guide. We break down storage costs, hidden egress bandwidth fees, request charges, and compare AWS S3, Google Cloud Storage, Microsoft Azure Blob, and on-chain ICBucket.",
+    publishedAt: "2026-10-12",
+    readingMinutes: 14,
+    category: "Infrastructure",
+  },
+  {
+    slug: "file-upload-api-s3-compatible",
+    title: "File Upload API 2026: S3-Compatible SDK & Direct Cloudinary Alternative | ICBucket",
+    description:
+      "Looking for a fast, reliable file upload API? Meet icpay-bucket: the S3-compatible TypeScript and Python SDK for on-chain cloud storage on the Internet Computer. Zero egress fees, chunked uploads, and instant public CDN delivery.",
+    publishedAt: "2026-10-12",
+    readingMinutes: 12,
+    category: "Developers",
+  },
+  {
+    slug: "best-s3-compatible-storage-aws-pricing-alternative",
+    title: "Best S3 Compatible Storage 2026: AWS S3 Pricing Alternative & Cloud Cost Comparison",
+    description:
+      "Looking for the best S3-compatible storage and AWS S3 pricing alternative? We compare AWS S3 cost, Google Cloud Storage, Azure Blob, MinIO, and icBucket — highlighting hidden egress fees, API compatibility, and predictable $5/GB/year on-chain storage.",
+    publishedAt: "2026-10-12",
+    readingMinutes: 13,
+    category: "Infrastructure",
+  },
+  {
+    slug: "best-cloudinary-alternative-zero-egress-fees",
+    title: "Best Cloudinary Alternative 2026: Fast Image CDN & On-Chain S3 Storage (Zero Egress Taxes)",
+    description:
+      "Tired of expensive Cloudinary credit limits and surprise bandwidth invoices? Discover the best Cloudinary alternative in 2026: icBucket provides high-speed image & video CDN hosting, direct upload APIs, and predictable flat-rate storage with zero egress taxes.",
+    publishedAt: "2026-10-12",
+    readingMinutes: 12,
+    category: "Developers",
+  },
+  {
+    slug: "on-chain-storage-explained",
+    title: "On-Chain Storage Explained: Architecture, Costs & Why ICP Outperforms Sui, IPFS & Arweave",
+    description:
+      "What is on-chain storage? A comprehensive technical guide comparing on-chain vs. off-chain storage, storage economics across Ethereum, Sui (Walrus), Arweave, Filecoin, and why Internet Computer (icBucket) achieves true on-chain HTTP streaming at $5/GB/year.",
+    publishedAt: "2026-10-12",
+    readingMinutes: 14,
+    category: "Explainers",
+  },
+  {
+    slug: "on-chain-storage-vs-centralized-cloud",
+    title: "On-Chain Storage vs. Centralized Cloud: The Hidden Risks of AWS, Supabase & The Sovereign Alternative",
+    description:
+      "Why storing critical documents and customer data exclusively on AWS S3 or Supabase is an existential business risk. Real-world analysis of account suspensions, the UniSuper cloud deletion disaster, legal liability gaps, and how on-chain storage (icBucket) provides sovereign immunity.",
+    publishedAt: "2026-10-12",
+    readingMinutes: 13,
+    category: "Infrastructure",
+  },
+  {
+    slug: "icpay-infrastructure-update-new-domains-icbucket",
+    title: "ICPay Infrastructure Update: New Domains icpay.cloud & onchainstorage.shop, Plus 268+ User Milestone",
+    description:
+      "A complete overview of ICPay's latest domain expansions with icpay.cloud and onchainstorage.shop, official contact channels, and crossing 268 on-chain usernames with live ICBucket storage metrics.",
+    publishedAt: "2026-10-09",
+    readingMinutes: 5,
+    category: "Infrastructure",
+  },
+  {
     slug: "on-chain-cloud-storage-icbucket-s3-guide",
     title: "icBucket: True On-Chain Cloud Storage with S3-Compatible API at 1 GB per ICP",
     description:

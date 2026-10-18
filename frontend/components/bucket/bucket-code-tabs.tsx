@@ -1,35 +1,36 @@
 "use client"
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { BucketCodeBlock } from "@/components/bucket/bucket-code-block"
+import { CodeBlock } from "@/components/ui/code-block"
 import type { DocsExampleLang } from "@/lib/bucket/docsExamples"
 
-const LANGS: { value: DocsExampleLang; label: string }[] = [
-  { value: "typescript", label: "TypeScript" },
-  { value: "python", label: "Python" },
-  { value: "curl", label: "cURL" },
+const LANG_CONFIG: { key: DocsExampleLang; label: string; language: string }[] = [
+  { key: "typescript", label: "TypeScript", language: "typescript" },
+  { key: "python", label: "Python", language: "python" },
+  { key: "curl", label: "cURL", language: "bash" },
 ]
 
 type BucketCodeTabsProps = {
   examples: Record<DocsExampleLang, string>
   defaultLang?: DocsExampleLang
+  className?: string
 }
 
-export function BucketCodeTabs({ examples, defaultLang = "typescript" }: BucketCodeTabsProps) {
+export function BucketCodeTabs({
+  examples,
+  className,
+}: BucketCodeTabsProps) {
+  const tabs = LANG_CONFIG.filter((item) => Boolean(examples[item.key])).map((item) => ({
+    label: item.label,
+    code: examples[item.key],
+    language: item.language,
+  }))
+
+  if (tabs.length === 0) return null
+
   return (
-    <Tabs defaultValue={defaultLang} className="gap-2">
-      <TabsList variant="line" className="w-full justify-start">
-        {LANGS.map((lang) => (
-          <TabsTrigger key={lang.value} value={lang.value} className="text-xs">
-            {lang.label}
-          </TabsTrigger>
-        ))}
-      </TabsList>
-      {LANGS.map((lang) => (
-        <TabsContent key={lang.value} value={lang.value} className="mt-0">
-          <BucketCodeBlock code={examples[lang.value]} />
-        </TabsContent>
-      ))}
-    </Tabs>
+    <CodeBlock
+      tabs={tabs}
+      className={className}
+    />
   )
 }

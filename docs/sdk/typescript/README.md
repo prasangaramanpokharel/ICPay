@@ -1,4 +1,10 @@
-# TypeScript SDK
+# ICBucket - S3 Compatible On-Chain Storage (AWS S3 & Cloudinary Alternative)
+
+Official TypeScript & JavaScript SDK (`icpay-bucket`) for [ICBucket](https://icpay.app/icbucket) on the Internet Computer. High-performance, S3-compatible cloud storage with zero egress fees and direct CDN delivery.
+
+- 🌐 **Homepage:** [https://icpay.app/icbucket](https://icpay.app/icbucket)
+- 📖 **Documentation:** [https://icpay.app/bucket/docs](https://icpay.app/bucket/docs)
+- 📦 **NPM Package:** [https://www.npmjs.com/package/icpay-bucket](https://www.npmjs.com/package/icpay-bucket)
 
 ```bash
 npm install icpay-bucket
@@ -45,7 +51,7 @@ if ("ok" in result) {
 }
 ```
 
-## List & search
+## List & Search
 
 ```ts
 await client.listFiles("my-app", 0, 50)
@@ -54,15 +60,7 @@ await client.searchFiles("my-app", "file.txt", 0, 20)
 await client.fileExists("my-app", "/docs/file.txt")
 ```
 
-## Update & tags
-
-```ts
-await client.updateFile("my-app", "/docs/file.txt", { contentType: "text/plain" })
-await client.setFileTags("my-app", "/docs/file.txt", ["docs", "v1"])
-await client.setFileMetadata("my-app", "/docs/file.txt", '{"version":1}')
-```
-
-## Move, copy, delete
+## Move, Copy, Delete
 
 ```ts
 await client.copyFile("my-app", "/a.txt", "/b.txt")
@@ -88,7 +86,7 @@ Check `"ok" in result` before using the value.
 - Single upload max: **1.85 MB** (`SINGLE_MAX_BYTES`) — use chunked upload for larger files
 - Path: absolute (`/folder/file.ext`), lowercase bucket names: `a-z`, `0-9`, `-`
 
-## Run tests
+## Run Tests
 
 ```bash
 cd ../test

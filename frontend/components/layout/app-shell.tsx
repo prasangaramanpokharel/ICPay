@@ -12,8 +12,15 @@ function isChannelsRoute(pathname: string): boolean {
 }
 
 function isChannelChatRoute(pathname: string): boolean {
+  if (typeof window !== "undefined" && pathname === "/channels") {
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const id = params.get("id") || params.get("slug")
+      return Boolean(id && id !== "new" && id !== "join")
+    } catch {}
+  }
   if (!pathname.startsWith("/channels/")) return false
-  return pathname !== "/channels/new"
+  return pathname !== "/channels/new" && !pathname.startsWith("/channels/join")
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -26,7 +33,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className={cn("md:hidden", channelChat && "hidden")}>
         <AppHeader />
       </div>
-      <main
+      <div
         className={cn(
           "mx-auto flex w-full flex-1 flex-col max-w-md md:max-w-none",
           channels
@@ -37,7 +44,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         )}
       >
         {children}
-      </main>
+      </div>
       <div className={cn("md:hidden", channelChat && "hidden")}>
         <BottomNav />
       </div>

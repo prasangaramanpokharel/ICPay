@@ -5,11 +5,12 @@ import { CommunityChannelScreen } from "@/app/(app)/channels/[slug]/community-ch
 import { CommunityWorkspace } from "@/components/community/community-workspace"
 import { ChannelPublicLanding } from "@/components/community/channel-public-landing"
 import { AppShell } from "@/components/layout/app-shell"
+import { useChannelSlug } from "@/lib/routing/rewrittenRoute"
 import { Spinner } from "@/components/ui/spinner"
 import type { CommunityChannelSnapshot } from "@/lib/community/snapshot"
 
 export function ChannelSlugView({
-  slug,
+  slug: propSlug,
   channel,
   avatarBytes,
 }: {
@@ -17,6 +18,8 @@ export function ChannelSlugView({
   channel: CommunityChannelSnapshot | null
   avatarBytes?: Uint8Array
 }) {
+  const dynamicSlug = useChannelSlug()
+  const slug = propSlug && propSlug !== "slug" ? propSlug : dynamicSlug
   const { isAuthenticated, isLoading } = useAuth()
 
   if (isLoading) {
@@ -31,11 +34,11 @@ export function ChannelSlugView({
     return (
       <AppShell>
         <CommunityWorkspace>
-          <CommunityChannelScreen />
+          <CommunityChannelScreen key={slug} slug={slug} />
         </CommunityWorkspace>
       </AppShell>
     )
   }
 
-  return <ChannelPublicLanding slug={slug} channel={channel} avatarBytes={avatarBytes} />
+  return <ChannelPublicLanding key={slug} slug={slug} channel={channel} avatarBytes={avatarBytes} />
 }

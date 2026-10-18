@@ -1,0 +1,48 @@
+---
+title: "Production Deployment"
+description: "Launch your application to production with custom domains, edge routing, and monitoring."
+group: "Deployment"
+order: 2
+---
+
+# Production Deployment
+
+Prepare your decentralized storage architecture for enterprise mainnet workloads.
+
+## Prerequisites
+
+- Production ICBucket canister on mainnet
+- Production API key stored in secure environment secrets (Vercel, AWS Secrets Manager, GitHub Actions)
+
+## Steps
+
+### 1. Configure Edge CDN
+
+Ensure your production application references the global CDN:
+
+```bash
+NEXT_PUBLIC_ICBUCKET_CDN=https://cdn.icpay.app
+```
+
+### 2. Custom Domain CNAME Mapping
+
+If you wish to alias your own subdomain (e.g. `assets.yourdomain.com`):
+1. Point a CNAME record to `cname.icpay.app`.
+2. Configure your custom origin mapping in your ICPay bucket settings.
+3. Verify SSL certificate issuance.
+
+## Verification
+
+Perform a health audit against your production asset pipeline:
+
+```bash
+curl -I https://cdn.icpay.app/cloud/{yourBucketName}/favicon.ico
+```
+
+Ensure headers report `200 OK` with valid edge cache indicators.
+
+## Related Pages
+
+- [Local Development](./local-development.mdx)
+- [Best Practices](../../guides/best-practices.mdx)
+- [Changelog](../../reference/changelog.mdx)

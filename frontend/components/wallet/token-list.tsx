@@ -1,7 +1,6 @@
 "use client"
 
 import { useMemo, useState, useSyncExternalStore } from "react"
-import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Add01Icon, Search01Icon } from "@hugeicons/core-free-icons"
@@ -14,8 +13,7 @@ import { formatTokenAmount } from "@/lib/wallet/utils"
 import { type TokenHolding, type TokenMetadata } from "@/services/tokens"
 import { TokenLogo } from "@/components/token/token-logo"
 import { AddTokenDrawer } from "@/components/wallet/add-token-drawer"
-import { useAuth } from "@/components/auth/auth-provider"
-import { prefetchAppRoute } from "@/lib/navigation/prefetchRoute"
+import { TokenDetailDrawer } from "@/components/wallet/token-detail-drawer"
 import { readHideZeroBalances, writeHideZeroBalances, HIDE_ZERO_EVENT } from "@/lib/wallet/tokenListPrefs"
 import { cn } from "@/lib/ui/utils"
 
@@ -52,23 +50,32 @@ export function TokenList({
   isLoading,
   outside,
   existingLedgerIds = [],
+  initialSelectedLedgerId,
   onAddCustom,
 }: {
   holdings: TokenHolding[]
   isLoading: boolean
   outside?: Map<string, bigint>
   existingLedgerIds?: string[]
+  initialSelectedLedgerId?: string | null
   onAddCustom?: (ledgerId: string, meta: TokenMetadata) => void
 }) {
   const t = useTranslations("wallet")
   const tPage = useTranslations("transactions")
   const [addOpen, setAddOpen] = useState(false)
+  const [selectedLedgerId, setSelectedLedgerId] = useState<string | null | false>(null)
   const [query, setQuery] = useState("")
   const hideZero = useHideZeroBalances()
   const filterKey = `${query}|${hideZero}|${holdings.length}`
   const [pageState, setPageState] = useState({ key: filterKey, page: 0 })
   const page = pageState.key === filterKey ? pageState.page : 0
   const setPage = (next: number) => setPageState({ key: filterKey, page: next })
+
+  const effectiveId = selectedLedgerId === false ? null : (selectedLedgerId ?? initialSelectedLedgerId ?? null)
+  const selectedToken = useMemo(
+    () => (effectiveId ? holdings.find((h) => h.ledgerId === effectiveId) ?? null : null),
+    [effectiveId, holdings]
+  )
 
   const filtered = useMemo(() => {
     return holdings.filter((token) => {
@@ -92,7 +99,7 @@ export function TokenList({
             type="button"
             variant="outline"
             size="icon-sm"
-            className="size-8 rounded-full"
+            className="size-8 rounded-full cursor-pointer"
             aria-label={t("addToken")}
             onClick={() => setAddOpen(true)}
           >
@@ -124,7 +131,7 @@ export function TokenList({
             writeHideZeroBalances(checked === true)
           }}
         />
-        <Label htmlFor="hide-zero-balances" className="text-sm font-normal text-muted-foreground">
+        <Label htmlFor="hide-zero-balances" className="text-sm font-normal text-muted-foreground cursor-pointer">
           {t("hideZeroBalances")}
         </Label>
       </div>
@@ -133,7 +140,7 @@ export function TokenList({
 
   if (isLoading && holdings.length === 0) {
     return (
-      <div className="rounded-2xl border bg-card p-4">
+      <div className="rounded-2xl border border-border/60 bg-card p-4">
         {toolbar}
         <div className="mt-4 space-y-2">
           {[0, 1, 2].map((i) => (
@@ -153,7 +160,7 @@ export function TokenList({
 
   if (holdings.length === 0) {
     return (
-      <div className="rounded-2xl border bg-card p-4">
+      <div className="rounded-2xl border border-border/60 bg-card p-4">
         {toolbar}
         <p className="py-8 text-center text-sm text-muted-foreground">{t("noTokens")}</p>
         {onAddCustom ? (
@@ -169,7 +176,7 @@ export function TokenList({
   }
 
   return (
-    <div className="rounded-2xl border bg-card p-4">
+    <div className="rounded-2xl border border-border/60 bg-card p-4">
       {toolbar}
 
       {pageItems.length === 0 ? (
@@ -180,6 +187,7 @@ export function TokenList({
             <TokenRow
               key={token.ledgerId}
               token={token}
+              onClick={() => setSelectedLedgerId(token.ledgerId)}
               outside={
                 (outside?.get(token.ledgerId) ?? 0n) > token.fee
                   ? outside!.get(token.ledgerId)!
@@ -214,35 +222,48 @@ export function TokenList({
           onAdded={onAddCustom}
         />
       ) : null}
+
+      {/* On-chain compatible Token Detail Drawer */}
+      <TokenDetailDrawer
+        token={selectedToken}
+        open={!!selectedToken}
+        onOpenChange={(next) => {
+          if (!next) setSelectedLedgerId(false)
+        }}
+      />
     </div>
   )
 }
 
-function TokenRow({ token, outside }: { token: TokenHolding; outside?: bigint }) {
+function TokenRow({
+  token,
+  outside,
+  onClick,
+}: {
+  token: TokenHolding
+  outside?: bigint
+  onClick: () => void
+}) {
   const t = useTranslations("wallet")
-  const { identity } = useAuth()
-  const href = `/token/${token.ledgerId}`
 
   return (
-    <Link
-      href={href}
-      prefetch
-      onMouseEnter={() => prefetchAppRoute(href, identity)}
-      onFocus={() => prefetchAppRoute(href, identity)}
+    <button
+      type="button"
+      onClick={onClick}
       className={cn(
-        "flex items-center gap-3 rounded-xl px-2 py-3 transition-colors",
+        "w-full flex items-center gap-3 rounded-xl px-2 py-3 transition-colors cursor-pointer text-left select-none",
         "hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none"
       )}
     >
       <TokenLogo token={token} />
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold">{token.symbol}</p>
+        <p className="truncate text-sm font-semibold text-foreground">{token.symbol}</p>
         <p className="truncate text-xs text-muted-foreground">{token.name}</p>
       </div>
 
       <div className="shrink-0 text-right">
-        <p className="text-sm font-semibold tabular-nums">
+        <p className="text-sm font-semibold tabular-nums text-foreground">
           {formatTokenAmount(token.balance, token.decimals)}
         </p>
         {outside !== undefined ? (
@@ -253,6 +274,6 @@ function TokenRow({ token, outside }: { token: TokenHolding; outside?: bigint })
           </p>
         ) : null}
       </div>
-    </Link>
+    </button>
   )
 }

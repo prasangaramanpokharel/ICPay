@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useId, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { createPortal } from "react-dom"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -32,10 +32,11 @@ export function BucketUploadControl({
   onSuccess?: () => void
 }) {
   const t = useTranslations("bucket")
-  const inputId = useId()
   const inputRef = useRef<HTMLInputElement>(null)
   const { desktopOnly } = useBucketUploadDesktopOnly()
   const blocked = disabled || desktopOnly
+  const [isDragging, setIsDragging] = useState(false)
+  const dragCounterRef = useRef(0)
 
   useEffect(() => {
     clearLegacyBucketStorage()
@@ -55,6 +56,59 @@ export function BucketUploadControl({
     mapApiError: (err) => mapBucketError(err, t),
   })
 
+  useEffect(() => {
+    if (blocked) return
+
+    const handleDragEnter = (e: DragEvent) => {
+      if (!e.dataTransfer || !e.dataTransfer.types.includes("Files")) return
+      e.preventDefault()
+      dragCounterRef.current += 1
+      if (dragCounterRef.current === 1) {
+        setIsDragging(true)
+      }
+    }
+
+    const handleDragOver = (e: DragEvent) => {
+      if (!e.dataTransfer || !e.dataTransfer.types.includes("Files")) return
+      e.preventDefault()
+      e.dataTransfer.dropEffect = "copy"
+    }
+
+    const handleDragLeave = (e: DragEvent) => {
+      if (!e.dataTransfer || !e.dataTransfer.types.includes("Files")) return
+      e.preventDefault()
+      dragCounterRef.current -= 1
+      if (dragCounterRef.current <= 0) {
+        dragCounterRef.current = 0
+        setIsDragging(false)
+      }
+    }
+
+    const handleDrop = (e: DragEvent) => {
+      if (!e.dataTransfer || !e.dataTransfer.types.includes("Files")) return
+      e.preventDefault()
+      e.stopPropagation()
+      dragCounterRef.current = 0
+      setIsDragging(false)
+      const droppedFiles = e.dataTransfer.files
+      if (droppedFiles && droppedFiles.length > 0) {
+        enqueue(droppedFiles)
+      }
+    }
+
+    window.addEventListener("dragenter", handleDragEnter)
+    window.addEventListener("dragover", handleDragOver)
+    window.addEventListener("dragleave", handleDragLeave)
+    window.addEventListener("drop", handleDrop)
+
+    return () => {
+      window.removeEventListener("dragenter", handleDragEnter)
+      window.removeEventListener("dragover", handleDragOver)
+      window.removeEventListener("dragleave", handleDragLeave)
+      window.removeEventListener("drop", handleDrop)
+    }
+  }, [blocked, enqueue])
+
   const dock =
     items.length > 0 ? (
       <BucketUploadDock
@@ -71,7 +125,7 @@ export function BucketUploadControl({
     <>
       <input
         ref={inputRef}
-        id={inputId}
+        id="bucket-upload-input"
         type="file"
         accept={FILE_ACCEPT}
         multiple
@@ -97,6 +151,50 @@ export function BucketUploadControl({
       </BucketUploadDesktopTrigger>
 
       {dock && typeof document !== "undefined" ? createPortal(dock, document.body) : null}
+
+      {isDragging && !blocked && typeof document !== "undefined"
+        ? createPortal(
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-background/80 backdrop-blur-md transition-all duration-150"
+              onDragOver={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+              }}
+              onDrop={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                dragCounterRef.current = 0
+                setIsDragging(false)
+                if (e.dataTransfer.files?.length) {
+                  enqueue(e.dataTransfer.files)
+                }
+              }}
+            >
+              <div className="relative flex flex-col items-center justify-center w-full max-w-lg p-10 text-center border-2 border-dashed rounded-3xl border-primary bg-card/95 shadow-2xl pointer-events-none">
+                <div className="flex items-center justify-center size-16 mb-4 rounded-2xl border border-primary/20 bg-primary/10 text-primary animate-bounce shadow-sm">
+                  <HugeiconsIcon icon={Upload01Icon} className="size-8" strokeWidth={1.75} />
+                </div>
+                <h3 className="text-xl font-semibold text-foreground">
+                  Drop files to upload
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Release anywhere to instantly upload to your bucket
+                </p>
+                {pathPrefix ? (
+                  <div className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/60 px-3 py-1 text-xs font-mono text-muted-foreground">
+                    <span>Target Folder:</span>
+                    <span className="font-semibold text-foreground">/{pathPrefix}</span>
+                  </div>
+                ) : null}
+              </div>
+            </div>,
+            document.body
+          )
+        : null}
     </>
   )
 }

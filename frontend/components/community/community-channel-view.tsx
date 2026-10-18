@@ -103,12 +103,12 @@ export function CommunityChannelView({
 
   const copyInvite = async () => {
     if (!inviteCode) return
-    const url = `${window.location.origin}/channels/join/${encodeURIComponent(slug)}?code=${encodeURIComponent(inviteCode)}`
+    const url = `${window.location.origin}/channels/join?id=${encodeURIComponent(slug)}&code=${encodeURIComponent(inviteCode)}`
     await copyText(url)
   }
 
   const copyChannelLink = async () => {
-    await copyText(`${window.location.origin}/channels/${encodeURIComponent(slug)}`)
+    await copyText(`${window.location.origin}/channels?id=${encodeURIComponent(slug)}`)
   }
 
   const handleJoinClick = () => {

@@ -10,12 +10,15 @@ import {
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { CommunityExplorer } from "@/components/community/community-explorer"
 import { useIsDesktop } from "@/hooks/ui/useMobile"
+import { useChannelSlug } from "@/lib/routing/rewrittenRoute"
 
 export function CommunityWorkspace({ children }: { children: ReactNode }) {
   const pathname = usePathname()
+  const slug = useChannelSlug()
   const isDesktop = useIsDesktop()
-  const onList = pathname === "/channels"
-  const hideExplorer = pathname === "/channels/new" || pathname.startsWith("/channels/join/")
+  const hasSelectedChannel = Boolean(slug && slug !== "new" && slug !== "join")
+  const onList = pathname === "/channels" && !hasSelectedChannel
+  const hideExplorer = pathname === "/channels/new" || pathname.startsWith("/channels/join")
 
   return (
     <TooltipProvider delay={200}>

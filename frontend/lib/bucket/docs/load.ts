@@ -8,7 +8,11 @@ import { extractHeadings } from "@/lib/bucket/docs/headings"
 import { bucketMdxComponents } from "@/lib/bucket/docs/mdx-components"
 import type { BucketDocFrontmatter, BucketDocMeta, LoadedBucketDoc } from "@/lib/bucket/docs/types"
 
-const DOCS_ROOT = path.join(process.cwd(), "content/bucket/docs")
+const DOCS_ROOT = path.join(process.cwd(), "public/docs/icbucket")
+
+function getDocsRoot(): string {
+  return DOCS_ROOT
+}
 
 function listMdxFiles(dir: string, prefix: string[] = []): string[][] {
   if (!fs.existsSync(dir)) return []
@@ -28,12 +32,16 @@ function listMdxFiles(dir: string, prefix: string[] = []): string[][] {
 }
 
 function resolveFilePath(slugParts: string[]): string | null {
+  const root = getDocsRoot()
   if (slugParts.length === 0) {
-    const index = path.join(DOCS_ROOT, "index.mdx")
+    const index = path.join(root, "index.mdx")
     return fs.existsSync(index) ? index : null
   }
-  const file = path.join(DOCS_ROOT, ...slugParts) + ".mdx"
-  return fs.existsSync(file) ? file : null
+  const file = path.join(root, ...slugParts) + ".mdx"
+  if (fs.existsSync(file)) return file
+  const dirIndex = path.join(root, ...slugParts, "index.mdx")
+  if (fs.existsSync(dirIndex)) return dirIndex
+  return null
 }
 
 function parseFrontmatter(data: Record<string, unknown>): BucketDocFrontmatter {
@@ -60,7 +68,7 @@ function toFullMarkdown(frontmatter: BucketDocFrontmatter, body: string): string
 }
 
 export function bucketDocSlugs(): string[][] {
-  return listMdxFiles(DOCS_ROOT)
+  return listMdxFiles(getDocsRoot())
 }
 
 export function loadAllDocMeta(): BucketDocMeta[] {

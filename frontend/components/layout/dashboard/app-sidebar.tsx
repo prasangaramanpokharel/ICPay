@@ -11,10 +11,12 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
 } from "@/components/ui/sidebar"
 import { DashboardNavFooter, DashboardNavMain } from "@/components/layout/dashboard/nav-main"
-import { LanguageSwitch } from "@/components/i18n/language-switch"
+import { SidebarUserFooter } from "@/components/layout/dashboard/sidebar-user-footer"
 import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
+import { SIDEBAR_FOOTER } from "@/lib/navigation/app-sidebar-nav"
 
 export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
   return (
@@ -46,10 +48,15 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
       <SidebarContent className="gap-0 pt-1">
         <DashboardNavMain />
       </SidebarContent>
-      <SidebarFooter className="gap-1 border-t border-sidebar-border/60 p-2 pb-3">
-        <DashboardNavFooter />
-        <LanguageSwitch variant="row" />
+      <SidebarFooter className="mt-auto border-t border-sidebar-border/40 p-2.5 pb-3">
+        {SIDEBAR_FOOTER.length > 0 ? (
+          <div className="mb-2 border-b border-sidebar-border/60 pb-2">
+            <DashboardNavFooter />
+          </div>
+        ) : null}
+        <SidebarUserFooter />
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   )
 }

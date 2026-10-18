@@ -1,0 +1,41 @@
+---
+title: "API Overview"
+description: "High-level overview of the ICBucket HTTP and Canister RPC interfaces."
+group: "API Reference"
+order: 1
+---
+
+# API Overview
+
+ICBucket exposes two complementary API interfaces:
+1. **REST / HTTP Gateway**: Standard HTTP GET and POST endpoints for direct file streaming, public downloads, and cURL automation.
+2. **Canister RPC (Candid)**: Cryptographically verified actor method calls for smart contracts, dApps, and Node.js SDK clients.
+
+## Prerequisites
+
+- Read access: No auth required for public files.
+- Write access: Bearer token API key or authenticated delegation.
+
+## Base URLs
+
+- **Global Edge CDN**: `https://cdn.icpay.app/cloud/{bucketName}/{filePath}`
+- **Raw IC Gateway**: `https://{canisterId}.raw.icp0.io/{filePath}`
+- **Canister ID**: `6vbhm-nqaaa-aaaan-q6muq-cai`
+
+## Authentication Header
+
+For authenticated endpoints:
+
+```http
+Authorization: Bearer icp_live_sec_your_api_key
+```
+
+## Available Method Classes
+
+<ApiMethodTable />
+
+## Related Pages
+
+- [Endpoints](./endpoints.mdx)
+- [Requests](./requests.mdx)
+- [Responses](./responses.mdx)

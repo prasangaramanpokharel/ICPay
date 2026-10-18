@@ -1,9 +1,19 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Card, CardContent } from "@/components/ui/card"
+import {
+  Empty,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+  EmptyDescription,
+  EmptyContent,
+} from "@/components/ui/empty"
+import { Button } from "@/components/ui/button"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Folder02Icon, Upload01Icon } from "@hugeicons/core-free-icons"
 import { Drawer, DrawerContent } from "@/components/ui/drawer"
 import { BucketFilePagination } from "@/components/bucket/bucket-file-pagination"
 import { BucketFilePreviewPane } from "@/components/bucket/bucket-file-preview-pane"
@@ -11,6 +21,8 @@ import { BucketFileDeleteDialog } from "@/components/bucket/bucket-file-delete-d
 import { BucketSelectBar } from "@/components/bucket/bucket-select-bar"
 import { BucketFilesToolbar, type FileSortKey } from "@/components/bucket/bucket-files-toolbar"
 import { BucketFilesTable, entryKey } from "@/components/bucket/bucket-files-table"
+import { BucketFilesGrid } from "@/components/bucket/bucket-files-grid"
+import { getFileCategory, type FileCategory } from "@/components/bucket/bucket-file-icon"
 import { useBucketExplorerHotkeys } from "@/hooks/bucket/useBucketExplorerHotkeys"
 import { useBucketFiles, useBucketSearch, useBucketStats } from "@/hooks/bucket/useBucket"
 import {
@@ -18,7 +30,9 @@ import {
   joinObjectPath,
   listFolderEntries,
   nestedPrefix,
+  normalizePrefix,
   pathsUnderFolder,
+  stripLeadingSlash,
 } from "@/lib/bucket/folderPath"
 import type { FileListPage, FilePublic } from "@/services/bucket/types"
 import type { FolderListEntry } from "@/lib/bucket/folderPath"
@@ -49,6 +63,7 @@ function sortEntries(
 
 export function BucketFilesPanel({
   bucketId,
+  bucketName,
   canWrite,
   prefix,
   onPrefixChange,
@@ -58,6 +73,7 @@ export function BucketFilesPanel({
   onCreateFolder,
 }: {
   bucketId: string
+  bucketName?: string
   canWrite: boolean
   prefix: string
   onPrefixChange: (prefix: string) => void
@@ -70,11 +86,18 @@ export function BucketFilesPanel({
   const [page, setPage] = useState(0)
   const [previewFile, setPreviewFile] = useState<FilePublic | null>(null)
   const [selected, setSelected] = useState<Set<string>>(new Set())
-  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [deleteTarget, setDeleteTarget] = useState<
+    | { type: "file"; path: string; name: string }
+    | { type: "folder"; name: string }
+    | { type: "bulk"; count: number }
+    | null
+  >(null)
   const [deleting, setDeleting] = useState(false)
   const [query, setQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
   const [sort, setSort] = useState<FileSortKey>("name")
+  const [category, setCategory] = useState<FileCategory>("all")
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list")
   const [refreshing, setRefreshing] = useState(false)
   const searching = debouncedQuery.length > 0
 
@@ -82,7 +105,8 @@ export function BucketFilesPanel({
   const search = useBucketSearch(searching ? bucketId : null, debouncedQuery, page)
   const active = searching ? search : browse
   const { files, total, totalPages, isLoading, refresh: refreshFiles } = active
-  const { refresh: refreshStats } = useBucketStats(bucketId)
+  const { stats: fetchedStats, refresh: refreshStats } = useBucketStats(bucketId)
+  const resolvedBucketName = bucketName || fetchedStats?.name
 
   const [prevFilter, setPrevFilter] = useState({ prefix, debouncedQuery })
   if (prevFilter.prefix !== prefix || prevFilter.debouncedQuery !== debouncedQuery) {
@@ -106,11 +130,16 @@ export function BucketFilesPanel({
   }, [query])
 
   const entries = useMemo(() => {
-    if (searching) {
-      return files.map((file) => ({ kind: "file" as const, file }))
-    }
-    return listFolderEntries(files, prefix, browse.folders)
-  }, [browse.folders, files, prefix, searching])
+    const raw = searching
+      ? files.map((file) => ({ kind: "file" as const, file }))
+      : listFolderEntries(files, prefix, browse.folders)
+
+    if (category === "all") return raw
+    return raw.filter((entry) => {
+      if (entry.kind === "folder") return false
+      return getFileCategory(entry.file.contentType, entry.file.path) === category
+    })
+  }, [browse.folders, category, files, prefix, searching])
 
   const visible = useMemo(
     () => sortEntries(entries, files, prefix, sort),
@@ -120,10 +149,11 @@ export function BucketFilesPanel({
   const allSelected = entryKeys.length > 0 && entryKeys.every((k) => selected.has(k))
 
   const removeFileFromCache = async (path: string) => {
+    const stripped = stripLeadingSlash(path)
     await refreshFiles(
       (current: FileListPage | undefined) => {
         if (!current) return current
-        const items = current.items.filter((f) => f.path !== path)
+        const items = current.items.filter((f) => stripLeadingSlash(f.path) !== stripped)
         const nextTotal = current.total > 0n ? current.total - 1n : 0n
         return { ...current, items, total: nextTotal }
       },
@@ -132,10 +162,63 @@ export function BucketFilesPanel({
     void refreshStats()
   }
 
+  const removePathsFromCache = async (deletedPaths: string[], deletedFolders: string[]) => {
+    const pathSet = new Set(deletedPaths.map(stripLeadingSlash))
+    const folderPrefixes = deletedFolders.map((f) => {
+      const p = stripLeadingSlash(f)
+      return p.endsWith("/") ? p : `${p}/`
+    })
+    const folderNames = new Set(
+      deletedFolders.map((f) => {
+        const segs = stripLeadingSlash(f).replace(/\/$/, "").split("/")
+        return segs[segs.length - 1]
+      })
+    )
+
+    await refreshFiles(
+      (current: FileListPage | undefined) => {
+        if (!current) return current
+        const items = current.items.filter((file) => {
+          const stripped = stripLeadingSlash(file.path)
+          if (pathSet.has(stripped)) return false
+          if (folderPrefixes.some((p) => stripped.startsWith(p))) return false
+          return true
+        })
+        const folders = (current.folders ?? []).filter((f) => !folderNames.has(f))
+        const removedItemsCount = BigInt(current.items.length - items.length)
+        const nextTotal = current.total >= removedItemsCount ? current.total - removedItemsCount : 0n
+        return {
+          ...current,
+          items,
+          folders,
+          total: nextTotal,
+        }
+      },
+      { revalidate: false }
+    )
+    void refreshStats()
+  }
+
   const handleDelete = async (path: string) => {
+    await removeFileFromCache(path)
     const err = await onDelete(path)
-    if (!err) await removeFileFromCache(path)
+    if (err) {
+      await refreshFiles()
+      void refreshStats()
+    }
     return err
+  }
+
+  const handleDeleteFolder = async (folderName: string) => {
+    const folderPath = joinObjectPath(prefix, `${folderName}/`)
+    const childPaths = pathsUnderFolder(files, prefix, folderName)
+    await removePathsFromCache(childPaths, [folderPath])
+    if (childPaths.length > 0) {
+      await onDeletePaths(childPaths)
+    }
+    await onDeleteFolders([folderPath])
+    await refreshFiles()
+    void refreshStats()
   }
 
   const toggleKey = (key: string, on: boolean) => {
@@ -165,15 +248,46 @@ export function BucketFilesPanel({
   const confirmBulkDelete = async () => {
     const { paths, folderPaths } = resolveSelectedPaths()
     setDeleting(true)
+    const prevSelected = new Set(selected)
+    await removePathsFromCache(paths, folderPaths)
+    setSelected(new Set())
+
     const fileErr = paths.length > 0 ? await onDeletePaths(paths) : null
     const folderErr = !fileErr && folderPaths.length > 0 ? await onDeleteFolders(folderPaths) : null
     setDeleting(false)
     const err = fileErr ?? folderErr
-    if (err) return
-    setConfirmOpen(false)
-    setSelected(new Set())
+    if (err) {
+      setSelected(prevSelected)
+      await refreshFiles()
+      void refreshStats()
+      return
+    }
+    setDeleteTarget(null)
     await refreshFiles()
     void refreshStats()
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTarget) return
+    if (deleteTarget.type === "bulk") {
+      await confirmBulkDelete()
+    } else if (deleteTarget.type === "file") {
+      setDeleting(true)
+      try {
+        await handleDelete(deleteTarget.path)
+      } finally {
+        setDeleting(false)
+        setDeleteTarget(null)
+      }
+    } else if (deleteTarget.type === "folder") {
+      setDeleting(true)
+      try {
+        await handleDeleteFolder(deleteTarget.name)
+      } finally {
+        setDeleting(false)
+        setDeleteTarget(null)
+      }
+    }
   }
 
   const selectAll = useCallback(() => {
@@ -182,8 +296,38 @@ export function BucketFilesPanel({
 
   const requestDelete = useCallback(() => {
     if (selected.size === 0) return
-    setConfirmOpen(true)
+    setDeleteTarget({ type: "bulk", count: selected.size })
   }, [selected.size])
+
+  const navigatingFolderRef = useRef<string | null>(null)
+  const navigationTimestampRef = useRef<number>(0)
+
+  const handleOpenFolder = useCallback(
+    (folderName: string) => {
+      const now = Date.now()
+      // Ignore rapid double clicks on the same folder within 500ms
+      if (
+        navigatingFolderRef.current === folderName &&
+        now - navigationTimestampRef.current < 500
+      ) {
+        return
+      }
+
+      // If already navigated into this folder recently, avoid duplicate nested navigation
+      const normalized = normalizePrefix(prefix)
+      if (normalized.endsWith(`${folderName}/`) && now - navigationTimestampRef.current < 800) {
+        return
+      }
+
+      navigatingFolderRef.current = folderName
+      navigationTimestampRef.current = now
+
+      onPrefixChange(nestedPrefix(prefix, folderName))
+      setPreviewFile(null)
+      setQuery("")
+    },
+    [onPrefixChange, prefix]
+  )
 
   const handleRefresh = async () => {
     setRefreshing(true)
@@ -198,25 +342,29 @@ export function BucketFilesPanel({
     enabled: true,
     canWrite,
     selectedCount: selected.size,
-    confirmOpen,
+    confirmOpen: deleteTarget !== null,
     onSelectAll: selectAll,
     onRequestDelete: requestDelete,
     onCreateFolder,
     onConfirmDelete: () => {
-      if (!deleting) void confirmBulkDelete()
+      if (!deleting) void handleConfirmDelete()
     },
   })
 
   const empty = !isLoading && files.length === 0 && (searching || entries.length === 0)
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <BucketFilesToolbar
         query={query}
         sort={sort}
+        category={category}
+        viewMode={viewMode}
         refreshing={refreshing}
         onQueryChange={setQuery}
         onSortChange={setSort}
+        onCategoryChange={setCategory}
+        onViewModeChange={setViewMode}
         onRefresh={() => void handleRefresh()}
       />
 
@@ -226,20 +374,83 @@ export function BucketFilesPanel({
           canWrite={canWrite}
           deleting={deleting}
           onClear={() => setSelected(new Set())}
-          onDelete={() => setConfirmOpen(true)}
+          onDelete={() => {
+            if (selected.size > 0) {
+              setDeleteTarget({ type: "bulk", count: selected.size })
+            }
+          }}
         />
       ) : null}
 
       {isLoading && files.length === 0 ? (
         <Skeleton className="h-40 w-full rounded-2xl" />
       ) : empty ? (
-        <Card className="border-dashed">
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
-            {searching ? t("noFilterMatch") : t("noFiles")}
-          </CardContent>
-        </Card>
+        <Empty className="border border-dashed border-border/80 bg-card/20 py-14">
+          <EmptyHeader>
+            <EmptyMedia
+              variant="icon"
+              className="size-12 rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-xs"
+            >
+              <HugeiconsIcon icon={Folder02Icon} className="size-6" strokeWidth={1.75} />
+            </EmptyMedia>
+            <EmptyTitle className="text-base font-semibold text-foreground">
+              {searching ? t("noFilterMatch") : t("noFiles")}
+            </EmptyTitle>
+            <EmptyDescription className="max-w-xs text-xs text-muted-foreground">
+              {searching
+                ? "No files or folders matched your search filters."
+                : "Drag and drop files anywhere to upload, or use the buttons below to add files or folders."}
+            </EmptyDescription>
+          </EmptyHeader>
+          {!searching && canWrite ? (
+            <EmptyContent className="flex flex-row items-center justify-center gap-2 pt-2">
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => document.getElementById("bucket-upload-input")?.click()}
+                className="gap-1.5"
+              >
+                <HugeiconsIcon icon={Upload01Icon} className="size-4" strokeWidth={1.75} />
+                <span>{t("upload")}</span>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onCreateFolder}
+                className="gap-1.5"
+              >
+                <HugeiconsIcon icon={Folder02Icon} className="size-4" strokeWidth={1.75} />
+                <span>{t("createFolder")}</span>
+              </Button>
+            </EmptyContent>
+          ) : null}
+        </Empty>
+      ) : viewMode === "grid" ? (
+        <BucketFilesGrid
+          bucketId={bucketId}
+          bucketName={resolvedBucketName}
+          files={files}
+          prefix={prefix}
+          visible={visible}
+          selected={selected}
+          previewId={previewFile?.id}
+          canWrite={canWrite}
+          onToggleKey={toggleKey}
+          onOpenFolder={handleOpenFolder}
+          onOpenFile={setPreviewFile}
+          onDeleteFile={(p) => {
+            const name = p.split("/").pop() ?? p
+            setDeleteTarget({ type: "file", path: p, name })
+          }}
+          onDeleteFolder={(name) => {
+            setDeleteTarget({ type: "folder", name })
+          }}
+        />
       ) : (
         <BucketFilesTable
+          bucketId={bucketId}
+          bucketName={resolvedBucketName}
           files={files}
           prefix={prefix}
           visible={visible}
@@ -249,12 +460,15 @@ export function BucketFilesPanel({
           allSelected={allSelected}
           onToggleAll={(on) => setSelected(on ? new Set(entryKeys) : new Set())}
           onToggleKey={toggleKey}
-          onOpenFolder={(name) => {
-            onPrefixChange(nestedPrefix(prefix, name))
-            setPreviewFile(null)
-            setQuery("")
-          }}
+          onOpenFolder={handleOpenFolder}
           onOpenFile={setPreviewFile}
+          onDeleteFile={(p) => {
+            const name = p.split("/").pop() ?? p
+            setDeleteTarget({ type: "file", path: p, name })
+          }}
+          onDeleteFolder={(name) => {
+            setDeleteTarget({ type: "folder", name })
+          }}
         />
       )}
 
@@ -276,6 +490,7 @@ export function BucketFilesPanel({
           {previewFile ? (
             <BucketFilePreviewPane
               bucketId={bucketId}
+              bucketName={resolvedBucketName}
               file={previewFile}
               canWrite={canWrite}
               onDelete={handleDelete}
@@ -286,12 +501,19 @@ export function BucketFilesPanel({
       </Drawer>
 
       <BucketFileDeleteDialog
-        open={confirmOpen}
-        onOpenChange={setConfirmOpen}
-        fileName=""
-        count={selected.size}
+        open={deleteTarget !== null}
+        onOpenChange={(open) => {
+          if (!open && !deleting) setDeleteTarget(null)
+        }}
+        fileName={
+          deleteTarget?.type === "file" || deleteTarget?.type === "folder"
+            ? deleteTarget.name
+            : ""
+        }
+        isFolder={deleteTarget?.type === "folder"}
+        count={deleteTarget?.type === "bulk" ? deleteTarget.count : 1}
         deleting={deleting}
-        onConfirm={confirmBulkDelete}
+        onConfirm={handleConfirmDelete}
       />
     </div>
   )

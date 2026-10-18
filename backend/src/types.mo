@@ -110,6 +110,8 @@ module {
 
   public type BucketVisibility = { #Public; #Private };
 
+  public type BucketBillingPeriod = { #Monthly; #Yearly };
+
   public type BucketStatus = { #ACTIVE; #EXPIRED };
 
   public type Bucket = {

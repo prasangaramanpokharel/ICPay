@@ -167,3 +167,70 @@ export function getTxStatusVariant(status: TxStatusVariant): "default" | "second
       return "outline"
   }
 }
+
+export function formatClockTime(t: bigint): string {
+  return new Date(Number(t / 1_000_000n)).toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+  })
+}
+
+export function formatDetailTime(t: bigint): string {
+  const date = new Date(Number(t / 1_000_000n))
+  return date.toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  })
+}
+
+function startOfLocalDay(date: Date): number {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+}
+
+export function transactionDateKey(t: bigint): string {
+  const date = new Date(Number(t / 1_000_000n))
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+}
+
+export function formatTransactionDateGroup(
+  t: bigint,
+  labels: { today: string; yesterday: string }
+): string {
+  const date = new Date(Number(t / 1_000_000n))
+  const now = new Date()
+  const txDay = startOfLocalDay(date)
+  const today = startOfLocalDay(now)
+  const yesterday = today - 86_400_000
+
+  if (txDay === today) return labels.today
+  if (txDay === yesterday) return labels.yesterday
+
+  return date.toLocaleDateString(undefined, {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    ...(date.getFullYear() !== now.getFullYear() ? { year: "numeric" as const } : {}),
+  })
+}
+
+export function groupTransactionsByDate<T extends { createdAt: bigint }>(
+  transactions: T[]
+): { key: string; items: T[] }[] {
+  const groups = new Map<string, T[]>()
+  const order: string[] = []
+
+  for (const tx of transactions) {
+    const key = transactionDateKey(tx.createdAt)
+    if (!groups.has(key)) {
+      groups.set(key, [])
+      order.push(key)
+    }
+    groups.get(key)!.push(tx)
+  }
+
+  return order.map((key) => ({ key, items: groups.get(key)! }))
+}
+

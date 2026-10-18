@@ -440,7 +440,7 @@ export function LaunchForm({
           disabled={needsConnect ? connecting : !canReview}
           onClick={() => (needsConnect ? onConnect?.() : setConfirmOpen(true))}
         >
-          {connecting && <Spinner className="size-4" />}
+          {connecting && <Spinner data-icon="inline-start" />}
           {needsConnect
             ? connecting
               ? tl("connecting")
@@ -500,7 +500,7 @@ export function LaunchForm({
                 onClick={handleConfirm}
                 disabled={launching}
               >
-                {launching && <Spinner className="size-4" />}
+                {launching && <Spinner data-icon="inline-start" />}
                 {launching ? t("launching") : t("confirmLaunch")}
               </Button>
               <DrawerClose render={<Button variant="outline" size="lg" className="w-full" disabled={launching}>{tc("cancel")}</Button>} />

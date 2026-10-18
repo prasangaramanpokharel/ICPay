@@ -255,7 +255,7 @@ export function Globe({
       ...activeConfig,
       width: widthRef.current * 2,
       height: widthRef.current * 2,
-      onRender: (state) => {
+      onRender: (state: Record<string, unknown>) => {
         // Smooth transition toward selected target country
         if (targetPhiRef.current !== null) {
           let diff = targetPhiRef.current - phiRef.current

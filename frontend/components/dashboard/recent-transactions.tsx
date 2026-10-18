@@ -88,9 +88,9 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
   return (
     <li>
       <Link
-        href={`/transactions/${encodeURIComponent(tx.id)}`}
+        href={`/transactions?id=${encodeURIComponent(tx.id)}`}
         prefetch
-        className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/40 active:bg-muted/60"
+        className="group flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/50 active:bg-muted/70"
       >
         <Avatar className="size-10 shrink-0">
           <AvatarImage src={avatarUri} alt="" />
@@ -100,18 +100,20 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
         </Avatar>
 
         <div className="min-w-0 flex-1">
-          <p className={cn("flex items-center gap-1 truncate text-sm font-medium", !handle && "font-mono tracking-tight")}>
+          <p className={cn("flex items-center gap-1.5 truncate text-sm font-medium", !handle && "font-mono tracking-tight")}>
             {handle ?? shortenCounterparty(counterparty)}
             <PremiumBadge name={handle} className="size-3.5" />
           </p>
-          <p className="mt-0.5 text-xs text-muted-foreground/80">
+          <p className="mt-0.5 text-xs font-normal text-muted-foreground">
             {t(`type.${txTypeKey(tx.txType)}`)} · {formatTime(tx.createdAt)}
           </p>
           {memo && (
-            <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-              <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0" />
-              <span className="truncate rounded-full bg-muted px-2.5 py-0.5">{memo}</span>
-            </p>
+            <div className="mt-1 flex items-center">
+              <span className="inline-flex max-w-[220px] items-center gap-1 rounded-md border border-border/60 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-foreground/85">
+                <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0 text-muted-foreground" />
+                <span className="truncate">{memo}</span>
+              </span>
+            </div>
           )}
         </div>
 
@@ -120,7 +122,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
             <p
               className={cn(
                 "font-mono text-sm font-semibold tabular-nums",
-                incoming ? "text-success" : "text-foreground",
+                incoming ? "text-emerald-500 dark:text-emerald-400" : "text-foreground",
               )}
             >
               {incoming ? "+" : "−"}
@@ -132,7 +134,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
               </Badge>
             )}
           </div>
-          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground/60" strokeWidth={1.75} />
+          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
         </div>
       </Link>
     </li>

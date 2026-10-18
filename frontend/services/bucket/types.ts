@@ -2,6 +2,9 @@ import type { BucketStatusVariant, BucketVisibilityVariant } from "@/lib/bucket/
 
 export type { BucketStatusVariant, BucketVisibilityVariant }
 
+export type BucketBillingPeriod = "monthly" | "yearly"
+export type BucketBillingPeriodVariant = { Monthly: null } | { Yearly: null }
+
 export type BucketPublic = {
   id: string
   name: string

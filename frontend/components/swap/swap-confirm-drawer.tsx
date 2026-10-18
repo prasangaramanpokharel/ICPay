@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import {
   Drawer,
   DrawerContent,
@@ -115,6 +116,7 @@ export function SwapConfirmDrawer({
 
         <DrawerFooter>
           <Button onClick={onConfirm} disabled={swapping}>
+            {swapping && <Spinner data-icon="inline-start" />}
             {swapping ? t("swapping") : t("confirmSwap")}
           </Button>
         </DrawerFooter>

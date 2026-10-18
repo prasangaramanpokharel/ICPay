@@ -1,0 +1,60 @@
+---
+title: "Types Reference"
+description: "Core TypeScript interfaces and Candid IDL signatures used across the ICBucket ecosystem."
+group: "Reference"
+order: 2
+---
+
+# Types Reference
+
+This document provides TypeScript type definitions for objects returned by the ICBucket SDK.
+
+## Core Types
+
+### FilePublic
+
+```typescript
+export interface FilePublic {
+  name: string
+  path: string
+  sizeBytes: number
+  contentType: string
+  publicUrl: string
+  rawUrl: string
+  sha256: string
+  createdAt: number
+  tags?: string[]
+}
+```
+
+### BucketStats
+
+```typescript
+export interface BucketStats {
+  id: string
+  name: string
+  capacityBytes: number
+  usedBytes: number
+  fileCount: number
+  tier: "starter" | "pro" | "enterprise"
+  expiresAt: number
+}
+```
+
+### FileListPage
+
+```typescript
+export interface FileListPage {
+  items: FilePublic[]
+  page: number
+  pageSize: number
+  total: number
+  totalPages: number
+}
+```
+
+## Related Pages
+
+- [Configuration Reference](./configuration.mdx)
+- [API Endpoints](../../api/endpoints.mdx)
+- [Responses](../../api/responses.mdx)

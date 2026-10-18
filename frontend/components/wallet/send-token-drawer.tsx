@@ -400,7 +400,7 @@ export function SendTokenDrawer({
                 {tc("back")}
               </Button>
               <Button className="flex-1" disabled={!canSend} onClick={() => void handleSend()}>
-                {loading && <Spinner className="size-4" />}
+                {loading && <Spinner data-icon="inline-start" />}
                 {loading ? t("sending") : t("confirmSend")}
               </Button>
             </>

@@ -74,8 +74,14 @@ export function prefetchAppRoute(href: string, identity: Identity | undefined) {
       preload(walletKey(identity, "profile")!, () => resolveProfile(identity))
       break
     default:
-      if (path.startsWith("/icpverse/")) {
-        const name = path.slice("/icpverse/".length).toLowerCase()
+      if (path.startsWith("/icpverse/") || path.startsWith("/icpverse?")) {
+        let name = ""
+        if (path.startsWith("/icpverse/")) {
+          name = path.slice("/icpverse/".length).toLowerCase()
+        } else {
+          const match = path.match(/[?&](?:id|user|username)=([^&]+)/)
+          if (match) name = decodeURIComponent(match[1]).toLowerCase()
+        }
         if (name.length >= 1) {
           preload(["resolve-username", name] as const, async () => {
             const { resolveUsername } = await import("@/services/profile/profile")

@@ -11,8 +11,8 @@ import {
   SentIcon,
   StopIcon,
   UserAdd01Icon,
-  Loading03Icon,
 } from "@hugeicons/core-free-icons"
+import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
 import {
   AlertDialog,
@@ -101,7 +101,7 @@ export function MyCanisterControls({
           }
         >
           {busy != null ? (
-            <HugeiconsIcon icon={Loading03Icon} className="size-3.5 animate-spin" />
+            <Spinner className="size-3.5" />
           ) : (
             <HugeiconsIcon icon={MoreVerticalIcon} className="size-3.5" />
           )}
@@ -130,7 +130,7 @@ export function MyCanisterControls({
                     className="cursor-pointer gap-2 text-destructive focus:text-destructive focus:bg-destructive/10"
                   >
                     {busy === "stop" ? (
-                      <HugeiconsIcon icon={Loading03Icon} className="size-4 animate-spin text-destructive" />
+                      <Spinner className="size-4 text-destructive" />
                     ) : (
                       <HugeiconsIcon icon={StopIcon} className="size-4 text-destructive" />
                     )}
@@ -143,7 +143,7 @@ export function MyCanisterControls({
                     className="cursor-pointer gap-2 text-success focus:text-success focus:bg-success/10"
                   >
                     {busy === "start" ? (
-                      <HugeiconsIcon icon={Loading03Icon} className="size-4 animate-spin text-success" />
+                      <Spinner className="size-4 text-success" />
                     ) : (
                       <HugeiconsIcon icon={PlayIcon} className="size-4 text-success" />
                     )}

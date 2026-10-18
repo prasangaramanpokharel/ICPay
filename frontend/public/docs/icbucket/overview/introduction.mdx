@@ -1,0 +1,46 @@
+---
+title: "Introduction"
+description: "Understand the ICBucket architecture, decentralized subaccount isolation, and reverse-gas storage model."
+group: "Overview"
+order: 1
+---
+
+# Introduction
+
+**ICBucket** is the decentralized cloud storage infrastructure for Web3 applications, AI agents, and dApps. Instead of hosting assets on centralized cloud providers like AWS S3 or Google Cloud Storage, ICBucket stores raw binary blobs and file chunks directly within canister smart contract stable memory on the Internet Computer.
+
+## Prerequisites
+
+- Basic familiarity with Web3 concepts and client-side JavaScript or Python.
+- Understanding of public vs private file access models.
+
+## Why ICBucket vs AWS S3 & IPFS
+
+| Feature | AWS S3 | IPFS / Filecoin | ICBucket |
+| :--- | :--- | :--- | :--- |
+| **Payment Model** | Monthly credit card + egress billing | Token staking / pinning contracts | 30-day fixed ICP plans from wallet balance |
+| **Storage Medium** | Centralized US/EU server farms | P2P DHT nodes requiring pinning | On-chain canister stable memory |
+| **Edge CDN** | CloudFront (extra egress cost) | Third-party gateways (rate-limited) | Native `cdn.icpay.app` Edge CDN included |
+| **Immutability** | Subject to account suspension | Pinning can expire | Cryptographically signed on-chain state |
+| **API Keys** | AWS IAM secrets | Gateway JWTs | In-dApp granular Read/Write API keys |
+
+## Architectural Overview
+
+Each ICBucket operates with complete cryptographic isolation:
+1. **Canister Stable Memory**: Files are partitioned into 2MB binary chunks and written into 64-bit stable memory that survives canister upgrades.
+2. **Subaccount Ownership**: Assets and write privileges are restricted to the owner's Internet Identity principal or delegated API keys.
+3. **Dual Link Resolution**: Every file generates both a fast edge CDN URL (`https://cdn.icpay.app/cloud/{bucket}/{file}`) and a direct on-chain canister URL (`https://{canisterId}.raw.icp0.io/...`).
+
+## Verification
+
+You can verify canister immutability and module hashes on-chain at any time via official IC boundary nodes:
+
+```bash
+dfx canister --network ic status 6vbhm-nqaaa-aaaan-q6muq-cai
+```
+
+## Related Pages
+
+- [Quick Start](../overview/quick-start.mdx)
+- [Installation](../overview/installation.mdx)
+- [Authentication](../../guides/authentication.mdx)

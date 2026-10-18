@@ -38,8 +38,14 @@ export function BucketDocsCopyMenu({ markdown, title = "ICBucket Documentation" 
   }
 
   const handleViewMarkdown = () => {
-    const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" })
-    window.open(URL.createObjectURL(blob), "_blank", "noopener,noreferrer")
+    try {
+      const currentPath = window.location.pathname.replace(/\/$/, "")
+      const mdUrl = currentPath ? `${currentPath}.md` : "/bucket/docs.md"
+      window.open(mdUrl, "_blank", "noopener,noreferrer")
+    } catch {
+      const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" })
+      window.open(URL.createObjectURL(blob), "_blank", "noopener,noreferrer")
+    }
   }
 
   const handleOpenChatGPT = async () => {

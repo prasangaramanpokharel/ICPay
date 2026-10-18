@@ -179,7 +179,14 @@ export default function TermsPage() {
           the current version, and the full history is in the public repository.
         </p>
         <p>
-          Questions, security reports and bugs go to{" "}
+          General inquiries, questions and support can be sent to{" "}
+          <a
+            href="mailto:contact@icpay.cloud"
+            className="underline underline-offset-2 font-medium"
+          >
+            contact@icpay.cloud
+          </a>
+          . Bug reports and technical security disclosures go to{" "}
           <a
             href="https://gitlab.com/prasangapokharel/icpay/-/issues"
             target="_blank"
@@ -188,7 +195,7 @@ export default function TermsPage() {
           >
             GitLab issues
           </a>
-          . There is no support email and no private channel.
+          .
         </p>
       </Section>
 

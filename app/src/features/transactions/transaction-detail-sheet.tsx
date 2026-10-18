@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Pressable, View } from 'react-native'
+import { Pressable, View, Linking } from 'react-native'
+import { useRouter } from 'expo-router'
 import { useTranslations } from '@/components/i18n/locale-provider'
 import { Sheet } from '@/components/ui/sheet'
 import { Button } from '@/components/ui/button'
@@ -13,7 +14,8 @@ import { useIcpPrice } from '@/hooks/use-icp-price'
 import type { TransactionPublic } from '@/services/types'
 import {
   copyText,
-  formatTime,
+  explorerTxUrl,
+  formatDetailTime,
   formatTokenAmount,
   isHexAccountId,
   shortenCounterparty,
@@ -33,6 +35,7 @@ export function TransactionDetailSheet({
 }) {
   const t = useTranslations('transactions')
   const tc = useTranslations('common')
+  const router = useRouter()
   const [copiedField, setCopiedField] = useState<string | null>(null)
   const { symbol, decimals } = useLedgerSymbol(tx?.ledgerId ?? '')
   const { price } = useIcpPrice()
@@ -51,6 +54,8 @@ export function TransactionDetailSheet({
 
   const isIcp = tx.ledgerId.includes('ryjl3') || symbol === 'ICP'
   const usd = isIcp && price ? (Number(tx.amount) / 100_000_000) * price.usd : null
+  const memo = tx.memo?.[0]
+  const blockIndex = tx.blockIndex?.[0]
 
   const handleCopy = (val: string, field: string) => {
     void copyText(val)
@@ -58,18 +63,42 @@ export function TransactionDetailSheet({
     setTimeout(() => setCopiedField(null), 2000)
   }
 
-  const memo = tx.memo?.[0]
+  const handleSendAgain = () => {
+    onOpenChange(false)
+    const target = handle ?? counterparty
+    router.push(`/transfer?to=${encodeURIComponent(target)}` as never)
+  }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange} title={t('title')}>
+    <Sheet open={open} onOpenChange={onOpenChange} title={t('detailTitle')}>
       <View className="gap-5 pb-4">
-        {/* Amount Hero */}
+        {/* Counterparty & Hero Amount */}
         <View className="items-center rounded-3xl bg-muted/40 px-4 py-6">
-          <Text className={cn('text-3xl font-bold font-mono', incoming && 'text-success')}>
+          <UserAvatar seed={counterparty} size={52} />
+
+          <View className="mt-2.5 flex-row items-center gap-1.5">
+            <Text className="text-base font-semibold text-foreground">
+              {handle ? `@${handle}` : shortenCounterparty(counterparty)}
+            </Text>
+            {handle ? <PremiumBadge name={handle} size={15} /> : null}
+          </View>
+
+          <Text className="mt-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+            {incoming ? t('amountReceived') : t('amountSent')}
+          </Text>
+
+          <Text
+            className={cn(
+              'mt-1 text-3xl font-bold font-mono tracking-tight',
+              incoming ? 'text-success' : 'text-foreground',
+            )}
+          >
             {incoming ? '+' : '−'}
             {formatTokenAmount(tx.amount, decimals)} {symbol}
           </Text>
-          {usd != null ? <FiatAmount usd={usd} className="mt-1.5" /> : null}
+
+          {usd != null ? <FiatAmount usd={usd} className="mt-1" /> : null}
+
           <View className="mt-3 flex-row gap-2">
             <Badge variant="outline">{t(`type.${type}`)}</Badge>
             <Badge variant={status === 'completed' ? 'default' : 'secondary'}>
@@ -78,20 +107,14 @@ export function TransactionDetailSheet({
           </View>
         </View>
 
-        {/* Counterparty / Transfer Details */}
+        {/* Transaction Details Card */}
         <View className="rounded-2xl border border-border/50 bg-muted/20 p-4 gap-3.5">
           <DetailRow
-            label={incoming ? t('type.deposit') : t('type.transfer')}
+            label={incoming ? t('rowFrom') : t('rowTo')}
             content={
-              <View className="flex-row items-center gap-2">
-                <UserAvatar seed={counterparty} size={28} />
-                <View className="flex-row items-center gap-1">
-                  <Text className="text-sm font-medium">
-                    {handle ?? shortenCounterparty(counterparty)}
-                  </Text>
-                  {handle ? <PremiumBadge name={handle} size={14} /> : null}
-                </View>
-              </View>
+              <Text className="font-mono text-xs text-foreground" numberOfLines={1}>
+                {handle ? `@${handle}` : shortenCounterparty(counterparty)}
+              </Text>
             }
             copyValue={counterparty}
             copied={copiedField === 'counterparty'}
@@ -101,8 +124,8 @@ export function TransactionDetailSheet({
           <View className="h-px bg-border/40" />
 
           <DetailRow
-            label="ID"
-            content={<Text className="font-mono text-xs">{tx.id.slice(0, 16)}…</Text>}
+            label="Transaction ID"
+            content={<Text className="font-mono text-xs text-muted-foreground">{tx.id.slice(0, 16)}…</Text>}
             copyValue={tx.id}
             copied={copiedField === 'id'}
             onCopy={() => handleCopy(tx.id, 'id')}
@@ -112,15 +135,37 @@ export function TransactionDetailSheet({
 
           <DetailRow
             label={tc('time') || 'Date & Time'}
-            content={<Text className="text-xs text-muted-foreground">{formatTime(tx.createdAt)}</Text>}
+            content={<Text className="text-xs text-muted-foreground">{formatDetailTime(tx.createdAt)}</Text>}
           />
+
+          {blockIndex !== undefined ? (
+            <>
+              <View className="h-px bg-border/40" />
+              <DetailRow
+                label="Block Index"
+                content={
+                  <Pressable
+                    onPress={() => void Linking.openURL(explorerTxUrl(blockIndex))}
+                    className="flex-row items-center gap-1 active:opacity-70"
+                  >
+                    <Text className="font-mono text-xs text-primary font-medium">
+                      #{blockIndex.toString()}
+                    </Text>
+                  </Pressable>
+                }
+                copyValue={blockIndex.toString()}
+                copied={copiedField === 'block'}
+                onCopy={() => handleCopy(blockIndex.toString(), 'block')}
+              />
+            </>
+          ) : null}
 
           {memo ? (
             <>
               <View className="h-px bg-border/40" />
               <DetailRow
                 label="Memo"
-                content={<Text className="text-sm">{memo}</Text>}
+                content={<Text className="text-sm text-foreground">{memo}</Text>}
                 copyValue={memo}
                 copied={copiedField === 'memo'}
                 onCopy={() => handleCopy(memo, 'memo')}
@@ -129,14 +174,22 @@ export function TransactionDetailSheet({
           ) : null}
         </View>
 
-        <Button
-          variant="outline"
-          size="lg"
-          className="w-full"
-          onPress={() => onOpenChange(false)}
-        >
-          {tc('close') || 'Close'}
-        </Button>
+        {/* Action Buttons */}
+        <View className="gap-2">
+          {handle || counterparty ? (
+            <Button size="lg" className="w-full" onPress={handleSendAgain}>
+              {handle ? `Send to @${handle}` : t('sendAgain')}
+            </Button>
+          ) : null}
+          <Button
+            variant="outline"
+            size="lg"
+            className="w-full"
+            onPress={() => onOpenChange(false)}
+          >
+            {tc('close') || 'Close'}
+          </Button>
+        </View>
       </View>
     </Sheet>
   )

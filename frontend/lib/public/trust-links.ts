@@ -12,6 +12,8 @@ export const ICPAY_CANISTERS = {
 
 export const ICPAY_SOCIAL_LINKS = {
   gitlab: "https://gitlab.com/prasangapokharel/icpay",
+  icbucket: "https://gitlab.com/prasangapokharel/icbucket",
+  icfalcon: "https://gitlab.com/prasangapokharel/icfalcon",
   github: "https://gitlab.com/prasangapokharel/icpay",
   x: "https://x.com/IcpayOfficial",
   linkedin: "https://www.linkedin.com/company/icpayofficial",

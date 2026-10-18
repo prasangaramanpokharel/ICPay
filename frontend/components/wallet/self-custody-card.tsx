@@ -111,7 +111,7 @@ export function SelfCustodyCard({
               onClick={handleSweep}
               disabled={loading || !deposit || checkingSupport}
             >
-              {loading && <Spinner className="size-4" />}
+              {loading && <Spinner data-icon="inline-start" />}
               {loading ? t("selfCustodyMoving") : t("selfCustodyMove")}
             </Button>
           )}

@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Particles } from "@/components/ui/particles"
 import { ShineBorder } from "@/components/ui/shine-border"
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text"
+import { Gitlab } from "@dev.icons/react"
 
 export function PackagesHero() {
   const { resolvedTheme } = useTheme()
@@ -153,7 +154,7 @@ export function PackagesHero() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <HugeiconsIcon icon={CodeCircleIcon} className="size-3.5 text-primary" />
+                <Gitlab size={14} />
                 <span>falconpkg GitLab</span>
               </Link>
             }

@@ -1,5 +1,7 @@
 import { Image } from 'expo-image'
 import { Pressable, View } from 'react-native'
+import { EyeIcon, ViewOffIcon } from '@hugeicons/core-free-icons'
+import { Icon } from '@/components/ui/icon'
 import { useTranslations } from '@/components/i18n/locale-provider'
 import { Text } from '@/components/ui/text'
 import { PremiumBadge } from '@/components/shared/premium-badge'
@@ -30,8 +32,8 @@ export function BalanceCard({
   const fiat = useFiatValue(usdValue)
 
   return (
-    <View className="rounded-3xl bg-blue-200/80 pt-4 shadow-2xl">
-      <View className="relative mt-2 rounded-3xl bg-primary p-5 shadow-xl">
+    <View className="rounded-3xl bg-primary/25 pt-2 shadow-2xl">
+      <View className="relative mt-1 rounded-3xl bg-primary p-5 shadow-xl">
         <View className="flex-row items-center justify-between gap-3">
           <View className="min-w-0 flex-row items-center gap-2.5">
             <CardChip />
@@ -56,12 +58,13 @@ export function BalanceCard({
             accessibilityLabel={hidden ? t('showBalance') : t('hideBalance')}
             onPress={onToggleHidden}
             hitSlop={10}
-            className="items-center justify-center active:opacity-70"
+            className="size-8 items-center justify-center rounded-full active:opacity-70 active:bg-white/10"
           >
-            <Image
-              source={hidden ? icons.hide : icons.show}
-              style={{ width: 22, height: 22, opacity: hidden ? 0.7 : 1 }}
-              contentFit="contain"
+            <Icon
+              icon={hidden ? ViewOffIcon : EyeIcon}
+              size={20}
+              strokeWidth={1.8}
+              color="rgba(255,255,255,0.85)"
             />
           </Pressable>
         </View>

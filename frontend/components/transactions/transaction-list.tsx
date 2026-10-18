@@ -1,7 +1,6 @@
 "use client"
 
-import Link from "next/link"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { createAvatar } from "@dicebear/core"
 import { adventurer } from "@dicebear/collection"
@@ -11,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { PremiumBadge } from "@/components/verified/premium-badge"
+import { TransactionDetailDrawer } from "@/components/transactions/transaction-detail-drawer"
 import type { TransactionPublic } from "@/services/types"
 import {
   formatClockTime,
@@ -31,12 +31,28 @@ type TransactionListProps = {
   total: bigint
   page: number
   pageSize: number
+  initialSelectedTxId?: string | null
   onPageChange: (page: number) => void
 }
 
-export function TransactionList({ transactions, total, page, pageSize, onPageChange }: TransactionListProps) {
+export function TransactionList({
+  transactions,
+  total,
+  page,
+  pageSize,
+  initialSelectedTxId,
+  onPageChange,
+}: TransactionListProps) {
   const t = useTranslations("transactions")
   const td = useTranslations("dashboard")
+  const [selectedTxId, setSelectedTxId] = useState<string | null | false>(null)
+
+  const effectiveTxId = selectedTxId === false ? null : (selectedTxId ?? initialSelectedTxId ?? null)
+  const selectedTx = useMemo(
+    () => (effectiveTxId ? transactions.find((item) => item.id === effectiveTxId) ?? null : null),
+    [effectiveTxId, transactions]
+  )
+
   const totalPages = Math.max(1, Math.ceil(Number(total) / pageSize))
   const hasNext = page < totalPages - 1
   const hasPrev = page > 0
@@ -49,9 +65,9 @@ export function TransactionList({ transactions, total, page, pageSize, onPageCha
 
   if (transactions.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed text-center">
+      <div className="rounded-2xl border border-dashed border-border/70 p-8 text-center">
         <HugeiconsIcon icon={InboxIcon} className="mx-auto size-6 text-muted-foreground/50" />
-        <p className="mt-3 text-sm font-medium">{td("noTransactions")}</p>
+        <p className="mt-3 text-sm font-medium text-foreground">{td("noTransactions")}</p>
         <p className="mt-1 text-xs text-muted-foreground">{td("noTransactionsHint")}</p>
       </div>
     )
@@ -65,9 +81,13 @@ export function TransactionList({ transactions, total, page, pageSize, onPageCha
             <h2 className="mb-2 px-1 text-xs font-semibold tracking-wide text-muted-foreground">
               {formatTransactionDateGroup(group.items[0].createdAt, dateLabels)}
             </h2>
-            <div className="divide-y overflow-hidden rounded-2xl border">
+            <div className="divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/60 bg-card">
               {group.items.map((tx) => (
-                <TransactionRow key={tx.id} tx={tx} />
+                <TransactionRow
+                  key={tx.id}
+                  tx={tx}
+                  onSelect={() => setSelectedTxId(tx.id)}
+                />
               ))}
             </div>
           </section>
@@ -99,11 +119,27 @@ export function TransactionList({ transactions, total, page, pageSize, onPageCha
           </div>
         </div>
       )}
+
+      {/* On-chain compatible Transaction Detail Drawer */}
+      <TransactionDetailDrawer
+        tx={selectedTx}
+        txId={effectiveTxId}
+        open={!!effectiveTxId}
+        onOpenChange={(next) => {
+          if (!next) setSelectedTxId(false)
+        }}
+      />
     </div>
   )
 }
 
-function TransactionRow({ tx }: { tx: TransactionPublic }) {
+function TransactionRow({
+  tx,
+  onSelect,
+}: {
+  tx: TransactionPublic
+  onSelect: () => void
+}) {
   const t = useTranslations("transactions")
   const type = txTypeKey(tx.txType)
   const incoming = isIncomingTx(tx.txType)
@@ -120,10 +156,10 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
   const handle = counterparty.startsWith("@") ? counterparty.slice(1) : null
 
   return (
-    <Link
-      href={`/transactions/${encodeURIComponent(tx.id)}`}
-      prefetch
-      className="flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40 active:bg-muted/60"
+    <button
+      type="button"
+      onClick={onSelect}
+      className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-muted/40 active:bg-muted/60 cursor-pointer select-none"
     >
       <Avatar className="size-11 shrink-0">
         <AvatarImage src={avatarUri} alt="" />
@@ -135,14 +171,14 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
       <div className="min-w-0 flex-1">
         <p
           className={cn(
-            "flex items-center gap-1 truncate text-sm font-medium",
+            "flex items-center gap-1 truncate text-sm font-medium text-foreground",
             !handle && "font-mono tracking-tight"
           )}
         >
           {handle ?? shortenCounterparty(counterparty)}
           <PremiumBadge name={handle} className="size-3.5" />
         </p>
-        <p className="mt-0.5 text-xs text-muted-foreground/80">
+        <p className="mt-0.5 text-xs text-muted-foreground">
           <span>{t(`type.${type}`)}</span> · {formatClockTime(tx.createdAt)}
         </p>
         {memo ? (
@@ -172,6 +208,6 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
         </div>
         <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
       </div>
-    </Link>
+    </button>
   )
 }

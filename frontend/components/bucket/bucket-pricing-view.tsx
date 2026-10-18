@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
@@ -28,6 +29,7 @@ import { CAPACITY_TIERS_GB } from "@/lib/bucket/bucket"
 import { BUCKET_POPULAR_TIER_GB } from "@/lib/bucket/pricing"
 import { BucketPriceLabel } from "@/components/bucket/bucket-price-label"
 import { cn } from "@/lib/ui/utils"
+import type { BucketBillingPeriod } from "@/services/bucket/types"
 
 const FEATURE_KEYS = [
   "pricingFeaturePublic",
@@ -41,7 +43,8 @@ const FEATURE_KEYS = [
 
 export function BucketPricingView() {
   const t = useTranslations("bucket")
-  const { tiers, isLoading } = useBucketPricingTiers()
+  const [billingPeriod, setBillingPeriod] = useState<BucketBillingPeriod>("monthly")
+  const { tiers, isLoading } = useBucketPricingTiers(billingPeriod)
 
   const tierRows = CAPACITY_TIERS_GB.map((gb) => {
     const tier = tiers.find((row) => row.gb === gb)
@@ -55,6 +58,38 @@ export function BucketPricingView() {
       back={<BucketBackButton href="/bucket" />}
       className="mx-auto max-w-2xl pb-8"
     >
+      <div className="flex items-center justify-center">
+        <div className="inline-flex rounded-xl border border-border/80 bg-muted/40 p-1">
+          <button
+            type="button"
+            onClick={() => setBillingPeriod("monthly")}
+            className={cn(
+              "flex items-center gap-2 rounded-lg py-1.5 px-4 text-xs font-medium transition-all",
+              billingPeriod === "monthly"
+                ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-border"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <span>Monthly (30 days)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setBillingPeriod("yearly")}
+            className={cn(
+              "flex items-center gap-2 rounded-lg py-1.5 px-4 text-xs font-medium transition-all",
+              billingPeriod === "yearly"
+                ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-primary/40"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <span>Annual (365 days)</span>
+            <span className="rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-bold text-emerald-500">
+              2 MO FREE
+            </span>
+          </button>
+        </div>
+      </div>
+
       <Card size="sm" className="py-0">
         <CardContent className="px-0">
           <Table>
@@ -83,6 +118,7 @@ export function BucketPricingView() {
                       <BucketPriceLabel
                         priceE8s={tier.priceE8s}
                         listPriceE8s={tier.listPriceE8s}
+                        perMonth={billingPeriod === "yearly" ? "/ year" : t("perMonth")}
                       />
                     ) : (
                       "—"
@@ -95,7 +131,9 @@ export function BucketPricingView() {
         </CardContent>
         <CardFooter className="border-t">
           <CardDescription className="text-xs leading-relaxed">
-            {t("pricingBreakdownNote")}
+            {billingPeriod === "yearly"
+              ? "Annual plans include 12 months (365 days) of continuous storage for the price of 10 months. Save ~17% with 2 months free."
+              : t("pricingBreakdownNote")}
           </CardDescription>
         </CardFooter>
       </Card>

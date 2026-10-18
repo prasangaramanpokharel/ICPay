@@ -72,7 +72,7 @@ export default function NewChannelPage() {
             if (code) {
               sessionStorage.setItem(`community-invite-${result.channelId}`, code)
             }
-            router.push(`/channels/${encodeURIComponent(result.channelId)}`)
+            router.push(`/channels?id=${encodeURIComponent(result.channelId)}`)
             return null
           } catch (e) {
             return e instanceof Error ? e.message : t("createFailed")

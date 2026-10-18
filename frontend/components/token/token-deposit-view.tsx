@@ -62,7 +62,7 @@ export function TokenDepositView() {
   return (
     <div className="space-y-6 pt-2">
       <BackButton
-        onClick={() => router.push(`/token/${token.ledgerId}`)}
+        onClick={() => router.push(`/wallet?token=${token.ledgerId}`)}
         label={token.symbol}
       />
 

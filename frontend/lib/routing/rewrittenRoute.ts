@@ -35,14 +35,32 @@ function channelMessageIdFromPath(path: string): string {
 }
 
 function getBrowserChannelSlug(): string {
+  if (typeof window === "undefined") return ""
+  try {
+    const params = new URLSearchParams(window.location.search)
+    const id = params.get("id") || params.get("slug")
+    if (id && id !== "new" && id !== "join") return id
+  } catch { }
   return channelSlugFromPath(window.location.pathname)
 }
 
 function getBrowserChannelMessageId(): string {
+  if (typeof window === "undefined") return ""
+  try {
+    const params = new URLSearchParams(window.location.search)
+    const msg = params.get("messageId") || params.get("msg") || params.get("message")
+    if (msg && /^\d+$/.test(msg)) return msg
+  } catch { }
   return channelMessageIdFromPath(window.location.pathname)
 }
 
 function getBrowserLastSegment(): string {
+  if (typeof window === "undefined") return ""
+  try {
+    const params = new URLSearchParams(window.location.search)
+    const id = params.get("id") || params.get("slug")
+    if (id) return id
+  } catch { }
   return lastSegment(window.location.pathname)
 }
 
@@ -50,9 +68,7 @@ function getBrowserTokenLedgerId(): string {
   return tokenLedgerIdFromPath(window.location.pathname)
 }
 
-// Static export serves one shell per dynamic route; Vercel rewrites keep the
-// visitor's URL (/icpverse/alice) but Next's router reports the shell path
-// (/icpverse/profile). Read the real segment from window.location instead.
+
 export function useRewrittenLastSegment(): string {
   const pathname = usePathname()
   void pathname
@@ -77,19 +93,33 @@ export function useTokenLedgerId(): string {
 
 export function useChannelSlug(): string {
   const pathname = usePathname()
-  const routerSlug = channelSlugFromPath(pathname)
   const browserSlug = useSyncExternalStore(subscribe, getBrowserChannelSlug, () => "")
-  return routerSlug || browserSlug
+
+  if (browserSlug && browserSlug !== "slug" && browserSlug !== "new" && browserSlug !== "join") {
+    return browserSlug
+  }
+  const routerSlug = channelSlugFromPath(pathname)
+  if (routerSlug && routerSlug !== "slug") return routerSlug
+  return ""
 }
 
 export function useChannelMessageId(): string {
   const pathname = usePathname()
+  const browserMsg = useSyncExternalStore(subscribe, getBrowserChannelMessageId, () => "")
+
+  if (browserMsg && /^\d+$/.test(browserMsg)) {
+    return browserMsg
+  }
   const routerMessageId = channelMessageIdFromPath(pathname)
-  const browserMessageId = useSyncExternalStore(subscribe, getBrowserChannelMessageId, () => "")
-  return routerMessageId || browserMessageId
+  if (routerMessageId && routerMessageId !== "message") return routerMessageId
+  return ""
 }
 
 function subscribe(onStoreChange: () => void) {
   window.addEventListener("popstate", onStoreChange)
-  return () => window.removeEventListener("popstate", onStoreChange)
+  window.addEventListener("hashchange", onStoreChange)
+  return () => {
+    window.removeEventListener("popstate", onStoreChange)
+    window.removeEventListener("hashchange", onStoreChange)
+  }
 }

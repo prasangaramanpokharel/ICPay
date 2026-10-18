@@ -6,6 +6,7 @@ import {
   BucketDocsNavFallback,
 } from "@/components/products/icbucket/bucket-docs-sidebar"
 import { BucketDocsPageToc } from "@/components/products/icbucket/bucket-docs-page-toc"
+import { BucketDocsPagination } from "@/components/products/icbucket/bucket-docs-pagination"
 import type { BucketDocNavGroup, LoadedBucketDoc } from "@/lib/bucket/docs/types"
 
 type BucketDocsShellProps = {
@@ -47,7 +48,9 @@ export function BucketDocsShell({ doc, navGroups, backHref = "/icbucket" }: Buck
               <BucketDocsCopyMenu markdown={doc.fullMarkdown} title={doc.title} />
             </div>
           </header>
-          <div className="max-w-none pb-16">{doc.content}</div>
+          <div className="max-w-none">{doc.content}</div>
+          <BucketDocsPagination currentSlug={doc.slug} navGroups={navGroups} />
+          <div className="pb-16" />
         </article>
 
         <aside className="hidden xl:block">

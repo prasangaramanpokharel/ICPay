@@ -48,12 +48,32 @@ export function calculateListPriceE8s(capacityGB: number): bigint {
   return priceWithMarginE8s(capacityGB, LIST_MARGIN_PERCENT)
 }
 
+/** Yearly price for 365 days (10x monthly price = 2 months free / ~17% discount). */
+export function calculateYearlyPriceE8s(capacityGB: number): bigint {
+  return calculatePriceE8s(capacityGB) * 10n
+}
+
+/** Strikethrough list price for 1 year (12x monthly list price). */
+export function calculateYearlyListPriceE8s(capacityGB: number): bigint {
+  return calculateListPriceE8s(capacityGB) * 12n
+}
+
 export function buildPricingTier(gb: number, priceE8s: bigint): BucketPricingTier {
   const costE8s = calculateCostE8s(gb)
   const listPriceE8s = calculateListPriceE8s(gb)
   return { gb, priceE8s, listPriceE8s, costE8s, marginE8s: priceE8s - costE8s }
 }
 
+export function buildYearlyPricingTier(gb: number, yearlyPriceE8s: bigint): BucketPricingTier {
+  const costE8s = calculateCostE8s(gb) * 12n
+  const listPriceE8s = calculateYearlyListPriceE8s(gb)
+  return { gb, priceE8s: yearlyPriceE8s, listPriceE8s, costE8s, marginE8s: yearlyPriceE8s - costE8s }
+}
+
 export function buildEstimatedPricingTiers(): BucketPricingTier[] {
   return CAPACITY_TIERS_GB.map((gb) => buildPricingTier(gb, calculatePriceE8s(gb)))
+}
+
+export function buildEstimatedYearlyPricingTiers(): BucketPricingTier[] {
+  return CAPACITY_TIERS_GB.map((gb) => buildYearlyPricingTier(gb, calculateYearlyPriceE8s(gb)))
 }

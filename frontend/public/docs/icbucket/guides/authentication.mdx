@@ -1,0 +1,69 @@
+---
+title: "Authentication"
+description: "Authenticate API requests using API keys, Internet Identity delegations, or agent principals."
+group: "Guides"
+order: 2
+---
+
+# Authentication
+
+ICBucket supports two primary authentication modes:
+1. **API Keys**: Lightweight bearer tokens intended for backend servers, worker processes, and automated CI pipelines.
+2. **Internet Identity Delegations**: Cryptographically signed delegations from `@dfinity/identity` for direct in-browser client uploads.
+
+## Prerequisites
+
+- An active ICPay account with Internet Identity login
+- Access to the [API Keys Manager](/bucket) in your dashboard
+
+## Steps
+
+### Option A: API Key Authentication (Recommended for Backends)
+
+Generate a Read/Write or Read-Only API key from the ICPay dashboard:
+
+```typescript
+import { ICBucket } from "icpay-bucket"
+
+const bucket = new ICBucket({
+  bucketId: "my-assets",
+  apiKey: "icp_live_sec_f98234...",
+})
+```
+
+### Option B: Internet Identity Delegation (Browser dApps)
+
+Pass the user's `@dfinity/auth-client` identity directly to the client:
+
+```typescript
+import { ICBucket } from "icpay-bucket"
+import { AuthClient } from "@dfinity/auth-client"
+
+const authClient = await AuthClient.create()
+const identity = authClient.getIdentity()
+
+const bucket = new ICBucket({
+  bucketId: "my-assets",
+  identity, // User's on-chain principal
+})
+```
+
+## Security Best Practices
+
+- **Never expose Secret API Keys in client-side bundles**: Use Internet Identity delegation or sign short-lived pre-authenticated upload sessions on your backend.
+- **Rotate Compromised Keys**: You can instantly revoke and re-issue API keys with zero canister downtime from the dashboard.
+
+## Verification
+
+Test that your credentials validate against the backend canister:
+
+```bash
+curl -H "Authorization: Bearer YOUR_API_KEY" \
+  https://cdn.icpay.app/cloud/my-assets/auth-test
+```
+
+## Related Pages
+
+- [Configuration](./configuration.mdx)
+- [Basic Usage](./basic-usage.mdx)
+- [Error Codes](../../errors/error-codes.mdx)

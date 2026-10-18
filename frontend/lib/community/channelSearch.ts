@@ -10,6 +10,15 @@ export function parseChannelSearchSlug(raw: string): string | null {
     query = query.slice(1)
   }
 
+  const paramMatch = query.match(/[?&](?:id|slug)=([^&#]+)/)
+  if (paramMatch?.[1]) {
+    try {
+      query = decodeURIComponent(paramMatch[1]).toLowerCase()
+    } catch {
+      query = paramMatch[1].toLowerCase()
+    }
+  }
+
   const pathMatch = query.match(/(?:^|\/)channels\/(?:join\/)?([^/?#]+)/)
   if (pathMatch?.[1]) {
     try {
@@ -22,9 +31,11 @@ export function parseChannelSearchSlug(raw: string): string | null {
   if (query.includes("://")) {
     try {
       const url = new URL(query.startsWith("http") ? query : `https://${query}`)
+      const fromParam = url.searchParams.get("id") || url.searchParams.get("slug")
       const fromPath = url.pathname.match(/\/channels\/(?:join\/)?([^/]+)/)?.[1]
-      if (fromPath) {
-        query = decodeURIComponent(fromPath).toLowerCase()
+      const chosen = fromParam || fromPath
+      if (chosen) {
+        query = decodeURIComponent(chosen).toLowerCase()
       }
     } catch {
       return null

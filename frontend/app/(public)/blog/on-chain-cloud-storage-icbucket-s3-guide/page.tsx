@@ -70,10 +70,10 @@ const faqJsonLd = {
     },
     {
       "@type": "Question",
-      name: "Is icBucket compatible with standard AWS S3 tools?",
+      name: "How do I integrate icBucket into my apps?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes. icBucket implements the standard S3 REST API specifications. You can use standard tools including the AWS CLI, rclone, Boto3 (Python), and @aws-sdk/client-s3 (Node.js) simply by configuring the icBucket endpoint.",
+        text: "You can integrate icBucket directly using the official, high-performance client libraries: icpay-bucket on npm (Node.js/TypeScript) and icpay-bucket with ic-py on PyPI (Python), along with direct HTTP CDN delivery.",
       },
     },
     {
@@ -228,39 +228,36 @@ export default function IcBucketS3GuidePage() {
           3. Developer Integration in 60 Seconds
         </h2>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          You can interact with your icBucket using the standard AWS CLI by specifying the icBucket endpoint:
+          Install the official, production-ready ICPay Cloud client library from npm or PyPI:
         </p>
         
         <div className="rounded-xl border border-border bg-card p-4 font-mono text-xs space-y-2 text-foreground">
-          <div className="text-muted-foreground"># Sync your static assets to icBucket</div>
+          <div className="text-muted-foreground"># Install via npm or pip</div>
           <div className="text-primary font-bold">
-            aws s3 sync ./dist s3://my-bucket/ \<br />
-            &nbsp;&nbsp;--endpoint-url https://icpay.app/api/s3
+            npm i icpay-bucket<br />
+            pip install icpay-bucket ic-py
           </div>
         </div>
 
         <div className="rounded-xl border border-border bg-card p-4 space-y-2">
           <h3 className="text-xs font-bold text-foreground uppercase tracking-wider">Node.js / TypeScript Example</h3>
           <pre className="rounded bg-muted p-3 font-mono text-xs overflow-x-auto text-foreground">
-{`import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
+{`import { BucketClient } from "icpay-bucket";
 
-const client = new S3Client({
-  endpoint: "https://icpay.app/api/s3",
-  region: "auto",
-  credentials: {
-    accessKeyId: process.env.ICPAY_BUCKET_KEY!,
-    secretAccessKey: process.env.ICPAY_BUCKET_SECRET!,
-  },
-})
+const client = new BucketClient({
+  apiKey: process.env.IC_API_KEY!, // icp_cloud_...
+});
 
-await client.send(
-  new PutObjectCommand({
-    Bucket: "my-bucket",
-    Key: "data.json",
-    Body: JSON.stringify({ status: "on-chain" }),
-    ContentType: "application/json",
-  })
-)`}
+// Upload directly to on-chain canister
+await client.uploadFile({
+  bucketId: "my-bucket",
+  path: "/data.json",
+  data: new TextEncoder().encode(JSON.stringify({ status: "on-chain" })),
+  contentType: "application/json",
+});
+
+// Download and verify
+const data = await client.downloadFile("my-bucket", "/data.json");`}
           </pre>
         </div>
       </section>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -423,6 +424,7 @@ export function TransferForm({
 
           <DrawerFooter className="mt-3">
             <Button onClick={handleConfirm} disabled={loading}>
+              {loading && <Spinner data-icon="inline-start" />}
               {loading ? t("sending") : t("confirmSend")}
             </Button>
             <DrawerClose

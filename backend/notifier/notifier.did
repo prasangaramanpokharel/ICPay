@@ -1,0 +1,41 @@
+type Result = variant {
+  ok;
+  err : text;
+};
+
+type NotifierStatus = record {
+  subscribersCount : nat;
+  totalEmailsSent : nat;
+  lastSweepAt : int;
+  timerActive : bool;
+  backendCanisterId : principal;
+};
+
+type HttpHeader = record {
+  name : text;
+  value : text;
+};
+
+type CanisterHttpResponse = record {
+  status : nat;
+  headers : vec HttpHeader;
+  body : blob;
+};
+
+type TransformArgs = record {
+  response : CanisterHttpResponse;
+  context : blob;
+};
+
+service : (principal) -> {
+  registerEmail : (text, text) -> (Result);
+  unregisterEmail : (text) -> (Result);
+  getEmail : (text) -> (opt text) query;
+  setApiKey : (text) -> ();
+  setFromEmail : (text) -> ();
+  setTimerActive : (bool) -> ();
+  setBackendPrincipal : (principal) -> ();
+  triggerManualSweep : () -> (nat);
+  getStatus : () -> (NotifierStatus) query;
+  transform : (TransformArgs) -> (CanisterHttpResponse) query;
+}

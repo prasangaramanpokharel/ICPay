@@ -35,8 +35,9 @@ import { useSearchParams } from "next/navigation"
 
 import { useMemo, useEffect, useState } from "react"
 
-export function CommunityChannelScreen() {
-  const slug = useChannelSlug()
+export function CommunityChannelScreen({ slug: propSlug }: { slug?: string } = {}) {
+  const dynamicSlug = useChannelSlug()
+  const slug = propSlug || dynamicSlug
   if (!slug || slug === "slug") {
     return null
   }

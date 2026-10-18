@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next"
 import { BLOG_POSTS } from "@/services/blog/blog"
 import { CHARITY_CAMPAIGNS } from "@/lib/public/charity/campaigns"
 import { listCachedIndexableChannelSnapshots } from "@/lib/community/publicCache"
+import { bucketDocSlugs } from "@/lib/bucket/docs/load"
 
 // IMPORTANT: Keep force-static. This runs listAllPublicChannelsForSeo() which
 // calls the IC canister. Without this, Next.js would re-execute that canister
@@ -61,33 +62,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     })),
   ]
 
-  const bucketDocEntries: MetadataRoute.Sitemap = [
-    "/bucket/docs",
-    "/bucket/docs/getting-started/overview",
-    "/bucket/docs/getting-started/quickstart",
-    "/bucket/docs/api/auth",
-    "/bucket/docs/api/buckets",
-    "/bucket/docs/api/bulk",
-    "/bucket/docs/api/keys",
-    "/bucket/docs/api/methods",
-    "/bucket/docs/api/pagination",
-    "/bucket/docs/api/read",
-    "/bucket/docs/api/tags",
-    "/bucket/docs/api/upload",
-    "/bucket/docs/api/write",
-    "/bucket/docs/cdn/verify",
-    "/bucket/docs/cdn/urls",
-    "/bucket/docs/sdk/python",
-    "/bucket/docs/sdk/typescript",
-  ].map((path) => ({
-    url: `${siteUrl}${path}`,
-    changeFrequency: "weekly" as const,
-    priority: path === "/bucket/docs" ? 0.85 : 0.75,
-  }))
+  const bucketDocEntries: MetadataRoute.Sitemap = bucketDocSlugs().map((slugParts) => {
+    const path = slugParts.length > 0 ? `/bucket/docs/${slugParts.join("/")}` : "/bucket/docs"
+    return {
+      url: `${siteUrl}${path}`,
+      changeFrequency: "weekly" as const,
+      priority: path === "/bucket/docs" ? 0.85 : 0.75,
+    }
+  })
 
   return [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
     { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${siteUrl}/contact`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${siteUrl}/faq`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${siteUrl}/roadmap`, changeFrequency: "weekly", priority: 0.6 },
     { url: `${siteUrl}/brand-protection`, changeFrequency: "monthly", priority: 0.6 },

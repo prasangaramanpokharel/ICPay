@@ -26,7 +26,7 @@ fi
 trap 'restore_api' EXIT
 
 export ICP_STATIC_EXPORT=1
-rm -rf "$frontend/.next" "$frontend/out"
+rm -rf "$frontend/.next" "$frontend/out" "$frontend/tsconfig.tsbuildinfo"
 npm --prefix "$frontend" run build
 
 rm -rf "$root/dist"

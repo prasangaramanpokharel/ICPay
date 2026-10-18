@@ -20,14 +20,14 @@ const PACKAGES = [
     label: "TypeScript / Node",
     install: "npm install icpay-bucket",
     href: "https://www.npmjs.com/package/icpay-bucket",
-    repo: "https://gitlab.com/prasangapokharel/icpay-bucket",
+    repo: "https://gitlab.com/prasangapokharel/icbucket",
   },
   {
     name: "PyPI",
     label: "Python",
     install: "pip install icpay-bucket",
     href: "https://pypi.org/project/icpay-bucket/",
-    repo: "https://gitlab.com/prasangapokharel/icpay-bucket",
+    repo: "https://gitlab.com/prasangapokharel/icbucket",
   },
   {
     name: "Go",

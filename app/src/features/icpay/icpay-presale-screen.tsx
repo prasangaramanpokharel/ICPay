@@ -103,8 +103,8 @@ export function IcpayPresaleScreen() {
               <View className="flex-row items-center gap-2">
                 <Text className="text-lg font-bold text-foreground">{t('heroTitle')}</Text>
                 {sale?.active ? (
-                  <View className="rounded-full bg-amber-500/15 px-2 py-0.5">
-                    <Text className="text-[10px] font-bold text-amber-500">{t('liveBadge')}</Text>
+                  <View className="rounded-full bg-primary/10 border border-primary/20 px-2 py-0.5">
+                    <Text className="text-[10px] font-bold text-primary">{t('liveBadge')}</Text>
                   </View>
                 ) : null}
               </View>
@@ -126,7 +126,7 @@ export function IcpayPresaleScreen() {
           <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             {t('rateInfoTitle')}
           </Text>
-          <Text className="mt-1 text-2xl font-bold tracking-tight text-amber-500">{t('heroRate')}</Text>
+          <Text className="mt-1 text-2xl font-bold tracking-tight text-foreground tabular-nums">{t('heroRate')}</Text>
         </View>
 
         {/* Progress & Raised Stats */}

@@ -217,7 +217,7 @@ export function TipDrawer({
               above it: the button is already locked, so a second element saying
               so only pushes the form around. */}
           <Button disabled={!canSend} onClick={handleSend}>
-            {loading && <Spinner className="size-4" />}
+            {loading && <Spinner data-icon="inline-start" />}
             {loading ? t("sending") : insufficient ? t("insufficient") : t("send")}
           </Button>
         </DrawerFooter>

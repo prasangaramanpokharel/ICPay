@@ -30,6 +30,13 @@ module {
     ?Array.tabulate<Text>(pathParts.size() - i, func(j) { pathParts[i + j] })
   };
 
+  public func isDirectChildFile(filePath: Text, prefix: Text) : Bool {
+    switch (relativeParts(filePath, prefix)) {
+      case (null) false;
+      case (?rel) rel.size() == 1;
+    }
+  };
+
   func addName(names: Map.Map<Text, ()>, name: Text) {
     if (name.size() > 0) { names.add(name, ()) };
   };

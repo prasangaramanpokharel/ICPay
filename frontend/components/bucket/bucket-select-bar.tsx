@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Delete02Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 
 export function BucketSelectBar({
   count,
@@ -40,8 +41,12 @@ export function BucketSelectBar({
             disabled={deleting}
             onClick={onDelete}
           >
-            <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
-            {t("delete")}
+            {deleting ? (
+              <Spinner data-icon="inline-start" />
+            ) : (
+              <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
+            )}
+            {deleting ? tc("loading") : t("delete")}
           </Button>
         ) : null}
       </div>

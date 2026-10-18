@@ -1,5 +1,5 @@
 export function channelMessagePath(slug: string, messageId: bigint | string | number): string {
-  return `/channels/${encodeURIComponent(slug)}/${messageId.toString()}`
+  return `/channels?id=${encodeURIComponent(slug)}&messageId=${messageId.toString()}`
 }
 
 export function channelMessageUrl(

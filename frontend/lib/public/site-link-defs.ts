@@ -67,4 +67,5 @@ export const PUBLIC_COMMUNITY_LINK_DEFS: SiteLinkDef[] = [
   { id: "x", href: "https://x.com/IcpayOfficial", external: true },
   { id: "linkedin", href: "https://www.linkedin.com/company/icpayofficial", external: true },
   { id: "discord", href: "https://discord.gg/icpay", external: true },
+  { id: "contact", href: "/contact" },
 ]

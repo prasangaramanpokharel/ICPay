@@ -1,0 +1,49 @@
+---
+title: "API Responses"
+description: "Structure of success envelopes, headers, metadata properties, and certified state signatures."
+group: "API Reference"
+order: 4
+---
+
+# API Responses
+
+All ICBucket endpoints return standardized HTTP status codes and JSON payloads for control operations, or direct binary streams for file retrieval.
+
+## Prerequisites
+
+- Client that inspects HTTP response status codes.
+
+## Success Response Structure
+
+When uploading or mutating a file, ICBucket returns an envelope with both CDN and on-chain raw URLs:
+
+```json
+{
+  "success": true,
+  "data": {
+    "name": "banner.webp",
+    "path": "assets/banner.webp",
+    "sizeBytes": 142058,
+    "contentType": "image/webp",
+    "publicUrl": "https://cdn.icpay.app/cloud/my-assets/assets/banner.webp",
+    "rawUrl": "https://6vbhm-nqaaa-aaaan-q6muq-cai.raw.icp0.io/my-assets/assets/banner.webp",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "createdAt": 1728518400000
+  }
+}
+```
+
+## Binary Stream Response Headers
+
+When fetching files via GET `/cloud/{bucket}/{file}`, headers include:
+
+- `Content-Type`: Original uploaded MIME type
+- `Content-Length`: Exact file size in bytes
+- `Cache-Control`: Configured cache policy (e.g. `public, max-age=31536000, immutable`)
+- `X-IC-Certificate`: IC boundary node cryptographic witness
+
+## Related Pages
+
+- [Endpoints](./endpoints.mdx)
+- [Error Codes](../../errors/error-codes.mdx)
+- [Types Reference](../../reference/types.mdx)

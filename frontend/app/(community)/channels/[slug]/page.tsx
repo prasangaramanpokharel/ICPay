@@ -5,8 +5,10 @@ import {
   isChannelIndexable,
 } from "@/lib/community/seo"
 import { getCachedPublicChannelSnapshot } from "@/lib/community/publicCache"
+import { Suspense } from "react"
 import { listAllPublicChannelsForSeo } from "@/services/community/community"
 import { ChannelSlugView } from "@/components/community/channel-slug-view"
+import { Spinner } from "@/components/ui/spinner"
 import type { CommunityChannelSnapshot } from "@/lib/community/snapshot"
 
 export async function generateStaticParams() {
@@ -45,7 +47,17 @@ export default async function ChannelPublicPage({ params }: PageProps) {
   const { slug } = await params
 
   if (slug === "slug") {
-    return <ChannelSlugView slug={slug} channel={null} />
+    return (
+      <Suspense
+        fallback={
+          <div className="flex min-h-svh items-center justify-center">
+            <Spinner className="size-6 text-muted-foreground" />
+          </div>
+        }
+      >
+        <ChannelSlugView slug={slug} channel={null} />
+      </Suspense>
+    )
   }
 
   const channel = await getChannelWithTimeout(slug)
@@ -60,7 +72,15 @@ export default async function ChannelPublicPage({ params }: PageProps) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       ) : null}
-      <ChannelSlugView slug={slug} channel={channel} />
+      <Suspense
+        fallback={
+          <div className="flex min-h-svh items-center justify-center">
+            <Spinner className="size-6 text-muted-foreground" />
+          </div>
+        }
+      >
+        <ChannelSlugView key={slug} slug={slug} channel={channel} />
+      </Suspense>
     </>
   )
 }

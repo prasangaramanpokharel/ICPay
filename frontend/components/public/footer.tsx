@@ -6,15 +6,12 @@ import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
 import type { SiteLink } from "@/lib/public/site-links"
 import { ThemeToggle } from "@/components/public/theme-toggle"
 import { usePublicSiteLinks } from "@/hooks/i18n/use-public-site-links"
+import { Gitlab } from "@dev.icons/react"
 
 function getCommunityIcon(label: string, href: string) {
   const l = (label + href).toLowerCase()
   if (l.includes("gitlab")) {
-    return (
-      <svg viewBox="0 0 24 24" className="size-3.5 shrink-0 fill-current opacity-70 group-hover:opacity-100 transition-opacity">
-        <path d="m23.6 9.58-1.02-3.14a.8.8 0 0 0-.3-.39.84.84 0 0 0-.49-.14.86.86 0 0 0-.5.15.82.82 0 0 0-.29.4L19.2 11.9H4.8L3 6.46a.82.82 0 0 0-.29-.4.86.86 0 0 0-.5-.15.84.84 0 0 0-.49.14.8.8 0 0 0-.3.39L.4 9.58a.9.9 0 0 0 .33 1l11.08 8.06a.37.37 0 0 0 .38 0L23.27 10.6a.9.9 0 0 0 .33-1.02Z"/>
-      </svg>
-    )
+    return <Gitlab size={15} className="shrink-0 opacity-80 group-hover:opacity-100 transition-opacity" />
   }
   if (l.includes("github")) {
     return (
@@ -44,6 +41,13 @@ function getCommunityIcon(label: string, href: string) {
       </svg>
     )
   }
+  if (l.includes("mailto") || l.includes("email") || l.includes("contact") || l.includes("support")) {
+    return (
+      <svg viewBox="0 0 24 24" className="size-3.5 shrink-0 fill-none stroke-current stroke-2 opacity-70 group-hover:opacity-100 transition-opacity">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+      </svg>
+    )
+  }
   return null
 }
 
@@ -52,8 +56,13 @@ function FooterLink({ link }: { link: SiteLink }) {
   const className = "group inline-flex items-center gap-2 text-sm text-muted-foreground/75 transition-colors hover:text-foreground"
 
   if (link.external) {
+    const isMailto = link.href.startsWith("mailto:")
     return (
-      <a href={link.href} target="_blank" rel="noopener noreferrer" className={className}>
+      <a
+        href={link.href}
+        {...(!isMailto ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+        className={className}
+      >
         {icon}
         <span>{link.label}</span>
       </a>
@@ -134,6 +143,16 @@ export function PublicFooter() {
               <p className="mt-2 max-w-[10.5rem] text-[11px] leading-relaxed text-muted-foreground/80">
                 {footerLabels.copyright}
               </p>
+              <a
+                href="mailto:contact@icpay.cloud"
+                className="mt-3 inline-flex items-center gap-1.5 text-xs text-muted-foreground/80 transition-colors hover:text-foreground"
+                title="Support & Inquiries"
+              >
+                <svg viewBox="0 0 24 24" className="size-3.5 shrink-0 fill-none stroke-current stroke-2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+                </svg>
+                <span>contact@icpay.cloud</span>
+              </a>
             </div>
 
             <div className="mt-10 lg:mt-auto lg:pt-10">

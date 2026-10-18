@@ -284,7 +284,7 @@ export function BuyIcpayDrawer({
             <Button className="w-full" disabled={!canBuy} onClick={handleBuy}>
               {loading ? (
                 <>
-                  <Spinner className="size-4" />
+                  <Spinner data-icon="inline-start" />
                   {t("buying")}
                 </>
               ) : inactive ? (

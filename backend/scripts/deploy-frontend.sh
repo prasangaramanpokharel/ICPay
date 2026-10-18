@@ -33,9 +33,18 @@ done
 # A stale build still answers 200 on every path because the SPA fallback serves
 # index.html, so the status code proves nothing on its own -- only the copy does.
 echo
-if curl -s "$base/terms.html" | grep -q "Terms of Service"; then
-  echo "  OK: /terms.html contains the legal copy."
-else
+verified=0
+for i in {1..6}; do
+  if curl -s "$base/terms.html" | grep -q "Terms of Service"; then
+    echo "  OK: /terms.html contains the legal copy."
+    verified=1
+    break
+  fi
+  echo "  Waiting for edge boundary nodes to propagate... ($i/6)"
+  sleep 2
+done
+
+if [ "$verified" -ne 1 ]; then
   echo "  STALE: /terms.html is the SPA fallback, not the terms page." >&2
   exit 1
 fi

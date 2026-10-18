@@ -44,7 +44,7 @@ export function DashboardActions() {
             className="flex flex-col items-center gap-1.5 transition-transform active:scale-95"
           >
             <span className="flex size-11 items-center justify-center rounded-full bg-muted text-foreground">
-              <HugeiconsIcon icon={item.icon} className="size-5" strokeWidth={1.75} />
+              <HugeiconsIcon icon={item.icon} className="size-5 text-primary" strokeWidth={1.75} />
             </span>
             <span className="text-[11px] font-medium lowercase text-foreground">
               {t(item.labelKey)}
@@ -62,7 +62,7 @@ export function DashboardActions() {
             <Button
               key={item.href}
               variant={item.labelKey === "common.swap" ? "default" : "outline"}
-              className="h-10 justify-start gap-2 rounded-xl px-3"
+              className="h-10 justify-start gap-2 rounded-xl px-3 transition-all duration-150 hover:-translate-y-0.5 hover:shadow-xs active:translate-y-0 active:scale-[0.98]"
               nativeButton={false}
               render={<Link href={item.href} />}
             >

@@ -3,31 +3,21 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { motion } from "motion/react"
 import { HeroSignOptions } from "@/components/public/hero-sign-options"
 import { Button } from "@/components/ui/button"
-import {
-  Globe,
-  DEFAULT_COUNTRY_NODES,
-  type GlobeCountryNode,
-} from "@/components/ui/globe"
-import { LocaleFlag } from "@/components/i18n/locale-flag"
-import { cn } from "@/lib/ui/utils"
-
-function GitLabIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="currentColor" {...props}>
-      <path d="m23.6 9.58-1.02-3.14a.8.8 0 0 0-.3-.39.84.84 0 0 0-.49-.14.86.86 0 0 0-.5.15.82.82 0 0 0-.29.4L19.2 11.9H4.8L3 6.46a.82.82 0 0 0-.29-.4.86.86 0 0 0-.5-.15.84.84 0 0 0-.49.14.8.8 0 0 0-.3.39L.4 9.58a.9.9 0 0 0 .33 1l11.08 8.06a.37.37 0 0 0 .38 0L23.27 10.6a.9.9 0 0 0 .33-1.02Z"/>
-    </svg>
-  )
-}
+import { MetatronsCubeSvg } from "@/components/ui/svg-shapes-animated"
+import { Gitlab } from "@dev.icons/react"
 
 export function HeroSection() {
   const t = useTranslations("publicSite.icbucket.hero")
-  const [selectedCountry, setSelectedCountry] = useState<GlobeCountryNode | null>(null)
+  const [replayKey, setReplayKey] = useState<number>(0)
 
   return (
-    <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 md:px-6 md:py-14 lg:grid-cols-2 lg:items-center lg:gap-16">
+    <section className="border-b border-border/60 bg-background relative overflow-hidden">
+
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 md:px-6 md:py-20 lg:py-24 lg:grid-cols-2 lg:items-center lg:gap-16 relative z-10">
+        {/* Left Column: Headline, Actions & Sign options */}
         <div className="space-y-6">
           <p className="shimmer text-xs font-semibold uppercase tracking-[0.24em] text-primary shimmer-duration-3000">
             {t("eyebrow")}
@@ -41,7 +31,7 @@ export function HeroSection() {
           <div className="flex flex-wrap gap-3">
             <Button
               size="lg"
-              className="rounded-full px-6"
+              className="rounded-full px-6 cursor-pointer font-semibold shadow-md"
               nativeButton={false}
               render={<Link href="/bucket" />}
             >
@@ -50,23 +40,23 @@ export function HeroSection() {
             <Button
               size="lg"
               variant="outline"
-              className="gap-2 rounded-full px-5"
+              className="gap-2 rounded-full px-5 cursor-pointer font-medium"
               nativeButton={false}
               render={
                 <Link
-                  href="https://gitlab.com/prasangapokharel/icpay"
+                  href="https://gitlab.com/prasangapokharel/icbucket"
                   target="_blank"
                   rel="noopener noreferrer"
                 />
               }
             >
-              <GitLabIcon />
+              <Gitlab size={16} />
               <span>GitLab</span>
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="rounded-full px-5"
+              className="rounded-full px-5 cursor-pointer font-medium"
               nativeButton={false}
               render={<Link href="/bucket/docs" />}
             >
@@ -76,78 +66,31 @@ export function HeroSection() {
           <HeroSignOptions />
         </div>
 
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative mx-auto flex aspect-square w-full max-w-md items-center justify-center bg-transparent lg:max-w-lg">
-            <Globe
-              selectedCountryId={selectedCountry?.id}
-              onSelectCountry={setSelectedCountry}
-            />
-          </div>
+        {/* Right Column: Floating Metatron's Cube Geometry (No card, bg-transparent, slow stroke animation) */}
+        <div className="flex items-center justify-center w-full">
+          <div
+            onClick={() => setReplayKey((k) => k + 1)}
+            title="Click to replay slow animation"
+            className="relative mx-auto flex aspect-square w-full max-w-md sm:max-w-lg lg:max-w-xl items-center justify-center bg-transparent cursor-pointer select-none group"
+          >
+            {/* Soft Ambient Radial Glow */}
+            <div className="pointer-events-none absolute -inset-6 rounded-full bg-[radial-gradient(circle_at_center,var(--primary)/18,transparent_70%)] blur-3xl transition-opacity duration-700 group-hover:opacity-100" />
 
-          {/* Active Subnet Country Node Details */}
-          {selectedCountry && (
-            <div className="w-full max-w-md rounded-2xl border border-border/60 bg-card/85 p-3.5 shadow-sm backdrop-blur-md transition-all duration-300">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5">
-                  <LocaleFlag
-                    country={selectedCountry.country}
-                    label={selectedCountry.name}
-                    size="md"
-                    className="size-5 rounded-full object-cover shadow-xs shrink-0"
-                  />
-                  <div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold text-foreground">
-                        {selectedCountry.name}
-                      </span>
-                      <span className="rounded bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-semibold text-emerald-400">
-                        Subnet Active
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-muted-foreground">{selectedCountry.region}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4 text-xs font-mono text-right">
-                  <div>
-                    <span className="text-[10px] text-muted-foreground block">Capacity</span>
-                    <span className="font-semibold text-foreground">{selectedCountry.nodes} Canisters</span>
-                  </div>
-                  <div>
-                    <span className="text-[10px] text-muted-foreground block">Latency</span>
-                    <span className="font-semibold text-emerald-400">{selectedCountry.latency}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Quick Country Selector Chips */}
-          <div className="flex flex-wrap items-center justify-center gap-1.5 max-w-md">
-            {DEFAULT_COUNTRY_NODES.map((node) => {
-              const isSelected = selectedCountry?.id === node.id
-              return (
-                <button
-                  key={node.id}
-                  type="button"
-                  onClick={() => setSelectedCountry(node)}
-                  className={cn(
-                    "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition-all duration-200 cursor-pointer",
-                    isSelected
-                      ? "border-primary bg-primary/10 text-primary font-medium shadow-xs"
-                      : "border-border/60 bg-muted/40 text-muted-foreground hover:border-border hover:bg-muted/80 hover:text-foreground"
-                  )}
-                >
-                  <LocaleFlag
-                    country={node.country}
-                    label={node.name}
-                    size="sm"
-                    className="size-3.5 rounded-full object-cover shrink-0"
-                  />
-                  <span>{node.name.split(" ")[0]}</span>
-                </button>
-              )
-            })}
+            {/* Slow-draw Animated Metatron's Cube Geometry with Floating Motion */}
+            <motion.div
+              key={replayKey}
+              animate={{ y: [-5, 5, -5], rotate: [-0.3, 0.3, -0.3] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+              className="relative z-10 w-full h-full flex items-center justify-center drop-shadow-[0_0_24px_rgba(244,63,94,0.25)] dark:drop-shadow-[0_0_36px_rgba(244,63,94,0.45)] transition-all duration-500"
+            >
+              <MetatronsCubeSvg
+                tightViewBox
+                themed
+                duration={3.8}
+                staggerDelay={0.045}
+                className="w-full h-full max-w-full max-h-full"
+              />
+            </motion.div>
           </div>
         </div>
       </div>

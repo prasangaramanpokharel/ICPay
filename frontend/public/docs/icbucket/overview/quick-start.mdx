@@ -1,0 +1,88 @@
+---
+title: "Quick Start"
+description: "Get started with ICBucket in under 5 minutes with our step-by-step onboarding walkthrough."
+group: "Overview"
+order: 2
+---
+
+# Quick Start
+
+Get your decentralized storage pipeline operational in under five minutes. In this tutorial, you will initialize the official client SDK, connect using your bucket credentials, and upload your first file to the Internet Computer.
+
+## Prerequisites
+
+- Node.js 18+ or Python 3.9+
+- An ICBucket created from the [ICPay Dashboard](/bucket)
+- Your Bucket ID (e.g. `my-app-assets`) and Read/Write API key
+
+## Steps
+
+### 1. Install the SDK
+
+Choose your preferred package manager:
+
+```bash
+npm install icpay-bucket
+```
+
+### 2. Configure Environment Variables
+
+Create or update your `.env.local` file:
+
+```bash
+ICBUCKET_API_KEY=icp_live_sec_994a8e2b
+ICBUCKET_ID=my-app-assets
+NEXT_PUBLIC_ICBUCKET_CDN=https://cdn.icpay.app
+```
+
+### 3. Initialize the Client and Upload a File
+
+Create a small test script `upload.ts`:
+
+```typescript
+import { ICBucket } from "icpay-bucket"
+import fs from "node:fs"
+
+async function main() {
+  const bucket = new ICBucket({
+    bucketId: process.env.ICBUCKET_ID!,
+    apiKey: process.env.ICBUCKET_API_KEY!,
+  })
+
+  const buffer = fs.readFileSync("./avatar.png")
+
+  // Upload directly to decentralized storage
+  const result = await bucket.uploadFile("avatar.png", buffer, {
+    contentType: "image/png",
+    visibility: "public",
+  })
+
+  console.log("Upload successful!")
+  console.log("CDN URL:", result.publicUrl)
+  console.log("Raw Canister URL:", result.rawUrl)
+}
+
+main().catch(console.error)
+```
+
+## Verification
+
+Run your script:
+
+```bash
+npx tsx upload.ts
+```
+
+Test access by opening the printed CDN URL in your browser or curling it:
+
+```bash
+curl -I https://cdn.icpay.app/cloud/my-app-assets/avatar.png
+```
+
+You should receive an `HTTP/2 200 OK` response with `Content-Type: image/png` and edge cache headers.
+
+## Related Pages
+
+- [Installation](../overview/installation.mdx)
+- [Configuration](../../guides/configuration.mdx)
+- [Basic Usage](../../guides/basic-usage.mdx)

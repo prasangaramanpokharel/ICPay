@@ -5,10 +5,8 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { BucketBackButton } from "@/components/bucket/bucket-back-button"
-import {
-  BucketDocsMobileNav,
-  BucketDocsMobileNavFallback,
-} from "@/components/products/icbucket/bucket-docs-sidebar"
+import { BucketDocsMobileNav, BucketDocsMobileNavFallback } from "@/components/products/icbucket/bucket-docs-sidebar"
+import { Gitlab } from "@dev.icons/react"
 import type { BucketDocNavGroup } from "@/lib/bucket/docs/types"
 
 export function BucketDocsChrome({
@@ -43,6 +41,21 @@ export function BucketDocsChrome({
               className="rounded-full"
             >
               {t("pricingLink")}
+            </Button>
+            <Button
+              variant="outline"
+              nativeButton={false}
+              render={
+                <Link
+                  href="https://gitlab.com/prasangapokharel/icbucket"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                />
+              }
+              className="rounded-full gap-2 cursor-pointer"
+            >
+              <Gitlab size={15} />
+              <span>GitLab</span>
             </Button>
           </div>
         </div>

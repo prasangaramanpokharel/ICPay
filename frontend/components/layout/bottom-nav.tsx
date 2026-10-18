@@ -21,13 +21,16 @@ export function BottomNav() {
     <nav
       className={cn(
         "fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md",
-        "px-3 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-2",
+        "px-3.5 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-1",
       )}
     >
       <div
         className={cn(
-          "grid min-h-[4.5rem] grid-cols-5 items-stretch rounded-3xl px-0.5 py-1",
-          "border border-border/60 bg-background/95 shadow-lg backdrop-blur-xl",
+          "grid h-16 grid-cols-5 items-center rounded-3xl px-1.5 py-1",
+          "border border-border/60 dark:border-white/10",
+          "bg-card/85 dark:bg-card/75 backdrop-blur-2xl",
+          "shadow-[0_12px_36px_-6px_rgba(0,0,0,0.12)]",
+          "dark:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.6)]",
         )}
       >
         {APP_NAV_ITEMS.map((item) => (
@@ -51,7 +54,6 @@ function NavTab({
   label,
   icon,
   active,
-  center,
   onWarm,
 }: {
   href: string
@@ -69,31 +71,24 @@ function NavTab({
       onFocus={onWarm}
       aria-label={label}
       aria-current={active ? "page" : undefined}
-      className="flex min-w-0 flex-col items-center justify-end gap-0.5 px-0.5 pb-0.5 pt-1 transition-transform active:scale-95"
+      className={cn(
+        "group relative flex min-w-0 flex-col items-center justify-center py-1 transition-transform duration-150 active:scale-95 focus-visible:outline-none",
+        active ? "text-primary" : "text-muted-foreground hover:text-foreground"
+      )}
     >
-      <span
-        className={cn(
-          "flex size-9 shrink-0 items-center justify-center rounded-full transition-colors",
-          center
-            ? cn(
-                "bg-primary text-primary-foreground ring-1 ring-border/60",
-                active && "ring-primary/40",
-              )
-            : cn(
-                active ? "bg-muted text-foreground" : "text-muted-foreground",
-              ),
-        )}
-      >
+      <span className="relative flex size-8 items-center justify-center transition-colors">
         <HugeiconsIcon
           icon={icon}
-          className={cn(center ? "size-5" : "size-5")}
-          strokeWidth={center ? 2 : 1.75}
+          className="size-5 transition-transform duration-200 group-hover:scale-105"
+          strokeWidth={active ? 2 : 1.75}
         />
       </span>
       <span
         className={cn(
-          "max-w-full truncate text-[11px] leading-none",
-          active ? "font-semibold text-foreground" : "font-medium text-muted-foreground",
+          "mt-0.5 max-w-full truncate text-[10.5px] leading-none transition-colors",
+          active
+            ? "font-semibold text-primary"
+            : "font-medium text-muted-foreground group-hover:text-foreground"
         )}
       >
         {label}

@@ -23,7 +23,6 @@ const shells = [
   { file: "launch/id.html", id: "launch-id" },
   { file: "token/token.html", id: "token-ledger" },
   { file: "token/token/deposit.html", id: "token-deposit" },
-  { file: "icpverse/profile.html", id: "icpverse-profile" },
   { file: "canister/id.html", id: "canister-id" },
   { file: "canister/id/settings.html", id: "canister-settings" },
   { file: "transactions/id.html", id: "transactions-id" },
