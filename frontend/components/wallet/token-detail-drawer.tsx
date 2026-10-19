@@ -192,11 +192,11 @@ export function TokenDetailDrawer({
                 <div className="pt-1">
                   <ButtonGroup className="w-full">
                     <Button
-                      variant="outline"
+                      variant="default"
                       size="sm"
                       type="button"
                       onClick={() => setSendOpen(true)}
-                      className="flex-1 h-9 text-xs font-semibold cursor-pointer border-border/80"
+                      className="flex-1 h-9 text-xs font-semibold cursor-pointer"
                     >
                       {t("send")}
                     </Button>
