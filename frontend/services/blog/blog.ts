@@ -32,6 +32,15 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "2-tib-subnets-enterprise-cloud-engines-on-chain-storage",
+    title: "The 2 TiB Subnet Milestone & Enterprise Cloud Engines: Why 2026 Marks the Turning Point for On-Chain Storage",
+    description:
+      "DFINITY's expansion to 2 TiB replicated state per subnet and the launch of Enterprise Cloud Engines have fundamentally redefined decentralized cloud infrastructure. Here is an in-depth architectural breakdown of on-chain state replication, the ShadowBridge migration protocol, the Mission 70 deflationary burn flywheel, and how icBucket delivers true sovereign S3-compatible storage.",
+    publishedAt: "2026-10-19",
+    readingMinutes: 14,
+    category: "Infrastructure",
+  },
+  {
     slug: "cloud-storage-pricing-comparison-2026",
     title: "Cloud Storage Pricing Comparison 2026: AWS vs Google vs Azure vs ICBucket",
     description:
