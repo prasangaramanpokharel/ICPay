@@ -3,7 +3,10 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 MOC="$(mops toolchain bin moc 2>/dev/null || echo "/home/prasanga/.cache/mops/moc/1.8.0/moc")"
-CORE_PKG="$HOME/.cache/mops/packages/core@2.5.0/src"
+CORE_PKG="${ROOT}/.mops/core@2.5.0/src"
+if [ ! -d "$CORE_PKG" ]; then
+  CORE_PKG="$HOME/.cache/mops/packages/core@2.5.0/src"
+fi
 
 PASS=0
 FAIL=0

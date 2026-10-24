@@ -39,7 +39,6 @@ export function buildNavGroups(pages: BucketDocMeta[]): BucketDocNavGroup[] {
     }
   }
 
-  // Include any other groups not in preset list
   for (const [label, list] of byGroup.entries()) {
     if (!seenGroups.has(label)) {
       result.push({

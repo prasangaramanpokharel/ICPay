@@ -159,7 +159,7 @@ export function MyCanisterAddControllerDialog({
                 }
               >
                 {submitting && <Spinner data-icon="inline-start" />}
-                {submitting ? t("addControllerSubmitting") : t("addControllerConfirm")}
+                <span>{submitting ? t("addControllerSubmitting") : t("addControllerConfirm")}</span>
               </Button>
             </DialogFooter>
           </form>

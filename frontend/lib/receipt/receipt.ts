@@ -8,28 +8,17 @@ export type Receipt = {
   recipient: string
   blockIndex: bigint
   memo?: string
-  // The card is shared for any ICRC-1 token, so the ticker and its scale travel
-  // with the amount rather than being assumed to be ICP's.
   symbol?: string
   decimals?: number
-  // Priced at share time from the same feed the dashboard uses. Optional: the
-  // card must still render when CoinGecko is rate-limiting, and only ICP has a
-  // quote here at all.
   usdPrice?: number
 }
 
 const WIDTH = 1080
 const HEIGHT = 1480
 
-// --primary from globals.css, resolved to sRGB. The card is rasterised outside
-// the document, so no CSS custom property is in scope to read.
 const BRAND = "#c6005c"
 const BRAND_BRIGHT = "#f43b80"
 
-// Memos are free text and a recipient can be a raw principal, so every
-// interpolated value is escaped before it reaches the SVG. Without this a memo
-// containing "</text>" would break out of the node and could inject markup into
-// the document we rasterise.
 function escapeXml(s: string): string {
   return s.replace(/[<>&"']/g, (c) => {
     switch (c) {
@@ -42,8 +31,6 @@ function escapeXml(s: string): string {
   })
 }
 
-// Long principals would overflow the card, so they are middle-truncated the same
-// way the success screen shows them.
 function shortenRecipient(recipient: string): string {
   if (recipient.startsWith("@")) {
     return recipient.length > 20 ? `${recipient.slice(0, 19)}…` : recipient
@@ -59,16 +46,11 @@ function formatUsd(n: number): string {
   return `$${n.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
 }
 
-// Local midnight-relative, not UTC: the timestamp is for the person sharing the
-// card, so it should read as their clock did.
 function stamp(d: Date): string {
   const p = (n: number) => String(n).padStart(2, "0")
   return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`
 }
 
-// An SVG loaded through an <img> cannot fetch external resources, so the logo,
-// avatar and QR all have to be inlined as data URIs before rasterising. Fetched
-// once per session -- the file never changes.
 let logoPromise: Promise<string> | null = null
 function logoDataUri(): Promise<string> {
   logoPromise ??= fetch(ICP_LOGO)
@@ -85,16 +67,11 @@ function logoDataUri(): Promise<string> {
   return logoPromise
 }
 
-// Re-encoded as base64 because DiceBear returns a percent-encoded SVG payload,
-// which carries characters that would terminate the href attribute it gets
-// embedded in.
 function avatarDataUri(seed: string): string {
   const svg = createAvatar(adventurer, { seed }).toString()
   return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`
 }
 
-// Links to the ledger block, so anyone scanning the card lands on the
-// transaction itself rather than a marketing page.
 async function qrDataUri(blockIndex: bigint): Promise<string> {
   const mod = await import("qrcode")
   return mod.toDataURL(explorerTxUrl(blockIndex), {
@@ -111,20 +88,13 @@ export async function receiptSvg(receipt: Receipt): Promise<string> {
   const avatar = avatarDataUri(recipient)
 
   const to = escapeXml(shortenRecipient(recipient))
-  // Capped at 4 decimals rather than the token's own: 18 places of ckETH would
-  // run off the widest line on the card.
   const value = escapeXml(formatTokenAmount(amount, decimals, 4))
   const ticker = escapeXml(symbol)
   const block = escapeXml(blockIndex.toString())
   const note = memo?.trim() ? escapeXml(truncate(memo.trim(), 38)) : null
-  // SendSuccess also covers withdrawals to one's own account, where "tip" would
-  // be wrong. A handle recipient is the only case that is unambiguously a tip.
   const heading = recipient.startsWith("@") ? "Tip Sent" : "Sent"
   const date = escapeXml(stamp(new Date()))
 
-  // CoinGecko rate-limits anonymous callers, so the price can legitimately be
-  // missing, and only ICP is quoted at all. The whole row is dropped rather than
-  // showing a placeholder dash, which reads as a broken card.
   const usd = usdPrice
     ? `  <text x="66" y="880" font-family="system-ui, -apple-system, sans-serif" font-size="36" fill="#8a8a8a">Value</text>
   <text x="66" y="946" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="600" fill="#ffffff">${escapeXml(formatUsd((Number(amount) / 10 ** decimals) * usdPrice))}</text>
@@ -132,9 +102,6 @@ export async function receiptSvg(receipt: Receipt): Promise<string> {
   <text x="560" y="946" font-family="system-ui, -apple-system, sans-serif" font-size="48" font-weight="600" fill="#ffffff">${escapeXml(formatUsd(usdPrice))}</text>`
     : ""
 
-  // A large balance ("12,345.6789") is more than twice the width of "1.5" and
-  // would run past the card edge at the base size, so the figure is stepped down
-  // instead of clipped.
   const valueSize = value.length > 13 ? 86 : value.length > 9 ? 108 : 132
 
   return `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${WIDTH}" height="${HEIGHT}" viewBox="0 0 ${WIDTH} ${HEIGHT}">
@@ -149,8 +116,6 @@ export async function receiptSvg(receipt: Receipt): Promise<string> {
 
   <rect width="${WIDTH}" height="${HEIGHT}" fill="url(#bg)"/>
 
-  <!-- Bleeds off the right edge and is clipped at the footer rule, so the mark
-       reads as a watermark behind the content rather than a placed logo. -->
   <g clip-path="url(#markClip)" opacity="0.07">
     <image xlink:href="${logo}" x="600" y="60" width="700" height="700" preserveAspectRatio="xMidYMid meet"/>
     <image xlink:href="${logo}" x="330" y="470" width="420" height="420" preserveAspectRatio="xMidYMid meet"/>
@@ -181,9 +146,6 @@ ${note ? `  <text x="66" y="1090" font-family="system-ui, -apple-system, sans-se
 </svg>`
 }
 
-// Rasterised through an Image rather than drawn with canvas text calls so the
-// layout above stays the single source of truth. The blob URL is revoked on both
-// paths; leaking it would pin the decoded bitmap for the page's lifetime.
 export async function receiptPng(receipt: Receipt): Promise<Blob> {
   const svg = await receiptSvg(receipt)
   const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }))
@@ -230,13 +192,6 @@ function triggerDownload(blob: Blob, filename: string): void {
 
 export type ShareOutcome = "shared" | "downloaded" | "cancelled"
 
-// Share sheet where available, download otherwise. canShare is checked with the
-// actual file because iOS Safari advertises navigator.share but rejects file
-// payloads, which would otherwise throw after the user had already tapped.
-//
-// Takes a rendered blob so the preview can hand over the image already on
-// screen: re-rasterising here would spend a second between the tap and the
-// share sheet, and on iOS that gap is long enough to lose the user gesture.
 export async function shareReceipt(blob: Blob, blockIndex: bigint): Promise<ShareOutcome> {
   const filename = receiptFilename(blockIndex)
   const file = new File([blob], filename, { type: "image/png" })
@@ -246,9 +201,6 @@ export async function shareReceipt(blob: Blob, blockIndex: bigint): Promise<Shar
       await navigator.share({ files: [file] })
       return "shared"
     } catch (e) {
-      // Dismissing the share sheet rejects with AbortError. That is a
-      // deliberate choice, not a failure, so it must not fall through to a
-      // surprise download.
       if (e instanceof Error && e.name === "AbortError") return "cancelled"
       triggerDownload(blob, filename)
       return "downloaded"

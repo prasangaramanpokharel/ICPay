@@ -1,4 +1,3 @@
-/** Remove pre-backend folder keys — folders now live on the canister only. */
 const LEGACY_PREFIXES = ["icpay:bucket-", "bucket-folder:", "icbucket:folder"] as const
 
 export function clearLegacyBucketStorage(): void {

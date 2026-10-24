@@ -23,6 +23,9 @@ export const PAGE_IMAGES = {
     hero: page("icfalcon/hero.webp"),
     og: page("icfalcon/og.png"),
   },
+  icacademy: {
+    hero: page("icacademy/hero.png"),
+  },
   login: {
     bg: page("login/bg.webp"),
   },

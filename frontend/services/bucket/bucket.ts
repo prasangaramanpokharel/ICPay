@@ -17,6 +17,8 @@ import type {
   BucketRenewQuote,
   BucketRenewResult,
   BucketVisibilityVariant,
+  FilePublic,
+  FilePathOp,
   FileListPage,
   BucketCycleStatus,
   BucketBillingPeriod,
@@ -33,13 +35,13 @@ export type {
   BucketRenewResult,
   BucketVisibilityVariant,
   FilePublic,
+  FilePathOp,
   FileListPage,
   BucketCycleStatus,
   BucketBillingPeriod,
   BucketBillingPeriodVariant,
 } from "@/services/bucket/types"
 
-/** Query — no auth required; uses an anonymous agent when logged out. */
 export async function getBucketPrice(
   identity: Identity | undefined,
   capacityGB: number
@@ -54,7 +56,6 @@ export async function getBucketPrice(
   }
 }
 
-/** Query yearly price (365 days / 2 months free) — no auth required. */
 export async function getBucketYearlyPrice(
   identity: Identity | undefined,
   capacityGB: number
@@ -275,6 +276,44 @@ export async function bulkDeleteFiles(
     deleted += res.ok
   }
   return { ok: deleted }
+}
+
+export function moveFile(
+  identity: Identity | undefined,
+  bucketId: string,
+  sourcePath: string,
+  destinationPath: string,
+  apiKey?: string
+): Promise<Outcome<FilePublic>> {
+  return call(identity, "Move failed", (actor) =>
+    actor.moveFile(
+      bucketId,
+      sourcePath,
+      destinationPath,
+      apiKey ? [apiKey] : []
+    ) as Promise<Outcome<FilePublic>>
+  )
+}
+
+const BULK_MOVE_MAX = 20
+
+export async function bulkMoveFiles(
+  identity: Identity | undefined,
+  bucketId: string,
+  operations: FilePathOp[],
+  apiKey?: string
+): Promise<Outcome<bigint>> {
+  if (operations.length === 0) return { ok: 0n }
+  let moved = 0n
+  for (let i = 0; i < operations.length; i += BULK_MOVE_MAX) {
+    const chunk = operations.slice(i, i + BULK_MOVE_MAX)
+    const res = await call(identity, "Move failed", (actor) =>
+      actor.bulkMoveFiles(bucketId, chunk, apiKey ? [apiKey] : []) as Promise<Outcome<bigint>>
+    )
+    if ("err" in res) return res
+    moved += res.ok
+  }
+  return { ok: moved }
 }
 
 export function downloadFileBlob(

@@ -5,14 +5,10 @@ import { fetchFiatRates } from "@/lib/fiat/fiat"
 import { CURRENCIES } from "@/lib/fiat/config"
 import { useFiatCurrency } from "@/components/fiat/fiat-provider"
 
-// A constant key per currency, so every component asking for the same
-// conversion shares one cache entry and one request.
 function ratesKey(code: string) {
   return ["fiat-rates", code]
 }
 
-// Fetches the USD→<currency> rate and formats a USD amount in that currency.
-// The provider supplies the active currency; this hook owns the API call.
 export function useFiatValue(usdValue: number | null) {
   const { currency } = useFiatCurrency()
 

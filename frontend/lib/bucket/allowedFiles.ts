@@ -1,4 +1,3 @@
-/** Video extensions blocked — keep in sync with backend FileValidator.mo. */
 export const VIDEO_BLOCKED_EXTENSIONS = new Set([
   "mp4",
   "webm",
@@ -17,7 +16,6 @@ export const VIDEO_BLOCKED_EXTENSIONS = new Set([
   "ogv",
 ])
 
-/** Executable / script markup blocked before upload (SVG converts to WebP client-side). */
 export const EXECUTABLE_BLOCKED_EXTENSIONS = new Set([
   "html",
   "htm",
@@ -55,7 +53,6 @@ export const EXECUTABLE_BLOCKED_EXTENSIONS = new Set([
   "dat",
 ])
 
-/** All client-blocked extensions (video + executable). SVG is allowed — converted to WebP. */
 export const BLOCKED_EXTENSIONS = new Set([
   ...VIDEO_BLOCKED_EXTENSIONS,
   ...EXECUTABLE_BLOCKED_EXTENSIONS,
@@ -129,7 +126,6 @@ export function mimeFromExtension(ext: string): string | null {
   return EXT_TO_MIME[e] ?? null
 }
 
-// Native picker filter — validation still runs in uploadValidationError.
 export const FILE_ACCEPT = Object.entries(EXT_TO_MIME)
   .flatMap(([ext, mime]) => [`.${ext}`, mime])
   .join(",")
@@ -148,7 +144,6 @@ const MIME_TO_EXT: Record<string, string> = {
   "image/svg+xml": "svg",
 }
 
-/** Infer extension when iOS omits it from the filename. */
 export function inferExtensionFromMime(mime: string): string | null {
   const type = mime.trim().toLowerCase()
   if (MIME_TO_EXT[type]) return MIME_TO_EXT[type]
@@ -159,10 +154,6 @@ export function inferExtensionFromMime(mime: string): string | null {
   return null
 }
 
-/**
- * iOS often returns HEIC photos with a missing or wrong extension.
- * Normalize before validation/compression so the pipeline can run.
- */
 export function normalizeUploadFile(file: File): File {
   const ext = pathExtension(file.name)
   const inferred = !ext ? inferExtensionFromMime(file.type) : null
@@ -175,7 +166,6 @@ export function normalizeUploadFile(file: File): File {
     })
   }
 
-  // HEIC bytes sometimes arrive as IMG_1234.jpg on iOS
   if (
     (file.type === "image/heic" || file.type === "image/heif") &&
     ext !== "heic" &&
@@ -192,10 +182,6 @@ export function normalizeUploadFile(file: File): File {
   return file
 }
 
-/**
- * Client-side pre-check only — size + blocked video extensions.
- * Does not use file.type. Backend validates bytes + extension on upload.
- */
 export function isUploadCandidate(file: File, maxBytes: number): boolean {
   if (!file || file.size <= 0 || file.size > maxBytes) return false
 

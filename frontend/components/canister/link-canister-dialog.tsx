@@ -77,7 +77,6 @@ export function LinkCanisterDialog({
   const [isVerified, setIsVerified] = useState(false)
   const [copiedId, setCopiedId] = useState(false)
 
-  // Reset dialog state when opened without cascading render issues
   const [prevOpen, setPrevOpen] = useState(open)
   if (open !== prevOpen) {
     setPrevOpen(open)
@@ -159,9 +158,7 @@ export function LinkCanisterDialog({
       setCopiedId(true)
       toast.success("Successfully copied")
       setTimeout(() => setCopiedId(false), 2000)
-    } catch {
-      // ignore
-    }
+    } catch {}
   }
 
   return (
@@ -186,7 +183,6 @@ export function LinkCanisterDialog({
           </DialogDescription>
         </DialogHeader>
 
-        {/* Stepper Progress Bar */}
         <div className="space-y-2 pt-1">
           <div className="relative h-1.5 w-full rounded-full bg-muted overflow-hidden">
             <motion.div
@@ -203,7 +199,6 @@ export function LinkCanisterDialog({
             />
           </div>
 
-          {/* Stepper Navigation Pills - formal, clean text, no icons */}
           <div className="flex gap-1">
             {STEPS.map((step, index) => {
               const isActive = index === activeStep
@@ -232,7 +227,7 @@ export function LinkCanisterDialog({
                   {isVerifyingThis ? (
                     <Badge variant="outline" className="h-5 px-1.5 text-[10px] font-normal gap-1">
                       <Spinner data-icon="inline-start" />
-                      Verifying
+                      <span>Verifying</span>
                     </Badge>
                   ) : (
                     <span>{step.title}</span>
@@ -245,7 +240,6 @@ export function LinkCanisterDialog({
 
         <Separator className="my-1" />
 
-        {/* Stepper Animated Content */}
         <div className="min-h-[220px] flex flex-col justify-center min-w-0 max-w-full overflow-hidden">
           <AnimatePresence mode="wait">
             {activeStep === 0 && (
@@ -349,7 +343,6 @@ export function LinkCanisterDialog({
                 transition={{ duration: 0.2 }}
                 className="space-y-4 min-w-0 max-w-full overflow-hidden"
               >
-                {/* Target badge */}
                 <div className="flex items-center justify-between rounded-lg border border-border/70 bg-muted/30 px-3 py-2 text-xs">
                   <div className="flex items-center gap-2 truncate">
                     <span className="text-muted-foreground">Target:</span>
@@ -363,7 +356,7 @@ export function LinkCanisterDialog({
                   {isVerifying ? (
                     <Badge variant="outline" className="text-[11px] h-5">
                       <Spinner data-icon="inline-start" />
-                      Verifying
+                      <span>Verifying</span>
                     </Badge>
                   ) : (
                     <button
@@ -376,7 +369,6 @@ export function LinkCanisterDialog({
                   )}
                 </div>
 
-                {/* DFX Command Code Block */}
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-medium text-foreground flex items-center gap-1.5">
@@ -397,14 +389,12 @@ export function LinkCanisterDialog({
                   </p>
                 </div>
 
-                {/* Minimal Verification Incomplete Message - clean destructive text */}
                 {verifyError && (
                   <p className="text-xs text-destructive font-medium">
                     Verification Incomplete: {verifyError}
                   </p>
                 )}
 
-                {/* Action buttons - formal, no icons */}
                 <div className="space-y-2 pt-2">
                   <div className="flex items-center justify-between gap-2">
                     <Button
@@ -424,7 +414,7 @@ export function LinkCanisterDialog({
                       className="cursor-pointer font-medium"
                     >
                       {isVerifying && <Spinner data-icon="inline-start" />}
-                      {isVerifying ? "Verifying..." : "Verify Controller"}
+                      <span>{isVerifying ? "Verifying..." : "Verify Controller"}</span>
                     </Button>
                   </div>
 
@@ -451,7 +441,6 @@ export function LinkCanisterDialog({
                 transition={{ duration: 0.25 }}
                 className="flex flex-col items-center justify-center text-center py-2"
               >
-                {/* Payment Success Tick SVG */}
                 <div className="animate-in fade-in zoom-in-75 mb-3 flex items-center justify-center text-success duration-200">
                   <HugeiconsIcon icon={Tick02Icon} className="size-12" strokeWidth={2.5} />
                 </div>
@@ -465,7 +454,6 @@ export function LinkCanisterDialog({
                     : "The canister has been saved to your dashboard for cycles monitoring and top-ups."}
                 </p>
 
-                {/* Summary Card */}
                 <div className="mt-4 w-full rounded-xl border border-border/70 bg-muted/30 p-3.5 text-left text-xs space-y-2.5">
                   {draftName.trim() && (
                     <div className="flex items-center justify-between">

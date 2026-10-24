@@ -46,10 +46,6 @@ export function useSavedCanisterEntries(
   }
 }
 
-/**
- * Synchronizes linked canisters between the browser and the on-chain cnsmangment canister.
- * Seamlessly populates linked canisters when logging in from new devices/browsers.
- */
 export function useSyncCloudCanisters(identity: Identity | null | undefined): void {
   const principal = identity?.getPrincipal().toText() ?? ""
 
@@ -61,7 +57,6 @@ export function useSyncCloudCanisters(identity: Identity | null | undefined): vo
       if (remote && remote.length > 0) {
         mergeRemoteCanisters(principal, remote)
       }
-      // If local storage has entries not yet in cloud, sync them up
       const currentLocal = listSavedCanisterEntries(principal)
       const remoteIds = new Set((remote ?? []).map((r) => r.id))
       const toSync = currentLocal.filter((l) => !remoteIds.has(l.id))

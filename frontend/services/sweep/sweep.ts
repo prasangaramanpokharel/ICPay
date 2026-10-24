@@ -29,12 +29,6 @@ function describe(err: TransferError): string {
   return "The transfer was rejected."
 }
 
-/**
- * Moves funds sitting at the user's own principal into their ICPay custodial
- * subaccount, signed by the browser identity. Nothing is stored: Internet
- * Identity issues an unscoped delegation, so the same identity that signs into
- * the wallet can sign a ledger transfer as its own owner.
- */
 export async function sweepToCustody(
   identity: Identity | undefined,
   ledgerId: string,

@@ -215,9 +215,9 @@ curl -O "https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${bucketName}/uploads/h
               </Button>
             ) : null}
             <Button
-              type="button"
               variant="ghost"
               size="sm"
+              nativeButton={false}
               render={<Link href="/bucket/docs" />}
               className="gap-1.5 text-muted-foreground hover:text-foreground"
             >

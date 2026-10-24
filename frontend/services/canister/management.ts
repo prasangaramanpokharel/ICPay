@@ -157,7 +157,6 @@ function rejectDetails(err: unknown): { code?: number; text: string } {
   }
 }
 
-/** Management APIs only succeed for controllers — map replica rejects cleanly. */
 export function isControllerDenied(err: unknown): boolean {
   const { text } = rejectDetails(err)
   const lower = text.toLowerCase()

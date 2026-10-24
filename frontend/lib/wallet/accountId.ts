@@ -46,11 +46,6 @@ function normalize(subaccount?: Uint8Array | number[]): Uint8Array | undefined {
   return sub.some((b) => b !== 0) ? sub : undefined
 }
 
-/**
- * ICRC-1 textual encoding. A non-default subaccount is appended as
- * `<principal>-<checksum>.<subaccount>` — dropping it would make funds
- * unattributable, so the full form must always be shown to the user.
- */
 export function icrc1Account(owner: Principal, subaccount?: Uint8Array | number[]): string {
   const sub = normalize(subaccount)
   if (!sub) return owner.toText()
@@ -70,14 +65,6 @@ export function icrc1Account(owner: Principal, subaccount?: Uint8Array | number[
 
 const ACCOUNT_ID_DOMAIN = new TextEncoder().encode("\x0Aaccount-id")
 
-/**
- * The legacy account identifier for the same account: crc32 ++ sha224 over a
- * domain-separated owner and subaccount. Mirrors Principal.toLedgerAccount on
- * the canister side, verified byte-for-byte against getDepositAccountIdentifier.
- *
- * Derived rather than fetched because that endpoint is scoped to its caller, so
- * a visitor looking at someone else's profile cannot ask for it.
- */
 export function accountIdentifier(owner: Principal, subaccount?: Uint8Array | number[]): string {
   const sub = subaccount
     ? subaccount instanceof Uint8Array

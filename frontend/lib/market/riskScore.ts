@@ -1,17 +1,11 @@
 import { premiumTier } from "@/lib/verified/premiumTick"
 import { RESERVED_BRANDS } from "@/lib/profile/reservedBrands"
 
-// Higher score = safer recipient. 0–100, clamped.
-// Each signal contributes up to its stated max. Missing data (profile not yet
-// loaded, ledger not queried) contributes 0 rather than penalising the sender
-// while data is in flight.
-
 export type RiskLevel = "low" | "medium" | "high"
 
 export type RiskScore = {
   score: number
   level: RiskLevel
-  // Ordered list of what the score is built from, shown to the user.
   reasons: string[]
 }
 
@@ -41,8 +35,8 @@ function isBrandSimilar(name: string): boolean {
 
 export function computeRiskScore(params: {
   username: string | null
-  createdAtNs: bigint | null  // from UserPublic.createdAt
-  txCount: number | null      // from NNS index, null = not loaded yet
+  createdAtNs: bigint | null
+  txCount: number | null
   reasonKeys: {
     hasUsername: string
     badgePremium: string
@@ -56,12 +50,10 @@ export function computeRiskScore(params: {
   let score = 0
   const reasons: string[] = []
 
-  // 1. Has a username on ICPay — 20 pts
   if (username) {
     score += 20
     reasons.push(reasonKeys.hasUsername)
 
-    // 2. Badge tier — gold (ultra/premium) 30 pts, blue (standard/basic) 20 pts
     const tier = premiumTier(username)
     if (tier === "gold") {
       score += 30
@@ -72,7 +64,6 @@ export function computeRiskScore(params: {
     }
   }
 
-  // 3. Account age — up to 20 pts
   if (createdAtNs !== null) {
     const days = Math.floor((Date.now() - Number(createdAtNs / NS_PER_MS)) / DAY_MS)
     const agePts = days >= 90 ? 20 : days >= 30 ? 14 : days >= 7 ? 8 : 0
@@ -80,14 +71,12 @@ export function computeRiskScore(params: {
     if (agePts > 0) reasons.push(reasonKeys.accountAge)
   }
 
-  // 4. Has on-chain transactions — up to 30 pts
   if (txCount !== null && txCount > 0) {
     const txPts = txCount >= 10 ? 30 : txCount >= 5 ? 20 : txCount >= 1 ? 10 : 0
     score += txPts
     if (txPts > 0) reasons.push(reasonKeys.hasTx)
   }
 
-  // Penalty: brand-similar name caps score at 25
   if (username && isBrandSimilar(username)) {
     score = Math.min(score, 25)
     reasons.unshift(reasonKeys.brandSimilar)

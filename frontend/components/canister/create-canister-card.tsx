@@ -326,7 +326,7 @@ export function CreateCanisterCard() {
                     }}
                   >
                     {(!hydrated || connecting || isLoading) && <Spinner data-icon="inline-start" />}
-                    {!hydrated || connecting || isLoading ? t("connecting") : t("signIn")}
+                    <span>{!hydrated || connecting || isLoading ? t("connecting") : t("signIn")}</span>
                   </Button>
                 ) : (
                   <Button
@@ -336,11 +336,13 @@ export function CreateCanisterCard() {
                     onClick={() => void onCreate()}
                   >
                     {submitting && <Spinner data-icon="inline-start" />}
-                    {submitting
-                      ? flowStep === "send"
-                        ? t("sending")
-                        : t("creating")
-                      : t("create")}
+                    <span>
+                      {submitting
+                        ? flowStep === "send"
+                          ? t("sending")
+                          : t("creating")
+                        : t("create")}
+                    </span>
                   </Button>
                 )}
                 <p className="text-xs leading-relaxed text-muted-foreground">{t("disclaimer")}</p>

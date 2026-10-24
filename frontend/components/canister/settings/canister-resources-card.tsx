@@ -115,7 +115,6 @@ export function CanisterResourcesCard({
       <CardContent>
         <form onSubmit={handleSave} className="flex flex-col gap-4">
           <FieldGroup className="grid gap-4 sm:grid-cols-2">
-            {/* Freezing Threshold */}
             <Field className="gap-1.5">
               <FieldLabel htmlFor="res-freezing" className="text-xs font-medium">
                 Freezing Threshold (Days)
@@ -134,7 +133,6 @@ export function CanisterResourcesCard({
               </FieldDescription>
             </Field>
 
-            {/* Compute Allocation */}
             <Field className="gap-1.5">
               <FieldLabel htmlFor="res-compute" className="text-xs font-medium">
                 Compute Allocation (%)
@@ -154,7 +152,6 @@ export function CanisterResourcesCard({
               </FieldDescription>
             </Field>
 
-            {/* Memory Allocation */}
             <Field className="gap-1.5">
               <FieldLabel htmlFor="res-mem" className="text-xs font-medium">
                 Memory Allocation (MB)
@@ -173,7 +170,6 @@ export function CanisterResourcesCard({
               </FieldDescription>
             </Field>
 
-            {/* Wasm Memory Limit */}
             <Field className="gap-1.5">
               <FieldLabel htmlFor="res-wasm" className="text-xs font-medium">
                 Wasm Memory Limit (MB)
@@ -201,7 +197,7 @@ export function CanisterResourcesCard({
                 ) : (
                   <HugeiconsIcon icon={FloppyDiskIcon} data-icon="inline-start" />
                 )}
-                {saving ? "Saving…" : "Save Resource Limits"}
+                <span>{saving ? "Saving…" : "Save Resource Limits"}</span>
               </Button>
             </div>
           )}

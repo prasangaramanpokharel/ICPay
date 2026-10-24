@@ -50,7 +50,6 @@ export async function registerBucketEmail(
 ): Promise<string | null> {
   const actor = await getNotifierActor(identity)
   if (!actor) {
-    // Offline / unconfigured graceful fallback: store locally
     try {
       if (typeof window !== "undefined") {
         window.localStorage.setItem(`icpay_bucket_email_${bucketId}`, email)

@@ -1,4 +1,3 @@
-/** Mirrors icpay_trade SERVICE_FEE_BPS (0.1%) and MIN_SERVICE_FEE. */
 export const SERVICE_FEE_BPS = 10n
 export const MIN_SERVICE_FEE = 1n
 
@@ -16,12 +15,10 @@ export function amountAfterServiceFee(amountIn: bigint): bigint {
   return amountIn > fee ? amountIn - fee : 0n
 }
 
-/** Wallet must cover input plus one ledger transfer to the trade canister. */
 export function requiredWalletDebit(amountIn: bigint, ledgerFee: bigint): bigint {
   return amountIn + ledgerFee
 }
 
-/** Minimum input so swap amount stays positive after 0.1% service fee and deposit ledger fee. */
 export function minTradeInput(ledgerFee: bigint): bigint {
   return ledgerFee * 3n + MIN_SERVICE_FEE + 1n
 }

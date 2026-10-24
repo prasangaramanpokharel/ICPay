@@ -13,7 +13,6 @@ export type TradeQuoteOpts = TradeQuoteFees & {
 
 export { fetchTradeQuote }
 
-/** Preload wallet + trade actors while the user reviews the confirm drawer. */
 export async function warmTradeSession(identity: Identity | undefined): Promise<void> {
   if (!identity) return
   await Promise.all([getWalletActor(identity), getTradeActor(identity)])

@@ -1,6 +1,3 @@
-// The single source of truth for what currencies exist. Adding one means
-// appending here -- nothing else. Frankfurter v2 can quote any of its 201
-// currencies, so the list is only what the UI offers, not what the API knows.
 export const CURRENCIES = [
   { code: "USD", label: "US Dollar", symbol: "$" },
   { code: "EUR", label: "Euro", symbol: "€" },

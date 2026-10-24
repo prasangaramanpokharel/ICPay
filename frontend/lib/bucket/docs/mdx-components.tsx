@@ -125,9 +125,7 @@ function resolveMdxHref(href?: string): string {
   ) {
     return href
   }
-  // Strip .mdx and .md extensions
   let clean = href.replace(/\.mdx?$/, "")
-  // Normalize relative directory references like ../overview/installation or ./configuration
   clean = clean.replace(/^\.\.\//, "").replace(/^\.\//, "")
   if (!clean.startsWith("/bucket/docs") && !clean.startsWith("/")) {
     clean = `/bucket/docs/${clean}`

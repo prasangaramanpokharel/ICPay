@@ -13,6 +13,7 @@ import {
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import { Spinner } from "@/components/ui/spinner"
 import {
   AlertDialog,
@@ -166,7 +167,6 @@ export function CanisterLifecycleCard({
         </CardContent>
       </Card>
 
-      {/* Stop Confirmation Dialog */}
       <AlertDialog open={stopConfirmOpen} onOpenChange={setStopConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -177,19 +177,20 @@ export function CanisterLifecycleCard({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={busyAction === "stop"}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              disabled={busyAction === "stop"}
-              onClick={() => handleToggleState("stop")}
-            >
-              {busyAction === "stop" && <Spinner data-icon="inline-start" />}
-              {busyAction === "stop" ? "Stopping…" : "Stop Canister"}
-            </AlertDialogAction>
+            <ButtonGroup>
+              <AlertDialogCancel disabled={busyAction === "stop"}>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={busyAction === "stop"}
+                onClick={() => handleToggleState("stop")}
+              >
+                {busyAction === "stop" && <Spinner data-icon="inline-start" />}
+                <span>{busyAction === "stop" ? "Stopping…" : "Stop Canister"}</span>
+              </AlertDialogAction>
+            </ButtonGroup>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -201,15 +202,17 @@ export function CanisterLifecycleCard({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={busyAction === "delete"}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              disabled={busyAction === "delete"}
-              onClick={handleDelete}
-            >
-              {busyAction === "delete" && <Spinner data-icon="inline-start" />}
-              {busyAction === "delete" ? "Deleting…" : "Delete Permanently"}
-            </AlertDialogAction>
+            <ButtonGroup>
+              <AlertDialogCancel disabled={busyAction === "delete"}>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                variant="destructive"
+                disabled={busyAction === "delete"}
+                onClick={handleDelete}
+              >
+                {busyAction === "delete" && <Spinner data-icon="inline-start" />}
+                <span>{busyAction === "delete" ? "Deleting…" : "Delete Permanently"}</span>
+              </AlertDialogAction>
+            </ButtonGroup>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

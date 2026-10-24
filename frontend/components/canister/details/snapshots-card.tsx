@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Camera01Icon, RefreshIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -352,13 +353,15 @@ export function SnapshotsCard({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              variant={confirm?.kind === "delete" ? "destructive" : "default"}
-              onClick={() => void onConfirm()}
-            >
-              {confirm?.kind === "load" ? t("load") : t("delete")}
-            </AlertDialogAction>
+            <ButtonGroup>
+              <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+              <AlertDialogAction
+                variant={confirm?.kind === "delete" ? "destructive" : "default"}
+                onClick={() => void onConfirm()}
+              >
+                <span>{confirm?.kind === "load" ? t("load") : t("delete")}</span>
+              </AlertDialogAction>
+            </ButtonGroup>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

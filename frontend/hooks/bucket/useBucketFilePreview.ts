@@ -20,7 +20,6 @@ export function useBucketFilePreview(bucketId: string, file: FilePublic | null) 
   const publicUrl = publicRaw ? normalizePublicFileUrl(publicRaw) : null
   const path = file?.path ?? ""
 
-  // When CDN img load fails, fall back to canister download for this path only.
   const [cdnFailedPath, setCdnFailedPath] = useState<string | null>(null)
   const useCanister = !publicUrl || cdnFailedPath === path
 

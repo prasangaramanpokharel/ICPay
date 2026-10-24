@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Delete02Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import { Spinner } from "@/components/ui/spinner"
 
 export function BucketSelectBar({
@@ -29,27 +30,28 @@ export function BucketSelectBar({
       <p className="text-sm">
         {t("selectedCount", { count: String(count) })}
       </p>
-      <div className="flex items-center gap-2">
-        <Button type="button" variant="ghost" size="sm" disabled={deleting} onClick={onClear}>
+      <ButtonGroup>
+        <Button type="button" variant="outline" size="sm" disabled={deleting} onClick={onClear}>
           {tc("cancel")}
         </Button>
         {canWrite ? (
           <Button
             type="button"
-            variant="destructive"
+            variant="outline"
             size="sm"
             disabled={deleting}
             onClick={onDelete}
+            className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
           >
             {deleting ? (
               <Spinner data-icon="inline-start" />
             ) : (
-              <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
+              <HugeiconsIcon icon={Delete02Icon} className="size-4 text-destructive" strokeWidth={1.75} />
             )}
-            {deleting ? tc("loading") : t("delete")}
+            <span>{deleting ? tc("loading") : t("delete")}</span>
           </Button>
         ) : null}
-      </div>
+      </ButtonGroup>
     </div>
   )
 }

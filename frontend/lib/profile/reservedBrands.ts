@@ -1,6 +1,3 @@
-// Mirrors the mainnet reserve list (`listReservedUsernames` on the canister).
-// Held here rather than fetched so the page renders for a crawler and for anyone
-// not signed in -- the canister call needs an agent, this needs nothing.
 export const RESERVED_BRANDS: readonly string[] = [
   "adele",
   "adidas",

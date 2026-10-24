@@ -134,7 +134,6 @@ export function MyCanisterControls({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
             <DropdownMenuGroup>
-              {/* Top up cycles - available to all */}
               <DropdownMenuItem
                 onClick={() => setTopupOpen(true)}
                 className="cursor-pointer gap-2"
@@ -143,12 +142,10 @@ export function MyCanisterControls({
                 <span>Top up cycles</span>
               </DropdownMenuItem>
 
-              {/* Controller-only actions */}
               {canControl && (
                 <>
                   <DropdownMenuSeparator />
 
-                  {/* Start or Stop Canister */}
                   {running ? (
                     <DropdownMenuItem
                       onClick={() => setStopOpen(true)}
@@ -179,7 +176,6 @@ export function MyCanisterControls({
 
                   <DropdownMenuSeparator />
 
-                  {/* Add Controller */}
                   <DropdownMenuItem
                     onClick={() => setAddControllerOpen(true)}
                     className="cursor-pointer gap-2"
@@ -188,7 +184,6 @@ export function MyCanisterControls({
                     <span>{t("addController")}</span>
                   </DropdownMenuItem>
 
-                  {/* Transfer */}
                   <DropdownMenuItem
                     onClick={() => setTransferOpen(true)}
                     className="cursor-pointer gap-2"
@@ -210,15 +205,17 @@ export function MyCanisterControls({
             <AlertDialogDescription>{t("stopConfirmBody")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t("topUpCancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              disabled={busy === "stop"}
-              onClick={() => void run("stop")}
-            >
-              {busy === "stop" && <Spinner data-icon="inline-start" />}
-              {busy === "stop" ? t("stopping") : t("stop")}
-            </AlertDialogAction>
+            <ButtonGroup>
+              <AlertDialogCancel>{t("topUpCancel")}</AlertDialogCancel>
+              <AlertDialogAction
+                variant="destructive"
+                disabled={busy === "stop"}
+                onClick={() => void run("stop")}
+              >
+                {busy === "stop" && <Spinner data-icon="inline-start" />}
+                <span>{busy === "stop" ? t("stopping") : t("stop")}</span>
+              </AlertDialogAction>
+            </ButtonGroup>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

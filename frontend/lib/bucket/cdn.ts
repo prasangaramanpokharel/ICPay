@@ -1,6 +1,5 @@
 import { WALLET_CANISTER_ID } from "@/services/icp"
 
-/** Production CDN host — proxied to the canister /cloud/ route. */
 export const BUCKET_CDN_ORIGIN = "https://cdn.icpay.app"
 
 const LEGACY_GATEWAY =
@@ -10,10 +9,6 @@ const RAW_CLOUD_RE = new RegExp(
   `^https://(?:[a-z0-9-]+\\.)?raw\\.icp0\\.io/cloud/([^?#]+)`
 )
 
-/**
- * CDN base for bucket URLs. Defaults to https://cdn.icpay.app.
- * Can be overridden via NEXT_PUBLIC_BUCKET_CDN_URL.
- */
 export function getBucketCdnBase(): string {
   const explicit = process.env.NEXT_PUBLIC_BUCKET_CDN_URL
   if (explicit !== undefined) {
@@ -39,7 +34,6 @@ export function rawCloudTail(url: string): string | null {
   return null
 }
 
-/** Map any bucket URL form to the canister raw /cloud/ URL. */
 export function toRawCanisterUrl(url: string): string {
   const tail = rawCloudTail(url)
   if (tail) return `https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${tail}`
@@ -51,7 +45,6 @@ export function toRawCanisterUrl(url: string): string {
   return url
 }
 
-/** Map any bucket URL form to the edge CDN /cloud/ URL. */
 export function toCdnUrl(url: string): string {
   const cdnBase = getBucketCdnBase()
   const tail = rawCloudTail(url)
@@ -61,31 +54,26 @@ export function toCdnUrl(url: string): string {
 
 export type BucketUrlMode = "cdn" | "raw"
 
-/** Resolve a bucket URL to the CDN host by default, or the raw canister host. */
 export function resolvePublicFileUrl(url: string, mode: BucketUrlMode = "cdn"): string {
   if (mode === "raw") return toRawCanisterUrl(url)
   return toCdnUrl(url)
 }
 
-/** CDN base for a bucket, e.g. https://cdn.icpay.app/cloud/{bucketName}. */
 export function bucketCdnBaseUrl(bucketName: string): string {
   const cdnBase = getBucketCdnBase()
   return `${cdnBase}/cloud/${bucketName}`
 }
 
-/** Raw canister base for a bucket, e.g. https://{canisterId}.raw.icp0.io/cloud/{bucketName}. */
 export function bucketRawBaseUrl(bucketName: string): string {
   return `https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${bucketName}`
 }
 
-/** CDN URL for a file, e.g. https://cdn.icpay.app/cloud/{bucketName}/{path}. */
 export function bucketCdnFileUrl(bucketName: string, path: string): string {
   const cleanPath = path.startsWith("/") ? path.slice(1) : path
   const cdnBase = getBucketCdnBase()
   return `${cdnBase}/cloud/${bucketName}/${cleanPath}`
 }
 
-/** Raw canister URL for a file, e.g. https://{canisterId}.raw.icp0.io/cloud/{bucketName}/{path}. */
 export function bucketRawFileUrl(bucketName: string, path: string): string {
   const cleanPath = path.startsWith("/") ? path.slice(1) : path
   return `https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${bucketName}/${cleanPath}`

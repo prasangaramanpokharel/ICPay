@@ -170,8 +170,6 @@ export type TokenPublic = {
   immutable: boolean
   status: TokenStatusVariant
   ledgerId: [] | [string]
-  // Exposed so a holder can check the deployed code against the published hash
-  // rather than taking "we deploy the audited wasm" on trust.
   moduleHash: [] | [Uint8Array | number[]]
   cyclesFunded: [] | [bigint]
   createdAt: bigint

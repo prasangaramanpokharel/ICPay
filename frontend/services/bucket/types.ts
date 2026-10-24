@@ -63,6 +63,11 @@ export type FilePublic = {
   publicUrl: [] | [string]
 }
 
+export type FilePathOp = {
+  source: string
+  destination: string
+}
+
 export type FileListPage = {
   items: FilePublic[]
   folders: string[]

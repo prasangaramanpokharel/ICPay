@@ -235,7 +235,7 @@ export function MyCanisterTransferDialog({
               onClick={() => void onConfirm()}
             >
               {submitting && <Spinner data-icon="inline-start" />}
-              {submitting ? t("transferring") : t("transferConfirm")}
+              <span>{submitting ? t("transferring") : t("transferConfirm")}</span>
             </Button>
           </DialogFooter>
         </DialogContent>

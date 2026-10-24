@@ -80,7 +80,6 @@ export async function getStorageActor(
   }) as unknown as StorageActor
 }
 
-/** Direct CDN URL to the storage canister via certified boundary nodes */
 export function getDirectStorageUrl(canisterId: string, blobId: string): string {
   const cleanId = blobId.startsWith("/") ? blobId.slice(1) : blobId
   return `https://${canisterId}.raw.icp0.io/${cleanId}`

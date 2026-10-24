@@ -11,7 +11,6 @@ export type SwapQuoteFees = {
   tokenOutFee?: bigint
 }
 
-/** Free ICPSwap queries — full tokenIn to pool; ICP service fee is separate (legacy swap). */
 export async function fetchIcpswapQuote(
   identity: Identity | undefined,
   tokenIn: string,

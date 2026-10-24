@@ -22,6 +22,7 @@ npm run ci cycles:balance -- --local
 | `npm run ci cycles:balance [canister]` | Cycles left. **Watch this one** — at zero the canister is deleted, taking every user record with it. |
 | `npm run ci canister:status [name]` | Cycles, memory, controllers, module hash. |
 | `npm run ci bucket:stats` | Cloud bucket usage, sales rollup, and top-up guidance. |
+| `npm run ci blob:audit` | Full icBucket infrastructure audit across control plane, blob store, sharding headroom, and notifier. |
 | `npm run ci backend:hash` | The live module hash. This is the version marker, and the argument you pass to a rollback. |
 | `npm run ci trade:hash` | The live module hash for the `icpay_trade` DEX canister. |
 | `npm run ci backend:logs` | Canister logs. |
@@ -108,7 +109,7 @@ is happening is normal.
 
 | Cost | Commands |
 |---|---|
-| **0 — query only** | `users:count`, `bucket:stats`, `canister:status`, `canister:info`, `canister:call` (default), `ledger:balance`, `ledger:history`, `backend:hash`, `trade:hash`, `backend:logs`, `cycles:balance`, `cycles:address`, `backend:build`, `trade:build`, `backend:test`, `trade:test`, `frontend:build` |
+| **0 — query only** | `users:count`, `bucket:stats`, `blob:audit`, `canister:status`, `canister:info`, `canister:call` (default), `ledger:balance`, `ledger:history`, `backend:hash`, `trade:hash`, `backend:logs`, `cycles:balance`, `cycles:address`, `backend:build`, `trade:build`, `backend:test`, `trade:test`, `frontend:build` |
 | **Canister update (~67M/call)** | `backend:deploy`, `trade:deploy`, `backend:register`, `backend:sweep`, `backend:sweep-icpay`, `backend:wasm`, `backend:reclaim`, `frontend:deploy`, `canister:call … --update` |
 | **ICP from operator wallet** | `cycles:convert`, `ledger:transfer` |
 | **Cycles ledger → canister** | `cycles:topup` |
@@ -170,9 +171,11 @@ never claimed a handle are not in the username index.
 | Command | What it does |
 |---|---|
 | `npm run ci bucket:stats` | Bucket count, storage used vs sold, file count, cycle burn, and a top-up suggestion. |
+| `npm run ci blob:audit` | Comprehensive icBucket infrastructure audit (control plane, blob store, sharding headroom, notifier plane, unit economics). |
 
 ```bash
 npm run ci bucket:stats
+npm run ci blob:audit
 ```
 
 Shows:

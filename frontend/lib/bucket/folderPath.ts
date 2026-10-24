@@ -1,4 +1,3 @@
-/** Prefix like `photos/` (no leading slash). Empty string is the bucket root. */
 export function normalizePrefix(prefix: string): string {
   const p = prefix.replace(/^\/+|\/+$/g, "")
   return p ? `${p}/` : ""
@@ -115,7 +114,6 @@ export function prefixSegments(prefix: string): string[] {
   return p ? p.slice(0, -1).split("/") : []
 }
 
-/** Backend listFolder prefix — absolute path segment like `/` or `/public/`. */
 export function apiListFolderPrefix(prefix: string): string {
   const p = normalizePrefix(prefix)
   return p ? `/${p}` : "/"

@@ -38,9 +38,7 @@ export async function fetchFalconPackages(): Promise<FalconPackage[]> {
       const parsed = parsePackagesFromIndex(data)
       if (parsed.length > 0) return parsed
     }
-  } catch {
-    // Network or CORS issue: fall back seamlessly to bundled package registry
-  }
+  } catch {}
 
   return parsePackagesFromIndex(fallbackData as unknown as PackageIndex)
 }

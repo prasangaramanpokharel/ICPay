@@ -1020,7 +1020,6 @@ export function MetatronsCubeSvg({
   const r = 60
   const ringR = 200
 
-  // Center + ring 1 (6) + ring 2 (6)
   const center = { x: cx, y: cy }
   const ring1 = Array.from({ length: 6 }, (_, i) => {
     const angle = (i * 60 * Math.PI) / 180 - Math.PI / 2
@@ -1036,7 +1035,6 @@ export function MetatronsCubeSvg({
 
   const nodes = [center, ...ring1, ...ring2]
 
-  // Connect every node to every other node
   const lines: { x1: number; y1: number; x2: number; y2: number }[] = []
   for (let i = 0; i < nodes.length; i++) {
     for (let j = i + 1; j < nodes.length; j++) {
@@ -1062,17 +1060,13 @@ export function MetatronsCubeSvg({
 
       <defs>
         {themed && (
-          <>
-            {/* Luminous High-Contrast Primary Gradient for Dark & Light */}
-            <linearGradient id="icpThemeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#F43F5E" stopOpacity="1" />
-              <stop offset="50%" stopColor="var(--primary)" stopOpacity="0.95" />
-              <stop offset="100%" stopColor="#C084FC" stopOpacity="0.9" />
-            </linearGradient>
-          </>
+          <linearGradient id="icpThemeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#F43F5E" stopOpacity="1" />
+            <stop offset="50%" stopColor="#E11D48" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#C084FC" stopOpacity="0.9" />
+          </linearGradient>
         )}
 
-        {/* Circular clipPaths for each of the 13 country flag badges */}
         {themed &&
           showFlags &&
           nodes.map((n, i) => (
@@ -1083,19 +1077,15 @@ export function MetatronsCubeSvg({
       </defs>
 
       {lines.map((l, i) => (
-        <motion.line
+        <motion.path
+          d={`M ${l.x1} ${l.y1} L ${l.x2} ${l.y2}`}
           initial={{ pathLength: reduceMotion ? 1 : 0 }}
+          animate={{ pathLength: 1 }}
           key={`mline-${l.x1}-${l.y1}-${l.x2}-${l.y2}`}
           stroke={themed ? "url(#icpThemeGrad)" : "currentColor"}
           strokeOpacity={themed ? 0.78 : 0.5}
-          strokeWidth={themed ? 1.75 : undefined}
+          strokeWidth={themed ? 1.75 : 1}
           transition={sacredStrokeTransition(reduceMotion, i, duration, staggerDelay)}
-          viewport={SACRED_IN_VIEW}
-          whileInView={{ pathLength: 1 }}
-          x1={l.x1}
-          x2={l.x2}
-          y1={l.y1}
-          y2={l.y2}
         />
       ))}
 
@@ -1105,30 +1095,26 @@ export function MetatronsCubeSvg({
 
         return (
           <g key={`mnode-group-${n.x}-${n.y}`}>
-            {/* Outer Animated Ring */}
             <motion.circle
               cx={n.x}
               cy={n.y}
               initial={{ pathLength: reduceMotion ? 1 : 0 }}
+              animate={{ pathLength: 1 }}
               r={r}
               stroke={themed ? "url(#icpThemeGrad)" : "currentColor"}
               strokeOpacity={themed ? 0.95 : 0.75}
-              strokeWidth={themed ? 2.2 : undefined}
+              strokeWidth={themed ? 2.2 : 1.5}
               fill="none"
               transition={sacredStrokeTransition(
                 reduceMotion,
-                lines.length + i,
-                duration * 1.1,
-                staggerDelay
+                Math.min(i, 12),
+                duration * 0.9,
+                staggerDelay * 2
               )}
-              viewport={SACRED_IN_VIEW}
-              whileInView={{ pathLength: 1 }}
             />
 
-            {/* Subnet Country Node Flag Badge */}
             {themed && showFlags && (
               <g className="transition-transform duration-300">
-                {/* Backing disk for high-contrast visibility */}
                 <circle
                   cx={n.x}
                   cy={n.y}
@@ -1138,7 +1124,6 @@ export function MetatronsCubeSvg({
                   strokeWidth={2}
                 />
 
-                {/* Country Flag Image */}
                 <image
                   href={`https://cdn.jsdelivr.net/gh/lipis/flag-icons/flags/4x3/${country.code}.svg`}
                   x={n.x - flagR}
@@ -1151,7 +1136,6 @@ export function MetatronsCubeSvg({
                   <title>{country.name}</title>
                 </image>
 
-                {/* Inner glass ring highlight */}
                 <circle
                   cx={n.x}
                   cy={n.y}
@@ -1163,7 +1147,6 @@ export function MetatronsCubeSvg({
               </g>
             )}
 
-            {/* Fallback micro-pin */}
             {themed && !showFlags && (
               <circle
                 cx={n.x}

@@ -15,8 +15,6 @@ export function balancesCacheKey(identity: Identity, customLedgerIds: string[]) 
   return walletKey(identity, "token-balances", customKey)
 }
 
-// In-memory cache keeps pre-resolved addresses and profiles available synchronously
-// without relying on private or unstable SWR internals.
 const inMemoryCache = new Map<string, unknown>()
 
 function cacheKeyToString(key: readonly string[]): string {

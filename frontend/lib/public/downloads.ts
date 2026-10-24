@@ -1,4 +1,3 @@
-/** Desktop wallet installers — served from GitLab Releases, not Vercel public/. */
 const RELEASE_BASE =
   "https://gitlab.com/prasangapokharel/icpay/-/releases/permalink/latest/downloads"
 

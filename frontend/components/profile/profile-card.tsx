@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -42,8 +43,6 @@ export function ProfileCard({ user, onUpdateUsername }: ProfileCardProps) {
     setError(null)
     const name = username.trim()
     if (!name) { setError(t("required")); return }
-    // Checked here so a short name explains itself and offers the buy path,
-    // rather than costing a round trip to learn it is not free.
     const invalid = validateFreeUsername(name)
     if (invalid) {
       setError(te(invalid, { max: USERNAME_MAX_LENGTH, min: USERNAME_FREE_MIN_LENGTH }))
@@ -126,7 +125,8 @@ export function ProfileCard({ user, onUpdateUsername }: ProfileCardProps) {
               </Alert>
             )}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? t("saving") : t("claim")}
+              {loading && <Spinner data-icon="inline-start" />}
+              <span>{loading ? t("saving") : t("claim")}</span>
             </Button>
           </form>
         )}

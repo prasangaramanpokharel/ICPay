@@ -73,7 +73,6 @@ export function downloadAnalyticsCsv(content: string, username: string): void {
   URL.revokeObjectURL(url)
 }
 
-// Hook-free helper for pages that already have symbol lookup.
 export function ledgerSymbolFallback(ledgerId: string): string {
   if (ledgerId === ICP_LEDGER_CANISTER_ID) return "ICP"
   return ledgerId.slice(0, 5).toUpperCase()

@@ -79,8 +79,6 @@ export default function UsernamePage() {
   const insufficient =
     balance !== undefined && trimmed !== "" && total > balance
 
-  // A query, and the treasury never moves, so it is read once per session and
-  // never revalidated.
   const { data: treasury } = useSWRImmutable(
     identity ? (["username-treasury"] as const) : null,
     () => getUsernameTreasury(identity)
@@ -109,20 +107,25 @@ export default function UsernamePage() {
 
   if (bought) {
     return (
-      <SendSuccess
-        amount={bought.price}
-        recipient={`@${bought.username}`}
-        blockIndex={bought.blockIndex}
-        kind="purchase"
-        onDone={() => router.push("/profile")}
-      />
+      <AppPage>
+        <div className="mx-auto w-full max-w-md">
+          <SendSuccess
+            amount={bought.price}
+            recipient={`@${bought.username}`}
+            blockIndex={bought.blockIndex}
+            kind="purchase"
+            onDone={() => router.push("/profile")}
+          />
+        </div>
+      </AppPage>
     )
   }
 
   return (
     <AppPage title={t("title")} description={t("subtitle")}>
-      <Card className="border-border/60 shadow-sm">
-        <CardContent className="space-y-6 px-5 py-7">
+      <div className="mx-auto w-full max-w-md">
+        <Card className="border-border/60 shadow-sm">
+          <CardContent className="space-y-6 px-5 py-7">
           <div className="space-y-2">
             <Label htmlFor="buy-username">{t("label")}</Label>
             <div className="relative">
@@ -190,8 +193,6 @@ export default function UsernamePage() {
                 <div className="flex items-baseline justify-between">
                   <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                     {t(`tiers.${tier.labelKey}`)}
-                    {/* Asked of the typed name, not the tier: ultra spans both marks,
-                    so this is the only place the exact badge is knowable. */}
                     <PremiumBadge name={trimmed} className="size-3.5" />
                   </span>
                   <span className="flex items-center gap-1.5 text-lg font-bold tabular-nums">
@@ -235,7 +236,7 @@ export default function UsernamePage() {
             onClick={handleBuy}
           >
             {buying ? <Spinner data-icon="inline-start" /> : null}
-            {buying ? t("buying") : insufficient ? t("insufficient") : t("buy")}
+            <span>{buying ? t("buying") : insufficient ? t("insufficient") : t("buy")}</span>
           </Button>
 
           <div className="space-y-2">
@@ -243,8 +244,6 @@ export default function UsernamePage() {
               <p className="text-xs font-medium text-muted-foreground">
                 {t("pricing")}
               </p>
-              {/* A popover, not a tooltip: the badge rule is the reason to pick one
-              tier over another, and on a phone there is no hover to reveal it. */}
               <Popover>
                 <PopoverTrigger
                   aria-label={t("badgeInfoTitle")}
@@ -261,8 +260,6 @@ export default function UsernamePage() {
                       {t("badgeInfo", { min: USERNAME_FREE_MIN_LENGTH })}
                     </PopoverDescription>
                   </PopoverHeader>
-                  {/* Listed as two rows rather than two ticks in the heading: side
-                  by side they read as a pair a buyer gets together. */}
                   <div className="flex flex-col gap-2 text-xs">
                     {(["gold", "blue"] as const).map((badge) => (
                       <div key={badge} className="flex items-start gap-2">
@@ -309,10 +306,6 @@ export default function UsernamePage() {
                     <p className="text-xs text-muted-foreground">
                       {t(`tiers.${tier.rangeKey}`)}
                     </p>
-                    {/* Marked per row rather than described in the note, so the
-                    badge reads as part of what the price buys. Each mark is
-                    labelled with the lengths it covers: ultra spans both, and
-                    two bare ticks read as though the row granted them both. */}
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {tierBadgeSpans(tier).map((span) => (
                         <BadgeChip key={span.badge} span={span} />
@@ -336,13 +329,11 @@ export default function UsernamePage() {
           </div>
         </CardContent>
       </Card>
+      </div>
     </AppPage>
   )
 }
 
-// The mark plus the lengths it covers, tappable for the reason it matters. The
-// label is what stops the ultra row -- which carries both marks -- from reading
-// as though every ultra name were gold.
 function BadgeChip({ span }: { span: BadgeSpan }) {
   const t = useTranslations("buyUsername")
   const lengths =

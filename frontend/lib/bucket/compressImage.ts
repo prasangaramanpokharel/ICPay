@@ -12,7 +12,6 @@ import { sanitizeUploadFilename } from "@/lib/bucket/uploadPath"
 import { shouldConvertRasterToWebp } from "@/lib/bucket/rasterFormats"
 import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/uploadChunk"
 
-/** Target output size — keeps most photos under the legacy 700 KB single-upload cap. */
 export const COMPRESSION_MAX_SIZE_MB = 0.65
 export const COMPRESSION_MAX_EDGE = 4096
 export const COMPRESSION_INITIAL_QUALITY = 0.85
@@ -33,10 +32,6 @@ export type TargetRasterFormat = {
 
 let cachedCanvasWebpSupport: boolean | null = null
 
-/**
- * Safari / WebKit does not support encoding WebP via HTML5 Canvas (falls back to PNG).
- * Feature-detect so Safari can gracefully degrade to hardware-accelerated JPEG or PNG.
- */
 export function isCanvasWebpSupported(): boolean {
   if (cachedCanvasWebpSupport !== null) return cachedCanvasWebpSupport
   if (typeof document === "undefined") return false
@@ -109,7 +104,6 @@ function isSvgFile(file: File): boolean {
   return ext === "svg" || mime === "image/svg+xml"
 }
 
-/** Rasterize vector SVG via canvas — raw SVG markup is never uploaded. */
 async function rasterizeSvg(
   file: File,
   target: TargetRasterFormat
@@ -179,7 +173,6 @@ async function encodeRaster(
       })
       if (await blobMatchesTargetHeader(blob, target)) return blob
     } catch {
-      // try next quality tier
     }
   }
 
@@ -203,10 +196,6 @@ function compressedFileFromBlob(
   })
 }
 
-/**
- * Raster uploads → compressed bytes (WebP on supporting browsers, JPEG/PNG on Safari).
- * Throws when conversion fails and original file is invalid or too large.
- */
 export async function compressRasterToWebp(file: File): Promise<RasterCompression> {
   if (!shouldConvertRasterToWebp(file)) {
     throw new ImageConvertError("Could not process this photo")
@@ -216,8 +205,6 @@ export async function compressRasterToWebp(file: File): Promise<RasterCompressio
   const blob = await encodeRaster(file, target)
 
   if (!blob) {
-    // Fallback: if compression failed (e.g. worker/canvas quirk), check if original file
-    // is already a valid raster under the canister size cap. Never reject valid photos.
     const head = new Uint8Array(await file.slice(0, 16).arrayBuffer())
     const ext = pathExtension(file.name)
     const isValidOrig =

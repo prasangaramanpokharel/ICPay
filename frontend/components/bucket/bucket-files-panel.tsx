@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
+import { toast } from "sonner"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Empty,
@@ -24,7 +25,7 @@ import { BucketFilesTable, entryKey } from "@/components/bucket/bucket-files-tab
 import { BucketFilesGrid } from "@/components/bucket/bucket-files-grid"
 import { getFileCategory, type FileCategory } from "@/components/bucket/bucket-file-icon"
 import { useBucketExplorerHotkeys } from "@/hooks/bucket/useBucketExplorerHotkeys"
-import { useBucketFiles, useBucketSearch, useBucketStats } from "@/hooks/bucket/useBucket"
+import { useBucketAllFiles, useBucketFiles, useBucketSearch, useBucketStats } from "@/hooks/bucket/useBucket"
 import {
   folderTotals,
   joinObjectPath,
@@ -71,6 +72,8 @@ export function BucketFilesPanel({
   onDeletePaths,
   onDeleteFolders,
   onCreateFolder,
+  onMoveFile,
+  onBulkMoveFiles,
 }: {
   bucketId: string
   bucketName?: string
@@ -81,6 +84,8 @@ export function BucketFilesPanel({
   onDeletePaths: (paths: string[]) => Promise<string | null>
   onDeleteFolders: (paths: string[]) => Promise<string | null>
   onCreateFolder: () => void
+  onMoveFile?: (sourcePath: string, destinationPath: string) => Promise<string | null>
+  onBulkMoveFiles?: (operations: { source: string; destination: string }[]) => Promise<string | null>
 }) {
   const t = useTranslations("bucket")
   const [page, setPage] = useState(0)
@@ -105,6 +110,7 @@ export function BucketFilesPanel({
   const search = useBucketSearch(searching ? bucketId : null, debouncedQuery, page)
   const active = searching ? search : browse
   const { files, total, totalPages, isLoading, refresh: refreshFiles } = active
+  const { allFiles, isLoading: allFilesLoading, refresh: refreshAllFiles } = useBucketAllFiles(bucketId)
   const { stats: fetchedStats, refresh: refreshStats } = useBucketStats(bucketId)
   const resolvedBucketName = bucketName || fetchedStats?.name
 
@@ -142,8 +148,8 @@ export function BucketFilesPanel({
   }, [browse.folders, category, files, prefix, searching])
 
   const visible = useMemo(
-    () => sortEntries(entries, files, prefix, sort),
-    [entries, files, prefix, sort]
+    () => sortEntries(entries, allFiles.length > 0 ? allFiles : files, prefix, sort),
+    [allFiles, entries, files, prefix, sort]
   )
   const entryKeys = useMemo(() => visible.map(entryKey), [visible])
   const allSelected = entryKeys.length > 0 && entryKeys.every((k) => selected.has(k))
@@ -203,22 +209,97 @@ export function BucketFilesPanel({
     await removeFileFromCache(path)
     const err = await onDelete(path)
     if (err) {
+      toast.error(err)
       await refreshFiles()
       void refreshStats()
+    } else {
+      const fileName = path.split("/").pop() ?? path
+      toast.success(`Deleted ${fileName}`)
+      void refreshAllFiles()
     }
     return err
   }
 
   const handleDeleteFolder = async (folderName: string) => {
     const folderPath = joinObjectPath(prefix, `${folderName}/`)
-    const childPaths = pathsUnderFolder(files, prefix, folderName)
+    const filesForPaths = allFiles.length > 0 ? allFiles : files
+    const childPaths = pathsUnderFolder(filesForPaths, prefix, folderName)
     await removePathsFromCache(childPaths, [folderPath])
+    let err: string | null = null
     if (childPaths.length > 0) {
-      await onDeletePaths(childPaths)
+      err = await onDeletePaths(childPaths)
     }
-    await onDeleteFolders([folderPath])
+    if (!err) {
+      err = await onDeleteFolders([folderPath])
+    }
+    if (err) {
+      toast.error(err)
+    } else {
+      toast.success(`Deleted folder "${folderName}"`)
+    }
     await refreshFiles()
     void refreshStats()
+    void refreshAllFiles()
+  }
+
+  const handleDropFilesIntoFolder = async (paths: string[], targetFolderName: string) => {
+    if (!canWrite || paths.length === 0) return
+    const targetFolderPrefix = nestedPrefix(prefix, targetFolderName)
+    const operations: { source: string; destination: string }[] = []
+
+    for (const sourcePath of paths) {
+      const fileName = sourcePath.split("/").pop() ?? sourcePath
+      const destinationPath = joinObjectPath(targetFolderPrefix, fileName)
+      if (sourcePath !== destinationPath) {
+        operations.push({ source: sourcePath, destination: destinationPath })
+      }
+    }
+
+    if (operations.length === 0) return
+
+    const movedPathsSet = new Set(operations.map((op) => stripLeadingSlash(op.source)))
+
+    await refreshFiles(
+      (current: FileListPage | undefined) => {
+        if (!current) return current
+        const items = current.items.filter((f) => !movedPathsSet.has(stripLeadingSlash(f.path)))
+        const nextTotal =
+          current.total >= BigInt(movedPathsSet.size)
+            ? current.total - BigInt(movedPathsSet.size)
+            : 0n
+        return { ...current, items, total: nextTotal }
+      },
+      { revalidate: false }
+    )
+
+    let err: string | null = null
+    if (onBulkMoveFiles && operations.length > 1) {
+      err = await onBulkMoveFiles(operations)
+    } else if (onMoveFile && operations.length === 1) {
+      err = await onMoveFile(operations[0].source, operations[0].destination)
+    } else if (onMoveFile) {
+      for (const op of operations) {
+        const itemErr = await onMoveFile(op.source, op.destination)
+        if (itemErr) {
+          err = itemErr
+          break
+        }
+      }
+    }
+
+    if (err) {
+      toast.error(err)
+      await refreshFiles()
+    } else {
+      const label =
+        operations.length === 1
+          ? `Moved ${operations[0].source.split("/").pop()} to ${targetFolderName}`
+          : `Moved ${operations.length} items to ${targetFolderName}`
+      toast.success(label)
+      await refreshFiles()
+      void refreshStats()
+      void refreshAllFiles()
+    }
   }
 
   const toggleKey = (key: string, on: boolean) => {
@@ -233,13 +314,14 @@ export function BucketFilesPanel({
   const resolveSelectedPaths = () => {
     const paths: string[] = []
     const folderPaths: string[] = []
+    const filesForPaths = allFiles.length > 0 ? allFiles : files
     for (const key of selected) {
       if (key.startsWith("file:")) {
         paths.push(key.slice(5))
         continue
       }
       const name = key.slice(7)
-      paths.push(...pathsUnderFolder(files, prefix, name))
+      paths.push(...pathsUnderFolder(filesForPaths, prefix, name))
       folderPaths.push(joinObjectPath(prefix, `${name}/`))
     }
     return { paths: [...new Set(paths)], folderPaths: [...new Set(folderPaths)] }
@@ -247,46 +329,58 @@ export function BucketFilesPanel({
 
   const confirmBulkDelete = async () => {
     const { paths, folderPaths } = resolveSelectedPaths()
+    const selectedCount = selected.size
+    const singleName =
+      paths.length === 1 && folderPaths.length === 0
+        ? paths[0].split("/").pop() ?? paths[0]
+        : folderPaths.length === 1 && paths.length === 0
+          ? folderPaths[0].replace(/\/$/, "").split("/").pop() ?? folderPaths[0]
+          : null
     setDeleting(true)
     const prevSelected = new Set(selected)
     await removePathsFromCache(paths, folderPaths)
     setSelected(new Set())
 
-    const fileErr = paths.length > 0 ? await onDeletePaths(paths) : null
-    const folderErr = !fileErr && folderPaths.length > 0 ? await onDeleteFolders(folderPaths) : null
-    setDeleting(false)
-    const err = fileErr ?? folderErr
-    if (err) {
-      setSelected(prevSelected)
+    try {
+      const fileErr = paths.length > 0 ? await onDeletePaths(paths) : null
+      const folderErr = !fileErr && folderPaths.length > 0 ? await onDeleteFolders(folderPaths) : null
+      const err = fileErr ?? folderErr
+      if (err) {
+        setSelected(prevSelected)
+        toast.error(err)
+        await refreshFiles()
+        void refreshStats()
+        return
+      }
+      const label =
+        selectedCount === 1 && singleName
+          ? `Deleted ${singleName}`
+          : `Deleted ${selectedCount} items`
+      toast.success(label)
       await refreshFiles()
       void refreshStats()
-      return
+      void refreshAllFiles()
+    } finally {
+      setDeleting(false)
     }
-    setDeleteTarget(null)
-    await refreshFiles()
-    void refreshStats()
   }
 
   const handleConfirmDelete = async () => {
     if (!deleteTarget) return
-    if (deleteTarget.type === "bulk") {
-      await confirmBulkDelete()
-    } else if (deleteTarget.type === "file") {
-      setDeleting(true)
-      try {
-        await handleDelete(deleteTarget.path)
-      } finally {
-        setDeleting(false)
-        setDeleteTarget(null)
+    const target = deleteTarget
+
+    setDeleting(true)
+    try {
+      if (target.type === "bulk") {
+        await confirmBulkDelete()
+      } else if (target.type === "file") {
+        await handleDelete(target.path)
+      } else if (target.type === "folder") {
+        await handleDeleteFolder(target.name)
       }
-    } else if (deleteTarget.type === "folder") {
-      setDeleting(true)
-      try {
-        await handleDeleteFolder(deleteTarget.name)
-      } finally {
-        setDeleting(false)
-        setDeleteTarget(null)
-      }
+    } finally {
+      setDeleting(false)
+      setDeleteTarget(null)
     }
   }
 
@@ -305,7 +399,6 @@ export function BucketFilesPanel({
   const handleOpenFolder = useCallback(
     (folderName: string) => {
       const now = Date.now()
-      // Ignore rapid double clicks on the same folder within 500ms
       if (
         navigatingFolderRef.current === folderName &&
         now - navigationTimestampRef.current < 500
@@ -313,7 +406,6 @@ export function BucketFilesPanel({
         return
       }
 
-      // If already navigated into this folder recently, avoid duplicate nested navigation
       const normalized = normalizePrefix(prefix)
       if (normalized.endsWith(`${folderName}/`) && now - navigationTimestampRef.current < 800) {
         return
@@ -332,7 +424,7 @@ export function BucketFilesPanel({
   const handleRefresh = async () => {
     setRefreshing(true)
     try {
-      await Promise.all([refreshFiles(), refreshStats()])
+      await Promise.all([refreshFiles(), refreshStats(), refreshAllFiles()])
     } finally {
       setRefreshing(false)
     }
@@ -431,6 +523,8 @@ export function BucketFilesPanel({
           bucketId={bucketId}
           bucketName={resolvedBucketName}
           files={files}
+          allFiles={allFiles}
+          allFilesLoading={allFilesLoading}
           prefix={prefix}
           visible={visible}
           selected={selected}
@@ -446,12 +540,15 @@ export function BucketFilesPanel({
           onDeleteFolder={(name) => {
             setDeleteTarget({ type: "folder", name })
           }}
+          onDropFilesIntoFolder={handleDropFilesIntoFolder}
         />
       ) : (
         <BucketFilesTable
           bucketId={bucketId}
           bucketName={resolvedBucketName}
           files={files}
+          allFiles={allFiles}
+          allFilesLoading={allFilesLoading}
           prefix={prefix}
           visible={visible}
           selected={selected}
@@ -469,6 +566,7 @@ export function BucketFilesPanel({
           onDeleteFolder={(name) => {
             setDeleteTarget({ type: "folder", name })
           }}
+          onDropFilesIntoFolder={handleDropFilesIntoFolder}
         />
       )}
 

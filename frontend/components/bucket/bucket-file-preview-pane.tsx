@@ -124,14 +124,17 @@ export function BucketFilePreviewPane({
   const handleDelete = async () => {
     setDeleting(true)
     setDeleteError(null)
-    const err = await onDelete(file.path)
-    setDeleting(false)
-    if (err) {
-      setDeleteError(mapBucketError(err, t))
-      return
+    try {
+      const err = await onDelete(file.path)
+      setDeleteOpen(false)
+      if (err) {
+        setDeleteError(mapBucketError(err, t))
+      } else {
+        onDeleted?.()
+      }
+    } finally {
+      setDeleting(false)
     }
-    setDeleteOpen(false)
-    onDeleted?.()
   }
 
   return (
@@ -296,11 +299,11 @@ export function BucketFilePreviewPane({
             {canWrite ? (
               <Button
                 type="button"
-                variant="destructive"
+                variant="outline"
                 size="sm"
                 disabled={deleting}
                 onClick={() => setDeleteOpen(true)}
-                className="flex-1 justify-center gap-1.5"
+                className="flex-1 justify-center gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
               >
                 <HugeiconsIcon icon={Delete02Icon} className="size-4 shrink-0 text-destructive" strokeWidth={1.75} />
                 <span>{t("delete")}</span>

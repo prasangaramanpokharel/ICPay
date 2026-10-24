@@ -33,7 +33,6 @@ import {
 } from "@/lib/bucket/allowedFiles"
 import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/uploadChunk"
 
-/** @deprecated use guessFileMime */
 export const guessImageMime = guessFileMime
 
 type BucketErrorKey =
@@ -103,7 +102,7 @@ export function isPublicVisibility(v: BucketVisibilityVariant): boolean {
 }
 
 export function isBucketActive(status: BucketStatusVariant): boolean {
-  return "ACTIVE" in status
+  return Boolean(status && "ACTIVE" in status)
 }
 
 export function isBucketFrozen(status: BucketStatusVariant, expiresAt: bigint | number, now = Date.now()): boolean {
@@ -170,18 +169,21 @@ export function isImageUploadFile(file: File): boolean {
   return guessFileMime(file).startsWith("image/")
 }
 
-/** @deprecated use isImageUploadFile */
 export const isRasterImageFile = isImageUploadFile
 
 export function isAllowedUpload(file: File): boolean {
   return isAllowedByExtension(file, BUCKET_MAX_FILE_BYTES)
 }
 
-/** @deprecated use isAllowedUpload */
 export const isAllowedImage = isAllowedUpload
 
 export function expiresAtToMs(expiresAt: bigint | number): number {
-  if (typeof expiresAt === "number") return expiresAt
+  if (typeof expiresAt === "number") {
+    if (expiresAt > 1e14) {
+      return Math.floor(expiresAt / 1_000_000)
+    }
+    return expiresAt
+  }
   return Number(expiresAt / 1_000_000n)
 }
 
@@ -189,5 +191,4 @@ export function optionalText(value: [] | [string]): string | null {
   return value.length === 0 ? null : value[0]
 }
 
-/** @deprecated use fileTypeChip from allowed-files */
 export const imageTypeChip = fileTypeChip

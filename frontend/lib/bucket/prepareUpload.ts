@@ -24,10 +24,6 @@ export type PreparedUpload = {
   }
 }
 
-/**
- * Validate → normalize → convert rasters to WebP → verify size → return upload payload.
- * Non-image types (PDF, ZIP, GIF, …) pass through unchanged.
- */
 export async function prepareUploadFile(
   file: File,
   prefix = "",

@@ -3,10 +3,6 @@ import { Principal } from "@icp-sdk/core/principal"
 import { createAgent } from "@/services/icp"
 import type { SavedCanister } from "@/lib/canister/savedCanisters"
 
-/**
- * Dedicated Canister Management Rust canister ID.
- * Defaults to environment variable NEXT_PUBLIC_CNSMANAGEMENT_CANISTER_ID.
- */
 export const CNSMANAGEMENT_CANISTER_ID =
   process.env.NEXT_PUBLIC_CNSMANAGEMENT_CANISTER_ID?.trim() || "6jtj7-4qaaa-aaaan-q6tta-cai"
 
@@ -76,15 +72,10 @@ function getCnsActor(identity: Identity, canisterIdText: string): Promise<CnsSer
   )
 }
 
-/** Check if cnsmangment canister is configured and callable. */
 export function isCnsServiceConfigured(): boolean {
   return Boolean(CNSMANAGEMENT_CANISTER_ID)
 }
 
-/**
- * Fetch linked canisters from the on-chain cnsmangment canister for the authenticated caller.
- * Returns null if not configured or if an error occurs.
- */
 export async function fetchRemoteLinkedCanisters(
   identity: Identity | null | undefined
 ): Promise<SavedCanister[] | null> {
@@ -102,9 +93,6 @@ export async function fetchRemoteLinkedCanisters(
   }
 }
 
-/**
- * Persist or update a linked canister in the on-chain cnsmangment canister.
- */
 export async function syncCanisterToCloud(
   identity: Identity | null | undefined,
   canisterIdText: string,
@@ -124,9 +112,6 @@ export async function syncCanisterToCloud(
   }
 }
 
-/**
- * Remove a linked canister from the on-chain cnsmangment canister.
- */
 export async function removeCanisterFromCloud(
   identity: Identity | null | undefined,
   canisterIdText: string
@@ -141,9 +126,6 @@ export async function removeCanisterFromCloud(
   }
 }
 
-/**
- * Batch synchronize existing local canister entries to the on-chain canister.
- */
 export async function batchSyncLocalCanistersToCloud(
   identity: Identity | null | undefined,
   entries: SavedCanister[]

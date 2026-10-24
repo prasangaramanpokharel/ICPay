@@ -19,6 +19,7 @@ export const OWNED_CANISTERS = [
   { name: "icp_blob_store", label: "blob store" },
   { name: "cnsmangment", label: "cns" },
   { name: "icpay_notifier", label: "notifier" },
+  { name: "icpay_academy", label: "academy" },
 ] as const
 export type OwnedCanisterName = (typeof OWNED_CANISTERS)[number]["name"]
 
@@ -26,7 +27,7 @@ export function canisterIds(): Record<string, { ic?: string }> {
   return JSON.parse(readFileSync(resolve(BACKEND, "canister_ids.json"), "utf8"))
 }
 
-/** Resolve dfx canister name from shorthand: backend | frontend | blob | blob store | cns | notifier */
+/** Resolve dfx canister name from shorthand: backend | frontend | blob | blob store | cns | notifier | academy */
 export function resolveOwnedCanister(target?: string): OwnedCanisterName | undefined {
   if (!target) return undefined
   const key = target.toLowerCase().replace(/_/g, " ").trim()
@@ -38,10 +39,12 @@ export function resolveOwnedCanister(target?: string): OwnedCanisterName | undef
       (key === "trade" && c.name === "icpay_trade") ||
       (key === "cns" && c.name === "cnsmangment") ||
       (key === "cnsmangment" && c.name === "cnsmangment") ||
-      (key === "notifier" && c.name === "icpay_notifier"),
+      (key === "notifier" && c.name === "icpay_notifier") ||
+      (key === "academy" && c.name === "icpay_academy"),
   )
   return hit?.name
 }
+
 
 export const WALLET_CANISTER_ID = canisterIds().icp_wallet_backend?.ic ?? ""
 export const ICPAY_LEDGER_ID = "5fsnk-rqaaa-aaaan-q6m4q-cai"
@@ -89,10 +92,42 @@ function resolveDfxMocPath(): string {
   process.exit(1)
 }
 
+// Ensure cargo/rustup bin is available on PATH
+const cargoBin = resolve(process.env.HOME ?? "", ".cargo/bin")
+const pathWithCargo = process.env.PATH?.includes(cargoBin)
+  ? process.env.PATH
+  : `${cargoBin}:${process.env.PATH ?? ""}`
+
+function resolveSdkRoot(): string | undefined {
+  if (process.platform !== "darwin") return undefined
+  if (process.env.SDKROOT) return process.env.SDKROOT
+  const fallbackSdks = [
+    "/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk",
+    "/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk",
+    "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+  ]
+  for (const sdk of fallbackSdks) {
+    try {
+      accessSync(sdk, constants.R_OK)
+      return sdk
+    } catch {
+      // try next
+    }
+  }
+  return undefined
+}
+
+const resolvedSdkRoot = resolveSdkRoot()
+if (resolvedSdkRoot && !process.env.SDKROOT) {
+  process.env.SDKROOT = resolvedSdkRoot
+}
+
 // dfx refuses to touch mainnet with a plaintext identity unless this is set, and
 // the controller key on this machine is plaintext.
 const env = {
   ...process.env,
+  PATH: pathWithCargo,
+  ...(resolvedSdkRoot ? { SDKROOT: resolvedSdkRoot } : {}),
   DFX_WARNING: "-mainnet_plaintext_identity",
   DFX_MOC_PATH: resolveDfxMocPath(),
 }
@@ -120,7 +155,7 @@ export function step(title: string): void {
 
 // Streams output rather than buffering: a deploy that hangs should show where.
 export function run(cmd: string, args: string[], cwd: string = BACKEND): void {
-  const res = spawnSync(cmd, args, { cwd, env, stdio: "inherit" })
+  const res = spawnSync(cmd, args, { cwd, env: { ...env, ...process.env, PATH: pathWithCargo }, stdio: "inherit" })
   if (res.status !== 0) {
     console.error(`\nFAILED: ${cmd} ${args.join(" ")}`)
     process.exit(res.status ?? 1)
@@ -128,7 +163,7 @@ export function run(cmd: string, args: string[], cwd: string = BACKEND): void {
 }
 
 export function capture(cmd: string, args: string[], cwd: string = BACKEND): string {
-  const res = spawnSync(cmd, args, { cwd, env, encoding: "utf8" })
+  const res = spawnSync(cmd, args, { cwd, env: { ...env, ...process.env, PATH: pathWithCargo }, encoding: "utf8" })
   if (res.status !== 0) {
     console.error(res.stderr?.trim() || `FAILED: ${cmd} ${args.join(" ")}`)
     process.exit(res.status ?? 1)

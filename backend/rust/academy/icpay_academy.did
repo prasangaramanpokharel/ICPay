@@ -1,0 +1,253 @@
+type LessonType = variant {
+  Video;
+  CodeLab;
+  Reading;
+  Quiz;
+};
+
+type Lesson = record {
+  id : text;
+  course_id : text;
+  module_id : text;
+  title : text;
+  slug : text;
+  description : text;
+  duration_minutes : nat32;
+  lesson_type : LessonType;
+  video_url : text;
+  thumbnail_url : text;
+  preview_available : bool;
+  order : nat32;
+  key_takeaways : vec text;
+  created_at : nat64;
+};
+
+type CourseModule = record {
+  id : text;
+  course_id : text;
+  title : text;
+  slug : text;
+  description : text;
+  order : nat32;
+  estimated_hours : nat32;
+  created_at : nat64;
+};
+
+type Course = record {
+  id : text;
+  slug : text;
+  title : text;
+  headline : text;
+  description : text;
+  level : text;
+  badge : text;
+  price_e8s : nat64;
+  total_hours : nat32;
+  total_lessons : nat32;
+  cover_image : text;
+  instructor_name : text;
+  instructor_role : text;
+  is_published : bool;
+  created_at : nat64;
+  updated_at : nat64;
+};
+
+type ModuleDetail = record {
+  id : text;
+  title : text;
+  slug : text;
+  description : text;
+  order : nat32;
+  estimated_hours : nat32;
+  lessons : vec Lesson;
+};
+
+type UserProgress = record {
+  user : principal;
+  course_id : text;
+  completed_lesson_ids : vec text;
+  percent_complete : nat8;
+  started_at : nat64;
+  last_active_at : nat64;
+  is_completed : bool;
+  certificate_id : opt text;
+};
+
+type CourseDetail = record {
+  course : Course;
+  modules : vec ModuleDetail;
+  is_enrolled : bool;
+  user_progress : opt UserProgress;
+};
+
+type UserEnrollment = record {
+  user : principal;
+  course_id : text;
+  enrolled_at : nat64;
+  payment_block_index : opt nat64;
+  amount_paid_e8s : nat64;
+};
+
+type Certificate = record {
+  id : text;
+  user : principal;
+  course_id : text;
+  course_title : text;
+  issued_at : nat64;
+  verification_hash : text;
+};
+
+type AcademyStats = record {
+  total_courses : nat32;
+  total_modules : nat32;
+  total_lessons : nat32;
+  total_students : nat64;
+  total_enrollments : nat64;
+  today_enrollments : nat64;
+  total_completed_lessons : nat64;
+  total_certificates_issued : nat64;
+  total_revenue_e8s : nat64;
+};
+
+type CourseStats = record {
+  total_enrolled : nat64;
+  today_enrolled : nat64;
+  total_completed : nat64;
+  completion_rate_percent : nat8;
+};
+
+type AuditLogEntry = record {
+  id : nat64;
+  timestamp : nat64;
+  action : text;
+  admin : principal;
+  target_id : text;
+  details : text;
+};
+
+type CreateCourseArgs = record {
+  id : text;
+  slug : text;
+  title : text;
+  headline : text;
+  description : text;
+  level : text;
+  badge : text;
+  price_e8s : nat64;
+  total_hours : nat32;
+  cover_image : text;
+  instructor_name : text;
+  instructor_role : text;
+  is_published : bool;
+};
+
+type UpdateCourseArgs = record {
+  id : text;
+  slug : opt text;
+  title : opt text;
+  headline : opt text;
+  description : opt text;
+  level : opt text;
+  badge : opt text;
+  price_e8s : opt nat64;
+  total_hours : opt nat32;
+  cover_image : opt text;
+  instructor_name : opt text;
+  instructor_role : opt text;
+  is_published : opt bool;
+};
+
+type CreateModuleArgs = record {
+  id : text;
+  title : text;
+  slug : text;
+  description : text;
+  order : nat32;
+  estimated_hours : nat32;
+};
+
+type UpdateModuleArgs = record {
+  title : opt text;
+  slug : opt text;
+  description : opt text;
+  order : opt nat32;
+  estimated_hours : opt nat32;
+};
+
+type CreateLessonArgs = record {
+  id : text;
+  title : text;
+  slug : text;
+  description : text;
+  duration_minutes : nat32;
+  lesson_type : LessonType;
+  video_url : text;
+  thumbnail_url : text;
+  preview_available : bool;
+  order : nat32;
+  key_takeaways : vec text;
+};
+
+type UpdateLessonArgs = record {
+  title : opt text;
+  slug : opt text;
+  description : opt text;
+  duration_minutes : opt nat32;
+  lesson_type : opt LessonType;
+  video_url : opt text;
+  thumbnail_url : opt text;
+  preview_available : opt bool;
+  order : opt nat32;
+  key_takeaways : opt vec text;
+};
+
+type Result = variant { Ok; Err : text };
+type ResultProgress = variant { Ok : UserProgress; Err : text };
+type ResultCertificate = variant { Ok : Certificate; Err : text };
+type ResultId = variant { Ok : text; Err : text };
+type ResultNat = variant { Ok : nat64; Err : text };
+
+service : (opt principal) -> {
+  // Public Queries
+  get_academy_stats : () -> (AcademyStats) query;
+  get_course_stats : (text) -> (opt CourseStats) query;
+  get_courses : () -> (vec Course) query;
+  get_course_by_slug : (text) -> (opt Course) query;
+  get_course_detail : (text) -> (opt CourseDetail) query;
+  get_lesson_video : (text, text, text) -> (ResultId) query;
+  verify_certificate : (text) -> (opt Certificate) query;
+
+  // Student Authenticated Endpoints
+  enroll_free : (text) -> (ResultProgress);
+  enroll_with_payment : (text, nat64) -> (ResultProgress);
+  get_my_enrollments : () -> (vec UserEnrollment) query;
+  get_my_progress : (text) -> (opt UserProgress) query;
+  complete_lesson : (text, text) -> (ResultProgress);
+  claim_certificate : (text) -> (ResultCertificate);
+
+  // Admin Full CRUD Endpoints
+  create_course : (CreateCourseArgs) -> (ResultId);
+  update_course : (UpdateCourseArgs) -> (Result);
+  delete_course : (text) -> (Result);
+  duplicate_course : (text) -> (ResultId);
+  publish_course : (text, bool) -> (Result);
+  set_course_price : (text, nat64) -> (Result);
+  add_module : (text, CreateModuleArgs) -> (ResultId);
+  update_module : (text, text, UpdateModuleArgs) -> (Result);
+  delete_module : (text, text) -> (Result);
+  add_lesson : (text, text, CreateLessonArgs) -> (ResultId);
+  update_lesson : (text, text, text, UpdateLessonArgs) -> (Result);
+  delete_lesson : (text, text, text) -> (Result);
+  add_admin : (principal, text) -> (Result);
+  remove_admin : (principal) -> (Result);
+  get_admins : () -> (vec record { principal; text }) query;
+  get_audit_log : (nat32) -> (vec AuditLogEntry) query;
+  get_all_courses_admin : () -> (vec Course) query;
+
+  // Treasury & Payout Endpoints
+  is_caller_admin : () -> (bool) query;
+  get_treasury_address : () -> (text) query;
+  get_treasury_balance : () -> (ResultNat);
+  withdraw_treasury : (text, nat64) -> (ResultNat);
+}
+

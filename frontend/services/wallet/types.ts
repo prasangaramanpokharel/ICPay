@@ -129,6 +129,17 @@ export interface WalletActor {
     paths: string[],
     apiKey: [] | [string]
   ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
+  moveFile: (
+    bucketId: string,
+    sourcePath: string,
+    destinationPath: string,
+    apiKey: [] | [string]
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  bulkMoveFiles: (
+    bucketId: string,
+    operations: { source: string; destination: string }[],
+    apiKey: [] | [string]
+  ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
   listFiles: (
     bucketId: string,
     page: bigint,

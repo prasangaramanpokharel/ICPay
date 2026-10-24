@@ -249,7 +249,8 @@ export function CyclesWalletCard() {
                       void login().finally(() => setConnecting(false))
                     }}
                   >
-                    {connecting || isLoading ? t("connecting") : t("signIn")}
+                    {(connecting || isLoading) && <Spinner data-icon="inline-start" />}
+                    <span>{connecting || isLoading ? t("connecting") : t("signIn")}</span>
                   </Button>
                 ) : (
                   <Button
@@ -259,11 +260,13 @@ export function CyclesWalletCard() {
                     onClick={() => void onMint()}
                   >
                     {submitting && <Spinner data-icon="inline-start" />}
-                    {submitting
-                      ? flowStep === "send"
-                        ? t("sending")
-                        : t("minting")
-                      : t("mint")}
+                    <span>
+                      {submitting
+                        ? flowStep === "send"
+                          ? t("sending")
+                          : t("minting")
+                        : t("mint")}
+                    </span>
                   </Button>
                 )}
               </TabsContent>
@@ -326,7 +329,7 @@ export function CyclesWalletCard() {
                   onClick={() => void onWithdraw()}
                 >
                   {submitting && <Spinner data-icon="inline-start" />}
-                  {submitting ? t("withdrawing") : t("withdraw")}
+                  <span>{submitting ? t("withdrawing") : t("withdraw")}</span>
                 </Button>
               </TabsContent>
             </Tabs>

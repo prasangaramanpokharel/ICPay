@@ -26,6 +26,8 @@ frontend/.agents/skills/vercel-react-best-practices
 !/docs/command/**
 !/docs/demo/
 !/docs/demo/**
+!/docs/icacademy/
+!/docs/icacademy/**
 !/docs/icFrame/
 !/docs/icFrame/**
 !/docs/icpay/
@@ -40,6 +42,8 @@ frontend/.agents/skills/vercel-react-best-practices
 !/docs/sdk/**
 !/docs/security/
 !/docs/security/**
+!/docs/problem&solution/
+!/docs/problem&solution/**
 !/docs/workflow.md
 
 # docs/bucket/ stays local (PDF exports, not committed)

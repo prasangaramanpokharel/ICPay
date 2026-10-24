@@ -13,6 +13,7 @@ import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/u
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Badge } from "@/components/ui/badge"
+import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { LinkCanisterDialog } from "@/components/canister/link-canister-dialog"
@@ -34,16 +35,22 @@ import { shortSubnetId } from "@/services/canister/subnetLocations"
 function EmptyBlock({
   message,
   actions,
+  loading = false,
 }: {
   message: string
   actions?: React.ReactNode
+  loading?: boolean
 }) {
   return (
     <div className="flex flex-col items-center gap-3 px-3 py-10 text-center">
-      <HugeiconsIcon
-        icon={Package01Icon}
-        className="size-10 text-muted-foreground/40"
-      />
+      {loading ? (
+        <Spinner className="size-8 text-primary" />
+      ) : (
+        <HugeiconsIcon
+          icon={Package01Icon}
+          className="size-10 text-muted-foreground/40"
+        />
+      )}
       <p className="max-w-xs text-sm text-muted-foreground">{message}</p>
       {actions}
     </div>
@@ -138,7 +145,7 @@ export function MyCanistersPanel() {
           <CardContent className="p-0">
             {mine.isLoading ? (
               <div className="p-2">
-                <EmptyBlock message={t("loading")} />
+                <EmptyBlock message={t("loading")} loading />
               </div>
             ) : mine.ids.length === 0 ? (
               <div className="p-2">

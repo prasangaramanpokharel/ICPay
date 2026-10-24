@@ -1,4 +1,3 @@
-/** Match backend FileValidator.mo — RIFF container + WEBP tag at offset 8. */
 export function validateWebpHeader(bytes: Uint8Array): boolean {
   if (bytes.length < 12) return false
   return (
@@ -32,7 +31,6 @@ export async function blobHasWebpHeader(blob: Blob): Promise<boolean> {
   return validateWebpHeader(head)
 }
 
-/** Match backend FileValidator.mo — SOI (0xFF, 0xD8) + start of next marker. */
 export function validateJpegHeader(bytes: Uint8Array): boolean {
   if (bytes.length < 3) return false
   return bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff

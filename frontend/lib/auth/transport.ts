@@ -1,8 +1,6 @@
 import { REDIRECT_PENDING_KEY } from "@/lib/auth/config"
 
 export function prefersRedirectTransport(): boolean {
-  // ICRC-167 redirect breaks on iOS Safari ("Unable to connect" on id.ai).
-  // Popup transport works on mobile when signIn starts inside the click handler.
   return false
 }
 

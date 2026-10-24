@@ -14,21 +14,15 @@ import {
 } from "@/services/launch/launch"
 import { normalizeSymbol, validateSymbol } from "@/lib/token/launch"
 
-// Same convention as use-wallet-data: the principal is the last key part, so a
-// switched identity cannot be served another account's launches.
 const keyFor = (identity: Identity | undefined, ...parts: string[]) =>
   identity ? ([...parts, identity.getPrincipal().toText()] as const) : null
 
-// Every call in this file is a query, which the IC does not bill, so these are
-// far cheaper to revalidate than anything in use-wallet-data.
 const QUERY = {
   revalidateOnFocus: false,
   revalidateIfStale: false,
   errorRetryCount: 3,
 } as const
 
-// Asked only of symbols that already pass the shape rules, so a half-typed
-// symbol does not produce a stream of confident-looking "unavailable".
 export function useSymbolAvailability(symbol: string) {
   const { identity } = useAuth()
   const normalized = normalizeSymbol(symbol)
@@ -39,8 +33,6 @@ export function useSymbolAvailability(symbol: string) {
     () => isSymbolAvailable(identity, normalized),
     {
       ...QUERY,
-      // The previous symbol's verdict shown against new text reads as a
-      // confident answer about the wrong symbol.
       keepPreviousData: false,
       dedupingInterval: 30_000,
     }
@@ -49,8 +41,6 @@ export function useSymbolAvailability(symbol: string) {
   return { available: data ?? null, isLoading: wellFormed && isLoading }
 }
 
-// Immutable: the fee is a compiled-in constant, so one read per session is the
-// whole truth until the canister is redeployed.
 export function useLaunchFee() {
   const { identity } = useAuth()
 
@@ -61,9 +51,6 @@ export function useLaunchFee() {
   return { fee: data, isLoading }
 }
 
-// Not immutable: readiness flips when the operator seals a wasm, and a form
-// enabled against a stale true would take payment for a launch that has nothing
-// to install.
 export function useLaunchReady() {
   const { identity } = useAuth()
 
@@ -88,9 +75,6 @@ export function useMyTokens(limit = 50) {
   return { tokens: (data ?? []) as TokenPublic[], error, isLoading, refresh: mutate }
 }
 
-// Polled while pending. A launch is several inter-canister calls long and can
-// still be running after the creator has navigated away, so without the interval
-// the detail page would read "creating" until a manual reload.
 export function useToken(id: string | null) {
   const { identity } = useAuth()
 

@@ -4,8 +4,6 @@ import useSWR from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
 import { fetchIcpayStats, type IcpayStats } from "@/services/icpay/icpay"
 
-// Market data moves, so this one revalidates on focus where the wallet hooks do
-// not. It stays well inside every rate limit: one request per five minutes.
 export function useIcpayStats(): { stats: IcpayStats | undefined; isLoading: boolean } {
   const { identity } = useAuth()
 

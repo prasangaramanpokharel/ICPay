@@ -106,7 +106,7 @@ export function CanisterVisibilityCard({
               ) : (
                 <HugeiconsIcon icon={FloppyDiskIcon} data-icon="inline-start" />
               )}
-              {saving ? "Saving…" : "Save Visibility"}
+              <span>{saving ? "Saving…" : "Save Visibility"}</span>
             </Button>
           </div>
         )}

@@ -1,7 +1,6 @@
 import { ICPAY_LEDGER_ID } from "@/services/icpay/icpay"
 import { ICP_LEDGER_ID, PINNED_LEDGER_IDS, type TokenHolding } from "@/services/tokens"
 
-/** ICPAY has no ICPSwap liquidity — keep it out of the swap picker. */
 export function isSwapToken(ledgerId: string): boolean {
   return ledgerId !== ICPAY_LEDGER_ID
 }
@@ -15,7 +14,6 @@ function pinRank(ledgerId: string): number {
   return i === -1 ? PINNED_LEDGER_IDS.length : i
 }
 
-/** Pinned tokens first, then by balance, then symbol. */
 export function sortSwapTokens(tokens: TokenHolding[]): TokenHolding[] {
   return [...tokens].sort((a, b) => {
     const pr = pinRank(a.ledgerId) - pinRank(b.ledgerId)

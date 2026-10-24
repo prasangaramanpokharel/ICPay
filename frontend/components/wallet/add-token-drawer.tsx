@@ -106,7 +106,7 @@ export function AddTokenDrawer({
         <DrawerFooter className="pt-2">
           <Button disabled={loading || !ledgerId.trim()} onClick={() => void handleAdd()}>
             {loading && <Spinner data-icon="inline-start" />}
-            {t("addTokenAction")}
+            <span>{t("addTokenAction")}</span>
           </Button>
         </DrawerFooter>
       </DrawerContent>

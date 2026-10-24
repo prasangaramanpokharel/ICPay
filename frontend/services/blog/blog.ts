@@ -7,7 +7,6 @@ export type BlogPost = {
   category?: string
 }
 
-/** Public URL for a blog article — always under /blog/{slug}. */
 export function blogPostPath(slug: string): string {
   const name = slug.startsWith("blog/") ? slug.slice("blog/".length) : slug
   return `/blog/${name}`
@@ -31,6 +30,15 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 }
 
 export const BLOG_POSTS: BlogPost[] = [
+  {
+    slug: "dfinity-near-patent-dispute-threshold-ecdsa-chain-signatures-intents",
+    title: "DFINITY vs. NEAR: The Cryptographic Patent Dispute Over Chain Signatures, Threshold ECDSA, and Confidential Intents Explained",
+    description:
+      "A comprehensive technical and architectural breakdown of Dominic Williams' allegations against NEAR Protocol. We examine US Patent 12,695,626 (re-randomized threshold ECDSA presignatures by Groth & Shoup), the Confidential Key Derivation vs. vetKeys dispute, the permissioned FAR network powering NEAR Confidential Intents, and what this high-stakes IP battle means for multichain chain abstraction.",
+    publishedAt: "2026-10-24",
+    readingMinutes: 15,
+    category: "Security",
+  },
   {
     slug: "2-tib-subnets-enterprise-cloud-engines-on-chain-storage",
     title: "The 2 TiB Subnet Milestone & Enterprise Cloud Engines: Why 2026 Marks the Turning Point for On-Chain Storage",

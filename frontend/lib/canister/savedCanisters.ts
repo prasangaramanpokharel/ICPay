@@ -69,7 +69,6 @@ export function subscribeSavedCanisters(listener: () => void): () => void {
   }
 }
 
-/** Canisters this II created or tracked in ICPay (browser-local). */
 export function listSavedCanisters(principal: string): string[] {
   return listSavedCanisterEntries(principal).map((e) => e.id)
 }
@@ -109,7 +108,6 @@ export function forgetCanister(principal: string, canisterId: string): void {
   )
 }
 
-/** Merges remotely synced canisters into local storage for this principal. */
 export function mergeRemoteCanisters(
   principal: string,
   remoteEntries: SavedCanister[]
@@ -118,12 +116,10 @@ export function mergeRemoteCanisters(
   const current = readEntries(principal)
   const map = new Map<string, string>()
 
-  // Local entries first
   for (const e of current) {
     map.set(e.id, e.name)
   }
 
-  // Remote entries merged
   for (const r of remoteEntries) {
     if (!map.has(r.id)) {
       map.set(r.id, r.name)

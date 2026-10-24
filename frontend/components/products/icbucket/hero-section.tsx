@@ -17,7 +17,6 @@ export function HeroSection() {
     <section className="border-b border-border/60 bg-background relative overflow-hidden">
 
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 md:px-6 md:py-20 lg:py-24 lg:grid-cols-2 lg:items-center lg:gap-16 relative z-10">
-        {/* Left Column: Headline, Actions & Sign options */}
         <div className="space-y-6">
           <p className="shimmer text-xs font-semibold uppercase tracking-[0.24em] text-primary shimmer-duration-3000">
             {t("eyebrow")}
@@ -66,17 +65,14 @@ export function HeroSection() {
           <HeroSignOptions />
         </div>
 
-        {/* Right Column: Floating Metatron's Cube Geometry (No card, bg-transparent, slow stroke animation) */}
         <div className="flex items-center justify-center w-full">
           <div
             onClick={() => setReplayKey((k) => k + 1)}
             title="Click to replay slow animation"
             className="relative mx-auto flex aspect-square w-full max-w-md sm:max-w-lg lg:max-w-xl items-center justify-center bg-transparent cursor-pointer select-none group"
           >
-            {/* Soft Ambient Radial Glow */}
             <div className="pointer-events-none absolute -inset-6 rounded-full bg-[radial-gradient(circle_at_center,var(--primary)/18,transparent_70%)] blur-3xl transition-opacity duration-700 group-hover:opacity-100" />
 
-            {/* Slow-draw Animated Metatron's Cube Geometry with Floating Motion */}
             <motion.div
               key={replayKey}
               animate={{ y: [-5, 5, -5], rotate: [-0.3, 0.3, -0.3] }}
@@ -86,8 +82,8 @@ export function HeroSection() {
               <MetatronsCubeSvg
                 tightViewBox
                 themed
-                duration={3.8}
-                staggerDelay={0.045}
+                duration={2.6}
+                staggerDelay={0.02}
                 className="w-full h-full max-w-full max-h-full"
               />
             </motion.div>

@@ -10,19 +10,11 @@ import { createAgent } from "@/services/icp"
 import { CMC_CANISTER_ID } from "@/services/chainkey/constants"
 import { ICP_LEDGER_ID } from "@/services/tokens"
 
-/** NNS CMC memo for notify_top_up ("TPUP" little-endian). */
 export const TOP_UP_CANISTER_MEMO = 0x50555054n
-
-/** ICP ledger default fee (e8s). Prefer live fee from the ledger when available. */
 export const ICP_TRANSFER_FEE_E8S = 10_000n
+export const MIN_TOPUP_E8S = 1_000_000n
+export const MAX_TOPUP_E8S = 5_000_000_000n
 
-export const MIN_TOPUP_E8S = 1_000_000n // 0.01 ICP
-export const MAX_TOPUP_E8S = 5_000_000_000n // 50 ICP
-
-/**
- * CMC get_icp_xdr_conversion_rate returns XDR permyriad per ICP.
- * 1 XDR = 1T cycles ⇒ cycles = e8s * rate (NNS / CMC convention).
- */
 export function estimateCyclesFromE8s(amountE8s: bigint, xdrPermyriadPerIcp: bigint): bigint {
   if (amountE8s <= 0n || xdrPermyriadPerIcp <= 0n) return 0n
   return amountE8s * xdrPermyriadPerIcp
@@ -109,12 +101,10 @@ export type TopUpResult = {
 
 export type TopUpFlowStep = "send" | "mint" | "done"
 
-/** ICP that must sit on the II principal before CMC transfer (amount + ledger fee). */
 export function iiNeedForTopUp(amountE8s: bigint, feeE8s: bigint): bigint {
   return amountE8s + feeE8s
 }
 
-/** How much to withdraw from the ICPay wallet onto II (0 if II already covers it). */
 export function walletShortfall(
   amountE8s: bigint,
   iiBalanceE8s: bigint,
@@ -124,7 +114,6 @@ export function walletShortfall(
   return iiBalanceE8s >= need ? 0n : need - iiBalanceE8s
 }
 
-/** Total ICP drained from the wallet when a shortfall withdraw is required. */
 export function walletCostForTopUp(
   amountE8s: bigint,
   iiBalanceE8s: bigint,
@@ -134,7 +123,6 @@ export function walletCostForTopUp(
   return shortfall === 0n ? 0n : shortfall + feeE8s
 }
 
-/** Largest top-up amount affordable from wallet + II after ledger fees. */
 export function maxTopUpAmount(
   walletBalanceE8s: bigint,
   iiBalanceE8s: bigint,
@@ -190,10 +178,6 @@ export async function topUpCanister(
   }
 }
 
-/**
- * Prefer ICPay wallet ICP: withdraw any shortfall to the II principal, then
- * mint cycles via CMC. CMC still requires the final transfer from the II principal.
- */
 export async function topUpFromWallet(
   identity: Identity,
   canisterIdText: string,
@@ -226,15 +210,10 @@ export async function topUpFromWallet(
   }
 }
 
-/** Official IC dashboard canister page. */
 export function canisterDashboardUrl(canisterId: string): string {
   return `https://dashboard.internetcomputer.org/canister/${canisterId}`
 }
 
-/**
- * Lightweight existence check via DFINITY's public IC API index.
- * 404 → unknown / not indexed; network errors are ignored (don't block top-up).
- */
 export async function verifyCanisterExists(canisterIdText: string): Promise<"ok" | "missing" | "unknown"> {
   let id: string
   try {
@@ -255,7 +234,6 @@ export async function verifyCanisterExists(canisterIdText: string): Promise<"ok"
   }
 }
 
-/** Map CMC / ledger / wallet errors to short UI copy. */
 export function formatTopUpError(err: unknown): string {
   const raw = err instanceof Error ? err.message : String(err ?? "Top-up failed")
   const lower = raw.toLowerCase()

@@ -13,8 +13,6 @@ export function formatUsd(value: number): string {
   })
 }
 
-// Micro-balances (a fraction of a cent) must not collapse to "$0.00", which
-// reads as "worthless". Sub-cent values show extra precision instead.
 export function formatUsdPrecise(value: number): string {
   if (value > 0 && value < 0.01) {
     return value.toLocaleString("en-US", {

@@ -44,19 +44,25 @@ export default function TransferPage() {
 
   if (sent) {
     return (
-      <SendSuccess
-        amount={sent.amount}
-        recipient={sent.recipient}
-        blockIndex={sent.blockIndex}
-        memo={sent.memo}
-        onDone={() => setSent(null)}
-      />
+      <AppPage>
+        <div className="mx-auto w-full max-w-md">
+          <SendSuccess
+            amount={sent.amount}
+            recipient={sent.recipient}
+            blockIndex={sent.blockIndex}
+            memo={sent.memo}
+            onDone={() => setSent(null)}
+          />
+        </div>
+      </AppPage>
     )
   }
 
   return (
     <AppPage title={t("title")} description={t("subtitle")}>
-      <TransferForm onTransfer={handleTransfer} balance={balance} initialTo={initialTo} />
+      <div className="mx-auto w-full max-w-md">
+        <TransferForm onTransfer={handleTransfer} balance={balance} initialTo={initialTo} />
+      </div>
     </AppPage>
   )
 }

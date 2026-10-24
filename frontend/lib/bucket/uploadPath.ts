@@ -1,4 +1,3 @@
-/** Sanitize a filename for bucket storage (no leading slash). */
 export function sanitizeUploadFilename(name: string): string {
   const safe = name
     .replace(/[^a-zA-Z0-9._-]/g, "_")
@@ -8,7 +7,6 @@ export function sanitizeUploadFilename(name: string): string {
   return safe
 }
 
-/** Bucket object path — sanitized original filename with leading slash. */
 export function uploadPathForFile(file: File): string {
   return `/${sanitizeUploadFilename(file.name)}`
 }
@@ -21,7 +19,6 @@ export function replacePathExtension(path: string, ext: string): string {
   return `${stem}${ext.startsWith(".") ? ext : `.${ext}`}`
 }
 
-/** Build final upload path — target ext for compressed rasters, original ext otherwise. */
 export function buildUploadPath(
   normalized: File,
   targetExtOrAsWebp: boolean | string = false

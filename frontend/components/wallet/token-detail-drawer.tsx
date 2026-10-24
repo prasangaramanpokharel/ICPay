@@ -124,7 +124,6 @@ export function TokenDetailDrawer({
         swipeDirection={isMobile ? "down" : "right"}
       >
         <DrawerContent className="max-h-[min(100dvh,720px)] sm:max-h-none sm:max-w-md md:max-w-lg border-border/60 bg-card p-0 focus:outline-none">
-          {/* Header Bar: Clean horizontal flex row with title on left and close icon on right */}
           <div className="flex shrink-0 items-center justify-between border-b border-border/60 px-5 py-3.5">
             <div className="flex items-center gap-2.5 min-w-0">
               <TokenLogo token={token} className="size-6 shrink-0" />
@@ -152,7 +151,6 @@ export function TokenDetailDrawer({
             </Button>
           </div>
 
-          {/* Drawer Body */}
           <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6 space-y-6">
             {sent ? (
               <SendSuccess
@@ -166,7 +164,6 @@ export function TokenDetailDrawer({
               />
             ) : (
               <>
-                {/* Hero Token Balance & Standard Details */}
                 <div className="flex flex-col items-center gap-2 text-center pt-1">
                   <TokenLogo token={token} className="size-16 shadow-xs" />
                   <div className="space-y-0.5">
@@ -188,7 +185,6 @@ export function TokenDetailDrawer({
                   </div>
                 </div>
 
-                {/* Primary Action ButtonGroup (Clean, formal, standard, NO icons inside buttons) */}
                 <div className="pt-1">
                   <ButtonGroup className="w-full">
                     <Button
@@ -239,7 +235,6 @@ export function TokenDetailDrawer({
                   </ButtonGroup>
                 </div>
 
-                {/* Tabbed Views: Activity / On-chain Deposit */}
                 <Tabs
                   value={activeTab}
                   onValueChange={(val) => setActiveTab(val as "activity" | "deposit")}
@@ -260,7 +255,6 @@ export function TokenDetailDrawer({
                     </TabsTrigger>
                   </TabsList>
 
-                  {/* TAB 1: Activity & Extra Cards */}
                   <TabsContent value="activity" className="mt-4 space-y-4">
                     {selfCustody !== undefined && selfCustody > 0n && (
                       <SelfCustodyCard token={token} balance={selfCustody} />
@@ -275,7 +269,6 @@ export function TokenDetailDrawer({
                     </div>
                   </TabsContent>
 
-                  {/* TAB 2: On-chain Deposit View */}
                   <TabsContent value="deposit" className="mt-4 space-y-4">
                     {depositLoading || !icrcAddress ? (
                       <div className="flex justify-center py-12">
@@ -337,7 +330,6 @@ export function TokenDetailDrawer({
         </DrawerContent>
       </Drawer>
 
-      {/* Nested Send Token Drawer */}
       <SendTokenDrawer
         open={sendOpen}
         onOpenChange={setSendOpen}

@@ -15,7 +15,6 @@ type SubnetAgg = {
   nodes: number
 }
 
-/** Parse IC dashboard region `"Continent,CC,Subdivision"` → country code. */
 export function countryCodeFromRegion(region: string | null | undefined): string | null {
   if (!region) return null
   const parts = region.split(",").map((p) => p.trim())
@@ -24,16 +23,12 @@ export function countryCodeFromRegion(region: string | null | undefined): string
   return code.toUpperCase()
 }
 
-/** Map IC region codes to lipis/flag-icons ISO filenames. */
 export function flagCountryCode(code: string): string {
   const upper = code.toUpperCase()
   if (upper === "UK") return "gb"
   return upper.toLowerCase()
 }
 
-/**
- * Build subnet_id → countries + replica node count from the public IC nodes API.
- */
 export async function fetchSubnetMetaMap(): Promise<Record<string, { countries: string[]; nodeCount: number }>> {
   try {
     const res = await fetch("https://ic-api.internetcomputer.org/api/v3/nodes?limit=5000", {
@@ -70,7 +65,6 @@ export async function fetchSubnetMetaMap(): Promise<Record<string, { countries: 
   }
 }
 
-/** @deprecated use fetchSubnetMetaMap */
 export async function fetchSubnetCountryMap(): Promise<Record<string, string[]>> {
   const meta = await fetchSubnetMetaMap()
   const out: Record<string, string[]> = {}

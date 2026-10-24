@@ -41,14 +41,6 @@ import { cn } from "@/lib/ui/utils"
 
 const PRESETS = [1n, 5n, 10n] as const
 
-// Sent as the ledger memo, so every label is kept inside MEMO_MAX_BYTES (32) --
-// a longer one would be rejected by the canister at the point of transfer.
-// Fixed options rather than free text: the memo is written on-chain, publicly
-// and permanently, and a typed note invites people to put things there they
-// cannot take back.
-//
-// The memo stays English in every locale: it is on-chain data the recipient
-// reads in their own language, not UI copy. Only the picker label translates.
 const PURPOSES = [
   { key: "payment", memo: "Payment" },
   { key: "tip", memo: "Tip" },
@@ -78,9 +70,6 @@ export function QuickPayDrawer({
   onOpenChange: (open: boolean) => void
   username: string
   balance?: bigint
-  // Set when the visitor arrived on a payment link. The recipient already said
-  // what they are owed and what for, so there is nothing left to pick -- the
-  // drawer becomes a confirmation.
   request?: { amount: bigint; memo?: string }
   onPay: (amount: bigint, message?: string) => Promise<{ blockIndex: bigint } | string>
 }) {
@@ -265,18 +254,17 @@ export function QuickPayDrawer({
             </FieldGroup>
 
             <DrawerFooter className="pt-4">
-              {/* Insufficient balance is said on the button rather than in an
-                  alert above it: the button is already locked, so a second
-                  element saying so only pushes the form around. */}
               <Button disabled={!canSend} onClick={handleSend}>
                 {loading && <Spinner data-icon="inline-start" />}
-                {loading
-                  ? t("sending")
-                  : insufficient
-                    ? t("insufficient")
-                    : request
-                      ? t("confirmAmount", { amount: formatE8s(request.amount) })
-                      : t("confirm")}
+                <span>
+                  {loading
+                    ? t("sending")
+                    : insufficient
+                      ? t("insufficient")
+                      : request
+                        ? t("confirmAmount", { amount: formatE8s(request.amount) })
+                        : t("confirm")}
+                </span>
               </Button>
             </DrawerFooter>
           </>

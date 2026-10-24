@@ -209,11 +209,13 @@ export function MyCanisterTopupDialog({
               onClick={() => void onConfirm()}
             >
               {submitting && <Spinner data-icon="inline-start" />}
-              {submitting
-                ? flowStep === "send"
-                  ? tt("sending")
-                  : tt("toppingUp")
-                : t("topUpConfirm")}
+              <span>
+                {submitting
+                  ? flowStep === "send"
+                    ? tt("sending")
+                    : tt("toppingUp")
+                  : t("topUpConfirm")}
+              </span>
             </Button>
           </DialogFooter>
         </DialogContent>

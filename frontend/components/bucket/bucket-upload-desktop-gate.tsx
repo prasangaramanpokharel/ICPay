@@ -12,10 +12,9 @@ import {
 import { useIsMobile } from "@/hooks/ui/useMobile"
 import { cn } from "@/lib/ui/utils"
 
-/** Bucket uploads are desktop-only — WebP conversion and multi-MB files need a full browser. */
 export function useBucketUploadDesktopOnly() {
   const isMobile = useIsMobile()
-  return { isMobile, desktopOnly: isMobile }
+  return { isMobile, desktopOnly: false }
 }
 
 export function BucketUploadDesktopAlert({ className }: { className?: string }) {

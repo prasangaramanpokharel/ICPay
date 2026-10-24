@@ -1,5 +1,8 @@
 "use client"
 
+import { useState } from "react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { GripVerticalIcon } from "@hugeicons/core-free-icons"
 import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
@@ -11,7 +14,6 @@ import {
   BucketFileRowActions,
   BucketFolderRowActions,
 } from "@/components/bucket/bucket-file-row-actions"
-import { BucketFileThumb } from "@/components/bucket/bucket-file-thumb"
 import { formatFileSize } from "@/components/bucket/bucket-card"
 import { fileTypeChip } from "@/lib/bucket/allowedFiles"
 import { folderTotals, type FolderListEntry } from "@/lib/bucket/folderPath"
@@ -23,6 +25,8 @@ export function BucketFilesGrid({
   bucketId,
   bucketName,
   files,
+  allFiles,
+  allFilesLoading,
   prefix,
   visible,
   selected,
@@ -33,10 +37,13 @@ export function BucketFilesGrid({
   onOpenFile,
   onDeleteFile,
   onDeleteFolder,
+  onDropFilesIntoFolder,
 }: {
   bucketId?: string
   bucketName?: string
   files: FilePublic[]
+  allFiles?: FilePublic[]
+  allFilesLoading?: boolean
   prefix: string
   visible: FolderListEntry<FilePublic>[]
   selected: Set<string>
@@ -47,7 +54,10 @@ export function BucketFilesGrid({
   onOpenFile: (file: FilePublic) => void
   onDeleteFile?: (path: string) => void
   onDeleteFolder?: (name: string) => void
+  onDropFilesIntoFolder?: (paths: string[], folderName: string) => void
 }) {
+  const [dragOverFolder, setDragOverFolder] = useState<string | null>(null)
+
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
       {visible.map((entry) => {
@@ -55,16 +65,54 @@ export function BucketFilesGrid({
         const isSelected = selected.has(key)
 
         if (entry.kind === "folder") {
-          const totals = folderTotals(files, prefix, entry.name)
+          const filesForTotals = allFiles && allFiles.length > 0 ? allFiles : files
+          const totals = folderTotals(filesForTotals, prefix, entry.name)
+          const sizeLabel =
+            allFilesLoading && (!allFiles || allFiles.length === 0)
+              ? "—"
+              : formatFileSize(totals.bytes)
+          const isOver = dragOverFolder === entry.name
+
           return (
             <Card
               key={key}
               role="button"
               tabIndex={0}
               onClick={() => onOpenFolder(entry.name)}
+              onDragOver={(e) => {
+                if (!canWrite) return
+                e.preventDefault()
+                e.dataTransfer.dropEffect = "move"
+                if (dragOverFolder !== entry.name) {
+                  setDragOverFolder(entry.name)
+                }
+              }}
+              onDragLeave={(e) => {
+                if (e.currentTarget.contains(e.relatedTarget as Node)) return
+                if (dragOverFolder === entry.name) {
+                  setDragOverFolder(null)
+                }
+              }}
+              onDrop={(e) => {
+                e.preventDefault()
+                setDragOverFolder(null)
+                if (!canWrite || !onDropFilesIntoFolder) return
+                try {
+                  const raw = e.dataTransfer.getData("application/json")
+                  if (!raw) return
+                  const data = JSON.parse(raw) as { paths: string[] }
+                  if (data.paths && data.paths.length > 0) {
+                    onDropFilesIntoFolder(data.paths, entry.name)
+                  }
+                } catch {
+                  const text = e.dataTransfer.getData("text/plain")
+                  if (text) onDropFilesIntoFolder([text], entry.name)
+                }
+              }}
               className={cn(
                 "group relative flex flex-col justify-between overflow-hidden border-border/80 bg-card/60 p-3.5 transition-all duration-150 hover:border-border hover:bg-card hover:shadow-xs",
-                isSelected && "border-primary bg-primary/5"
+                isSelected && "border-primary bg-primary/5",
+                isOver && "border-primary/50 bg-primary/10 ring-2 ring-primary/80"
               )}
             >
               <div className="flex items-start justify-between gap-2">
@@ -100,20 +148,56 @@ export function BucketFilesGrid({
                 >
                   Folder
                 </Badge>
-                <span className="tabular-nums">{formatFileSize(totals.bytes)}</span>
+                <span className="tabular-nums">{sizeLabel}</span>
               </div>
             </Card>
           )
         }
 
         const chip = fileTypeChip(entry.file.contentType, entry.file.path)
-        const isImage = entry.file.contentType.startsWith("image/")
 
         return (
           <Card
             key={key}
             role="button"
             tabIndex={0}
+            draggable={canWrite}
+            onDragStart={(e) => {
+              if (!canWrite) return
+              const isChecked = selected.has(key)
+              const pathsToMove: string[] = []
+
+              if (isChecked) {
+                for (const k of selected) {
+                  if (k.startsWith("file:")) pathsToMove.push(k.slice(5))
+                }
+              }
+              if (!pathsToMove.includes(entry.file.path)) {
+                pathsToMove.push(entry.file.path)
+              }
+
+              e.dataTransfer.setData("application/json", JSON.stringify({ paths: pathsToMove }))
+              e.dataTransfer.setData("text/plain", entry.file.path)
+              e.dataTransfer.effectAllowed = "move"
+
+              const fileName = entry.file.path.split("/").pop() ?? entry.file.path
+              const ghost = document.createElement("div")
+              ghost.style.position = "absolute"
+              ghost.style.top = "-9999px"
+              ghost.style.left = "-9999px"
+              ghost.style.padding = "4px 8px"
+              ghost.style.borderRadius = "8px"
+              ghost.style.backgroundColor = "var(--card)"
+              ghost.style.color = "var(--foreground)"
+              ghost.style.border = "1px solid var(--border)"
+              ghost.style.fontSize = "12px"
+              ghost.style.fontWeight = "500"
+              ghost.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)"
+              ghost.innerText = pathsToMove.length > 1 ? `${pathsToMove.length} files` : fileName
+              document.body.appendChild(ghost)
+              e.dataTransfer.setDragImage(ghost, 12, 12)
+              setTimeout(() => document.body.removeChild(ghost), 0)
+            }}
             onClick={() => onOpenFile(entry.file)}
             className={cn(
               "group relative flex flex-col justify-between overflow-hidden border-border/80 bg-card/60 p-3.5 transition-all duration-150 hover:border-border hover:bg-card hover:shadow-xs",
@@ -121,16 +205,22 @@ export function BucketFilesGrid({
             )}
           >
             <div className="flex items-start justify-between gap-2">
-              {canWrite ? (
-                <div onClick={(e) => e.stopPropagation()}>
-                  <Checkbox
-                    checked={isSelected}
-                    onCheckedChange={(v) => onToggleKey(key, v === true)}
-                  />
-                </div>
-              ) : (
-                <div />
-              )}
+              <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                {canWrite ? (
+                  <>
+                    <span
+                      className="cursor-grab text-muted-foreground/50 transition-colors hover:text-foreground active:cursor-grabbing"
+                      title="Drag to move"
+                    >
+                      <HugeiconsIcon icon={GripVerticalIcon} className="size-3.5 shrink-0" strokeWidth={1.75} />
+                    </span>
+                    <Checkbox
+                      checked={isSelected}
+                      onCheckedChange={(v) => onToggleKey(key, v === true)}
+                    />
+                  </>
+                ) : null}
+              </div>
               <BucketFileRowActions
                 bucketId={bucketId ?? ""}
                 bucketName={bucketName}
@@ -141,21 +231,11 @@ export function BucketFilesGrid({
               />
             </div>
 
-            <div className="my-2 flex flex-col items-center justify-center gap-2 py-1">
-              {isImage && bucketId ? (
-                <div className="relative size-16 overflow-hidden rounded-lg border border-border/60 bg-muted/30">
-                  <BucketFileThumb
-                    bucketId={bucketId}
-                    file={entry.file}
-                    size="md"
-                  />
-                </div>
-              ) : (
-                <BucketFileIcon
-                  path={entry.file.path}
-                  className="size-8"
-                />
-              )}
+            <div className="my-3 flex flex-col items-center justify-center gap-2 py-2">
+              <BucketFileIcon
+                path={entry.file.path}
+                className="size-8"
+              />
               <p
                 className="max-w-full truncate text-center text-xs font-medium text-foreground group-hover:text-foreground"
                 title={entry.file.path}

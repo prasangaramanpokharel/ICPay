@@ -34,7 +34,12 @@ const COMMANDS: Record<string, string> = {
   "cns:build": "cns/build.ts",
   "cns:deploy": "cns/deploy.ts",
   "cns:hash": "cns/hash.ts",
+  "academy:test": "academy/test.ts",
+  "academy:build": "academy/build.ts",
+  "academy:deploy": "academy/deploy.ts",
+  "academy:hash": "academy/hash.ts",
   "cnsmangment:test": "cns/test.ts",
+
   "cnsmangment:build": "cns/build.ts",
   "cnsmangment:deploy": "cns/deploy.ts",
   "cnsmangment:hash": "cns/hash.ts",
