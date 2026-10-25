@@ -48,7 +48,7 @@
   } else if (/^\/[A-Za-z0-9_]{1,8}$/.test(path)) {
     var seg = path.slice(1).toLowerCase()
     var reserved =
-      "login wallet deposit withdraw transfer profile settings icpverse username terms privacy api admin icpay support help about static public assets images audio well sitemap robots manifest favicon icon og u index 404 video bucket launch token swap roadmap faq transparency transactions deposit withdraw wallet transfer login icpay"
+      "home login wallet deposit withdraw transfer profile settings icpverse username terms privacy api admin icpay support help about static public assets images audio well sitemap robots manifest favicon icon og u index 404 video bucket launch token swap trade roadmap faq transparency transactions icfalcon courses charity academy contact topup icbucket channels governance"
     if ((" " + reserved + " ").indexOf(" " + seg + " ") === -1) {
       shell = "/u.html"
       shellId = "profile-u"

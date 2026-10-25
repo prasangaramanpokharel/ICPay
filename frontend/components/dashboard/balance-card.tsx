@@ -10,7 +10,6 @@ import { cn } from "@/lib/ui/utils"
 import type { IcpPrice } from "@/lib/market/icpPrice"
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 
-/** Number of e8s (10^-8 ICP) in one whole ICP token. */
 const E8S_PER_ICP = 100_000_000
 
 type BalanceCardProps = {
@@ -42,18 +41,7 @@ export function BalanceCard({
   const fiat = useFiatValue(usdValue)
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-card dark:bg-background p-5 text-foreground   dark:border-primary/20 select-none sm:p-6">
-      {/* Ambient specular lighting */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-12 -top-12 size-40 rounded-full bg-primary/10 blur-2xl"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -bottom-12 -left-12 size-36 rounded-full bg-primary/5 blur-2xl"
-      />
-
-      {/* Top row: Chip + username + Network label */}
+    <div className="relative overflow-hidden rounded-3xl bg-card dark:bg-background p-5 text-foreground select-none sm:p-6">
       <div className="relative z-10 flex min-w-0 items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
           <EmvChip />
@@ -70,12 +58,9 @@ export function BalanceCard({
           )}
         </div>
 
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-          Internet Computer
-        </span>
+       
       </div>
 
-      {/* Center: Main Balance */}
       <div className="relative z-10 mt-6 flex items-baseline justify-between gap-2">
         <Button
           variant="ghost"
@@ -104,13 +89,12 @@ export function BalanceCard({
         </Button>
       </div>
 
-      {/* Bottom row: Fiat valuation + 24h market status */}
       <div className="relative z-10 mt-4 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border/60">
         <button
           type="button"
           onClick={() => void onRefreshPrice()}
           title="Click to refresh balance & price"
-          className="inline-flex items-center rounded-full bg-muted/60 hover:bg-muted px-3 py-1 text-xs font-medium tabular-nums text-foreground transition-all cursor-pointer border border-border/40"
+          className="inline-flex items-center rounded-full  hover:bg-muted px-3 py-1 text-xs font-medium tabular-nums text-foreground transition-all cursor-pointer border border-border/40"
         >
           {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
         </button>
@@ -145,11 +129,6 @@ export function BalanceCard({
   )
 }
 
-/**
- * Splits a balance string on its decimal point and renders the fractional
- * tail smaller and dimmed, so the eye lands on the whole-number amount
- * first — the same pattern Coinbase/Robinhood-style balances use.
- */
 function FormattedBalance({ value }: { value: string }) {
   const dotIndex = value.indexOf(".")
   if (dotIndex === -1) return <>{value}</>
@@ -165,7 +144,6 @@ function FormattedBalance({ value }: { value: string }) {
   )
 }
 
-/** Metallic EMV-style chip icon shown next to the username. */
 function EmvChip() {
   return (
     <span

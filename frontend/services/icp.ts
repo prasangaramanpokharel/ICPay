@@ -62,6 +62,9 @@ const ALTERNATIVE_ORIGINS = [
   "https://ic-pay.vercel.app",
   "https://icpay.app",
   "https://www.icpay.app",
+  "https://icpay.cloud",
+  "https://www.icpay.cloud",
+  "https://63dke-waaaa-aaaan-q6mvq-cai.raw.icp0.io",
 ]
 
 // Permanently pinned derivation origin. Changing this value alters

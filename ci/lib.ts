@@ -20,6 +20,7 @@ export const OWNED_CANISTERS = [
   { name: "cnsmangment", label: "cns" },
   { name: "icpay_notifier", label: "notifier" },
   { name: "icpay_academy", label: "academy" },
+  { name: "icpay_index", label: "index" },
 ] as const
 export type OwnedCanisterName = (typeof OWNED_CANISTERS)[number]["name"]
 
@@ -27,7 +28,7 @@ export function canisterIds(): Record<string, { ic?: string }> {
   return JSON.parse(readFileSync(resolve(BACKEND, "canister_ids.json"), "utf8"))
 }
 
-/** Resolve dfx canister name from shorthand: backend | frontend | blob | blob store | cns | notifier | academy */
+/** Resolve dfx canister name from shorthand: backend | frontend | blob | blob store | cns | notifier | academy | index */
 export function resolveOwnedCanister(target?: string): OwnedCanisterName | undefined {
   if (!target) return undefined
   const key = target.toLowerCase().replace(/_/g, " ").trim()
@@ -40,7 +41,8 @@ export function resolveOwnedCanister(target?: string): OwnedCanisterName | undef
       (key === "cns" && c.name === "cnsmangment") ||
       (key === "cnsmangment" && c.name === "cnsmangment") ||
       (key === "notifier" && c.name === "icpay_notifier") ||
-      (key === "academy" && c.name === "icpay_academy"),
+      (key === "academy" && c.name === "icpay_academy") ||
+      (key === "index" && c.name === "icpay_index"),
   )
   return hit?.name
 }
@@ -48,6 +50,7 @@ export function resolveOwnedCanister(target?: string): OwnedCanisterName | undef
 
 export const WALLET_CANISTER_ID = canisterIds().icp_wallet_backend?.ic ?? ""
 export const ICPAY_LEDGER_ID = "5fsnk-rqaaa-aaaan-q6m4q-cai"
+export const ICPAY_INDEX_ID = canisterIds().icpay_index?.ic ?? "geode-2qaaa-aaaan-q6wuq-cai"
 export const ICP_INDEX = "qhbym-qaaaa-aaaaa-aaafq-cai"
 
 // dfx invokes whatever DFX_MOC_PATH names. A shell profile that sets

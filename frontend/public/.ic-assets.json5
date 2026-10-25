@@ -28,6 +28,14 @@
     "ignore": false
   },
   {
+    "match": ".well-known/ic-domains",
+    "headers": {
+      "Content-Type": "text/plain",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "ignore": false
+  },
+  {
     "match": "images/**/*",
     "headers": {
       "Cache-Control": "public, max-age=604800, stale-while-revalidate=86400",
@@ -111,6 +119,28 @@
     "match": "**/*.html",
     "headers": {
       "Cache-Control": "public, max-age=0, must-revalidate"
+    }
+  },
+  {
+    // Next.js App Router static export emits RSC flight payloads as .txt files
+    // that the client router parses. They require text/x-component to avoid
+    // flight decoding errors during client-side navigation.
+    "match": "**/*.txt",
+    "headers": {
+      "Content-Type": "text/x-component",
+      "Cache-Control": "public, max-age=0, must-revalidate"
+    }
+  },
+  {
+    "match": "robots.txt",
+    "headers": {
+      "Content-Type": "text/plain"
+    }
+  },
+  {
+    "match": "llm*.txt",
+    "headers": {
+      "Content-Type": "text/plain"
     }
   },
   {

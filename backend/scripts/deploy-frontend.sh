@@ -34,13 +34,13 @@ done
 # index.html, so the status code proves nothing on its own -- only the copy does.
 echo
 verified=0
-for i in {1..6}; do
-  if curl -s "$base/terms.html" | grep -q "Terms of Service"; then
+for i in {1..15}; do
+  if curl -s -H 'Cache-Control: no-cache' "$base/terms.html?_t=$(date +%s)" | grep -q "Terms of Service"; then
     echo "  OK: /terms.html contains the legal copy."
     verified=1
     break
   fi
-  echo "  Waiting for edge boundary nodes to propagate... ($i/6)"
+  echo "  Waiting for edge boundary nodes to propagate... ($i/15)"
   sleep 2
 done
 

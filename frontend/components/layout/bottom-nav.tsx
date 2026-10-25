@@ -20,13 +20,13 @@ export function BottomNav() {
   return (
     <nav
       className={cn(
-        "fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md",
+        "pointer-events-none fixed inset-x-0 bottom-0 z-50 mx-auto w-full max-w-md touch-manipulation",
         "px-3.5 pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] pt-1",
       )}
     >
       <div
         className={cn(
-          "grid h-16 grid-cols-5 items-center rounded-3xl px-1.5 py-1",
+          "pointer-events-auto grid h-16 grid-cols-5 items-center rounded-3xl px-1.5 py-1",
           "border border-border/60 dark:border-white/10",
           "bg-card/85 dark:bg-card/75 backdrop-blur-2xl",
           "shadow-[0_12px_36px_-6px_rgba(0,0,0,0.12)]",
@@ -72,11 +72,16 @@ function NavTab({
       aria-label={label}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "group relative flex min-w-0 flex-col items-center justify-center py-1 transition-transform duration-150 active:scale-95 focus-visible:outline-none",
+        "group relative flex h-full min-w-0 flex-col items-center justify-center py-1 touch-manipulation focus-visible:outline-none",
         active ? "text-primary" : "text-muted-foreground hover:text-foreground"
       )}
+      onClick={(e) => {
+        if (active) {
+          e.preventDefault()
+        }
+      }}
     >
-      <span className="relative flex size-8 items-center justify-center transition-colors">
+      <span className="relative flex size-8 items-center justify-center transition-all duration-150 group-active:scale-90">
         <HugeiconsIcon
           icon={icon}
           className="size-5 transition-transform duration-200 group-hover:scale-105"
