@@ -2,6 +2,7 @@
 
 import { useMemo } from "react"
 import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TokenAvatar } from "@/components/public/market/trade/token-avatar"
@@ -70,10 +71,11 @@ function MarqueeItem({
   const change = row.stats?.priceChange24h
   return (
     <div className="flex shrink-0 items-center">
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => onSelect(row.baseLedgerId)}
-        className="flex items-center gap-2 px-4 py-2 text-left hover:bg-muted/40"
+        className="h-auto flex items-center gap-2 px-4 py-2 text-left rounded-none hover:bg-muted/40 font-normal"
       >
         <TokenAvatar
           symbol={row.base.symbol}
@@ -90,7 +92,7 @@ function MarqueeItem({
         <span className={cn("text-xs tabular-nums", changeClass(change))}>
           {formatPct(change)}
         </span>
-      </button>
+      </Button>
       <Separator orientation="vertical" className="h-6" />
     </div>
   )

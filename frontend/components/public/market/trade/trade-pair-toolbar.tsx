@@ -69,7 +69,7 @@ export function TradePairToolbar({
       <ShineBorder
         borderWidth={1}
         duration={12}
-        shineColor={["#3b82f6", "#10b981", "#6366f1"]}
+        shineColor={["var(--primary)", "var(--success)", "var(--accent)"]}
         className="opacity-30 dark:opacity-40"
       />
       <div className="flex items-center gap-3 pr-2">
@@ -95,19 +95,34 @@ export function TradePairToolbar({
         detail={usd.sub}
         large
         valueClass={changeClass(stats?.priceChange24h)}
+        tooltip="Current spot market price in USD"
       />
       {snapshot.priceInIcp !== null && (
-        <Metric label={t("priceIcp")} value={icp.main} detail={icp.sub} />
+        <Metric
+          label={t("priceIcp")}
+          value={icp.main}
+          detail={icp.sub}
+          tooltip="Current price denominated in ICP"
+        />
       )}
       <Metric
         label={t("change24h")}
         value={formatPct(stats?.priceChange24h)}
         valueClass={changeClass(stats?.priceChange24h)}
+        tooltip="24-hour price change percentage"
       />
       {range && (
         <>
-          <Metric label={t("rangeHigh")} value={priceLayers(range.high).main} />
-          <Metric label={t("rangeLow")} value={priceLayers(range.low).main} />
+          <Metric
+            label={t("rangeHigh")}
+            value={priceLayers(range.high).main}
+            tooltip="Highest traded price in the last 24 hours"
+          />
+          <Metric
+            label={t("rangeLow")}
+            value={priceLayers(range.low).main}
+            tooltip="Lowest traded price in the last 24 hours"
+          />
         </>
       )}
       <Metric label={t("volume24h")} value={formatUsd(stats?.volume24hUsd)} tooltip="Total trading volume in USD over the last 24 hours" />

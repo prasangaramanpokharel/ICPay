@@ -15,6 +15,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Empty,
   EmptyDescription,
@@ -161,12 +162,9 @@ export function TradeSwapHistory({
         </CardHeader>
 
         <CardContent className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-0 pb-1">
-          {/* 1. Recent Swaps Tab */}
           <TabsContent value="swaps" className="m-0 h-full p-0">
             {!snapshot || (txLoading && swaps.length === 0) ? (
-              <div className="flex h-36 items-center justify-center p-6">
-                <Spinner className="size-6 text-muted-foreground/60" />
-              </div>
+              <TableLoadingSkeleton cols={5} />
             ) : swaps.length === 0 ? (
               <Empty className="border-0 py-6">
                 <EmptyHeader>
@@ -194,7 +192,7 @@ export function TradeSwapHistory({
                       <TableCell
                         className={cn(
                           "py-1.5 px-2.5 text-xs font-semibold",
-                          row.isBuy ? "text-emerald-500" : "text-rose-500"
+                          row.isBuy ? "text-success" : "text-destructive"
                         )}
                       >
                         {row.isBuy ? t("swapBuy") : t("swapSell")}
@@ -219,12 +217,9 @@ export function TradeSwapHistory({
             )}
           </TabsContent>
 
-          {/* 2. Open Limit Orders Tab */}
           <TabsContent value="openOrders" className="m-0 h-full p-0">
             {openLoading && openOrders.length === 0 ? (
-              <div className="flex h-36 items-center justify-center p-6">
-                <Spinner className="size-6 text-muted-foreground/60" />
-              </div>
+              <TableLoadingSkeleton cols={7} />
             ) : openOrders.length === 0 ? (
               <Empty className="border-0 py-6">
                 <EmptyHeader>
@@ -271,8 +266,8 @@ export function TradeSwapHistory({
                             className={cn(
                               "font-semibold text-[10px] px-1.5 py-0",
                               isBuy
-                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                                : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                                ? "bg-success/10 text-success"
+                                : "bg-destructive/10 text-destructive"
                             )}
                           >
                             {isBuy ? t("buy") : t("sell")} {baseTok.symbol}
@@ -291,7 +286,7 @@ export function TradeSwapHistory({
                           <span className="font-sans text-[11px] text-muted-foreground/70">{quoteTok.symbol}</span>
                         </TableCell>
                         <TableCell className="py-1.5 px-2.5">
-                          <Badge variant="outline" className="text-amber-600 border-amber-500/40 text-[10px] px-1.5 py-0">
+                          <Badge variant="outline" className="text-warning border-warning/40 text-[10px] px-1.5 py-0">
                             {order.status}
                           </Badge>
                         </TableCell>
@@ -322,12 +317,9 @@ export function TradeSwapHistory({
             )}
           </TabsContent>
 
-          {/* 3. Limit Order History Tab */}
           <TabsContent value="orderHistory" className="m-0 h-full p-0">
             {allLoading && allOrders.length === 0 ? (
-              <div className="flex h-36 items-center justify-center p-6">
-                <Spinner className="size-6 text-muted-foreground/60" />
-              </div>
+              <TableLoadingSkeleton cols={6} />
             ) : allOrders.length === 0 ? (
               <Empty className="border-0 py-6">
                 <EmptyHeader>
@@ -373,8 +365,8 @@ export function TradeSwapHistory({
                             className={cn(
                               "font-semibold text-[10px] px-1.5 py-0",
                               isBuy
-                                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                                : "bg-rose-500/10 text-rose-600 dark:text-rose-400"
+                                ? "bg-success/10 text-success"
+                                : "bg-destructive/10 text-destructive"
                             )}
                           >
                             {isBuy ? t("buy") : t("sell")} {baseTok.symbol}
@@ -403,8 +395,8 @@ export function TradeSwapHistory({
                             }
                             className={cn(
                               "text-[10px] px-1.5 py-0",
-                              order.status === "Filled" && "text-emerald-600 dark:text-emerald-400 bg-emerald-500/10",
-                              order.status === "Open" && "text-amber-600 border-amber-500/40"
+                              order.status === "Filled" && "text-success bg-success/10",
+                              order.status === "Open" && "text-warning border-warning/40"
                             )}
                           >
                             {order.status}
@@ -421,12 +413,9 @@ export function TradeSwapHistory({
             )}
           </TabsContent>
 
-          {/* 4. On-chain Audit Log Tab */}
           <TabsContent value="audit" className="m-0 h-full p-0">
             {tradesLoading && trades.length === 0 ? (
-              <div className="flex h-36 items-center justify-center p-6">
-                <Spinner className="size-6 text-muted-foreground/60" />
-              </div>
+              <TableLoadingSkeleton cols={5} />
             ) : trades.length === 0 ? (
               <Empty className="border-0 py-6">
                 <EmptyHeader>
@@ -455,13 +444,13 @@ export function TradeSwapHistory({
 
                     return (
                       <TableRow key={`${tr.txId}-${idx}`} className="h-7.5 border-b border-border/20 hover:bg-muted/30">
-                        <TableCell className="py-1.5 px-2.5 font-mono text-xs tabular-nums font-medium text-rose-500">
+                        <TableCell className="py-1.5 px-2.5 font-mono text-xs tabular-nums font-medium text-destructive">
                           -{formatTokenAmount(tr.amountIn, inTok.decimals)}{" "}
-                          <span className="font-sans text-[11px] text-rose-500/80">{inTok.symbol}</span>
+                          <span className="font-sans text-[11px] text-destructive/80">{inTok.symbol}</span>
                         </TableCell>
-                        <TableCell className="py-1.5 px-2.5 font-mono text-xs tabular-nums font-medium text-emerald-500">
+                        <TableCell className="py-1.5 px-2.5 font-mono text-xs tabular-nums font-medium text-success">
                           +{formatTokenAmount(tr.amountOut, outTok.decimals)}{" "}
-                          <span className="font-sans text-[11px] text-emerald-500/80">{outTok.symbol}</span>
+                          <span className="font-sans text-[11px] text-success/80">{outTok.symbol}</span>
                         </TableCell>
                         <TableCell className="py-1.5 px-2.5 font-mono text-xs tabular-nums text-muted-foreground">
                           {formatTokenAmount(tr.serviceFee, 8)}{" "}
@@ -542,8 +531,26 @@ function FillStatusCell({
     )
   }
   return (
-    <Badge variant="secondary" className="font-normal text-emerald-600 dark:text-emerald-400 text-[11px]">
+    <Badge variant="secondary" className="font-normal text-success text-[11px]">
       {filled}
     </Badge>
+  )
+}
+
+function TableLoadingSkeleton({ cols = 5 }: { cols?: number }) {
+  return (
+    <Table className="w-full">
+      <TableBody>
+        {Array.from({ length: 6 }).map((_, i) => (
+          <TableRow key={i} className="h-7.5 border-b border-border/20">
+            {Array.from({ length: cols }).map((_, j) => (
+              <TableCell key={j} className="py-2 px-2.5">
+                <Skeleton className={cn("h-3", j === 0 ? "w-12" : j === cols - 1 ? "w-10 ml-auto" : "w-20")} />
+              </TableCell>
+            ))}
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   )
 }

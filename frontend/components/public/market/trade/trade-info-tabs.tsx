@@ -6,8 +6,16 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { Copy01Icon, LinkSquare02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 import { copyText, formatTokenAmount } from "@/lib/wallet/utils"
 import { formatPct, formatUsd } from "@/lib/market/format"
 import { canisterDashboardUrl, looksLikeCanisterId } from "@/lib/market/canisterLink"
@@ -69,160 +77,195 @@ export function TradeInfoTabs({
       </TabsList>
       )}
 
-      <TabsContent value="pool" className="mt-3 min-h-0 flex-1 space-y-2.5 overflow-y-auto px-4 pb-3 text-sm">
-        {poolsLoading ? (
-          <div className="flex h-40 items-center justify-center p-6">
-            <Spinner className="size-6 text-muted-foreground/60" />
-          </div>
-        ) : mainPool ? (
-          <>
-            <InfoRow label={t("poolId")} value={mainPool.poolId} mono />
-            <InfoRow label={t("poolPair")} value={`${mainPool.token0Symbol} / ${mainPool.token1Symbol}`} />
-            <InfoRow label={t("poolFee")} value={`${(mainPool.poolFee / 10_000).toFixed(2)}%`} />
-            <InfoRow label={t("tvl")} value={formatUsd(parseFloat(mainPool.tvlUSD))} />
-            <InfoRow label={t("tvlChange24h")} value={formatPct(parseFloat(mainPool.tvlUSDChange24H))} />
-            <InfoRow label={t("volume24h")} value={formatUsd(parseFloat(mainPool.volumeUSD24H))} />
-            <InfoRow label={t("volume7d")} value={formatUsd(parseFloat(mainPool.volumeUSD7D))} />
-            <InfoRow label={t("tx24h")} value={mainPool.txCount24H} />
-            <InfoRow label={t("fees24h")} value={formatUsd(parseFloat(mainPool.feesUSD24H))} />
-            {pools.length > 1 && (
-              <div className="pt-2 text-xs text-muted-foreground">
-                {t("morePools", { count: pools.length - 1 })}
-              </div>
-            )}
-          </>
-        ) : (
-          <InfoRow label={t("poolId")} value={t("noPool")} mono />
-        )}
+      <TabsContent value="pool" className="mt-2 min-h-0 flex-1 p-0">
+        <ScrollArea className="h-full px-4 pb-3">
+          {poolsLoading ? (
+            <div className="flex h-40 items-center justify-center p-6">
+              <Spinner className="size-6 text-muted-foreground/60" />
+            </div>
+          ) : mainPool ? (
+            <div className="space-y-2.5 pt-2 text-sm">
+              <InfoRow label={t("poolId")} value={mainPool.poolId} mono />
+              <InfoRow label={t("poolPair")} value={`${mainPool.token0Symbol} / ${mainPool.token1Symbol}`} />
+              <InfoRow label={t("poolFee")} value={`${(mainPool.poolFee / 10_000).toFixed(2)}%`} />
+              <InfoRow label={t("tvl")} value={formatUsd(parseFloat(mainPool.tvlUSD))} />
+              <InfoRow label={t("tvlChange24h")} value={formatPct(parseFloat(mainPool.tvlUSDChange24H))} />
+              <InfoRow label={t("volume24h")} value={formatUsd(parseFloat(mainPool.volumeUSD24H))} />
+              <InfoRow label={t("volume7d")} value={formatUsd(parseFloat(mainPool.volumeUSD7D))} />
+              <InfoRow label={t("tx24h")} value={mainPool.txCount24H} />
+              <InfoRow label={t("fees24h")} value={formatUsd(parseFloat(mainPool.feesUSD24H))} />
+              {pools.length > 1 && (
+                <div className="pt-2 text-xs text-muted-foreground">
+                  {t("morePools", { count: pools.length - 1 })}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="pt-2 text-sm">
+              <InfoRow label={t("poolId")} value={t("noPool")} mono />
+            </div>
+          )}
+        </ScrollArea>
       </TabsContent>
 
-      <TabsContent value="token" className="mt-3 min-h-0 flex-1 space-y-2.5 overflow-y-auto px-4 pb-3 text-sm">
-        <InfoRow label={t("symbol")} value={snapshot.base.symbol} />
-        <InfoRow label={t("name")} value={snapshot.base.name} />
-        {snapshot.tokenType && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground">{t("tokenType")}</span>
-            <Badge variant="secondary" className="text-[10px] uppercase">
-              {snapshot.tokenType}
-            </Badge>
-          </div>
-        )}
-        <InfoRow label={t("decimals")} value={String(snapshot.base.decimals)} />
-        <InfoRow
-          label={t("transferFee")}
-          value={`${formatTokenAmount(snapshot.base.fee, snapshot.base.decimals)} ${snapshot.base.symbol}`}
-        />
-        <InfoRow
-          label={t("totalSupply")}
-          value={
-            extras
-              ? formatTokenAmount(extras.totalSupply, snapshot.base.decimals)
-              : "—"
-          }
-        />
-        {snapshot.circulatingSupply && (
-          <InfoRow
-            label={t("circulatingSupply")}
-            value={formatTokenAmount(BigInt(snapshot.circulatingSupply), snapshot.base.decimals)}
-          />
-        )}
-        {snapshot.maxSupply && (
-          <InfoRow
-            label={t("maxSupply")}
-            value={formatTokenAmount(BigInt(snapshot.maxSupply), snapshot.base.decimals)}
-          />
-        )}
-        {snapshot.holders !== undefined && (
-          <InfoRow label={t("holders")} value={snapshot.holders.toLocaleString()} />
-        )}
-        {snapshot.transactions7d !== undefined && (
-          <InfoRow label={t("transactions7d")} value={snapshot.transactions7d.toLocaleString()} />
-        )}
-        {snapshot.volume7d !== undefined && (
-          <InfoRow label={t("volume7d")} value={formatUsd(snapshot.volume7d)} />
-        )}
-        <InfoRow label={t("mintingAccount")} value={extras?.mintingAccount ?? "—"} mono />
-        <InfoRow
-          label={t("supplyFixed")}
-          value={supplyFixedLabel(extras ? isSupplyFixed(extras.mintingAccount) : null, t("yes"), t("no"))}
-        />
-        <InfoRow label={t("indexCanister")} value={extras?.indexCanisterId ?? "—"} mono />
-        <div className="flex flex-wrap gap-1.5 pt-1">
-          {(extras?.supportedStandards ?? []).map((s) => (
-            <Badge key={s} variant="secondary" className="text-[10px]">
-              {s}
-            </Badge>
-          ))}
-        </div>
-        {snapshot.urls && (
-          <div className="space-y-2 pt-2">
-            {snapshot.urls.website && snapshot.urls.website.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                <span className="text-xs text-muted-foreground">{t("website")}:</span>
-                {snapshot.urls.website.map((url, i) => (
-                  <a
-                    key={i}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-primary hover:underline"
-                  >
-                    {new URL(url).hostname}
-                  </a>
-                ))}
-              </div>
-            )}
-            {snapshot.urls.twitter && snapshot.urls.twitter.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                <span className="text-xs text-muted-foreground">{t("twitter")}:</span>
-                {snapshot.urls.twitter.map((url, i) => (
-                  <a
-                    key={i}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-primary hover:underline"
-                  >
-                    {url.split('/').pop()}
-                  </a>
-                ))}
-              </div>
-            )}
-            {snapshot.urls.explorer && snapshot.urls.explorer.length > 0 && (
-              <div className="flex flex-wrap gap-1.5">
-                <span className="text-xs text-muted-foreground">{t("explorer")}:</span>
-                {snapshot.urls.explorer.map((url, i) => (
-                  <a
-                    key={i}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-primary hover:underline"
-                  >
-                    {new URL(url).hostname}
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+      <TabsContent value="token" className="mt-2 min-h-0 flex-1 p-0">
+        <ScrollArea className="h-full px-4 pb-3">
+          <Accordion defaultValue={["details", "supply", "links"]} className="border-0 rounded-none divide-y divide-border/40">
+            <AccordionItem value="details" className="border-b-0 py-1">
+              <AccordionTrigger className="py-2 text-xs font-semibold hover:no-underline">
+                {t("tabToken")}
+              </AccordionTrigger>
+              <AccordionContent className="space-y-2.5 px-0 pt-1 text-sm">
+                <InfoRow label={t("symbol")} value={snapshot.base.symbol} />
+                <InfoRow label={t("name")} value={snapshot.base.name} />
+                {snapshot.tokenType && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">{t("tokenType")}</span>
+                    <Badge variant="secondary" className="text-[10px] uppercase">
+                      {snapshot.tokenType}
+                    </Badge>
+                  </div>
+                )}
+                <InfoRow label={t("decimals")} value={String(snapshot.base.decimals)} />
+                <InfoRow
+                  label={t("transferFee")}
+                  value={`${formatTokenAmount(snapshot.base.fee, snapshot.base.decimals)} ${snapshot.base.symbol}`}
+                />
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="supply" className="border-b-0 py-1">
+              <AccordionTrigger className="py-2 text-xs font-semibold hover:no-underline">
+                {t("totalSupply")} & {t("holders")}
+              </AccordionTrigger>
+              <AccordionContent className="space-y-2.5 px-0 pt-1 text-sm">
+                <InfoRow
+                  label={t("totalSupply")}
+                  value={
+                    extras
+                      ? formatTokenAmount(extras.totalSupply, snapshot.base.decimals)
+                      : "—"
+                  }
+                />
+                {snapshot.circulatingSupply && (
+                  <InfoRow
+                    label={t("circulatingSupply")}
+                    value={formatTokenAmount(BigInt(snapshot.circulatingSupply), snapshot.base.decimals)}
+                  />
+                )}
+                {snapshot.maxSupply && (
+                  <InfoRow
+                    label={t("maxSupply")}
+                    value={formatTokenAmount(BigInt(snapshot.maxSupply), snapshot.base.decimals)}
+                  />
+                )}
+                {snapshot.holders !== undefined && (
+                  <InfoRow label={t("holders")} value={snapshot.holders.toLocaleString()} />
+                )}
+                {snapshot.transactions7d !== undefined && (
+                  <InfoRow label={t("transactions7d")} value={snapshot.transactions7d.toLocaleString()} />
+                )}
+                {snapshot.volume7d !== undefined && (
+                  <InfoRow label={t("volume7d")} value={formatUsd(snapshot.volume7d)} />
+                )}
+                <InfoRow
+                  label={t("supplyFixed")}
+                  value={supplyFixedLabel(extras ? isSupplyFixed(extras.mintingAccount) : null, t("yes"), t("no"))}
+                />
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="links" className="border-b-0 py-1">
+              <AccordionTrigger className="py-2 text-xs font-semibold hover:no-underline">
+                {t("indexCanister")} & Links
+              </AccordionTrigger>
+              <AccordionContent className="space-y-2.5 px-0 pt-1 text-sm">
+                <InfoRow label={t("mintingAccount")} value={extras?.mintingAccount ?? "—"} mono />
+                <InfoRow label={t("indexCanister")} value={extras?.indexCanisterId ?? "—"} mono />
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  {(extras?.supportedStandards ?? []).map((s) => (
+                    <Badge key={s} variant="secondary" className="text-[10px]">
+                      {s}
+                    </Badge>
+                  ))}
+                </div>
+                {snapshot.urls && (
+                  <div className="space-y-2 pt-2">
+                    {snapshot.urls.website && snapshot.urls.website.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        <span className="text-xs text-muted-foreground">{t("website")}:</span>
+                        {snapshot.urls.website.map((url, i) => (
+                          <a
+                            key={i}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary hover:underline"
+                          >
+                            {new URL(url).hostname}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                    {snapshot.urls.twitter && snapshot.urls.twitter.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        <span className="text-xs text-muted-foreground">{t("twitter")}:</span>
+                        {snapshot.urls.twitter.map((url, i) => (
+                          <a
+                            key={i}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary hover:underline"
+                          >
+                            {url.split('/').pop()}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                    {snapshot.urls.explorer && snapshot.urls.explorer.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        <span className="text-xs text-muted-foreground">{t("explorer")}:</span>
+                        {snapshot.urls.explorer.map((url, i) => (
+                          <a
+                            key={i}
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs text-primary hover:underline"
+                          >
+                            {new URL(url).hostname}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </ScrollArea>
       </TabsContent>
 
-      <TabsContent value="pair" className="mt-3 min-h-0 flex-1 space-y-2.5 overflow-y-auto px-4 pb-3 text-sm">
-        <InfoRow label={t("pair")} value={`${snapshot.base.symbol} / ${snapshot.quote.symbol}`} />
-        <InfoRow label={t("baseLedger")} value={snapshot.base.ledgerId} mono />
-        <InfoRow label={t("quoteLedger")} value={snapshot.quote.ledgerId} mono />
-        <InfoRow
-          label={t("spotRate")}
-          value={
-            snapshot.spotRate !== null
-              ? `${snapshot.spotRate.toPrecision(6)} ${snapshot.quote.symbol}`
-              : "—"
-          }
-        />
-        <InfoRow label={t("quoteSource")} value={t("quoteSourceOnChain")} />
-        <InfoRow label={t("statsSource")} value="api.icpswap.com" />
-        <InfoRow label={t("ledgerSource")} value={t("ledgerSourceOnChain")} />
+      <TabsContent value="pair" className="mt-2 min-h-0 flex-1 p-0">
+        <ScrollArea className="h-full px-4 pb-3">
+          <div className="space-y-2.5 pt-2 text-sm">
+            <InfoRow label={t("pair")} value={`${snapshot.base.symbol} / ${snapshot.quote.symbol}`} />
+            <InfoRow label={t("baseLedger")} value={snapshot.base.ledgerId} mono />
+            <InfoRow label={t("quoteLedger")} value={snapshot.quote.ledgerId} mono />
+            <InfoRow
+              label={t("spotRate")}
+              value={
+                snapshot.spotRate !== null
+                  ? `${snapshot.spotRate.toPrecision(6)} ${snapshot.quote.symbol}`
+                  : "—"
+              }
+            />
+            <InfoRow label={t("quoteSource")} value={t("quoteSourceOnChain")} />
+            <InfoRow label={t("statsSource")} value="api.icpswap.com" />
+            <InfoRow label={t("ledgerSource")} value={t("ledgerSourceOnChain")} />
+          </div>
+        </ScrollArea>
       </TabsContent>
       </Tabs>
   )
@@ -277,14 +320,16 @@ function InfoRow({
         </span>
         {canister ? (
           <span className="flex shrink-0 items-center gap-0.5 pt-0.5">
-            <button
+            <Button
               type="button"
-              className="rounded p-0.5 text-foreground/70 hover:bg-muted hover:text-foreground"
+              variant="ghost"
+              size="icon-xs"
+              className="size-5 rounded p-0.5 text-foreground/70 hover:bg-muted hover:text-foreground cursor-pointer"
               aria-label={copied ? tc("copied") : tc("copy")}
               onClick={() => void copyId()}
             >
               <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-3.5" strokeWidth={2} />
-            </button>
+            </Button>
             <a
               href={canisterDashboardUrl(canister)}
               target="_blank"

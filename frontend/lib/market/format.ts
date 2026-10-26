@@ -83,8 +83,8 @@ export function formatPct(value: number | null | undefined): string {
 
 export function changeClass(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "text-muted-foreground"
-  if (value > 0) return "text-emerald-500"
-  if (value < 0) return "text-red-500"
+  if (value > 0) return "text-success"
+  if (value < 0) return "text-destructive"
   return "text-muted-foreground"
 }
 

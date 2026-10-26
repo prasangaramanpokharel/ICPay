@@ -9,8 +9,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Progress } from "@/components/ui/progress"
 import { Spinner } from "@/components/ui/spinner"
 import { ShineBorder } from "@/components/ui/shine-border"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useDebounced } from "@/hooks/ui/useDebounced"
 import { useApplyTradeBalances, useRefreshTradeBalances, useTradeTokens, useTradingBalance, tradeBalanceKey } from "@/hooks/trade/useTrade"
@@ -123,10 +125,8 @@ export function TradeOrderPanel({
     return 0
   }, [icpPriceData, snapshot])
 
-  // Market Mode input (In-token amount)
   const [marketAmountText, setMarketAmountText] = useState("")
 
-  // Limit Mode inputs (Price in Quote/ICP or USD, Base Amount, and Total in Quote/ICP)
   const [limitPriceText, setLimitPriceText] = useState("")
   const [limitBaseAmountText, setLimitBaseAmountText] = useState("")
   const [limitTotalText, setLimitTotalText] = useState("")
@@ -190,14 +190,11 @@ export function TradeOrderPanel({
         : null
     }
 
-    // Limit Mode amount_in
     if (side === "buy") {
-      // User is paying Total (in quote currency, e.g. ICP)
       return limitTotalText.trim() && quoteToken
         ? parseTokenAmount(limitTotalText, quoteToken.decimals)
         : null
     } else {
-      // User is paying Base Amount (in base currency, e.g. ckETH)
       return limitBaseAmountText.trim() && baseToken
         ? parseTokenAmount(limitBaseAmountText, baseToken.decimals)
         : null
@@ -256,7 +253,6 @@ export function TradeOrderPanel({
   )
   const quoteError = quoteErr ? classifyTradeQuoteError(quoteErr) : null
 
-  // Price conversion helper text (e.g., ≈ $2,673.98 USD or ≈ 828.1990 ICP)
   const convertedPriceSubtext = useMemo(() => {
     const rawNum = parseFloat(effectivePriceText.replace(/,/g, ""))
     if (Number.isNaN(rawNum) || rawNum <= 0) return null
@@ -329,7 +325,6 @@ export function TradeOrderPanel({
     }
   }
 
-  // Price & Amount Sync handlers for Limit Order
   function handlePriceChange(val: string) {
     setLimitPriceText(val)
     setStatus("idle")
@@ -390,7 +385,6 @@ export function TradeOrderPanel({
     }
   }
 
-  // Current Fill Percentage calculation (0-100)
   const currentFillPercent = useMemo(() => {
     if (!tradingBal || !tokenIn) return 0
     const maxIn = maxTradeInput(tradingBal, tokenIn.fee)
@@ -432,11 +426,9 @@ export function TradeOrderPanel({
       return
     }
 
-    // Limit Mode Quick-Fill
     const p = effectivePriceInIcp
     if (side === "buy") {
       lastEditedLimitField.current = "total"
-      // raw is ICP Total
       const totStr = toPlainTokenAmount(raw, tokenIn.decimals)
       setLimitTotalText(totStr)
       if (p > 0) {
@@ -445,7 +437,6 @@ export function TradeOrderPanel({
       }
     } else {
       lastEditedLimitField.current = "amount"
-      // raw is Base Token Amount
       const amtStr = toPlainTokenAmount(raw, tokenIn.decimals)
       setLimitBaseAmountText(amtStr)
       if (p > 0) {
@@ -469,11 +460,9 @@ export function TradeOrderPanel({
     let calculatedMinAmountOut: bigint | null = null
 
     if (side === "buy") {
-      // User is spending ICP (amount_in) to receive baseToken (min_amount_out)
       calculatedAmountIn = parseTokenAmount(limitTotalText, quoteToken.decimals)
       calculatedMinAmountOut = parseTokenAmount(limitBaseAmountText, baseToken.decimals)
     } else {
-      // User is spending baseToken (amount_in) to receive ICP (min_amount_out)
       calculatedAmountIn = parseTokenAmount(limitBaseAmountText, baseToken.decimals)
       calculatedMinAmountOut = parseTokenAmount(limitTotalText, quoteToken.decimals)
     }
@@ -726,93 +715,70 @@ export function TradeOrderPanel({
           duration={14}
           shineColor={
             side === "buy"
-              ? ["#10b981", "#3b82f6", "#059669"]
-              : ["#ef4444", "#f97316", "#dc2626"]
+              ? ["var(--success)", "var(--primary)", "var(--accent)"]
+              : ["var(--destructive)", "var(--warning)", "var(--destructive)"]
           }
           className="opacity-30 dark:opacity-40"
         />
         <div className="relative z-10 flex min-h-0 flex-col">
-          {/* 1. Professional Solid Buy / Sell Toggle Buttons (KuCoin / Binance Style) */}
           <div className="p-3 pb-2">
-            <div className="grid grid-cols-2 gap-1.5 rounded-xl bg-muted/40 p-1">
-              <button
-                type="button"
-                onClick={() => {
-                  setSide("buy")
-                  setMarketAmountText("")
-                  setStatus("idle")
-                  setTradeError(null)
-                  setLimitNotice(null)
-                  setImpactConfirmed(false)
-                }}
-                className={cn(
-                  "rounded-lg py-2 text-center text-xs font-bold transition-all active:scale-[0.98]",
-                  side === "buy"
-                    ? "bg-emerald-600 text-white shadow-xs"
-                    : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-                )}
+            <ToggleGroup
+              value={[side]}
+              onValueChange={(val) => {
+                const s = val[0] as "buy" | "sell" | undefined
+                if (!s) return
+                setSide(s)
+                setMarketAmountText("")
+                setStatus("idle")
+                setTradeError(null)
+                setLimitNotice(null)
+                setImpactConfirmed(false)
+              }}
+              className="grid w-full grid-cols-2 gap-1.5 rounded-xl bg-muted/40 p-1"
+            >
+              <ToggleGroupItem
+                value="buy"
+                className="h-8 rounded-lg font-bold transition-all data-[state=on]:bg-success data-[state=on]:text-success-foreground data-[state=on]:shadow-xs hover:bg-muted"
               >
                 {t("buy")} {baseSymbol}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSide("sell")
-                  setMarketAmountText("")
-                  setStatus("idle")
-                  setTradeError(null)
-                  setLimitNotice(null)
-                  setImpactConfirmed(false)
-                }}
-                className={cn(
-                  "rounded-lg py-2 text-center text-xs font-bold transition-all active:scale-[0.98]",
-                  side === "sell"
-                    ? "bg-rose-600 text-white shadow-xs"
-                    : "text-muted-foreground hover:bg-muted/60 hover:text-foreground"
-                )}
+              </ToggleGroupItem>
+              <ToggleGroupItem
+                value="sell"
+                className="h-8 rounded-lg font-bold transition-all data-[state=on]:bg-destructive data-[state=on]:text-destructive-foreground data-[state=on]:shadow-xs hover:bg-muted"
               >
                 {t("sell")} {baseSymbol}
-              </button>
-            </div>
+              </ToggleGroupItem>
+            </ToggleGroup>
           </div>
 
           <div className="flex min-h-0 flex-col gap-2.5 overflow-y-auto px-4 pb-3 pt-0">
-            {/* 2. Order Mode Sub-Tabs: Limit vs Market */}
             <div className="flex items-center justify-between border-b border-border/40 pb-2">
-              <div className="flex items-center gap-4 text-xs">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOrderType("limit")
-                    setTradeError(null)
-                    setLimitNotice(null)
-                  }}
-                  className={cn(
-                    "relative pb-1 font-semibold transition-colors",
-                    orderType === "limit"
-                      ? "text-foreground after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
+              <ToggleGroup
+                value={[orderType]}
+                onValueChange={(val) => {
+                  const mode = val[0] as "limit" | "market" | undefined
+                  if (!mode) return
+                  setOrderType(mode)
+                  setTradeError(null)
+                  setLimitNotice(null)
+                }}
+                className="justify-start gap-1 p-0"
+              >
+                <ToggleGroupItem
+                  value="limit"
+                  size="sm"
+                  className="h-6 rounded-md px-2 text-xs font-semibold data-[state=on]:bg-muted data-[state=on]:text-foreground"
                 >
                   {t("limit")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setOrderType("market")
-                    setTradeError(null)
-                    setLimitNotice(null)
-                  }}
-                  className={cn(
-                    "relative pb-1 font-semibold transition-colors",
-                    orderType === "market"
-                      ? "text-foreground after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
+                </ToggleGroupItem>
+                <ToggleGroupItem
+                  value="market"
+                  size="sm"
+                  className="h-6 rounded-md px-2 text-xs font-semibold data-[state=on]:bg-muted data-[state=on]:text-foreground"
                 >
                   {t("market")}
-                </button>
-              </div>
+                </ToggleGroupItem>
+              </ToggleGroup>
               <div className="flex items-center gap-1">
                 <Button
                   type="button"
@@ -823,6 +789,7 @@ export function TradeOrderPanel({
                   title={tDeposit("title")}
                 >
                   <span>{tDeposit("title")}</span>
+                  <HugeiconsIcon icon={ArrowDataTransferHorizontalIcon} className="ml-1 size-3" />
                 </Button>
                 <Button
                   type="button"
@@ -837,7 +804,6 @@ export function TradeOrderPanel({
               </div>
             </div>
 
-            {/* Trading Balance Display */}
             {isAuthenticated && tokenIn && (
               <div className="space-y-0.5 text-xs">
                 <div className="flex items-center justify-between">
@@ -872,10 +838,8 @@ export function TradeOrderPanel({
               </div>
             )}
 
-            {/* LIMIT MODE INPUTS (Price, Amount, Total) */}
             {orderType === "limit" ? (
               <div className="space-y-2">
-                {/* 1. Price Input */}
                 <div className="overflow-hidden rounded-lg border border-border/60 bg-background/80 transition-colors focus-within:border-ring">
                   <div className="relative">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-muted-foreground">
@@ -888,10 +852,12 @@ export function TradeOrderPanel({
                       value={effectivePriceText}
                       onChange={(e) => handlePriceChange(e.target.value)}
                     />
-                    <button
+                    <Button
                       type="button"
+                      variant="ghost"
+                      size="xs"
                       onClick={togglePriceMode}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 rounded-md border border-border/60 bg-muted/40 px-1.5 py-0.5 text-[11px] font-semibold text-foreground transition-all hover:bg-muted hover:border-border active:scale-95 cursor-pointer"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 h-6 flex items-center gap-1 rounded-md border border-border/60 bg-muted/40 px-1.5 py-0.5 text-[11px] font-semibold text-foreground transition-all hover:bg-muted hover:border-border active:scale-95 cursor-pointer"
                       title={limitPriceMode === "quote" ? t("switchToUsd") : t("switchToToken", { symbol: quoteSymbol })}
                     >
                       {limitPriceMode === "quote" && (
@@ -908,7 +874,7 @@ export function TradeOrderPanel({
                         className="size-3 text-muted-foreground"
                         strokeWidth={2}
                       />
-                    </button>
+                    </Button>
                   </div>
                   {convertedPriceSubtext ? (
                     <div className="flex items-center justify-between border-t border-border/40 px-3 py-1 text-[10px] text-muted-foreground">
@@ -934,7 +900,6 @@ export function TradeOrderPanel({
                   ) : null}
                 </div>
 
-                {/* 2. Amount Input (Base Currency) */}
                 <div className="overflow-hidden rounded-lg border border-border/60 bg-background/80 transition-colors focus-within:border-ring">
                   <div className="relative">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-muted-foreground">
@@ -959,14 +924,15 @@ export function TradeOrderPanel({
                   </div>
                 </div>
 
-                {/* Amount Percentage Slider */}
-                <TradePercentageSlider
-                  value={currentFillPercent}
-                  onChange={applyFill}
-                  disabled={!isAuthenticated || !tradingBal || tradingBal <= 0n}
-                />
+                <div>
+                  <TradePercentageSlider
+                    value={currentFillPercent}
+                    onChange={applyFill}
+                    disabled={!isAuthenticated || !tradingBal || tradingBal <= 0n}
+                  />
+                  <Progress value={currentFillPercent} className="h-1 mt-1 bg-muted" />
+                </div>
 
-                {/* 3. Total Input (Quote Currency) */}
                 <div className="overflow-hidden rounded-lg border border-border/60 bg-background/80 transition-colors focus-within:border-ring">
                   <div className="relative">
                     <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-muted-foreground">
@@ -999,7 +965,6 @@ export function TradeOrderPanel({
                   ) : null}
                 </div>
 
-                {/* Maker Fee Transparency Line */}
                 <div className="flex items-center justify-between px-1 text-[11px] text-muted-foreground">
                   <span>{t("makerFee")}</span>
                   <span className="font-medium text-foreground">
@@ -1008,7 +973,6 @@ export function TradeOrderPanel({
                 </div>
               </div>
             ) : (
-              /* MARKET MODE INPUT */
               <div className="space-y-2">
                 <div className="overflow-hidden rounded-lg border border-border/60 bg-background/80 transition-colors focus-within:border-ring">
                   <div className="relative">
@@ -1047,12 +1011,14 @@ export function TradeOrderPanel({
                   ) : null}
                 </div>
 
-                {/* Amount Percentage Slider */}
-                <TradePercentageSlider
-                  value={currentFillPercent}
-                  onChange={applyFill}
-                  disabled={!isAuthenticated || !tradingBal || tradingBal <= 0n}
-                />
+                <div>
+                  <TradePercentageSlider
+                    value={currentFillPercent}
+                    onChange={applyFill}
+                    disabled={!isAuthenticated || !tradingBal || tradingBal <= 0n}
+                  />
+                  <Progress value={currentFillPercent} className="h-1 mt-1 bg-muted" />
+                </div>
 
                 {hasAmount && tokenIn && tokenOut && canQuote ? (
                   <TradeOrderQuote
@@ -1071,9 +1037,8 @@ export function TradeOrderPanel({
               </div>
             )}
 
-            {/* Success & Error Notices */}
             {limitNotice ? (
-              <div className="flex items-center gap-1.5 px-0.5 py-0.5 text-emerald-600 dark:text-emerald-400">
+              <div className="flex items-center gap-1.5 px-0.5 py-0.5 text-success">
                 <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 shrink-0" />
                 <span className="text-xs font-medium">{limitNotice}</span>
               </div>
@@ -1120,19 +1085,20 @@ export function TradeOrderPanel({
                       </div>
                     )}
                   </div>
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon-xs"
                     onClick={() => setTradeError(null)}
-                    className="text-destructive/70 hover:text-destructive text-xs p-0.5 -mr-1 -mt-0.5 rounded cursor-pointer transition-colors"
+                    className="size-5 text-destructive/70 hover:text-destructive hover:bg-destructive/20 text-xs p-0.5 -mr-1 -mt-0.5 rounded cursor-pointer transition-colors"
                     aria-label="Dismiss error"
                   >
                     ✕
-                  </button>
+                  </Button>
                 </div>
               </Alert>
             ) : null}
 
-            {/* Action CTA Button */}
             {cta === "wait" ? (
               <Button variant="outline" size="lg" className="w-full" disabled>
                 <Spinner className="size-4" />
@@ -1156,10 +1122,10 @@ export function TradeOrderPanel({
                 variant="default"
                 size="lg"
                 className={cn(
-                  "w-full font-semibold text-white shadow-xs transition-all active:scale-[0.99]",
+                  "w-full font-semibold shadow-xs transition-all active:scale-[0.99]",
                   isBuy
-                    ? "bg-emerald-600 hover:bg-emerald-500"
-                    : "bg-rose-600 hover:bg-rose-500"
+                    ? "bg-success hover:bg-success/90 text-success-foreground"
+                    : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
                 )}
                 disabled={
                   orderType === "limit"

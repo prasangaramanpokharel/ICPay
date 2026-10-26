@@ -23,16 +23,13 @@ export function TradePercentageSlider({
   return (
     <div className={cn("w-full space-y-1.5 select-none pt-1 pb-0.5", className)}>
       <div className="relative flex h-4 items-center">
-        {/* Background Track */}
         <div className="absolute inset-x-0 h-1 rounded-full bg-muted/60" />
 
-        {/* Filled Track */}
         <div
           className="absolute left-0 h-1 rounded-full bg-primary transition-all duration-75"
           style={{ width: `${clampedValue}%` }}
         />
 
-        {/* Step dots on the track */}
         <div className="pointer-events-none absolute inset-x-0 flex justify-between px-0.5">
           {PERCENT_STEPS.map((step) => {
             const isActive = clampedValue >= step
@@ -50,7 +47,6 @@ export function TradePercentageSlider({
           })}
         </div>
 
-        {/* Invisible range input for dragging and accessibility */}
         <input
           type="range"
           min={0}
@@ -63,7 +59,6 @@ export function TradePercentageSlider({
           aria-label="Order percentage"
         />
 
-        {/* Custom Styled Slider Thumb */}
         <div
           className={cn(
             "pointer-events-none absolute z-10 size-3.5 -translate-x-1/2 rounded-full border-2 border-primary bg-background shadow-xs transition-all duration-75",
@@ -73,7 +68,6 @@ export function TradePercentageSlider({
         />
       </div>
 
-      {/* Percentage Tick Labels */}
       <div className="flex justify-between px-0.5 text-[10px] font-medium text-muted-foreground">
         {PERCENT_STEPS.map((step) => (
           <button

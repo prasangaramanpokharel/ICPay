@@ -21,9 +21,11 @@ import {
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { cn } from "@/lib/ui/utils"
 import { formatUsd } from "@/lib/market/format"
-import { Plus, X } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Add01Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
 import {
   CHART_INTERVALS,
   type ChartWindow,
@@ -121,7 +123,6 @@ export function TradeChartPanel({
     setLimitDialogOpen(true)
   }
 
-  // Keyboard shortcut: Escape unpins
   useEffect(() => {
     if (!pinnedDiff) return
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -173,7 +174,6 @@ export function TradeChartPanel({
     }
   }, [currentPrice, candles])
 
-  // 1. Initialize chart on mount
   useEffect(() => {
     if (!containerRef.current) return
 
@@ -218,7 +218,6 @@ export function TradeChartPanel({
       height: initialHeight,
     })
 
-    // Volume Subseries
     const volumeSeries = chart.addSeries(HistogramSeries, {
       priceFormat: { type: "volume" },
       priceScaleId: "volume",
@@ -227,7 +226,6 @@ export function TradeChartPanel({
       scaleMargins: { top: 0.82, bottom: 0 },
     })
 
-    // Candlestick Series
     const candleSeries = chart.addSeries(CandlestickSeries, {
       upColor: "#22c55e",
       downColor: "#ef4444",
@@ -237,7 +235,6 @@ export function TradeChartPanel({
       wickDownColor: "#ef4444",
     })
 
-    // Area Series
     const areaSeries = chart.addSeries(AreaSeries, {
       topColor: "rgba(34, 197, 94, 0.35)",
       bottomColor: "rgba(34, 197, 94, 0.01)",
@@ -250,7 +247,6 @@ export function TradeChartPanel({
     areaSeriesRef.current = areaSeries
     volumeSeriesRef.current = volumeSeries
 
-    // Crosshair Delta Tooltip
     chart.subscribeCrosshairMove((param) => {
       if (!param.point || !containerRef.current) {
         setCursorDiff(null)
@@ -294,7 +290,6 @@ export function TradeChartPanel({
       })
     })
 
-    // Chart Click: Pin Limit Order at clicked price level
     const handleChartClick = (param: MouseEventParams) => {
       if (!param.point || !containerRef.current) return
 
@@ -328,7 +323,6 @@ export function TradeChartPanel({
 
     chart.subscribeClick(handleChartClick)
 
-    // Auto-Resize with ResizeObserver
     const ro = new ResizeObserver((entries) => {
       const entry = entries[0]
       if (entry && chartRef.current) {
@@ -351,7 +345,6 @@ export function TradeChartPanel({
     }
   }, [])
 
-  // 2. Reactively feed data and toggle series visibility
   useEffect(() => {
     if (!chartRef.current) return
 
@@ -392,9 +385,7 @@ export function TradeChartPanel({
     }
   }, [candles, volumes, areas, chartType, snapshot?.baseLedgerId])
 
-  // 3. Render Open Limit Orders & Pinned Limit Level as dotted lines on the chart
   useEffect(() => {
-    // Clean up previously attached price lines
     for (const item of priceLinesRef.current) {
       try {
         item.series.removePriceLine(item.line)
@@ -415,7 +406,6 @@ export function TradeChartPanel({
           ? icpPrice.usd
           : 0
 
-    // A. Draw Open Limit Orders for this pair
     for (const order of pairOrders) {
       const isBuy = order.tokenIn === snapshot.quoteLedgerId && order.tokenOut === snapshot.baseLedgerId
       const isSell = order.tokenIn === snapshot.baseLedgerId && order.tokenOut === snapshot.quoteLedgerId
@@ -470,7 +460,6 @@ export function TradeChartPanel({
       } catch {}
     }
 
-    // B. Draw Pinned Limit Line (when user clicked on chart)
     if (pinnedDiff && Number.isFinite(pinnedDiff.cursorPrice) && pinnedDiff.cursorPrice > 0) {
       const isAbove = pinnedDiff.isAbove
       const pinnedTitle = isAbove ? "Limit Sell" : "Limit Buy"
@@ -511,72 +500,66 @@ export function TradeChartPanel({
         role="tablist"
         aria-label={t("tabChart")}
       >
-        <div className="flex items-center gap-1">
+        <ToggleGroup
+          value={[chartWindow]}
+          onValueChange={(val) => {
+            const id = val[0] as ChartWindow | undefined
+            if (id) setChartWindow(id)
+          }}
+          className="gap-1 p-0 justify-start"
+        >
           {CHART_INTERVALS.map((id) => (
-            <button
+            <ToggleGroupItem
               key={id}
-              type="button"
-              role="tab"
-              aria-selected={chartWindow === id}
-              onClick={() => setChartWindow(id)}
-              className={cn(
-                "rounded px-2.5 py-0.5 text-xs font-semibold tabular-nums transition-colors",
-                chartWindow === id
-                  ? "bg-primary text-primary-foreground shadow-xs"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}
+              value={id}
+              size="sm"
+              className="h-6 rounded px-2.5 text-xs font-semibold tabular-nums data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-xs"
             >
               {id === "1d" ? t("interval1d") : t("interval1w")}
-            </button>
+            </ToggleGroupItem>
           ))}
-        </div>
+        </ToggleGroup>
 
         <div className="flex items-center gap-2">
-          <div className="flex items-center rounded-md border border-border/60 bg-muted/30 p-0.5 text-[10px] font-medium">
-            <button
-              type="button"
-              onClick={() => setChartType("candle")}
-              className={cn(
-                "rounded px-2 py-0.5 transition-colors",
-                chartType === "candle"
-                  ? "bg-background text-foreground shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
+          <ToggleGroup
+            value={[chartType]}
+            onValueChange={(val) => {
+              const ct = val[0] as "candle" | "area" | undefined
+              if (ct) setChartType(ct)
+            }}
+            className="rounded-md border border-border/60 bg-muted/30 p-0.5 text-[10px] font-medium"
+          >
+            <ToggleGroupItem
+              value="candle"
+              size="sm"
+              className="h-5 rounded px-2 text-[10px] font-medium data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow-xs"
             >
               Candles
-            </button>
-            <button
-              type="button"
-              onClick={() => setChartType("area")}
-              className={cn(
-                "rounded px-2 py-0.5 transition-colors",
-                chartType === "area"
-                  ? "bg-background text-foreground shadow-xs"
-                  : "text-muted-foreground hover:text-foreground"
-              )}
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="area"
+              size="sm"
+              className="h-5 rounded px-2 text-[10px] font-medium data-[state=on]:bg-background data-[state=on]:text-foreground data-[state=on]:shadow-xs"
             >
               Line
-            </button>
-          </div>
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
       </div>
 
       <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden p-1">
-        {/* Loading overlay */}
         {waiting && (
           <div className="absolute inset-1 z-20 flex flex-col items-center justify-center rounded-xl bg-background/80 backdrop-blur-xs">
             <Spinner className="size-8 text-muted-foreground/60" />
           </div>
         )}
 
-        {/* Empty state overlay */}
         {!waiting && candles.length === 0 && (
           <div className="absolute inset-1 z-10 flex size-full items-center justify-center text-sm text-muted-foreground">
             {t("noChartData")}
           </div>
         )}
 
-        {/* Chart canvas is permanently mounted */}
         <div className="relative size-full">
           <div
             ref={containerRef}
@@ -590,7 +573,6 @@ export function TradeChartPanel({
 
 
 
-          {/* Pinned Limit Order Badge (Click-based, stationary in place) */}
           {pinnedDiff && (
             <div
               className="pointer-events-auto absolute z-30 flex items-center select-none max-w-[calc(100%-24px)]"
@@ -604,8 +586,8 @@ export function TradeChartPanel({
                 className={cn(
                   "flex items-center gap-1.5 bg-background/98 py-1 pr-1.5 pl-1.5 text-xs font-mono font-medium shadow-xl backdrop-blur-md ring-1 select-none",
                   pinnedDiff.isAbove
-                    ? "border-rose-500/60 text-rose-600 dark:text-rose-400 ring-rose-500/20"
-                    : "border-emerald-500/60 text-emerald-600 dark:text-emerald-400 ring-emerald-500/20"
+                    ? "border-destructive/60 text-destructive ring-destructive/20"
+                    : "border-success/60 text-success ring-success/20"
                 )}
               >
                 <button
@@ -616,13 +598,13 @@ export function TradeChartPanel({
                   }}
                   title={`Place ${pinnedDiff.isAbove ? "Sell" : "Buy"} Limit Order at ${formatUsd(pinnedDiff.cursorPrice, pinnedDiff.cursorPrice < 1 ? 6 : 2)}`}
                   className={cn(
-                    "flex size-5 items-center justify-center rounded-full text-white transition-all cursor-pointer shadow-sm active:scale-95",
+                    "flex size-5 items-center justify-center rounded-full transition-all cursor-pointer shadow-sm active:scale-95",
                     pinnedDiff.isAbove
-                      ? "bg-rose-600 hover:bg-rose-500"
-                      : "bg-emerald-600 hover:bg-emerald-500"
+                      ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+                      : "bg-success hover:bg-success/90 text-success-foreground"
                   )}
                 >
-                  <Plus className="size-3.5 stroke-[2.5]" />
+                  <HugeiconsIcon icon={Add01Icon} className="size-3.5" strokeWidth={2.5} />
                 </button>
                 <span>
                   {pinnedDiff.isAbove ? "+" : ""}
@@ -641,13 +623,12 @@ export function TradeChartPanel({
                   title="Dismiss pinned order"
                   className="ml-0.5 flex size-4 items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors cursor-pointer"
                 >
-                  <X className="size-3" />
+                  <HugeiconsIcon icon={Cancel01Icon} className="size-3" strokeWidth={2} />
                 </button>
               </Badge>
             </div>
           )}
 
-          {/* Floating Crosshair Delta Badge (Hover preview when not pinned) */}
           {!pinnedDiff && cursorDiff && (
             <div
               className="pointer-events-none absolute z-20 transition-[top,left] duration-75 select-none"
@@ -660,10 +641,10 @@ export function TradeChartPanel({
                 variant="outline"
                 className={cn(
                   "flex items-center gap-1.5 border-border/80 bg-background/90 py-0.5 px-2 text-xs font-mono font-medium shadow-md backdrop-blur-md opacity-85",
-                  cursorDiff.isAbove ? "text-emerald-500" : "text-rose-500"
+                  cursorDiff.isAbove ? "text-success" : "text-destructive"
                 )}
               >
-                <Plus className="size-3 text-muted-foreground" />
+                <HugeiconsIcon icon={Add01Icon} className="size-3 text-muted-foreground" strokeWidth={2} />
                 <span>
                   {cursorDiff.isAbove ? "+" : ""}
                   {cursorDiff.diffPct.toFixed(2)}%

@@ -3,6 +3,7 @@
 import { cn } from "@/lib/ui/utils"
 import { rememberedTokenLogo, usableTokenLogo } from "@/lib/market/tokenLogo"
 import { resolveTokenIcon } from "@/lib/token/icon"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export function TokenAvatar({
   symbol,
@@ -19,31 +20,16 @@ export function TokenAvatar({
     usableTokenLogo(logoUrl) ??
     (ledgerId ? rememberedTokenLogo(ledgerId) : null) ??
     (ledgerId ? resolveTokenIcon(ledgerId) : undefined) ??
-    null
-
-  if (src) {
-    return (
-      <span
-        className={cn(
-          "inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted",
-          className
-        )}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt="" className="size-full object-contain p-[7%]" />
-      </span>
-    )
-  }
+    undefined
 
   return (
-    <span
-      className={cn(
-        "flex size-8 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-bold",
-        className
-      )}
-      aria-hidden
-    >
-      {symbol.slice(0, 1).toUpperCase()}
-    </span>
+    <Avatar className={cn("size-8 shrink-0 bg-muted after:hidden", className)}>
+      {src ? (
+        <AvatarImage src={src} alt={symbol} className="size-full object-contain p-[7%]" />
+      ) : null}
+      <AvatarFallback className="bg-muted text-xs font-bold text-foreground">
+        {symbol.slice(0, 1).toUpperCase()}
+      </AvatarFallback>
+    </Avatar>
   )
 }

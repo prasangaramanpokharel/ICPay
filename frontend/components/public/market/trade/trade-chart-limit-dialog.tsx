@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useRefreshTradeBalances, useTradingBalance } from "@/hooks/trade/useTrade"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
@@ -25,7 +26,8 @@ import { placeLimitOrder } from "@/services/trade/trade"
 import { cn } from "@/lib/ui/utils"
 import { MIN_TRADE_ICP } from "@/lib/market/minTradeUsd"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
-import { CheckCircle2, AlertCircle, Wallet } from "lucide-react"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { AlertCircleIcon, CheckmarkCircle02Icon, Wallet01Icon } from "@hugeicons/core-free-icons"
 
 function formatCalculatedAmount(num: number, maxDecimals: number = 8): string {
   if (!Number.isFinite(num) || num <= 0) return ""
@@ -96,7 +98,6 @@ function TradeChartLimitDialogContent({
   const baseSymbol = baseToken?.symbol ?? "TOKEN"
   const quoteSymbol = quoteToken?.symbol ?? "ICP"
 
-  // Derive ICP price in USD
   const icpPriceUsd = useMemo(() => {
     if (icpPriceData?.usd && icpPriceData.usd > 0) return icpPriceData.usd
     if (snapshot?.stats?.priceUsd && snapshot?.priceInIcp && snapshot.priceInIcp > 0) {
@@ -105,10 +106,8 @@ function TradeChartLimitDialogContent({
     return 5.0
   }, [icpPriceData, snapshot])
 
-  // Current market price in USD
   const currentPriceUsd = snapshot?.stats?.priceUsd ?? 0
 
-  // Parsed target price in USD & ICP
   const parsedPriceUsd = useMemo(() => {
     const num = parseFloat(priceUsdText.replace(/,/g, ""))
     return Number.isFinite(num) && num > 0 ? num : initialPriceUsd
@@ -119,24 +118,20 @@ function TradeChartLimitDialogContent({
     return parsedPriceUsd / icpPriceUsd
   }, [parsedPriceUsd, icpPriceUsd])
 
-  // Delta vs current market price
   const diffPct = useMemo(() => {
     if (currentPriceUsd <= 0 || parsedPriceUsd <= 0) return 0
     return ((parsedPriceUsd - currentPriceUsd) / currentPriceUsd) * 100
   }, [currentPriceUsd, parsedPriceUsd])
 
-  // Active in/out tokens based on side
   const tokenIn = side === "buy" ? quoteToken : baseToken
   const tokenOut = side === "buy" ? baseToken : quoteToken
 
-  // Trading balance for the asset being spent
   const tradingBal = useTradingBalance(tokenIn?.ledgerId ?? null)
   const tradingBalFormatted = useMemo(() => {
     if (tradingBal === null || !tokenIn) return "0.00"
     return formatTokenAmount(tradingBal, tokenIn.decimals)
   }, [tradingBal, tokenIn])
 
-  // Handle Base Amount input change
   function handleBaseAmountChange(val: string) {
     setBaseAmountText(val)
     setErrorMessage(null)
@@ -149,7 +144,6 @@ function TradeChartLimitDialogContent({
     }
   }
 
-  // Handle Total ICP input change
   function handleTotalQuoteChange(val: string) {
     setTotalQuoteText(val)
     setErrorMessage(null)
@@ -162,7 +156,6 @@ function TradeChartLimitDialogContent({
     }
   }
 
-  // Percentage quick buttons (25%, 50%, 75%, 100%)
   function handlePercent(pct: number) {
     if (tradingBal === null || tradingBal <= 0n || !tokenIn) return
     const targetIn = (tradingBal * BigInt(pct)) / 100n
@@ -185,7 +178,6 @@ function TradeChartLimitDialogContent({
     setErrorMessage(null)
   }
 
-  // Validation
   const calculatedAmountIn = useMemo(() => {
     if (!tokenIn) return null
     const text = side === "buy" ? totalQuoteText : baseAmountText
@@ -209,7 +201,6 @@ function TradeChartLimitDialogContent({
     return Number.isFinite(totalNum) && totalNum < MIN_TRADE_ICP
   }, [totalQuoteText])
 
-  // Place Limit Order handler
   async function handleSubmit() {
     if (!isAuthenticated) {
       void login()
@@ -287,42 +278,35 @@ function TradeChartLimitDialogContent({
         </AlertDialogDescription>
       </AlertDialogHeader>
 
-      {/* Side Selector (Buy / Sell) */}
-      <div className="grid grid-cols-2 gap-1.5 p-1 bg-muted/60 rounded-xl border border-border/60">
-        <button
-          type="button"
-          onClick={() => setSide("buy")}
-          className={cn(
-            "py-1.5 text-xs font-semibold rounded-lg transition-all text-center cursor-pointer",
-            side === "buy"
-              ? "bg-emerald-500/15 border border-emerald-500/40 text-emerald-400 shadow-xs"
-              : "text-muted-foreground hover:text-foreground"
-          )}
+      <ToggleGroup
+        value={[side]}
+        onValueChange={(val) => {
+          const s = val[0] as "buy" | "sell" | undefined
+          if (s) setSide(s)
+        }}
+        className="grid w-full grid-cols-2 gap-1.5 p-1 bg-muted/60 rounded-xl border border-border/60"
+      >
+        <ToggleGroupItem
+          value="buy"
+          className="h-8 rounded-lg font-bold transition-all data-[state=on]:bg-success/20 data-[state=on]:border data-[state=on]:border-success/40 data-[state=on]:text-success data-[state=on]:shadow-xs hover:bg-muted"
         >
           Buy {baseSymbol}
-        </button>
-        <button
-          type="button"
-          onClick={() => setSide("sell")}
-          className={cn(
-            "py-1.5 text-xs font-semibold rounded-lg transition-all text-center cursor-pointer",
-            side === "sell"
-              ? "bg-rose-500/15 border border-rose-500/40 text-rose-400 shadow-xs"
-              : "text-muted-foreground hover:text-foreground"
-          )}
+        </ToggleGroupItem>
+        <ToggleGroupItem
+          value="sell"
+          className="h-8 rounded-lg font-bold transition-all data-[state=on]:bg-destructive/20 data-[state=on]:border data-[state=on]:border-destructive/40 data-[state=on]:text-destructive data-[state=on]:shadow-xs hover:bg-muted"
         >
           Sell {baseSymbol}
-        </button>
-      </div>
+        </ToggleGroupItem>
+      </ToggleGroup>
 
-      {/* Target Limit Price Input */}
       <div className="space-y-1.5 rounded-xl border border-border/80 bg-muted/20 p-3">
         <div className="flex items-center justify-between text-xs">
           <span className="font-medium text-muted-foreground">{t("limitPrice")}</span>
           <span
             className={cn(
               "font-mono text-[11px] font-semibold",
-              diffPct >= 0 ? "text-emerald-500" : "text-rose-500"
+              diffPct >= 0 ? "text-success" : "text-destructive"
             )}
           >
             {diffPct >= 0 ? "+" : ""}
@@ -354,7 +338,6 @@ function TradeChartLimitDialogContent({
         </div>
       </div>
 
-      {/* Order Amount & Quick Percentages */}
       <div className="space-y-2">
         <div className="space-y-1.5">
           <div className="flex items-center justify-between text-xs">
@@ -362,7 +345,7 @@ function TradeChartLimitDialogContent({
               {side === "buy" ? `Amount to Buy (${baseSymbol})` : `Amount to Sell (${baseSymbol})`}
             </span>
             <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
-              <Wallet className="size-3" />
+              <HugeiconsIcon icon={Wallet01Icon} className="size-3" />
               <span className="font-mono">
                 {tradingBalFormatted} {tokenIn?.symbol}
               </span>
@@ -384,21 +367,21 @@ function TradeChartLimitDialogContent({
           </div>
         </div>
 
-        {/* Quick Percent Pills */}
         <div className="grid grid-cols-4 gap-1.5">
           {[25, 50, 75, 100].map((pct) => (
-            <button
+            <Button
               key={pct}
               type="button"
+              variant="outline"
+              size="xs"
               onClick={() => handlePercent(pct)}
-              className="rounded-md border border-border/60 bg-muted/40 py-1 text-[11px] font-mono text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+              className="h-7 text-[11px] font-mono text-muted-foreground hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
             >
               {pct === 100 ? "MAX" : `${pct}%`}
-            </button>
+            </Button>
           ))}
         </div>
 
-        {/* Total Quote Value */}
         <div className="space-y-1">
           <div className="flex items-center justify-between text-xs">
             <span className="font-medium text-muted-foreground">
@@ -421,7 +404,6 @@ function TradeChartLimitDialogContent({
         </div>
       </div>
 
-      {/* Order Fee & Status Summary */}
       <div className="rounded-xl border border-border/60 bg-muted/15 p-2.5 space-y-1.5 text-[11px]">
         <div className="flex items-center justify-between text-muted-foreground">
           <span>{t("makerFee")}</span>
@@ -433,22 +415,20 @@ function TradeChartLimitDialogContent({
         </div>
       </div>
 
-      {/* Alerts / Error feedback */}
       {errorMessage && (
         <Alert variant="destructive" className="py-2 px-3 text-xs flex items-center gap-2">
-          <AlertCircle className="size-4 shrink-0" />
+          <HugeiconsIcon icon={AlertCircleIcon} className="size-4 shrink-0" />
           <AlertDescription className="text-xs">{errorMessage}</AlertDescription>
         </Alert>
       )}
 
       {successMessage && (
-        <Alert className="py-2 px-3 text-xs flex items-center gap-2 border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
-          <CheckCircle2 className="size-4 shrink-0 text-emerald-400" />
+        <Alert className="py-2 px-3 text-xs flex items-center gap-2 border-success/30 bg-success/10 text-success">
+          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 shrink-0 text-success" />
           <AlertDescription className="text-xs">{successMessage}</AlertDescription>
         </Alert>
       )}
 
-      {/* Actions */}
       <AlertDialogFooter className="flex sm:justify-between items-center gap-2 pt-2 border-t border-border/50">
         <AlertDialogCancel className="h-9 px-4 text-xs cursor-pointer">
           {t("cancelOrder")}
@@ -475,8 +455,8 @@ function TradeChartLimitDialogContent({
             className={cn(
               "h-9 px-5 text-xs font-semibold cursor-pointer transition-all",
               side === "buy"
-                ? "bg-emerald-600 hover:bg-emerald-500 text-white"
-                : "bg-rose-600 hover:bg-rose-500 text-white"
+                ? "bg-success hover:bg-success/90 text-success-foreground"
+                : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
             )}
           >
             {status === "placing" ? (
@@ -486,7 +466,7 @@ function TradeChartLimitDialogContent({
               </>
             ) : status === "success" ? (
               <>
-                <CheckCircle2 className="size-3.5 mr-1.5" />
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 mr-1.5" />
                 {t("orderPlaced")}
               </>
             ) : isInsufficient ? (
