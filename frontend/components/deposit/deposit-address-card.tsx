@@ -98,7 +98,10 @@ export function DepositQrBlock({
   const handleCopy = () => {
     onCopy(value)
     setCopied(true)
-    toast.success("Successfully copied")
+    toast.add({
+      title: "Copied to clipboard",
+      type: "info",
+    })
     setTimeout(() => setCopied(false), 2000)
   }
 

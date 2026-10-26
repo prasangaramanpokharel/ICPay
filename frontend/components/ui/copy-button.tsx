@@ -15,10 +15,6 @@ export interface CopyIconIndicatorProps {
   iconClassName?: string
 }
 
-/**
- * Animated copy icon indicator that transitions smoothly from Copy01Icon
- * to our signature green circular checkmark badge with spring and pathLength drawing.
- */
 export function CopyIconIndicator({
   copied,
   className,
@@ -105,11 +101,17 @@ export function CopyButton({
     try {
       await copyText(targetText)
       setCopied(true)
-      toast.success(successMessage)
+      toast.add({
+        title: successMessage,
+        type: "info",
+      })
       onCopySuccess?.()
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      toast.error("Failed to copy")
+      toast.add({
+        title: "Failed to copy",
+        type: "error",
+      })
     }
   }
 
