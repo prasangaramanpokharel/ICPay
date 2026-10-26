@@ -23,22 +23,21 @@ there is no separate deploy step, and no way to merge "just to see."
 ## Remotes
 
 ```bash
-origin  git@gitlab.com:prasangapokharel/icpay.git (primary)
-github  git@github.com:prasangapokharel/ICPay.git (backup)
+github  https://github.com/prasangaramanpokharel/ICPay.git (active primary)
+origin  git@gitlab.com:prasangapokharel/icpay.git (GitLab secondary / mirrored)
 ```
 
-Default commands (`git pull`, `git push`) target GitLab.
+Default commands (`git pull`, `git push`) target `github` (GitHub).
 
 ## Daily work
 
 ```bash
-git checkout dev && git pull origin dev
+git checkout dev && git pull github dev
 git checkout -b feature/fiat-rates
 # ... work ...
-git push -u origin feature/fiat-rates
-# Create Merge Request on GitLab (or PR on GitHub):
-glab mr create --target-branch dev --fill # or via GitLab UI
-# gh pr create --base dev --fill (if syncing to GitHub)
+git push -u github feature/fiat-rates
+# Create Pull Request on GitHub:
+gh pr create --base dev --fill
 ```
 
 `dev` allows direct pushes — it is the integration branch, and requiring a PR/MR to
@@ -48,10 +47,12 @@ anything non-trivial.
 ## Release
 
 ```bash
-glab mr create --target-branch main --source-branch dev --title "release: v1.5.0"
-# merge, then:
-git checkout main && git pull origin main
-git tag v1.5.0 && git push origin v1.5.0
+gh pr create --base main --head dev --title "release: v1.7.0" --fill
+# merge once CI (backend + frontend) is green:
+gh pr merge --merge --auto
+# or manually after merge:
+git checkout main && git pull github main
+git tag v1.7.0 && git push github v1.7.0
 ```
 
 Patch for fixes, minor for features, major for breaking changes. Tags are cut on
