@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { AcademyAdminGate } from "@/components/products/icacademy/admin/academy-admin-gate"
 import { AcademyAdminNav } from "@/components/products/icacademy/admin/academy-admin-nav"
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/toast"
 
 export const metadata: Metadata = {
   title: "ICAcademy Management Suite | ICPay",

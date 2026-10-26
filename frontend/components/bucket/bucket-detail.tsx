@@ -72,7 +72,7 @@ import { formatBytes, isBucketActive, isBucketFrozen, isBucketTombstoned } from 
 import { joinObjectPath, nestedPrefix, prefixSegments, apiListFolderPrefix } from "@/lib/bucket/folderPath"
 import { clearLegacyBucketStorage } from "@/lib/bucket/legacyStorage"
 import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { cn } from "@/lib/ui/utils"
 
 export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } = {}) {

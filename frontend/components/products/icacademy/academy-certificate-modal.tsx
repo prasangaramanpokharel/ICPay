@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Tick02Icon,

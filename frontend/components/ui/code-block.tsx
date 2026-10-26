@@ -2,7 +2,7 @@
 
 import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { AnimatePresence, motion } from "motion/react"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { CopyIconIndicator } from "@/components/ui/copy-button"
 
 import { cn } from "@/lib/ui/utils"

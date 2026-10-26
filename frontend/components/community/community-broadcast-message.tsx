@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/context-menu"
 import { Message, MessageContent, MessageFooter } from "@/components/ui/message"
 import { Spinner } from "@/components/ui/spinner"
+import { toast } from "@/components/ui/toast"
 import { channelMessageUrl } from "@/lib/community/messageLink"
 import { formatMessageTime } from "@/lib/community/format"
 import { myReactionCode, type ReactionCode } from "@/lib/community/reactions"
@@ -112,19 +113,38 @@ export function BroadcastMessage({
 
   const copyMessageText = async () => {
     await navigator.clipboard.writeText(message.text)
+    toast.add({
+      title: "Message copied to clipboard",
+      type: "info",
+    })
   }
 
   const copyMessageLink = async () => {
     await navigator.clipboard.writeText(channelMessageUrl(channelSlug, message.id))
+    toast.add({
+      title: "Link copied to clipboard",
+      type: "info",
+    })
   }
 
   const handleDelete = () => {
     if (!onDelete || deleting) return
     setDeleting(true)
     window.setTimeout(() => {
-      void onDelete(message.id).catch(() => {
-        setDeleting(false)
-      })
+      void onDelete(message.id)
+        .then(() => {
+          toast.add({
+            title: "Message deleted",
+            type: "success",
+          })
+        })
+        .catch(() => {
+          setDeleting(false)
+          toast.add({
+            title: "Failed to delete message",
+            type: "error",
+          })
+        })
     }, 160)
   }
 

@@ -23,6 +23,17 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowDataTransferHorizontalIcon, Cancel01Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -73,6 +84,7 @@ export function TradeSwapHistory({
   const { isAuthenticated, identity } = useAuth()
   const [activeTab, setActiveTab] = useState<"swaps" | "openOrders" | "orderHistory" | "audit">("swaps")
   const [cancellingId, setCancellingId] = useState<bigint | null>(null)
+  const [orderToCancel, setOrderToCancel] = useState<bigint | null>(null)
 
   const { items, isLoading: txLoading } = useTransactions(0, 80)
   const { holdings } = useTokenHoldings()
@@ -120,19 +132,36 @@ export function TradeSwapHistory({
           refreshTrades(),
           refreshTradeBalances(),
         ])
+        toast.add({
+          title: t("orderCancelled"),
+          type: "success",
+        })
+      } else {
+        toast.add({
+          title: t("fillFailed"),
+          description: "err" in res && res.err ? String(res.err) : undefined,
+          type: "error",
+        })
       }
+    } catch (e) {
+      toast.add({
+        title: t("fillFailed"),
+        description: e instanceof Error ? e.message : undefined,
+        type: "error",
+      })
     } finally {
       setCancellingId(null)
     }
   }
 
   return (
-    <Card size="sm" className="m-1 mb-1 flex min-h-[240px] flex-1 flex-col overflow-hidden py-0">
-      <Tabs
-        value={activeTab}
-        onValueChange={(v) => setActiveTab(v as typeof activeTab)}
-        className="flex h-full min-h-0 flex-1 flex-col"
-      >
+    <>
+      <Card size="sm" className="m-1 mb-1 flex min-h-[240px] flex-1 flex-col overflow-hidden py-0">
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as typeof activeTab)}
+          className="flex h-full min-h-0 flex-1 flex-col"
+        >
         <CardHeader className="shrink-0 border-b px-3 py-1.5">
           <div className="flex items-center justify-between">
             <TabsList variant="line" className="h-7 border-0 p-0">
@@ -299,7 +328,7 @@ export function TradeSwapHistory({
                             variant="destructive"
                             className="h-5 px-1.5 text-[11px] font-semibold"
                             disabled={cancellingId === order.id}
-                            onClick={() => void handleCancelOrder(order.id)}
+                            onClick={() => setOrderToCancel(order.id)}
                           >
                             {cancellingId === order.id ? (
                               <Spinner className="size-3" />
@@ -474,6 +503,33 @@ export function TradeSwapHistory({
         </CardContent>
       </Tabs>
     </Card>
+
+    <AlertDialog open={orderToCancel !== null} onOpenChange={(open) => !open && setOrderToCancel(null)}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t("cancelOrder")}</AlertDialogTitle>
+          <AlertDialogDescription>
+            Are you sure you want to cancel this order? Unspent trading balances will be returned to your account.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+          <AlertDialogAction
+            variant="destructive"
+            onClick={() => {
+              if (orderToCancel !== null) {
+                const id = orderToCancel
+                setOrderToCancel(null)
+                void handleCancelOrder(id)
+              }
+            }}
+          >
+            {t("cancelOrder")}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  </>
   )
 }
 

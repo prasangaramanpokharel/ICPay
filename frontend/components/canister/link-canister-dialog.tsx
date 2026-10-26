@@ -23,7 +23,7 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui
 import { Separator } from "@/components/ui/separator"
 import { Spinner } from "@/components/ui/spinner"
 import { CodeBlock } from "@/components/ui/code-block"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { useAuth } from "@/components/auth/auth-provider"
 import { parseCanisterId } from "@/services/cycles/topUp"
 import { rememberCanister } from "@/lib/canister/savedCanisters"

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { QrCode } from "@/components/shared/qr-code"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 
 type DepositAddressCardProps = {
   icrcAddress: string

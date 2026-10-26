@@ -4,6 +4,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { CommunityChannelView } from "@/components/community/community-channel-view"
 import { CommunityMessageList } from "@/components/community/community-message-list"
 import { Spinner } from "@/components/ui/spinner"
+import { toast } from "@/components/ui/toast"
 import { useLiveBalance, useOwnProfile, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import {
   useCommunityChannel,
@@ -262,12 +263,34 @@ function CommunityChannelScreenBody({ slug }: { slug: string }) {
           canForward={canForward}
           forwardTargets={forwardTargets}
           onForward={async (targetSlug, text) => {
-            await postCommunityMessage(identity, targetSlug, text)
-            void invalidateLists()
+            try {
+              await postCommunityMessage(identity, targetSlug, text)
+              void invalidateLists()
+              toast.add({
+                title: "Message forwarded",
+                type: "success",
+              })
+            } catch {
+              toast.add({
+                title: "Failed to forward message",
+                type: "error",
+              })
+            }
           }}
           onReact={(messageId, code) => reactToMessage(messageId, code)}
           onPin={async (messageId) => {
-            await pinMessage(messageId)
+            try {
+              await pinMessage(messageId)
+              toast.add({
+                title: pinnedId === messageId ? "Message unpinned" : "Message pinned",
+                type: "success",
+              })
+            } catch {
+              toast.add({
+                title: "Failed to pin message",
+                type: "error",
+              })
+            }
           }}
           onDelete={async (messageId) => {
             await deleteMessage(messageId)

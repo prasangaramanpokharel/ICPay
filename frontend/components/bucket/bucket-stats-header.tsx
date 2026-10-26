@@ -30,7 +30,7 @@ import {
   bucketCdnBaseUrl,
 } from "@/lib/bucket/bucket"
 import { copyText } from "@/lib/wallet/utils"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import type { BucketStats, BucketVisibilityVariant } from "@/services/bucket/types"
 
 export function BucketStatsHeader({

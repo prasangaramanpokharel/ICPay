@@ -15,7 +15,7 @@ import { Switch } from "@/components/ui/switch"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { useAuth } from "@/components/auth/auth-provider"
 import { updateBucket } from "@/services/bucket/bucket"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { cn } from "@/lib/ui/utils"
 import {
   expiresAtToMs,

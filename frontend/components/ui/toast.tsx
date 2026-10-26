@@ -15,7 +15,36 @@ import {
 import { cn } from "@/lib/ui/utils"
 import { Button } from "@/components/ui/button"
 
-const toast = ToastPrimitive.createToastManager()
+export type ToastType = "success" | "error" | "info" | "warning" | "loading"
+
+export interface ToastOptions {
+  description?: React.ReactNode
+  type?: ToastType
+  duration?: number
+  action?: React.ReactNode
+  id?: string
+}
+
+const baseToast = ToastPrimitive.createToastManager()
+
+const toastCallable = (title: React.ReactNode, options?: ToastOptions) =>
+  baseToast.add({ title, ...options })
+
+const toast = Object.assign(toastCallable, baseToast, {
+  add: (options: ToastOptions & { title?: React.ReactNode }) => baseToast.add(options),
+  success: (title: React.ReactNode, options?: ToastOptions) =>
+    baseToast.add({ title, type: "success", ...options }),
+  error: (title: React.ReactNode, options?: ToastOptions) =>
+    baseToast.add({ title, type: "error", ...options }),
+  info: (title: React.ReactNode, options?: ToastOptions) =>
+    baseToast.add({ title, type: "info", ...options }),
+  warning: (title: React.ReactNode, options?: ToastOptions) =>
+    baseToast.add({ title, type: "warning", ...options }),
+  message: (title: React.ReactNode, options?: ToastOptions) =>
+    baseToast.add({ title, ...options }),
+  loading: (title: React.ReactNode, options?: ToastOptions) =>
+    baseToast.add({ title, type: "loading", ...options }),
+})
 
 function ToastProvider({ ...props }: ToastPrimitive.Provider.Props) {
   return <ToastPrimitive.Provider {...props} />

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import useSWR, { useSWRConfig } from "swr"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Alert02Icon, ArrowDataTransferHorizontalIcon, CheckmarkCircle02Icon } from "@hugeicons/core-free-icons"
+import { Alert02Icon, ArrowDataTransferHorizontalIcon } from "@hugeicons/core-free-icons"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -13,6 +13,7 @@ import { Progress } from "@/components/ui/progress"
 import { Spinner } from "@/components/ui/spinner"
 import { ShineBorder } from "@/components/ui/shine-border"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
+import { toast } from "@/components/ui/toast"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useDebounced } from "@/hooks/ui/useDebounced"
 import { useApplyTradeBalances, useRefreshTradeBalances, useTradeTokens, useTradingBalance, tradeBalanceKey } from "@/hooks/trade/useTrade"
@@ -134,7 +135,6 @@ export function TradeOrderPanel({
 
   const [status, setStatus] = useState<TradeStatus>("idle")
   const [tradeError, setTradeError] = useState<string | null>(null)
-  const [limitNotice, setLimitNotice] = useState<string | null>(null)
   const [impactConfirmed, setImpactConfirmed] = useState(false)
   const [depositDrawerOpen, setDepositDrawerOpen] = useState(false)
 
@@ -329,7 +329,6 @@ export function TradeOrderPanel({
     setLimitPriceText(val)
     setStatus("idle")
     setTradeError(null)
-    setLimitNotice(null)
     const p = parseFloat(val.replace(/,/g, ""))
     if (!Number.isNaN(p) && p > 0) {
       const pInIcp = limitPriceMode === "usd" ? (icpPriceUsd > 0 ? p / icpPriceUsd : 0) : p
@@ -364,7 +363,6 @@ export function TradeOrderPanel({
     setLimitBaseAmountText(val)
     setStatus("idle")
     setTradeError(null)
-    setLimitNotice(null)
     const amt = parseFloat(val.replace(/,/g, ""))
     const p = effectivePriceInIcp
     if (!Number.isNaN(amt) && p > 0) {
@@ -377,7 +375,6 @@ export function TradeOrderPanel({
     setLimitTotalText(val)
     setStatus("idle")
     setTradeError(null)
-    setLimitNotice(null)
     const tot = parseFloat(val.replace(/,/g, ""))
     const p = effectivePriceInIcp
     if (!Number.isNaN(tot) && p > 0) {
@@ -487,7 +484,6 @@ export function TradeOrderPanel({
 
     setStatus("placing_limit")
     setTradeError(null)
-    setLimitNotice(null)
 
     try {
       const inId = side === "buy" ? quoteToken.ledgerId : baseToken.ledgerId
@@ -503,17 +499,32 @@ export function TradeOrderPanel({
 
       if ("ok" in res && res.ok) {
         setStatus("idle")
-        setLimitNotice(t("orderPlaced"))
         setLimitBaseAmountText("")
         setLimitTotalText("")
+        toast.add({
+          title: t("orderPlaced"),
+          type: "success",
+        })
         await refreshTradeBalances(inId)
       } else {
+        const errMessage = formatTradeErrorMessage("err" in res ? res.err : "Failed to place limit order")
         setStatus("error")
-        setTradeError(formatTradeErrorMessage("err" in res ? res.err : "Failed to place limit order"))
+        setTradeError(errMessage)
+        toast.add({
+          title: t("fillFailed"),
+          description: errMessage,
+          type: "error",
+        })
       }
     } catch (e) {
+      const errMessage = formatTradeErrorMessage(e)
       setStatus("error")
-      setTradeError(formatTradeErrorMessage(e))
+      setTradeError(errMessage)
+      toast.add({
+        title: t("fillFailed"),
+        description: errMessage,
+        type: "error",
+      })
     }
   }
 
@@ -613,8 +624,14 @@ export function TradeOrderPanel({
           decimals: snapshot.base.decimals,
           at: now,
         })
+        const formattedErr = formatTradeErrorMessage(result.err)
         setStatus("error")
-        setTradeError(formatTradeErrorMessage(result.err))
+        setTradeError(formattedErr)
+        toast.add({
+          title: t("fillFailed"),
+          description: formattedErr,
+          type: "error",
+        })
         return
       }
       const inKey = tradeBalanceKey(identity, tokenIn.ledgerId)
@@ -654,8 +671,14 @@ export function TradeOrderPanel({
         decimals: snapshot.base.decimals,
         at: now,
       })
+      const formattedErr = formatTradeErrorMessage(e)
       setStatus("error")
-      setTradeError(formatTradeErrorMessage(e))
+      setTradeError(formattedErr)
+      toast.add({
+        title: t("fillFailed"),
+        description: formattedErr,
+        type: "error",
+      })
     }
   }
 
@@ -731,7 +754,6 @@ export function TradeOrderPanel({
                 setMarketAmountText("")
                 setStatus("idle")
                 setTradeError(null)
-                setLimitNotice(null)
                 setImpactConfirmed(false)
               }}
               className="grid w-full grid-cols-2 gap-1.5 rounded-xl bg-muted/40 p-1"
@@ -760,7 +782,6 @@ export function TradeOrderPanel({
                   if (!mode) return
                   setOrderType(mode)
                   setTradeError(null)
-                  setLimitNotice(null)
                 }}
                 className="justify-start gap-1 p-0"
               >
@@ -788,8 +809,7 @@ export function TradeOrderPanel({
                   onClick={() => setDepositDrawerOpen(true)}
                   title={tDeposit("title")}
                 >
-                  <span>{tDeposit("title")}</span>
-                  <HugeiconsIcon icon={ArrowDataTransferHorizontalIcon} className="ml-1 size-3" />
+                  {tDeposit("title")}
                 </Button>
                 <Button
                   type="button"
@@ -1036,13 +1056,6 @@ export function TradeOrderPanel({
                 ) : null}
               </div>
             )}
-
-            {limitNotice ? (
-              <div className="flex items-center gap-1.5 px-0.5 py-0.5 text-success">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 shrink-0" />
-                <span className="text-xs font-medium">{limitNotice}</span>
-              </div>
-            ) : null}
 
             {orderType === "market" && guard ? (
               <div className="px-0.5 py-0.5 text-xs text-muted-foreground">

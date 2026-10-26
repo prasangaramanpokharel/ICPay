@@ -44,7 +44,7 @@ import {
 import { downloadBlob, fetchBucketFileBlob } from "@/lib/bucket/filePreview"
 import { copyText } from "@/lib/wallet/utils"
 import { useAuth } from "@/components/auth/auth-provider"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import type { FilePublic } from "@/services/bucket/types"
 
 export function BucketFilePreviewPane({

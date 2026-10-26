@@ -10,7 +10,7 @@ import { AutoLocale } from "@/components/i18n/auto-locale"
 import { FiatProvider } from "@/components/fiat/fiat-provider"
 import { cn } from "@/lib/ui/utils"
 import { SiteAnalytics } from "@/components/analytics/site-analytics"
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/toast"
 import { SITE_VERIFICATION } from "@/lib/public/site-verification"
 
 const fontSans = Geist({
