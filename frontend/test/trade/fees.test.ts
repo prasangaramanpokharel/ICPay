@@ -15,6 +15,10 @@ function assert(cond: boolean, msg: string) {
   if (!cond) throw new Error(msg)
 }
 
+// BPS constants
+assert(TAKER_FEE_BPS === 15n, "taker fee is 15 bps")
+assert(MAKER_FEE_BPS === 5n, "maker fee is 5 bps")
+
 // Service fee computation
 assert(tradeServiceFee(0n) === 0n, "zero in has zero fee")
 assert(tradeServiceFee(10_000n, false) === 15n, "15 bps taker fee")
