@@ -1,4 +1,3 @@
-/** Official NNS SNS-W canister — mirrors backend Config.SNS_WASM_CANISTER_ID */
 export const SNS_WASM_CANISTER_ID = "qaa6y-5yaaa-aaaaa-aaafa-cai"
 
 export const SNS_REGISTRY_SWR_KEY = "sns-registry" as const

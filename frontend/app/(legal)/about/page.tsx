@@ -110,16 +110,22 @@ export default function AboutPage() {
 
       <Section title="Who builds it">
         <p>
-          ICPay is not an incorporated company. It is open-source software with
-          no support desk and no account managers — questions, bugs and security
-          reports go to{" "}
+          ICPay is open-source software built on the Internet Computer. For inquiries,
+          partnerships or direct questions, email{" "}
           <a
-            href="https://github.com/prasangapokharel/ICPay/issues"
+            href="mailto:contact@icpay.cloud"
+            className="underline underline-offset-2 font-medium"
+          >
+            contact@icpay.cloud
+          </a>
+          . Bug reports, feature proposals and technical security reviews go to{" "}
+          <a
+            href="https://gitlab.com/prasangapokharel/icpay/-/issues"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-2"
           >
-            GitHub issues
+            GitLab issues
           </a>
           , in public.
         </p>

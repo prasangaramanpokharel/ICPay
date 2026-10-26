@@ -7,6 +7,7 @@ import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { LinkSquare02Icon, ZapIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -248,7 +249,8 @@ export function CyclesWalletCard() {
                       void login().finally(() => setConnecting(false))
                     }}
                   >
-                    {connecting || isLoading ? t("connecting") : t("signIn")}
+                    {(connecting || isLoading) && <Spinner data-icon="inline-start" />}
+                    <span>{connecting || isLoading ? t("connecting") : t("signIn")}</span>
                   </Button>
                 ) : (
                   <Button
@@ -257,11 +259,14 @@ export function CyclesWalletCard() {
                     disabled={submitting || amountE8s == null || mintError != null}
                     onClick={() => void onMint()}
                   >
-                    {submitting
-                      ? flowStep === "send"
-                        ? t("sending")
-                        : t("minting")
-                      : t("mint")}
+                    {submitting && <Spinner data-icon="inline-start" />}
+                    <span>
+                      {submitting
+                        ? flowStep === "send"
+                          ? t("sending")
+                          : t("minting")
+                        : t("mint")}
+                    </span>
                   </Button>
                 )}
               </TabsContent>
@@ -323,7 +328,8 @@ export function CyclesWalletCard() {
                   }
                   onClick={() => void onWithdraw()}
                 >
-                  {submitting ? t("withdrawing") : t("withdraw")}
+                  {submitting && <Spinner data-icon="inline-start" />}
+                  <span>{submitting ? t("withdrawing") : t("withdraw")}</span>
                 </Button>
               </TabsContent>
             </Tabs>

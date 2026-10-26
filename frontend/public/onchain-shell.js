@@ -21,13 +21,34 @@
   } else if (/^\/token\/[^/]+$/.test(path)) {
     shell = "/token/token.html"
     shellId = "token-ledger"
+  } else if (/^\/channels\/join\/[^/]+$/.test(path)) {
+    var joinSeg = path.slice("/channels/join/".length)
+    if (joinSeg) {
+      location.replace("/channels/join?id=" + encodeURIComponent(joinSeg) + (location.search ? "&" + location.search.slice(1) : ""))
+      return
+    }
+  } else if (/^\/channels\/[^/]+\/\d+$/.test(path)) {
+    var chanParts = path.slice("/channels/".length).split("/")
+    var chanId = chanParts[0]
+    var msgId = chanParts[1]
+    location.replace("/channels?id=" + encodeURIComponent(chanId) + "&messageId=" + encodeURIComponent(msgId) + (location.search ? "&" + location.search.slice(1) : ""))
+    return
+  } else if (/^\/channels\/[^/]+$/.test(path)) {
+    var chanSeg = path.slice("/channels/".length)
+    if (chanSeg && chanSeg !== "new" && chanSeg !== "join") {
+      location.replace("/channels?id=" + encodeURIComponent(chanSeg) + (location.search ? "&" + location.search.slice(1) : ""))
+      return
+    }
   } else if (/^\/icpverse\/[^/]+$/.test(path)) {
-    shell = "/icpverse/profile.html"
-    shellId = "icpverse-profile"
+    var userSeg = path.slice("/icpverse/".length)
+    if (userSeg && userSeg !== "profile") {
+      location.replace("/icpverse?id=" + encodeURIComponent(userSeg))
+      return
+    }
   } else if (/^\/[A-Za-z0-9_]{1,8}$/.test(path)) {
     var seg = path.slice(1).toLowerCase()
     var reserved =
-      "login wallet deposit withdraw transfer profile settings icpverse username terms privacy api admin icpay support help about static public assets images audio well sitemap robots manifest favicon icon og u index 404 video bucket launch token swap roadmap faq transparency transactions deposit withdraw wallet transfer login icpay"
+      "home login wallet deposit withdraw transfer profile settings icpverse username terms privacy api admin icpay support help about static public assets images audio well sitemap robots manifest favicon icon og u index 404 video bucket launch token swap trade roadmap faq transparency transactions icfalcon courses charity academy contact topup icbucket channels governance"
     if ((" " + reserved + " ").indexOf(" " + seg + " ") === -1) {
       shell = "/u.html"
       shellId = "profile-u"

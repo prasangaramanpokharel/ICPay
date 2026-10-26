@@ -17,6 +17,7 @@ Read this index first when working on the ICPay frontend (`frontend/`). It maps 
 | **Next.js 16 & App Router** | [`skills/nextjs/skills.md`](skills/nextjs/skills.md) | Next.js 16 + React 19 standards, server components, route groups, static export |
 | **SWR Official Patterns** | [`skills/swr-official/api.md`](skills/swr-official/api.md) | Cache mutation, pagination, conditional fetching, middleware, performance |
 | **Commenting & Doc Standards** | [`skills/comments/SKILL.md`](skills/comments/SKILL.md) | Strict comment rules: explain non-obvious *why*, never restate code, zero clutter |
+| **Icons & Visual Elements Standard** | [`skills/icon-standard/SKILL.md`](skills/icon-standard/SKILL.md) | Clean formal fintech icons, semantic tokens only, no bg clutter, CopyButton standard |
 
 ---
 

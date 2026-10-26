@@ -2,12 +2,12 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { QrCode } from "@/components/shared/qr-code"
+import { toast } from "sonner"
 
 type DepositAddressCardProps = {
   icrcAddress: string
@@ -98,6 +98,7 @@ export function DepositQrBlock({
   const handleCopy = () => {
     onCopy(value)
     setCopied(true)
+    toast.success("Successfully copied")
     setTimeout(() => setCopied(false), 2000)
   }
 
@@ -122,7 +123,7 @@ export function DepositQrBlock({
           aria-label={t("copyAddress")}
           className="size-8 shrink-0 rounded-none border-l border-input bg-transparent px-0 text-muted-foreground hover:bg-muted/60"
         >
-          <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-3.5" />
+          <CopyIconIndicator copied={copied} iconClassName="size-3.5" />
         </Button>
       </div>
 

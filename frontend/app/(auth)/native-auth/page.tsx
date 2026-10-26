@@ -96,7 +96,6 @@ export default function NativeAuthBridgePage() {
   const [status, setStatus] = useState<"ready" | "authenticating" | "redirecting" | "error">("ready")
   const [error, setError] = useState<string | null>(null)
   const [returnUrl, setReturnUrl] = useState<string | null>(null)
-  const autoTriggered = useRef(false)
 
   const params = useMemo(() => {
     if (typeof window === "undefined") return { appKey: null, redirect: null, provider: null }
@@ -219,15 +218,6 @@ export default function NativeAuthBridgePage() {
     }, 500)
   }, [params])
 
-  useEffect(() => {
-    if (autoTriggered.current) return
-    autoTriggered.current = true
-    const t = setTimeout(() => {
-      startAuth()
-    }, 300)
-    return () => clearTimeout(t)
-  }, [startAuth])
-
   return (
     <div className="mx-auto flex w-full max-w-sm flex-col items-center justify-center px-4 py-12 text-center">
       <div className="relative mb-6 flex size-16 items-center justify-center rounded-2xl bg-primary/10 ring-1 ring-primary/20">
@@ -237,6 +227,7 @@ export default function NativeAuthBridgePage() {
           width={40}
           height={40}
           priority
+          loading="eager"
           className="size-10 object-contain"
         />
       </div>

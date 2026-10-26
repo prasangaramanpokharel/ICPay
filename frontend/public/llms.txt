@@ -1,39 +1,49 @@
 # ICPay
 
-> Fast, secure multi-token wallet, decentralized cloud storage, and DEX trading platform built on the Internet Computer (ICP).
+> Fast, secure custodial ICP wallet, decentralized on-chain cloud storage (icBucket), and Web3 developer platform built on the Internet Computer.
 
-ICPay provides seamless payments using Internet Identity, decentralized file storage (ICPay Bucket), gasless cross-chain assets, token launchpads, and decentralized swap operations.
+ICPay (https://icpay.app) is an Internet Computer (ICP) native platform featuring a custodial multi-token wallet, human-readable username handles, high-throughput on-chain storage with an edge CDN, one-click ICRC token launching, and canister management tooling.
+
+## Quick Facts & Architecture
+- **Website**: https://icpay.app
+- **Official Domains**: https://icpay.app, https://icpay.cloud, https://icbucket.app, https://onchainstorage.shop
+- **Storage CDN**: https://cdn.icpay.app (Edge cached reverse proxy to canister storage)
+- **Primary Support**: contact@icpay.cloud
+- **Backend Canister (On-Chain Motoko)**: `6vbhm-nqaaa-aaaan-q6muq-cai`
+- **Frontend Asset Canister**: `63dke-waaaa-aaaan-q6mvq-cai`
+- **Internet Identity Derivation Origin**: `https://63dke-waaaa-aaaan-q6mvq-cai.icp0.io`
+- **Official ICP Ledger Canister**: `ryjl3-tyaaa-aaaaa-aaaba-cai`
+- **Official ICP Index Canister**: `qhbym-qaaaa-aaaaa-aaafq-cai`
+- **Authentication**: Internet Identity only (Passkeys, WebAuthn, biometric). Zero passwords, zero seed phrases stored.
+- **Custody Model**: Each user possesses an isolated, deterministic subaccount on the backend canister derived from their Internet Identity principal. Only the authenticated principal can execute transfers or withdrawals.
 
 ## Core Products & Features
-
 - [Dashboard](https://icpay.app/): Main application dashboard for sending, receiving, and managing ICP and ICRC tokens.
 - [Wallet](https://icpay.app/wallet): Multi-token wallet management, address book, subaccounts, and transaction history.
-- [Bucket Cloud Storage](https://icpay.app/bucket): Decentralized, encrypted-at-rest file storage and global CDN hosting on the Internet Computer.
-- [Swap & DEX Trading](https://icpay.app/trade): Instant decentralized token swaps and limit orders via ICPSwap integration.
+- [icBucket Cloud Storage](https://icpay.app/bucket): Decentralized, encrypted-at-rest file storage and global CDN hosting on the Internet Computer.
+- [icBucket Landing Page](https://icpay.app/icbucket): Product overview, pricing tiers, and architecture comparisons with AWS S3.
+- [icFalcon Framework](https://icpay.app/icfalcon): High-performance developer CLI and canister operations suite.
 - [Token Launcher](https://icpay.app/token/create): Launch custom ICRC-1 / ICRC-2 tokens on the Internet Computer in one click.
 - [Canister Manager](https://icpay.app/canister): Deploy, monitor cycles, snapshot, and manage ICP canisters.
+- [Topup & Cycles](https://icpay.app/topup): Convert ICP to cycles and top up canisters directly.
 - [Community Channels](https://icpay.app/channels): On-chain community channels and token-gated discussions.
-- [ICPay Presale & Tokenomics](https://icpay.app/icpay): ICPAY utility token details, distribution, and presale allocation.
+- [Charity](https://icpay.app/charity): Transparent, verified on-chain donation campaigns.
 
 ## Developer Documentation & APIs
+- [icBucket Documentation](https://icpay.app/bucket/docs): REST, Python SDK, and TypeScript SDK integration guides for icBucket.
+- [Quickstart Guide](https://icpay.app/bucket/docs/getting-started/quickstart): 5-minute guide to upload and retrieve files.
+- [API Authentication](https://icpay.app/bucket/docs/api/auth): Generate and manage read/write API keys for scripts, bots, and agents.
+- [API Methods & Endpoints](https://icpay.app/bucket/docs/api/methods): Full reference for listFolder, uploadChunk, and getFile.
+- [CDN URL Structure](https://icpay.app/bucket/docs/cdn/urls): Global CDN edge routing via `https://cdn.icpay.app/cloud/{bucketName}/{filePath}`.
+- [Python SDK](https://icpay.app/bucket/docs/sdk/python): Python client library for icBucket.
+- [TypeScript SDK](https://icpay.app/bucket/docs/sdk/typescript): TypeScript client library for Node.js and browser environments.
 
-- [Bucket API & SDK Documentation](https://icpay.app/bucket/docs): REST and TypeScript SDK integration guide for ICPay Cloud Bucket.
-- [Storage Pricing & Tiers](https://icpay.app/bucket/pricing): Transparent 30-day billing breakdown for storage tiers (1 GB, 2 GB, 3 GB).
-- [API Authentication Guide](https://icpay.app/bucket/docs/api/auth): How to generate and authenticate with Bucket API keys.
-- [Canister Top-up & Cycles Guide](https://icpay.app/topup): Cycles ledger top-up and conversion instructions.
-
-## Articles & Guides
-
-- [ICP Cloud Storage Explained](https://icpay.app/blog/icp-cloud-storage): Deep-dive into decentralized file storage architecture on ICP.
-- [Internet Identity vs Seed Phrases](https://icpay.app/blog/internet-identity-vs-seed-phrases): Passwordless Web3 authentication guide.
-- [ICRC-1 Token Standard Guide](https://icpay.app/blog/icrc-1-token-standard): Understanding fungible token standards on the Internet Computer.
-- [On-Chain AI on Internet Computer](https://icpay.app/blog/on-chain-ai-internet-computer): Running LLMs and AI agents fully on-chain.
-- [ICP Price & Market Insights](https://icpay.app/blog/icp-price): Live ICP market dynamics, tokenomics, and staking economy.
-
-## Legal & Organization
-
-- [About ICPay](https://icpay.app/about): Mission, architecture, and technology overview.
-- [FAQ](https://icpay.app/faq): Frequently asked questions about ICPay security, custody, and fees.
-- [Transparency](https://icpay.app/transparency): On-chain canister IDs and auditability breakdown.
-- [Privacy Policy](https://icpay.app/privacy): Privacy policy and data handling principles.
+## Official Resources & Legal
+- [About ICPay](https://icpay.app/about): Project mission, security principles, and team overview.
+- [Contact Support](https://icpay.app/contact): Official support email, security vulnerability reports, and partnerships.
+- [Transparency](https://icpay.app/transparency): On-chain canister verification, controller lists, and auditability details.
+- [FAQ](https://icpay.app/faq): Frequently asked questions on fees, custody, Internet Identity, and security.
 - [Terms of Service](https://icpay.app/terms): Terms and conditions for using ICPay services.
+- [Privacy Policy](https://icpay.app/privacy): Privacy policy and data handling principles.
+- [Roadmap](https://icpay.app/roadmap): Current milestones and planned developments.
+- [Official Blog](https://icpay.app/blog): Engineering updates, release notes, and tutorials.

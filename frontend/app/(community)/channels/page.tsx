@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
+import { Suspense } from "react"
 import { listCachedIndexableChannelSnapshots } from "@/lib/community/publicCache"
 import { ChannelsIndexView } from "@/components/community/channels-index-view"
+import { Spinner } from "@/components/ui/spinner"
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 
@@ -27,5 +29,15 @@ export const metadata: Metadata = {
 
 export default async function ChannelsIndexPage() {
   const channels = await listCachedIndexableChannelSnapshots()
-  return <ChannelsIndexView channels={channels} />
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-svh items-center justify-center">
+          <Spinner className="size-6 text-muted-foreground" />
+        </div>
+      }
+    >
+      <ChannelsIndexView channels={channels} />
+    </Suspense>
+  )
 }

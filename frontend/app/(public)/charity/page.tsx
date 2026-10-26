@@ -14,7 +14,6 @@ export const metadata: Metadata = {
   description,
   keywords: CHARITY_INDEX_KEYWORDS,
   alternates: { canonical: "/charity" },
-  robots: { index: true, follow: true },
   openGraph: {
     title,
     description,

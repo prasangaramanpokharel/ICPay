@@ -23,7 +23,8 @@ export function DashboardScreen() {
     return (
       <View className="gap-6 pt-2">
         <Skeleton className="h-40 w-full rounded-3xl" />
-        <View className="flex-row justify-around px-6">
+        <View className="flex-row justify-around px-4">
+          <Skeleton className="size-11 rounded-full" />
           <Skeleton className="size-11 rounded-full" />
           <Skeleton className="size-11 rounded-full" />
           <Skeleton className="size-11 rounded-full" />

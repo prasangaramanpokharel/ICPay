@@ -20,27 +20,39 @@ by attempting a direct push and having GitHub reject it.
 **Merging to `main` is a production deploy.** Vercel builds it automatically —
 there is no separate deploy step, and no way to merge "just to see."
 
+## Remotes
+
+```bash
+github  https://github.com/prasangaramanpokharel/ICPay.git (active primary)
+origin  git@gitlab.com:prasangapokharel/icpay.git (GitLab secondary / mirrored)
+```
+
+Default commands (`git pull`, `git push`) target `github` (GitHub).
+
 ## Daily work
 
 ```bash
-git checkout dev && git pull origin dev
+git checkout dev && git pull github dev
 git checkout -b feature/fiat-rates
 # ... work ...
-git push -u origin feature/fiat-rates
+git push -u github feature/fiat-rates
+# Create Pull Request on GitHub:
 gh pr create --base dev --fill
 ```
 
-`dev` allows direct pushes — it is the integration branch, and requiring a PR to
+`dev` allows direct pushes — it is the integration branch, and requiring a PR/MR to
 reach it as well would double the ceremony for no safety gain. Branch off it for
 anything non-trivial.
 
 ## Release
 
 ```bash
-gh pr create --base main --head dev --title "release: v1.5.0"
-# merge, then:
-git checkout main && git pull origin main
-git tag v1.5.0 && git push origin v1.5.0
+gh pr create --base main --head dev --title "release: v1.7.0" --fill
+# merge once CI (backend + frontend) is green:
+gh pr merge --merge --auto
+# or manually after merge:
+git checkout main && git pull github main
+git tag v1.7.0 && git push github v1.7.0
 ```
 
 Patch for fixes, minor for features, major for breaking changes. Tags are cut on
@@ -115,13 +127,15 @@ per-machine permission grants.
 
 ## CI
 
-`.github/workflows/ci.yml`, three jobs: `backend` (the 33-test Motoko suite),
-`frontend` (typecheck, eslint-against-baseline, build), and `deploy`. The first
-two run on pushes to `main` and `dev`, and on every PR.
+Parity is maintained between GitLab CI (`.gitlab-ci.yml`) and GitHub Actions (`.github/workflows/ci.yml`).
+Both run three jobs: `backend` (the Motoko test suite), `frontend` (typecheck,
+eslint-against-baseline, build), and `deploy`.
+
+The first two run on pushes to `main` and `dev`, and on every Merge Request / PR.
 
 `deploy` fires the Vercel hook, and only on a green push to `main` — so a red
 build never reaches icpay.app. Vercel's own git integration is disabled for
 `main` and `dev` in `frontend/vercel.json`: on `main` it would deploy the same
 commit twice, ignoring CI, and on `dev` it was building a URL nobody opens.
-Feature branches still get previews, so a PR still has one. CI still **never
+Feature branches still get previews, so a MR/PR still has one. CI still **never
 deploys the backend** — see the ops skill for why.

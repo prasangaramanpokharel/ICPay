@@ -16,7 +16,6 @@ export type PhaseStatus = "shipped" | "active" | "next" | "planned"
 export type Milestone = {
   label: string
   done: boolean
-  // Surfaced in a popover. Only worth writing when the reason is non-obvious.
   note?: string
 }
 
@@ -43,8 +42,6 @@ export const STATUS_META: Record<
   planned: { label: "Planned", badge: "outline", dot: "bg-muted-foreground/25" },
 }
 
-// Single source of truth. Adding a phase is one object -- the stepper, the
-// chart and the progress ring all derive from this array.
 export const PHASES: Phase[] = [
   {
     id: "custody",
@@ -327,7 +324,6 @@ export const PHASES: Phase[] = [
   },
 ]
 
-// Not on the roadmap, and saying so is part of having one.
 export const NOT_DOING: { title: string; why: string }[] = [
   {
     title: "Non-custodial mode",

@@ -39,7 +39,7 @@ export function UsernameScreen() {
   const total = price + ICP_FEE
   const balance = useLiveBalance()
   const insufficient = balance != null && trimmed !== '' && total > balance
-  const { data: treasury } = useSWRImmutable(identity ? (['username-treasury'] as const) : null, () =>
+  const { data: treasury } = useSWRImmutable(identity ? 'username-treasury' : null, () =>
     getUsernameTreasury(identity),
   )
   const canBuy = trimmed !== '' && !shapeError && available === true && !insufficient && !buying

@@ -1,4 +1,3 @@
-/** Bytes → human size for canister memory metrics. */
 export function formatBytes(bytes: bigint): string {
   if (bytes <= 0n) return "0 B"
   const units = ["B", "KB", "MB", "GB", "TB"] as const
@@ -38,7 +37,6 @@ export function parseRunStatus(
   return "stopped"
 }
 
-/** Parse "1.5" as trillion cycles (1.5 × 10¹²). */
 export function parseCyclesT(text: string): bigint | null {
   const raw = text.trim().replace(/,/g, "")
   if (!raw || !/^\d+(\.\d+)?$/.test(raw)) return null
@@ -48,7 +46,6 @@ export function parseCyclesT(text: string): bigint | null {
   return whole * 1_000_000_000_000n + BigInt(fracPadded)
 }
 
-/** Format raw cycles as a T-cycles input string (matches parseCyclesT). */
 export function cyclesToTInput(cycles: bigint): string {
   if (cycles <= 0n) return "0"
   const T = 1_000_000_000_000n

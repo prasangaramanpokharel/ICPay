@@ -8,7 +8,7 @@ import { AppSidebar } from "@/components/layout/dashboard/app-sidebar"
 import { AppSiteHeader } from "@/components/layout/dashboard/app-site-header"
 
 const shellStyle = {
-  "--sidebar-width": "calc(var(--spacing) * 72)",
+  "--sidebar-width": "calc(var(--spacing) * 60)",
   "--header-height": "calc(var(--spacing) * 12)",
 } as CSSProperties
 

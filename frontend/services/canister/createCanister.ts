@@ -25,15 +25,10 @@ import {
   type SubnetOption,
 } from "@/services/canister/subnetLocations"
 
-/** NNS CMC memo for notify_create_canister ("CREA" little-endian). */
 export const CREATE_CANISTER_MEMO = 0x41455243n
-
-/** CMC creation fee (cycles deducted from the deposited ICP→cycles). */
 export const CREATE_CANISTER_FEE_CYCLES = 500_000_000_000n
-
-/** Floor ICP so estimated cycles clear the 500B creation fee at typical CMC rates. */
-export const MIN_CREATE_E8S = 50_000_000n // 0.5 ICP
-export const MAX_CREATE_E8S = 5_000_000_000n // 50 ICP
+export const MIN_CREATE_E8S = 50_000_000n
+export const MAX_CREATE_E8S = 5_000_000_000n
 
 export {
   estimateCyclesFromE8s,
@@ -52,9 +47,7 @@ export type CreateCanisterFlowStep = "send" | "create" | "done"
 
 export type CreateCanisterOptions = {
   amountE8s: bigint
-  /** Extra controllers besides the II caller. */
   extraControllers?: string[]
-  /** Specific subnet principal, or omit for CMC default. */
   subnetId?: string | null
 }
 

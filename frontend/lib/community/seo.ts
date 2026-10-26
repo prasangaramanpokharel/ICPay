@@ -9,7 +9,7 @@ import {
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 
 export function channelPath(slug: string): string {
-  return `/channels/${encodeURIComponent(slug)}`
+  return `/channels?id=${encodeURIComponent(slug)}`
 }
 
 export function channelCanonical(slug: string): string {

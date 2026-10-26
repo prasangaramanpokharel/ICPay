@@ -189,6 +189,44 @@ export async function fetchBalances(
   return new Map(entries)
 }
 
+const PINNED_METADATA: Record<string, Omit<TokenHolding, 'balance'>> = {
+  [ICP_LEDGER_ID]: {
+    ledgerId: ICP_LEDGER_ID,
+    symbol: 'ICP',
+    name: 'Internet Computer',
+    decimals: 8,
+    fee: 10_000n,
+  },
+  'mxzaz-hqaaa-aaaar-qaada-cai': {
+    ledgerId: 'mxzaz-hqaaa-aaaar-qaada-cai',
+    symbol: 'ckBTC',
+    name: 'Chain-key Bitcoin',
+    decimals: 8,
+    fee: 10n,
+  },
+  'ss2fx-dyaaa-aaaar-qacoq-cai': {
+    ledgerId: 'ss2fx-dyaaa-aaaar-qacoq-cai',
+    symbol: 'ckETH',
+    name: 'Chain-key Ethereum',
+    decimals: 18,
+    fee: 2_000_000_000_000n,
+  },
+  'xevnm-gaaaa-aaaar-qafnq-cai': {
+    ledgerId: 'xevnm-gaaaa-aaaar-qafnq-cai',
+    symbol: 'ckUSDC',
+    name: 'Chain-key USD Coin',
+    decimals: 6,
+    fee: 10_000n,
+  },
+  'cngnf-vqaaa-aaaar-qag4q-cai': {
+    ledgerId: 'cngnf-vqaaa-aaaar-qag4q-cai',
+    symbol: 'ckUSDT',
+    name: 'Chain-key Tether USD',
+    decimals: 6,
+    fee: 10_000n,
+  },
+}
+
 // Called only for tokens the user actually holds, so the cost scales with the
 // holdings list rather than with the number of tokens that exist.
 //
@@ -200,6 +238,10 @@ export async function fetchTokenMetadata(
   ledgerId: string,
   identity?: Identity
 ): Promise<Omit<TokenHolding, "balance"> | null> {
+  const pinned = PINNED_METADATA[ledgerId]
+  if (ledgerId === ICP_LEDGER_ID && pinned) {
+    return pinned
+  }
   try {
     const row = (await fetchTokenRegistry()).get(ledgerId)
     if (row) {
@@ -210,6 +252,7 @@ export async function fetchTokenMetadata(
     // Falls through to the ledger below.
   }
 
+
   const agent = await createAgent(identity)
   try {
     const ledger = Actor.createActor<{
@@ -219,7 +262,7 @@ export async function fetchTokenMetadata(
     const raw = await ledger.icrc1_metadata()
     const md = new Map(raw.map(([key, value]) => [key, Object.values(value)[0]]))
     const symbol = md.get("icrc1:symbol")
-    if (typeof symbol !== "string") return null
+    if (typeof symbol !== "string") return pinned ?? null
 
     const decimals = md.get("icrc1:decimals")
     const fee = md.get("icrc1:fee")
@@ -235,6 +278,7 @@ export async function fetchTokenMetadata(
       logo: typeof logo === "string" && logo.startsWith("data:") ? logo : undefined,
     }
   } catch {
-    return null
+    return pinned ?? null
   }
+
 }

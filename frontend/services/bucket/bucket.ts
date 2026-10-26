@@ -3,6 +3,11 @@ import { call, query, unwrap, type Outcome } from "@/services/client"
 import { storeFile } from "@/services/bucket/store-file"
 
 export { storeFile, type StoreFileOptions } from "@/services/bucket/store-file"
+export {
+  getStorageActor,
+  getDirectStorageUrl,
+  type StorageActor,
+} from "@/services/bucket/storage-actor"
 import type {
   ApiKeyCreateResult,
   ApiKeyPermissions,
@@ -12,8 +17,12 @@ import type {
   BucketRenewQuote,
   BucketRenewResult,
   BucketVisibilityVariant,
+  FilePublic,
+  FilePathOp,
   FileListPage,
   BucketCycleStatus,
+  BucketBillingPeriod,
+  BucketBillingPeriodVariant,
 } from "@/services/bucket/types"
 
 export type {
@@ -26,11 +35,13 @@ export type {
   BucketRenewResult,
   BucketVisibilityVariant,
   FilePublic,
+  FilePathOp,
   FileListPage,
   BucketCycleStatus,
+  BucketBillingPeriod,
+  BucketBillingPeriodVariant,
 } from "@/services/bucket/types"
 
-/** Query — no auth required; uses an anonymous agent when logged out. */
 export async function getBucketPrice(
   identity: Identity | undefined,
   capacityGB: number
@@ -45,15 +56,47 @@ export async function getBucketPrice(
   }
 }
 
+export async function getBucketYearlyPrice(
+  identity: Identity | undefined,
+  capacityGB: number
+): Promise<Outcome<bigint>> {
+  try {
+    const { getWalletActor } = await import("@/services/wallet")
+    const actor = await getWalletActor(identity)
+    if (actor.getBucketYearlyPrice) {
+      return (await actor.getBucketYearlyPrice(BigInt(capacityGB))) as Outcome<bigint>
+    }
+    const monthly = (await actor.getBucketPrice(BigInt(capacityGB))) as Outcome<bigint>
+    if ("ok" in monthly) {
+      return { ok: monthly.ok * 10n }
+    }
+    return monthly
+  } catch (e) {
+    console.error(e)
+    return { err: "Failed to load yearly price" }
+  }
+}
+
 export function createBucket(
   identity: Identity | undefined,
   name: string,
   capacityGB: number,
-  visibility: BucketVisibilityVariant
+  visibility: BucketVisibilityVariant,
+  period: BucketBillingPeriod = "monthly"
 ): Promise<Outcome<string>> {
-  return call(identity, "Failed to create bucket", (actor) =>
-    actor.createBucket(name, BigInt(capacityGB), visibility) as Promise<Outcome<string>>
-  )
+  const periodVariant: BucketBillingPeriodVariant =
+    period === "yearly" ? { Yearly: null } : { Monthly: null }
+  return call(identity, "Failed to create bucket", (actor) => {
+    if (period === "yearly" && actor.createBucketPlan) {
+      return actor.createBucketPlan(
+        name,
+        BigInt(capacityGB),
+        visibility,
+        periodVariant
+      ) as Promise<Outcome<string>>
+    }
+    return actor.createBucket(name, BigInt(capacityGB), visibility) as Promise<Outcome<string>>
+  })
 }
 
 export function listBuckets(identity: Identity | undefined): Promise<BucketPublic[]> {
@@ -75,9 +118,16 @@ export function getBucketStats(
 
 export function getRenewQuote(
   identity: Identity | undefined,
-  bucketId: string
+  bucketId: string,
+  period: BucketBillingPeriod = "monthly"
 ): Promise<BucketRenewQuote> {
+  const periodVariant: BucketBillingPeriodVariant =
+    period === "yearly" ? { Yearly: null } : { Monthly: null }
   return query(identity, async (actor) => {
+    if (period === "yearly" && actor.getRenewQuotePlan) {
+      const res = (await actor.getRenewQuotePlan(bucketId, periodVariant)) as Outcome<BucketRenewQuote>
+      return unwrap(res)
+    }
     const res = (await actor.getRenewQuote(bucketId)) as Outcome<BucketRenewQuote>
     return unwrap(res)
   })
@@ -85,11 +135,17 @@ export function getRenewQuote(
 
 export function renewBucket(
   identity: Identity | undefined,
-  bucketId: string
+  bucketId: string,
+  period: BucketBillingPeriod = "monthly"
 ): Promise<Outcome<BucketRenewResult>> {
-  return call(identity, "Renew failed", (actor) =>
-    actor.renewBucket(bucketId) as Promise<Outcome<BucketRenewResult>>
-  )
+  const periodVariant: BucketBillingPeriodVariant =
+    period === "yearly" ? { Yearly: null } : { Monthly: null }
+  return call(identity, "Renew failed", (actor) => {
+    if (period === "yearly" && actor.renewBucketPlan) {
+      return actor.renewBucketPlan(bucketId, periodVariant) as Promise<Outcome<BucketRenewResult>>
+    }
+    return actor.renewBucket(bucketId) as Promise<Outcome<BucketRenewResult>>
+  })
 }
 
 export function listFiles(
@@ -222,6 +278,44 @@ export async function bulkDeleteFiles(
   return { ok: deleted }
 }
 
+export function moveFile(
+  identity: Identity | undefined,
+  bucketId: string,
+  sourcePath: string,
+  destinationPath: string,
+  apiKey?: string
+): Promise<Outcome<FilePublic>> {
+  return call(identity, "Move failed", (actor) =>
+    actor.moveFile(
+      bucketId,
+      sourcePath,
+      destinationPath,
+      apiKey ? [apiKey] : []
+    ) as Promise<Outcome<FilePublic>>
+  )
+}
+
+const BULK_MOVE_MAX = 20
+
+export async function bulkMoveFiles(
+  identity: Identity | undefined,
+  bucketId: string,
+  operations: FilePathOp[],
+  apiKey?: string
+): Promise<Outcome<bigint>> {
+  if (operations.length === 0) return { ok: 0n }
+  let moved = 0n
+  for (let i = 0; i < operations.length; i += BULK_MOVE_MAX) {
+    const chunk = operations.slice(i, i + BULK_MOVE_MAX)
+    const res = await call(identity, "Move failed", (actor) =>
+      actor.bulkMoveFiles(bucketId, chunk, apiKey ? [apiKey] : []) as Promise<Outcome<bigint>>
+    )
+    if ("err" in res) return res
+    moved += res.ok
+  }
+  return { ok: moved }
+}
+
 export function downloadFileBlob(
   identity: Identity | undefined,
   bucketId: string,
@@ -324,4 +418,22 @@ export function regenerateApiKey(
   return call(identity, "Failed to regenerate API key", (actor) =>
     actor.regenerateApiKey(bucketId, keyId) as Promise<Outcome<ApiKeyCreateResult>>
   )
+}
+
+export function updateBucket(
+  identity: Identity | undefined,
+  bucketId: string,
+  opts: {
+    name?: string
+    visibility?: BucketVisibilityVariant
+  }
+): Promise<Outcome<BucketPublic>> {
+  return call(identity, "Failed to update bucket", (actor) => {
+    if (!actor.updateBucket) throw new Error("updateBucket not supported")
+    return actor.updateBucket(
+      bucketId,
+      opts.name !== undefined ? [opts.name] : [],
+      opts.visibility !== undefined ? [opts.visibility] : []
+    ) as Promise<Outcome<BucketPublic>>
+  })
 }

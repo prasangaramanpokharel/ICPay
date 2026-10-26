@@ -5,75 +5,52 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  Cancel01Icon,
-  Copy01Icon,
+  ConnectIcon,
   InformationCircleIcon,
   Package01Icon,
-  Tick02Icon,
 } from "@hugeicons/core-free-icons"
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import { Badge } from "@/components/ui/badge"
+import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
+import { LinkCanisterDialog } from "@/components/canister/link-canister-dialog"
+import { ConnectControllerDialog } from "@/components/canister/connect-controller-dialog"
 import { MyCanisterRow } from "@/components/canister/my-canister-row"
 import { MyCanisterTopupDialog } from "@/components/canister/my-canister-topup-dialog"
-import { PremiumGateDialog } from "@/components/shared/premium-gate"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useAuth } from "@/components/auth/auth-provider"
-import { useOwnProfile } from "@/hooks/wallet/useWalletData"
 import { useMineCanisters } from "@/hooks/canister/useMineCanisters"
 import { useMineStatusMap } from "@/hooks/canister/useMineStatusMap"
-import { useSavedCanisterEntries } from "@/hooks/canister/useSavedCanisters"
-import { isPremiumHandle } from "@/lib/verified/premiumTick"
 import {
-  displayCanisterLabel,
-  rememberCanister,
-} from "@/lib/canister/savedCanisters"
+  useSavedCanisterEntries,
+  useSyncCloudCanisters,
+} from "@/hooks/canister/useSavedCanisters"
+import { displayCanisterLabel } from "@/lib/canister/savedCanisters"
 import { subnetLabel } from "@/services/canister/controlledCanisters"
 import { shortSubnetId } from "@/services/canister/subnetLocations"
-import { parseCanisterId } from "@/services/cycles/topUp"
-import { cn } from "@/lib/ui/utils"
-
-function tryParseCanisterId(raw: string): string | null {
-  const text = raw.trim()
-  if (!text) return null
-  try {
-    return parseCanisterId(text).toText()
-  } catch {
-    return null
-  }
-}
 
 function EmptyBlock({
   message,
   actions,
+  loading = false,
 }: {
   message: string
   actions?: React.ReactNode
+  loading?: boolean
 }) {
   return (
     <div className="flex flex-col items-center gap-3 px-3 py-10 text-center">
-      <HugeiconsIcon
-        icon={Package01Icon}
-        className="size-10 text-muted-foreground/40"
-      />
+      {loading ? (
+        <Spinner className="size-8 text-primary" />
+      ) : (
+        <HugeiconsIcon
+          icon={Package01Icon}
+          className="size-10 text-muted-foreground/40"
+        />
+      )}
       <p className="max-w-xs text-sm text-muted-foreground">{message}</p>
       {actions}
     </div>
@@ -83,21 +60,21 @@ function EmptyBlock({
 export function MyCanistersPanel() {
   const t = useTranslations("myCanisters")
   const { identity, isAuthenticated } = useAuth()
-  const { data: profile } = useOwnProfile()
-  const username = profile?.username[0] ?? null
-  const isPremium = isPremiumHandle(username)
-
   const principal = identity?.getPrincipal().toText() ?? null
   const mine = useMineCanisters(principal)
   const entries = useSavedCanisterEntries(principal)
+  useSyncCloudCanisters(identity)
   const nameById = useMemo(() => new Map(entries.map((e) => [e.id, e.name])), [entries])
   const [topUpTarget, setTopUpTarget] = useState<string | null>(null)
   const [topUpOpen, setTopUpOpen] = useState(false)
-  const [draftId, setDraftId] = useState("")
-  const [draftName, setDraftName] = useState("")
   const [linkOpen, setLinkOpen] = useState(false)
-  const [premiumGateOpen, setPremiumGateOpen] = useState(false)
-  const [linkedOk, setLinkedOk] = useState<{ id: string; name: string } | null>(null)
+  const [connectOpen, setConnectOpen] = useState(false)
+  const [connectCanisterId, setConnectCanisterId] = useState<string | null>(null)
+
+  const knownCanisters = useMemo(
+    () => mine.ids.map((id) => ({ id, name: nameById.get(id) })),
+    [mine.ids, nameById]
+  )
 
   const previews = useMineStatusMap(
     identity,
@@ -105,28 +82,18 @@ export function MyCanistersPanel() {
     Boolean(isAuthenticated && mine.ids.length > 0)
   )
 
-  const parsedDraft = useMemo(() => tryParseCanisterId(draftId), [draftId])
-  const draftTouched = draftId.trim().length > 0
-  const draftValid = parsedDraft != null
-  const draftInvalid = draftTouched && !draftValid
-
-  const openLink = () => {
-    if (!isPremium) {
-      setPremiumGateOpen(true)
-      return
-    }
-    setDraftName("")
-    setLinkOpen(true)
+  const handleOpenConnect = (canisterId?: string) => {
+    const target =
+      canisterId ||
+      knownCanisters.find((c) => previews.map[c.id]?.kind === "denied")?.id ||
+      knownCanisters[0]?.id ||
+      null
+    setConnectCanisterId(target)
+    setConnectOpen(true)
   }
 
-  const onConfirmLink = () => {
-    if (!principal || !parsedDraft) return
-    const name = draftName.trim()
-    rememberCanister(principal, parsedDraft, name)
-    setDraftId("")
-    setDraftName("")
-    setLinkOpen(false)
-    setLinkedOk({ id: parsedDraft, name })
+  const openLink = () => {
+    setLinkOpen(true)
   }
 
   return (
@@ -134,14 +101,14 @@ export function MyCanistersPanel() {
       title={t("title")}
       description={t("subtitle")}
       actions={
-        <div className="flex flex-wrap items-center gap-2">
+        <ButtonGroup>
           <Button type="button" variant="outline" size="sm" onClick={openLink}>
             {t("link")}
           </Button>
-          <Button nativeButton={false} render={<Link href="/canister/create" />}>
+          <Button size="sm" nativeButton={false} render={<Link href="/canister/create" />}>
             {t("create")}
           </Button>
-        </div>
+        </ButtonGroup>
       }
     >
       <Alert className="bg-muted/30">
@@ -149,18 +116,18 @@ export function MyCanistersPanel() {
         <AlertTitle>{t("yourPrincipal")}</AlertTitle>
         <AlertDescription>
           <p className="break-all font-mono text-xs text-foreground">{principal ?? "—"}</p>
-          <p className="mt-1 text-[11px]">{t("principalHint")}</p>
         </AlertDescription>
         {principal ? (
           <AlertAction>
             <Button
               type="button"
-              variant="ghost"
-              size="icon-sm"
-              aria-label={t("copyPrincipal")}
-              onClick={() => void navigator.clipboard.writeText(principal)}
+              variant="outline"
+              size="xs"
+              className="h-7 gap-1 px-2.5 text-xs font-medium"
+              onClick={() => handleOpenConnect()}
             >
-              <HugeiconsIcon icon={Copy01Icon} className="size-3.5" />
+              <HugeiconsIcon icon={ConnectIcon} className="size-3.5 text-primary" />
+              <span>Connect</span>
             </Button>
           </AlertAction>
         ) : null}
@@ -178,7 +145,7 @@ export function MyCanistersPanel() {
           <CardContent className="p-0">
             {mine.isLoading ? (
               <div className="p-2">
-                <EmptyBlock message={t("loading")} />
+                <EmptyBlock message={t("loading")} loading />
               </div>
             ) : mine.ids.length === 0 ? (
               <div className="p-2">
@@ -233,6 +200,7 @@ export function MyCanistersPanel() {
                           setTopUpTarget(id)
                           setTopUpOpen(true)
                         }}
+                        onConnect={() => handleOpenConnect(id)}
                       />
                     )
                   })}
@@ -243,115 +211,14 @@ export function MyCanistersPanel() {
         </Card>
       </div>
 
-      <Dialog
+      <LinkCanisterDialog
         open={linkOpen}
-        onOpenChange={(open) => {
-          setLinkOpen(open)
-          if (!open) {
-            setDraftId("")
-            setDraftName("")
-          }
+        onOpenChange={setLinkOpen}
+        onSuccess={() => {
+          previews.refresh()
         }}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{t("linkTitle")}</DialogTitle>
-            <DialogDescription>{t("linkHint")}</DialogDescription>
-          </DialogHeader>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              if (draftValid) onConfirmLink()
-            }}
-          >
-            <FieldGroup className="gap-4 py-2">
-              <Field className="gap-2">
-                <FieldLabel htmlFor="link-canister-id">{t("linkId")}</FieldLabel>
-                <div className="relative">
-                  <Input
-                    id="link-canister-id"
-                    value={draftId}
-                    onChange={(e) => setDraftId(e.target.value)}
-                    placeholder={t("addPlaceholder")}
-                    spellCheck={false}
-                    aria-invalid={draftInvalid}
-                    className={cn(
-                      "pr-9 font-mono text-sm",
-                      draftValid && "border-emerald-500/60 focus-visible:ring-emerald-500/30",
-                      draftInvalid && "border-destructive focus-visible:ring-destructive/30"
-                    )}
-                  />
-                  {draftTouched && (
-                    <span className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2">
-                      <HugeiconsIcon
-                        icon={draftValid ? Tick02Icon : Cancel01Icon}
-                        className={cn(
-                          "size-3.5",
-                          draftValid ? "text-emerald-500" : "text-destructive"
-                        )}
-                      />
-                    </span>
-                  )}
-                </div>
-                {draftInvalid ? (
-                  <FieldDescription className="text-xs text-destructive">{t("invalidId")}</FieldDescription>
-                ) : null}
-              </Field>
-
-              <Field className="gap-2">
-                <FieldLabel htmlFor="link-canister-name">{t("linkName")}</FieldLabel>
-                <Input
-                  id="link-canister-name"
-                  value={draftName}
-                  onChange={(e) => setDraftName(e.target.value)}
-                  placeholder={t("linkNamePlaceholder")}
-                  maxLength={48}
-                />
-              </Field>
-            </FieldGroup>
-
-            <DialogFooter className="mt-4 flex-col gap-2 sm:flex-col sm:justify-stretch">
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={!draftValid}
-              >
-                {t("linkConfirm")}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => setLinkOpen(false)}
-              >
-                {t("linkCancel")}
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      <CanisterSuccessDialog
-        open={linkedOk != null}
-        onClose={() => setLinkedOk(null)}
-        title={t("linkSuccessTitle")}
-        description={
-          linkedOk?.name
-            ? t("linkSuccessNamed", { name: linkedOk.name })
-            : t("linkSuccessBody")
-        }
-        monoId={linkedOk?.id}
       />
 
-      <PremiumGateDialog
-        open={premiumGateOpen}
-        onOpenChange={setPremiumGateOpen}
-        title="Link External Canister"
-        description="Linking, labeling, and monitoring external canisters in your dashboard is an ICPay Premium feature. Upgrade your handle (1–4 characters) to manage any canister across the Internet Computer."
-        featureName="Canister Linking"
-        actionText="Get Premium Handle"
-        href="/username"
-      />
 
       {topUpTarget && (
         <MyCanisterTopupDialog
@@ -366,6 +233,17 @@ export function MyCanistersPanel() {
           }}
         />
       )}
+
+      <ConnectControllerDialog
+        open={connectOpen}
+        onOpenChange={(open) => {
+          setConnectOpen(open)
+          if (!open) setConnectCanisterId(null)
+        }}
+        principal={principal}
+        canisters={knownCanisters}
+        initialCanisterId={connectCanisterId}
+      />
     </AppPage>
   )
 }

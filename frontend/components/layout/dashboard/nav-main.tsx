@@ -23,7 +23,7 @@ import {
 import { prefetchAppRoute } from "@/lib/navigation/prefetchRoute"
 
 const itemClass =
-  "h-8 gap-2.5 rounded-lg px-2.5 text-[13px] font-normal text-foreground [&>svg]:size-4 data-active:bg-muted data-active:font-medium"
+  "h-8.5 gap-2.5 rounded-lg px-2.5 text-[13px] font-normal text-foreground [&>svg]:size-4.5 data-active:bg-muted data-active:font-medium"
 
 export function DashboardNavMain() {
   const pathname = usePathname()
@@ -34,9 +34,11 @@ export function DashboardNavMain() {
     <>
       {SIDEBAR_SECTIONS.map((section) => (
         <SidebarGroup key={section.sectionKey} className="py-1">
-          <SidebarGroupLabel className="mb-0.5 h-6 px-2.5 text-[11px] font-medium text-muted-foreground">
-            {t(`settings.sections.${section.sectionKey}`)}
-          </SidebarGroupLabel>
+          {section.sectionKey !== "overview" ? (
+            <SidebarGroupLabel className="mb-0.5 h-6 px-2.5 text-[11px] font-semibold tracking-wider text-muted-foreground/90 uppercase">
+              {t(`settings.sections.${section.sectionKey}`)}
+            </SidebarGroupLabel>
+          ) : null}
           <SidebarGroupContent>
             <SidebarMenu className="gap-0.5">
               {section.items.map((item) => (
@@ -99,7 +101,14 @@ function NavRow({
         onMouseEnter={onWarm}
         onFocus={onWarm}
       >
-        <NavIcon icon={item.icon} className="text-primary" />
+        <NavIcon
+          icon={item.icon}
+          className={
+            active
+              ? "text-primary"
+              : "text-muted-foreground transition-colors group-hover/menu-button:text-foreground"
+          }
+        />
         <span className="min-w-0 flex-1 truncate">{label}</span>
         {item.badgeKey ? (
           <GradientBadge size="sm">{t(item.badgeKey as never)}</GradientBadge>

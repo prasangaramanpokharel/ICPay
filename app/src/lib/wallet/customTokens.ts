@@ -74,18 +74,58 @@ function writeStored(principal: string, stored: Stored) {
   setItem(KEY + principal, JSON.stringify(stored))
 }
 
-export function getCustomLedgerIdsSnapshot(principal: string): string[] {
-  return readStored(principal).ids
+const EMPTY_IDS: string[] = []
+const idsCache = new Map<string, { serialized: string | null; snapshot: string[] }>()
+
+export function getCustomLedgerIdsSnapshot(principal: string | undefined): string[] {
+  if (!principal) return EMPTY_IDS
+  const serialized = getItem(KEY + principal)
+  const cached = idsCache.get(principal)
+  if (cached && cached.serialized === serialized) {
+    return cached.snapshot
+  }
+  if (!serialized) {
+    idsCache.set(principal, { serialized, snapshot: EMPTY_IDS })
+    return EMPTY_IDS
+  }
+  try {
+    const parsed = parseStored(serialized)
+    const snapshot = parsed.ids
+    idsCache.set(principal, { serialized, snapshot })
+    return snapshot
+  } catch {
+    idsCache.set(principal, { serialized, snapshot: EMPTY_IDS })
+    return EMPTY_IDS
+  }
 }
 
-export function getCustomTokenMetaSnapshot(principal: string): Map<string, TokenMetadata> {
-  const stored = readStored(principal)
-  const meta = new Map<string, TokenMetadata>()
-  for (const id of stored.ids) {
-    const row = stored.meta[id]
-    if (row) meta.set(id, toTokenMeta(row))
+const EMPTY_META = new Map<string, TokenMetadata>()
+const metaCache = new Map<string, { serialized: string | null; snapshot: Map<string, TokenMetadata> }>()
+
+export function getCustomTokenMetaSnapshot(principal: string | undefined): Map<string, TokenMetadata> {
+  if (!principal) return EMPTY_META
+  const serialized = getItem(KEY + principal)
+  const cached = metaCache.get(principal)
+  if (cached && cached.serialized === serialized) {
+    return cached.snapshot
   }
-  return meta
+  if (!serialized) {
+    metaCache.set(principal, { serialized, snapshot: EMPTY_META })
+    return EMPTY_META
+  }
+  try {
+    const stored = parseStored(serialized)
+    const meta = new Map<string, TokenMetadata>()
+    for (const id of stored.ids) {
+      const row = stored.meta[id]
+      if (row) meta.set(id, toTokenMeta(row))
+    }
+    metaCache.set(principal, { serialized, snapshot: meta })
+    return meta
+  } catch {
+    metaCache.set(principal, { serialized, snapshot: EMPTY_META })
+    return EMPTY_META
+  }
 }
 
 export function normalizeLedgerId(raw: string): string | null {

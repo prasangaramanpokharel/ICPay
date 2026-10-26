@@ -74,7 +74,6 @@ export function SendTokenDrawer({
   const tc = useTranslations("common")
   const locale = useLocale()
   const { identity } = useAuth()
-  // The scan button's label already exists under transfer, in all ten catalogs.
   const tt = useTranslations("transfer")
   const [username, setUsername] = useState("")
   const [value, setValue] = useState("")
@@ -83,18 +82,11 @@ export function SendTokenDrawer({
   const [loading, setLoading] = useState(false)
   const [scanOpen, setScanOpen] = useState(false)
   const [confirming, setConfirming] = useState(false)
-  // Anything but "username" means the field holds a principal or account id, so
-  // the handle lookup is skipped and the raw text is sent as typed.
   const [mode, setMode] = useState<TransferMode>("username")
-  // Only ever set by an ICRC-1 address, which names one account under a
-  // principal. Held apart from the field, which shows the owner.
   const [subaccount, setSubaccount] = useState<Uint8Array | null>(null)
 
-  // Parsed at the token's own decimals, never through Number(): an 18-decimal
-  // amount does not survive float math and would send more than was typed.
   const amount = parseTokenAmount(value, token.decimals)
   const total = amount === null ? null : amount + token.fee
-  // The fee is charged on top, so the whole balance can never be sent.
   const sendable = token.balance > token.fee ? token.balance - token.fee : 0n
   const insufficient = total !== null && total > token.balance
   const memoTooLong = memoByteLength(memo.trim()) > MEMO_MAX_BYTES
@@ -103,10 +95,6 @@ export function SendTokenDrawer({
   const isIcp = token.ledgerId === ICP_LEDGER_ID
 
   const applyAddress = (hit: ScannedAddress, raw?: string) => {
-    // Account identifiers are an ICP-ledger concept: transferByAccountId takes no
-    // ledgerId, and services/transfer routes on hex shape before it looks at the
-    // mode. Accepting one here while sending ckBTC would send ICP instead and
-    // report success, so it is refused rather than silently repointed.
     if (hit.kind === "account" && !isIcp) {
       setError(t("accountIdIcpOnly", { symbol: token.symbol }))
       return
@@ -122,9 +110,6 @@ export function SendTokenDrawer({
     }
   }
 
-  // The same detector the transfer page uses, so a pasted principal or account
-  // id is recognised here rather than failing as an unknown handle. It only
-  // fires on self-delimiting forms, so a half-typed username is left alone.
   const handleRecipientChange = (raw: string) => {
     const hit = detectTypedAddress(raw)
     if (hit) {
@@ -138,18 +123,12 @@ export function SendTokenDrawer({
   }
 
   const full = (v: bigint) => formatTokenAmount(v, token.decimals, token.decimals)
-  // Written back into the field, so it must be a value parseTokenAmount accepts.
   const setAmount = (v: bigint) => {
     setValue(toPlainTokenAmount(v, token.decimals))
     setError(null)
   }
-  // Only a resolvable handle can be paid here, and the lookup is debounced so it
-  // runs per typing pause rather than per keystroke.
   const debouncedHandle = useDebounced(mode === "username" ? handle : "")
   const { principal: resolved, isLoading: resolving } = useResolvedUsername(debouncedHandle)
-  // Validated by shape, not by a length floor: handles run from 1 to 8 chars,
-  // so a minimum of 3 would refuse to send to the ultra-premium tier. A
-  // principal or account id arrived through the parser, so it is already valid.
   const canSend =
     (mode === "username" ? validateUsername(handle) === null : recipient.length > 0) &&
     amount !== null &&
@@ -400,8 +379,8 @@ export function SendTokenDrawer({
                 {tc("back")}
               </Button>
               <Button className="flex-1" disabled={!canSend} onClick={() => void handleSend()}>
-                {loading && <Spinner className="size-4" />}
-                {loading ? t("sending") : t("confirmSend")}
+                {loading && <Spinner data-icon="inline-start" />}
+                <span>{loading ? t("sending") : t("confirmSend")}</span>
               </Button>
             </>
           ) : (
@@ -412,7 +391,7 @@ export function SendTokenDrawer({
               setConfirming(true)
             }}
           >
-            {insufficient ? t("insufficient") : t("send")}
+            <span>{insufficient ? t("insufficient") : t("send")}</span>
           </Button>
           )}
         </DrawerFooter>

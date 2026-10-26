@@ -10,7 +10,6 @@ export type SwapQuoteOpts = TradeQuoteFees & {
   skipAllowlistCheck?: boolean
 }
 
-/** @deprecated Use services/trade — kept for any legacy imports. */
 export async function fetchSwapQuote(
   identity: Identity | undefined,
   tokenIn: string,

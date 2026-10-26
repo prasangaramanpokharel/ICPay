@@ -1,0 +1,41 @@
+---
+title: "Error Codes"
+description: "Comprehensive catalog of ICBucket machine-readable error codes and their HTTP mappings."
+group: "Errors"
+order: 1
+---
+
+# Error Codes
+
+This reference documents the error codes returned by the ICBucket API and SDKs, explaining their causes and recovery actions.
+
+## Error Reference Table
+
+| Code | HTTP Status | Description | Action |
+| :--- | :--- | :--- | :--- |
+| `ERR_UNAUTHORIZED` | 401 | Invalid or expired API key | Verify key credentials in ICPay dashboard |
+| `ERR_FORBIDDEN` | 403 | Principal lacks write permission | Check bucket ownership or request higher scope |
+| `ERR_BUCKET_NOT_FOUND` | 404 | Bucket name does not exist | Verify bucket slug spelling |
+| `ERR_FILE_NOT_FOUND` | 404 | File path does not exist in bucket | Ensure file path prefix matches uploaded path |
+| `ERR_PAYLOAD_TOO_LARGE` | 413 | Single-call payload exceeds 2MB | Use chunked upload session for files > 2MB |
+| `ERR_QUOTA_EXCEEDED` | 402 | Bucket storage limit reached | Top up bucket capacity from dashboard |
+| `ERR_CANISTER_BUSY` | 503 | Consensus queue currently saturated | Retry with exponential backoff |
+
+## Error Envelope Shape
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "ERR_PAYLOAD_TOO_LARGE",
+    "message": "Payload size 3.4MB exceeds single-call limit of 2.0MB. Use beginUpload chunked session.",
+    "timestamp": 1728518400000
+  }
+}
+```
+
+## Related Pages
+
+- [Error Handling](./error-handling.mdx)
+- [Troubleshooting](./troubleshooting.mdx)
+- [Endpoints Reference](../../api/endpoints.mdx)

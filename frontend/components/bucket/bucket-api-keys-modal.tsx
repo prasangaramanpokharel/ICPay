@@ -2,9 +2,10 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { Copy01Icon, Delete02Icon, Key01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { Delete02Icon, Key01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Button } from "@/components/ui/button"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Input } from "@/components/ui/input"
 import {
@@ -41,22 +42,12 @@ import {
 import { Spinner } from "@/components/ui/spinner"
 import { mapBucketError } from "@/lib/bucket/bucket"
 import { copyText } from "@/lib/wallet/utils"
+import { toast } from "sonner"
 import { useBucketApiKeys } from "@/hooks/bucket/useBucketApiKeys"
 import { useOwnProfile } from "@/hooks/wallet/useWalletData"
 import { isPremiumHandle } from "@/lib/verified/premiumTick"
 import { PremiumGateDialog } from "@/components/shared/premium-gate"
 import type { ApiKeyCreateResult, ApiKeyPublic } from "@/services/bucket/types"
-
-function permLabel(
-  key: ApiKeyPublic,
-  t: (key: "apiKeyPermRead" | "apiKeyPermWrite" | "apiKeyPermDelete" | "apiKeyPermNone") => string
-) {
-  const parts: string[] = []
-  if (key.permissions.read) parts.push(t("apiKeyPermRead"))
-  if (key.permissions.write) parts.push(t("apiKeyPermWrite"))
-  if (key.permissions.delete) parts.push(t("apiKeyPermDelete"))
-  return parts.join(" · ") || t("apiKeyPermNone")
-}
 
 export function BucketApiKeysModal({
   bucketId,
@@ -122,7 +113,17 @@ export function BucketApiKeysModal({
     if (!created) return
     await copyText(created.secret)
     setCopied(true)
+    toast.success("Successfully copied")
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const [copiedHintId, setCopiedHintId] = useState<string | null>(null)
+
+  const handleCopyHint = async (key: ApiKeyPublic) => {
+    await copyText(key.keyHint)
+    setCopiedHintId(key.id)
+    toast.success("Successfully copied")
+    setTimeout(() => setCopiedHintId(null), 2000)
   }
 
   return (
@@ -145,7 +146,7 @@ export function BucketApiKeysModal({
             </Alert>
           )}
 
-          <Card size="sm" className="max-h-[min(40vh,280px)] overflow-y-auto py-0">
+          <Card size="sm" className="max-h-[min(45vh,320px)] overflow-y-auto p-0 py-0">
             <CardContent className="p-0">
             {isLoading ? (
               <div className="flex justify-center py-8">
@@ -156,20 +157,62 @@ export function BucketApiKeysModal({
                 {t("apiKeysEmpty")}
               </p>
             ) : (
-              <ul className="divide-y">
+              <ul className="divide-y divide-border/60 pb-1">
                 {keys.map((key) => (
-                  <li key={key.id} className="flex min-w-0 items-center gap-2 px-3 py-2">
+                  <li
+                    key={key.id}
+                    className={`flex min-w-0 items-center gap-2 px-3 py-2.5 transition-opacity ${
+                      key.revoked ? "opacity-50" : ""
+                    }`}
+                  >
                     <div className="min-w-0 flex-1 overflow-hidden">
-                      <p className="truncate text-sm font-medium" title={key.name}>
-                        {key.name}
-                      </p>
-                      <p className="truncate font-mono text-xs text-muted-foreground" title={key.keyHint}>
-                        {key.keyHint}
-                      </p>
-                      <p className="truncate text-xs text-muted-foreground">{permLabel(key, t)}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="truncate text-sm font-medium" title={key.name}>
+                          {key.name}
+                        </p>
+                        <span className="text-[10px] text-muted-foreground">
+                          {new Date(Number(key.createdAt / 1_000_000n)).toLocaleDateString(undefined, {
+                            month: "short",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </span>
+                      </div>
+                      <div className="mt-0.5 flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
+                        <span className="truncate">{key.keyHint}</span>
+                        <button
+                          type="button"
+                          onClick={() => void handleCopyHint(key)}
+                          className="inline-flex size-3.5 items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                          aria-label="Copy key prefix"
+                          title={copiedHintId === key.id ? "Copied!" : "Copy key prefix"}
+                        >
+                          <CopyIconIndicator copied={copiedHintId === key.id} iconClassName="size-3" />
+                        </button>
+                      </div>
+                      <div className="mt-1 flex flex-wrap items-center gap-1">
+                        {key.permissions.read ? (
+                          <Badge variant="outline" className="h-4 px-1 text-[9px] font-normal text-muted-foreground">
+                            {t("apiKeyPermRead")}
+                          </Badge>
+                        ) : null}
+                        {key.permissions.write ? (
+                          <Badge variant="outline" className="h-4 px-1 text-[9px] font-normal text-muted-foreground">
+                            {t("apiKeyPermWrite")}
+                          </Badge>
+                        ) : null}
+                        {key.permissions.delete ? (
+                          <Badge
+                            variant="outline"
+                            className="h-4 border-destructive/30 px-1 text-[9px] font-normal text-destructive/80"
+                          >
+                            {t("apiKeyPermDelete")}
+                          </Badge>
+                        ) : null}
+                      </div>
                     </div>
                     {key.revoked ? (
-                      <Badge variant="secondary" className="shrink-0">
+                      <Badge variant="secondary" className="shrink-0 text-[10px]">
                         {t("apiKeyRevoked")}
                       </Badge>
                     ) : (
@@ -216,7 +259,7 @@ export function BucketApiKeysModal({
 
           <Button
             type="button"
-            variant="outline"
+            variant="default"
             size="sm"
             className="w-full"
             onClick={() => {
@@ -322,7 +365,7 @@ export function BucketApiKeysModal({
                 type="submit"
                 disabled={busy || !name.trim() || (!read && !write && !del)}
               >
-                {busy && <Spinner className="size-3.5" />}
+                {busy && <Spinner data-icon="inline-start" />}
                 {busy ? t("apiKeyCreating") : t("apiKeyCreate")}
               </Button>
             </DialogFooter>
@@ -349,11 +392,7 @@ export function BucketApiKeysModal({
                 aria-label={copied ? tc("copied") : tc("copy")}
                 onClick={handleCopySecret}
               >
-                <HugeiconsIcon
-                  icon={copied ? Tick02Icon : Copy01Icon}
-                  className="size-4"
-                  strokeWidth={1.75}
-                />
+                <CopyIconIndicator copied={copied} iconClassName="size-4" />
               </Button>
             </ButtonGroup>
             </CardContent>

@@ -23,8 +23,8 @@ export function ServiceTile({
   const tile = (
     <>
       <span className="relative">
-        <span className="flex size-11 items-center justify-center rounded-full bg-muted text-foreground">
-          <AppIcon name={icon} size={20} />
+        <span className="flex size-11 items-center justify-center rounded-full bg-muted text-primary">
+          <AppIcon name={icon} size={20} className="text-primary" />
         </span>
         {badge ? (
           <GradientBadge className="absolute -right-2 -top-2 z-10" size="sm">

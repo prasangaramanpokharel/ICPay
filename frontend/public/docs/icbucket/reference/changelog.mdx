@@ -1,0 +1,38 @@
+---
+title: "Changelog"
+description: "Release history, breaking changes, and migration guides for ICBucket and its SDKs."
+group: "Reference"
+order: 3
+---
+
+# Changelog
+
+All notable changes to the ICBucket protocol, SDKs, and developer tools are documented here.
+
+## [v1.4.0] - 2026-10-09
+
+### Added
+- **Interactive Code Blocks**: Native support for `@cult-ui/code-block` across documentation and integration views.
+- **Global Edge CDN Dual Links**: Files now expose both `https://cdn.icpay.app/cloud/{bucket}/{file}` and on-chain raw URLs.
+- **10-Item Pagination**: Standardized list views and API default page size to 10 items.
+- **Raw Markdown Endpoints**: Any doc section can now be fetched as raw markdown via `.md` URLs for LLMs and developers.
+
+## [v1.3.0] - 2026-09-20
+
+### Added
+- Multi-canister chunked streaming for files exceeding 10MB.
+- Python SDK `icpay-bucket` release on PyPI.
+- Automated API key rotation without canister upgrade.
+
+## [v1.0.0] - 2026-08-01
+
+### Initial Release
+- Core Motoko on-chain bucket canister smart contract.
+- Internet Identity delegated subaccount isolation.
+- TypeScript SDK for browser and Node.js.
+
+## Related Pages
+
+- [Configuration Reference](./configuration.mdx)
+- [Types Reference](./types.mdx)
+- [Installation](../../overview/installation.mdx)

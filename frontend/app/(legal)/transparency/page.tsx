@@ -160,7 +160,7 @@ export default function TransparencyPage() {
                 rel="noopener noreferrer"
                 className="underline underline-offset-2"
               >
-                github.com/prasangapokharel/ICPay
+                gitlab.com/prasangapokharel/icpay
               </a>
               . The fund-moving logic is in the backend&apos;s transfer and
               withdraw services.
@@ -182,12 +182,12 @@ export default function TransparencyPage() {
         <p>
           Report vulnerabilities at{" "}
           <a
-            href={`${REPO}/issues`}
+            href={`${REPO}/-/issues`}
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-2"
           >
-            GitHub issues
+            GitLab issues
           </a>
           . There is no bug bounty and no private disclosure channel — if a
           finding would put user funds at immediate risk, please consider that an

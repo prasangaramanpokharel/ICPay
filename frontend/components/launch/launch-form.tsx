@@ -20,6 +20,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { ShineBorder } from "@/components/ui/shine-border"
 import {
   Field,
   FieldGroup,
@@ -405,16 +406,24 @@ export function LaunchForm({
             </Tooltip>
           </div>
 
-          {/* Fee Breakdown Card */}
-          <div className="flex flex-col gap-2.5 rounded-2xl border border-border/70 bg-card/60 p-4">
-            <Row label={t("creationFee")} value={launchFee === undefined ? "—" : `${formatAmount(launchFee)} ICP`} />
-            <Row label={t("networkFee")} value={`${formatAmount(ICP_FEE)} ICP`} muted />
-            <div className="border-t border-border/60 pt-2.5">
-              <Row
-                label={tc("total")}
-                value={total === undefined ? "—" : `${formatAmount(total)} ICP`}
-                emphasis
-              />
+          {/* Fee Breakdown Card with ShineBorder */}
+          <div className="relative overflow-hidden flex flex-col gap-2.5 rounded-2xl border border-border/70 bg-card/60 p-4 shadow-xs">
+            <ShineBorder
+              className="rounded-2xl"
+              borderWidth={1.2}
+              duration={12}
+              shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+            />
+            <div className="relative z-10 space-y-2.5">
+              <Row label={t("creationFee")} value={launchFee === undefined ? "—" : `${formatAmount(launchFee)} ICP`} />
+              <Row label={t("networkFee")} value={`${formatAmount(ICP_FEE)} ICP`} muted />
+              <div className="border-t border-border/60 pt-2.5">
+                <Row
+                  label={tc("total")}
+                  value={total === undefined ? "—" : `${formatAmount(total)} ICP`}
+                  emphasis
+                />
+              </div>
             </div>
           </div>
         </FieldGroup>
@@ -431,7 +440,7 @@ export function LaunchForm({
           disabled={needsConnect ? connecting : !canReview}
           onClick={() => (needsConnect ? onConnect?.() : setConfirmOpen(true))}
         >
-          {connecting && <Spinner className="size-4" />}
+          {connecting && <Spinner data-icon="inline-start" />}
           {needsConnect
             ? connecting
               ? tl("connecting")
@@ -456,17 +465,25 @@ export function LaunchForm({
             </DrawerHeader>
 
             <div className="space-y-3 px-4 py-2">
-              <div className="space-y-2 rounded-2xl border border-border/70 bg-card p-4">
-                <Row label={t("nameLabel")} value={name.trim()} />
-                <Row label={t("symbolLabel")} value={normalizeSymbol(symbol)} mono />
-                <Row label={t("supplyLabel")} value={`${supply} ${normalizeSymbol(symbol)}`} />
-                <Row label={t("controlLabel")} value={t("immutableTitle")} />
-                <div className="border-t border-border/60 pt-2">
-                  <Row
-                    label={tc("total")}
-                    value={total === undefined ? "—" : `${formatAmount(total)} ICP`}
-                    emphasis
-                  />
+              <div className="relative overflow-hidden space-y-2 rounded-2xl border border-border/70 bg-card p-4 shadow-xs">
+                <ShineBorder
+                  className="rounded-2xl"
+                  borderWidth={1.2}
+                  duration={12}
+                  shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                />
+                <div className="relative z-10 space-y-2">
+                  <Row label={t("nameLabel")} value={name.trim()} />
+                  <Row label={t("symbolLabel")} value={normalizeSymbol(symbol)} mono />
+                  <Row label={t("supplyLabel")} value={`${supply} ${normalizeSymbol(symbol)}`} />
+                  <Row label={t("controlLabel")} value={t("immutableTitle")} />
+                  <div className="border-t border-border/60 pt-2">
+                    <Row
+                      label={tc("total")}
+                      value={total === undefined ? "—" : `${formatAmount(total)} ICP`}
+                      emphasis
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -483,7 +500,7 @@ export function LaunchForm({
                 onClick={handleConfirm}
                 disabled={launching}
               >
-                {launching && <Spinner className="size-4" />}
+                {launching && <Spinner data-icon="inline-start" />}
                 {launching ? t("launching") : t("confirmLaunch")}
               </Button>
               <DrawerClose render={<Button variant="outline" size="lg" className="w-full" disabled={launching}>{tc("cancel")}</Button>} />

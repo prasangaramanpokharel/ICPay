@@ -69,7 +69,6 @@ export function subscribeSavedCanisters(listener: () => void): () => void {
   }
 }
 
-/** Canisters this II created or tracked in ICPay (browser-local). */
 export function listSavedCanisters(principal: string): string[] {
   return listSavedCanisterEntries(principal).map((e) => e.id)
 }
@@ -107,6 +106,33 @@ export function forgetCanister(principal: string, canisterId: string): void {
     principal,
     readEntries(principal).filter((e) => e.id !== id)
   )
+}
+
+export function mergeRemoteCanisters(
+  principal: string,
+  remoteEntries: SavedCanister[]
+): void {
+  if (!principal || !remoteEntries.length) return
+  const current = readEntries(principal)
+  const map = new Map<string, string>()
+
+  for (const e of current) {
+    map.set(e.id, e.name)
+  }
+
+  for (const r of remoteEntries) {
+    if (!map.has(r.id)) {
+      map.set(r.id, r.name)
+    } else if (r.name && !map.get(r.id)) {
+      map.set(r.id, r.name)
+    }
+  }
+
+  const merged: SavedCanister[] = Array.from(map.entries()).map(([id, name]) => ({
+    id,
+    name,
+  }))
+  writeEntries(principal, merged)
 }
 
 export function shortCanisterId(id: string): string {

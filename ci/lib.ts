@@ -17,6 +17,10 @@ export const OWNED_CANISTERS = [
   { name: "icpay_trade", label: "trade" },
   { name: "icp_wallet_frontend", label: "frontend" },
   { name: "icp_blob_store", label: "blob store" },
+  { name: "cnsmangment", label: "cns" },
+  { name: "icpay_notifier", label: "notifier" },
+  { name: "icpay_academy", label: "academy" },
+  { name: "icpay_index", label: "index" },
 ] as const
 export type OwnedCanisterName = (typeof OWNED_CANISTERS)[number]["name"]
 
@@ -24,7 +28,7 @@ export function canisterIds(): Record<string, { ic?: string }> {
   return JSON.parse(readFileSync(resolve(BACKEND, "canister_ids.json"), "utf8"))
 }
 
-/** Resolve dfx canister name from shorthand: backend | frontend | blob | blob store */
+/** Resolve dfx canister name from shorthand: backend | frontend | blob | blob store | cns | notifier | academy | index */
 export function resolveOwnedCanister(target?: string): OwnedCanisterName | undefined {
   if (!target) return undefined
   const key = target.toLowerCase().replace(/_/g, " ").trim()
@@ -33,13 +37,20 @@ export function resolveOwnedCanister(target?: string): OwnedCanisterName | undef
       c.name === target ||
       c.label === key ||
       (key === "blob" && c.name === "icp_blob_store") ||
-      (key === "trade" && c.name === "icpay_trade"),
+      (key === "trade" && c.name === "icpay_trade") ||
+      (key === "cns" && c.name === "cnsmangment") ||
+      (key === "cnsmangment" && c.name === "cnsmangment") ||
+      (key === "notifier" && c.name === "icpay_notifier") ||
+      (key === "academy" && c.name === "icpay_academy") ||
+      (key === "index" && c.name === "icpay_index"),
   )
   return hit?.name
 }
 
+
 export const WALLET_CANISTER_ID = canisterIds().icp_wallet_backend?.ic ?? ""
 export const ICPAY_LEDGER_ID = "5fsnk-rqaaa-aaaan-q6m4q-cai"
+export const ICPAY_INDEX_ID = canisterIds().icpay_index?.ic ?? "geode-2qaaa-aaaan-q6wuq-cai"
 export const ICP_INDEX = "qhbym-qaaaa-aaaaa-aaafq-cai"
 
 // dfx invokes whatever DFX_MOC_PATH names. A shell profile that sets
@@ -61,6 +72,22 @@ function resolveDfxMocPath(): string {
   })
   const path = res.stdout?.trim()
   if (res.status === 0 && path) return path
+
+  const dfxCache = spawnSync("dfx", ["cache", "show"], { encoding: "utf8" })
+  if (dfxCache.status === 0 && dfxCache.stdout) {
+    const lines = dfxCache.stdout.trim().split("\n")
+    const cacheDir = lines[lines.length - 1]?.trim()
+    if (cacheDir) {
+      const dfxMoc = resolve(cacheDir, "moc")
+      try {
+        accessSync(dfxMoc, constants.X_OK)
+        return dfxMoc
+      } catch {
+        // ignore — fall through to error
+      }
+    }
+  }
+
   console.error(
     "dfx needs a Motoko compiler. Run:\n  cd backend && mops toolchain use moc 1.13.0\n" +
       "If your shell sets DFX_MOC_PATH=moc-wrapper, run: unset DFX_MOC_PATH",
@@ -68,10 +95,42 @@ function resolveDfxMocPath(): string {
   process.exit(1)
 }
 
+// Ensure cargo/rustup bin is available on PATH
+const cargoBin = resolve(process.env.HOME ?? "", ".cargo/bin")
+const pathWithCargo = process.env.PATH?.includes(cargoBin)
+  ? process.env.PATH
+  : `${cargoBin}:${process.env.PATH ?? ""}`
+
+function resolveSdkRoot(): string | undefined {
+  if (process.platform !== "darwin") return undefined
+  if (process.env.SDKROOT) return process.env.SDKROOT
+  const fallbackSdks = [
+    "/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk",
+    "/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk",
+    "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+  ]
+  for (const sdk of fallbackSdks) {
+    try {
+      accessSync(sdk, constants.R_OK)
+      return sdk
+    } catch {
+      // try next
+    }
+  }
+  return undefined
+}
+
+const resolvedSdkRoot = resolveSdkRoot()
+if (resolvedSdkRoot && !process.env.SDKROOT) {
+  process.env.SDKROOT = resolvedSdkRoot
+}
+
 // dfx refuses to touch mainnet with a plaintext identity unless this is set, and
 // the controller key on this machine is plaintext.
 const env = {
   ...process.env,
+  PATH: pathWithCargo,
+  ...(resolvedSdkRoot ? { SDKROOT: resolvedSdkRoot } : {}),
   DFX_WARNING: "-mainnet_plaintext_identity",
   DFX_MOC_PATH: resolveDfxMocPath(),
 }
@@ -99,7 +158,7 @@ export function step(title: string): void {
 
 // Streams output rather than buffering: a deploy that hangs should show where.
 export function run(cmd: string, args: string[], cwd: string = BACKEND): void {
-  const res = spawnSync(cmd, args, { cwd, env, stdio: "inherit" })
+  const res = spawnSync(cmd, args, { cwd, env: { ...env, ...process.env, PATH: pathWithCargo }, stdio: "inherit" })
   if (res.status !== 0) {
     console.error(`\nFAILED: ${cmd} ${args.join(" ")}`)
     process.exit(res.status ?? 1)
@@ -107,7 +166,7 @@ export function run(cmd: string, args: string[], cwd: string = BACKEND): void {
 }
 
 export function capture(cmd: string, args: string[], cwd: string = BACKEND): string {
-  const res = spawnSync(cmd, args, { cwd, env, encoding: "utf8" })
+  const res = spawnSync(cmd, args, { cwd, env: { ...env, ...process.env, PATH: pathWithCargo }, encoding: "utf8" })
   if (res.status !== 0) {
     console.error(res.stderr?.trim() || `FAILED: ${cmd} ${args.join(" ")}`)
     process.exit(res.status ?? 1)

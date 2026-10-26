@@ -1,12 +1,15 @@
 import type { Identity } from "@icp-sdk/core/agent"
 
-/** SWR cache keys — principal suffix prevents cross-account bleed. */
 export function bucketListKey(identity: Identity | undefined) {
   return identity ? (["bucket-list", identity.getPrincipal().toText()] as const) : null
 }
 
 export function bucketStatsKey(identity: Identity | undefined, bucketId: string) {
   return identity ? (["bucket-stats", bucketId, identity.getPrincipal().toText()] as const) : null
+}
+
+export function bucketAllFilesKey(identity: Identity | undefined, bucketId: string) {
+  return identity ? (["bucket-all-files", bucketId, identity.getPrincipal().toText()] as const) : null
 }
 
 export function bucketFilesKey(
@@ -31,7 +34,6 @@ export function bucketSearchKey(
     : null
 }
 
-/** Price is global — same for every account; no principal suffix. */
 export function bucketPriceKey(capacityGB: number) {
   return ["bucket-price", String(capacityGB)] as const
 }
@@ -77,6 +79,7 @@ export function isBucketCacheKey(key: unknown, identity: Identity | undefined): 
     head === "bucket-list" ||
     head === "bucket-stats" ||
     head === "bucket-files" ||
+    head === "bucket-all-files" ||
     head === "bucket-search" ||
     head === "bucket-renew-quote" ||
     head === "bucket-cycle-status" ||

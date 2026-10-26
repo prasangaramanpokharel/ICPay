@@ -26,6 +26,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { BadgeMark, PremiumBadge } from "@/components/verified/premium-badge"
+import { ShineBorder } from "@/components/ui/shine-border"
 import {
   BADGE_RANGES,
   tierBadgeSpans,
@@ -78,8 +79,6 @@ export default function UsernamePage() {
   const insufficient =
     balance !== undefined && trimmed !== "" && total > balance
 
-  // A query, and the treasury never moves, so it is read once per session and
-  // never revalidated.
   const { data: treasury } = useSWRImmutable(
     identity ? (["username-treasury"] as const) : null,
     () => getUsernameTreasury(identity)
@@ -108,20 +107,25 @@ export default function UsernamePage() {
 
   if (bought) {
     return (
-      <SendSuccess
-        amount={bought.price}
-        recipient={`@${bought.username}`}
-        blockIndex={bought.blockIndex}
-        kind="purchase"
-        onDone={() => router.push("/profile")}
-      />
+      <AppPage>
+        <div className="mx-auto w-full max-w-md">
+          <SendSuccess
+            amount={bought.price}
+            recipient={`@${bought.username}`}
+            blockIndex={bought.blockIndex}
+            kind="purchase"
+            onDone={() => router.push("/profile")}
+          />
+        </div>
+      </AppPage>
     )
   }
 
   return (
     <AppPage title={t("title")} description={t("subtitle")}>
-      <Card className="border-border/60 shadow-sm">
-        <CardContent className="space-y-6 px-5 py-7">
+      <div className="mx-auto w-full max-w-md">
+        <Card className="border-border/60 shadow-sm">
+          <CardContent className="space-y-6 px-5 py-7">
           <div className="space-y-2">
             <Label htmlFor="buy-username">{t("label")}</Label>
             <div className="relative">
@@ -178,38 +182,44 @@ export default function UsernamePage() {
           </div>
 
           {trimmed !== "" && !shapeError && tier && (
-            <div className="space-y-3 rounded-2xl bg-muted/40 p-4">
-              <div className="flex items-baseline justify-between">
-                <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  {t(`tiers.${tier.labelKey}`)}
-                  {/* Asked of the typed name, not the tier: ultra spans both marks,
-                  so this is the only place the exact badge is knowable. */}
-                  <PremiumBadge name={trimmed} className="size-3.5" />
-                </span>
-                <span className="flex items-center gap-1.5 text-lg font-bold tabular-nums">
-                  <Image
-                    src={ICP_LOGO}
-                    alt=""
-                    width={40}
-                    height={40}
-                    className="size-5 object-contain"
-                  />
-                  {formatAmount(price)}
-                </span>
+            <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card/60 p-4 shadow-xs">
+              <ShineBorder
+                className="rounded-2xl"
+                borderWidth={1.2}
+                duration={12}
+                shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+              />
+              <div className="relative z-10 space-y-3">
+                <div className="flex items-baseline justify-between">
+                  <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                    {t(`tiers.${tier.labelKey}`)}
+                    <PremiumBadge name={trimmed} className="size-3.5" />
+                  </span>
+                  <span className="flex items-center gap-1.5 text-lg font-bold tabular-nums">
+                    <Image
+                      src={ICP_LOGO}
+                      alt=""
+                      width={40}
+                      height={40}
+                      className="size-5 object-contain"
+                    />
+                    {formatAmount(price)}
+                  </span>
+                </div>
+                <div className="flex items-baseline justify-between text-xs text-muted-foreground">
+                  <span>{t("networkFee")}</span>
+                  <span className="tabular-nums">{formatAmount(ICP_FEE)} ICP</span>
+                </div>
+                <div className="flex items-baseline justify-between border-t border-border/60 pt-3 text-sm font-medium">
+                  <span>{t("total")}</span>
+                  <span className="tabular-nums">{formatAmount(total)} ICP</span>
+                </div>
+                {treasury && (
+                  <p className="text-xs text-muted-foreground">
+                    {t("treasuryNote", { principal: shortPrincipal(treasury) })}
+                  </p>
+                )}
               </div>
-              <div className="flex items-baseline justify-between text-xs text-muted-foreground">
-                <span>{t("networkFee")}</span>
-                <span className="tabular-nums">{formatAmount(ICP_FEE)} ICP</span>
-              </div>
-              <div className="flex items-baseline justify-between border-t pt-3 text-sm font-medium">
-                <span>{t("total")}</span>
-                <span className="tabular-nums">{formatAmount(total)} ICP</span>
-              </div>
-              {treasury && (
-                <p className="text-xs text-muted-foreground">
-                  {t("treasuryNote", { principal: shortPrincipal(treasury) })}
-                </p>
-              )}
             </div>
           )}
 
@@ -225,8 +235,8 @@ export default function UsernamePage() {
             disabled={!canBuy}
             onClick={handleBuy}
           >
-            {buying ? <Spinner className="size-4" /> : null}
-            {buying ? t("buying") : insufficient ? t("insufficient") : t("buy")}
+            {buying ? <Spinner data-icon="inline-start" /> : null}
+            <span>{buying ? t("buying") : insufficient ? t("insufficient") : t("buy")}</span>
           </Button>
 
           <div className="space-y-2">
@@ -234,8 +244,6 @@ export default function UsernamePage() {
               <p className="text-xs font-medium text-muted-foreground">
                 {t("pricing")}
               </p>
-              {/* A popover, not a tooltip: the badge rule is the reason to pick one
-              tier over another, and on a phone there is no hover to reveal it. */}
               <Popover>
                 <PopoverTrigger
                   aria-label={t("badgeInfoTitle")}
@@ -252,8 +260,6 @@ export default function UsernamePage() {
                       {t("badgeInfo", { min: USERNAME_FREE_MIN_LENGTH })}
                     </PopoverDescription>
                   </PopoverHeader>
-                  {/* Listed as two rows rather than two ticks in the heading: side
-                  by side they read as a pair a buyer gets together. */}
                   <div className="flex flex-col gap-2 text-xs">
                     {(["gold", "blue"] as const).map((badge) => (
                       <div key={badge} className="flex items-start gap-2">
@@ -279,24 +285,27 @@ export default function UsernamePage() {
                 </PopoverContent>
               </Popover>
             </div>
-            <div className="overflow-hidden rounded-2xl border">
-              {TIERS.map((tier, i) => (
-                <div
-                  key={tier.labelKey}
-                  className={cn(
-                    "flex items-baseline justify-between px-4 py-3 text-sm",
-                    i > 0 && "border-t"
-                  )}
-                >
+            <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card/40 shadow-xs">
+              <ShineBorder
+                className="rounded-2xl"
+                borderWidth={1.2}
+                duration={14}
+                shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+              />
+              <div className="relative z-10">
+                {TIERS.map((tier, i) => (
+                  <div
+                    key={tier.labelKey}
+                    className={cn(
+                      "flex items-baseline justify-between px-4 py-3 text-sm",
+                      i > 0 && "border-t border-border/60"
+                    )}
+                  >
                   <div>
                     <p className="font-medium">{t(`tiers.${tier.labelKey}`)}</p>
                     <p className="text-xs text-muted-foreground">
                       {t(`tiers.${tier.rangeKey}`)}
                     </p>
-                    {/* Marked per row rather than described in the note, so the
-                    badge reads as part of what the price buys. Each mark is
-                    labelled with the lengths it covers: ultra spans both, and
-                    two bare ticks read as though the row granted them both. */}
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {tierBadgeSpans(tier).map((span) => (
                         <BadgeChip key={span.badge} span={span} />
@@ -308,6 +317,7 @@ export default function UsernamePage() {
                   </span>
                 </div>
               ))}
+              </div>
             </div>
             <p className="text-xs text-muted-foreground">{t("note")}</p>
             <Link
@@ -319,13 +329,11 @@ export default function UsernamePage() {
           </div>
         </CardContent>
       </Card>
+      </div>
     </AppPage>
   )
 }
 
-// The mark plus the lengths it covers, tappable for the reason it matters. The
-// label is what stops the ultra row -- which carries both marks -- from reading
-// as though every ultra name were gold.
 function BadgeChip({ span }: { span: BadgeSpan }) {
   const t = useTranslations("buyUsername")
   const lengths =

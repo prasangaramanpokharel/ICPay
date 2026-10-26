@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { InformationCircleIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -324,7 +325,8 @@ export function CreateCanisterCard() {
                       void login().finally(() => setConnecting(false))
                     }}
                   >
-                    {!hydrated || connecting || isLoading ? t("connecting") : t("signIn")}
+                    {(!hydrated || connecting || isLoading) && <Spinner data-icon="inline-start" />}
+                    <span>{!hydrated || connecting || isLoading ? t("connecting") : t("signIn")}</span>
                   </Button>
                 ) : (
                   <Button
@@ -333,11 +335,14 @@ export function CreateCanisterCard() {
                     disabled={submitting || Boolean(amountError) || amountE8s == null}
                     onClick={() => void onCreate()}
                   >
-                    {submitting
-                      ? flowStep === "send"
-                        ? t("sending")
-                        : t("creating")
-                      : t("create")}
+                    {submitting && <Spinner data-icon="inline-start" />}
+                    <span>
+                      {submitting
+                        ? flowStep === "send"
+                          ? t("sending")
+                          : t("creating")
+                        : t("create")}
+                    </span>
                   </Button>
                 )}
                 <p className="text-xs leading-relaxed text-muted-foreground">{t("disclaimer")}</p>

@@ -6,10 +6,6 @@ export type FiatRates = {
 
 const FRANKFURTER_URL = "https://api.frankfurter.dev/v2/rates"
 
-// ICP is quoted in USD by CoinGecko; every other currency is derived in one
-// Frankfurter call with USD as the base. This keeps the two external fetches
-// fixed -- one crypto quote, one fiat table -- no matter how many currencies
-// the UI asks for.
 export async function fetchFiatRates(
   quotes: string[]
 ): Promise<FiatRates | null> {
@@ -27,7 +23,6 @@ export async function fetchFiatRates(
   }
 }
 
-// One call for the whole chain: ICP price in USD plus every fiat conversion.
 export async function icpToFiat(
   icpAmount: number,
   icpUsd: number,

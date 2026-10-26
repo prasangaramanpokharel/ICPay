@@ -23,6 +23,7 @@ import {
   Package01Icon,
 } from "@hugeicons/core-free-icons"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { Gitlab } from "@dev.icons/react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -408,13 +409,13 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                     <span>{cat.label}</span>
                   </span>
                   <Link
-                    href={`https://github.com/prasangapokharel/icp-hub/tree/master/${pkg.path}`}
+                    href={`https://gitlab.com/prasangapokharel/falconpkg/-/tree/main/${pkg.path}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1 text-primary hover:underline font-medium transition-all"
+                    className="flex items-center gap-1.5 text-primary hover:underline font-medium transition-all"
                   >
-                    <span>Source</span>
-                    <HugeiconsIcon icon={LinkSquare02Icon} className="size-3" />
+                    <Gitlab size={12} />
+                    <span>GitLab</span>
                   </Link>
                 </div>
               </Card>
@@ -469,13 +470,13 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                     <span>{cmdCopied ? "Copied" : "Copy Install"}</span>
                   </Button>
                   <Link
-                    href={`https://github.com/prasangapokharel/icp-hub/tree/master/${pkg.path}`}
+                    href={`https://gitlab.com/prasangapokharel/falconpkg/-/tree/main/${pkg.path}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex size-8 items-center justify-center rounded-lg border border-border/60 bg-background/60 text-muted-foreground hover:text-foreground transition-colors"
-                    title="View Source on GitHub"
+                    title="View Source on GitLab"
                   >
-                    <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5" />
+                    <Gitlab size={15} />
                   </Link>
                 </div>
               </div>

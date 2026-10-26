@@ -15,15 +15,14 @@ export type StoreFileOptions = {
   path: string
   contentType?: string
   apiKey?: string
+  storageCanisterId?: string
   onProgress?: (pct: number) => void
 }
 
 async function cancelUpload(actor: WalletActor, uploadId: string) {
   try {
     await actor.cancelUpload(uploadId)
-  } catch {
-    /* best-effort */
-  }
+  } catch {}
 }
 
 async function sendChunks(
@@ -83,7 +82,6 @@ async function uploadSmall(
   return res
 }
 
-/** IC upload: single call ≤1.85 MiB, else begin → indexed chunks → complete. */
 export async function storeFile(
   identity: Identity | undefined,
   file: File,

@@ -1,4 +1,7 @@
 {
+  "cnsmangment": {
+    "ic": "6jtj7-4qaaa-aaaan-q6tta-cai"
+  },
   "icp_blob_store": {
     "ic": "fly6t-piaaa-aaaan-q6oga-cai"
   },
@@ -7,6 +10,15 @@
   },
   "icp_wallet_frontend": {
     "ic": "63dke-waaaa-aaaan-q6mvq-cai"
+  },
+  "icpay_academy": {
+    "ic": "wkdfn-yqaaa-aaaan-q6vyq-cai"
+  },
+  "icpay_index": {
+    "ic": "geode-2qaaa-aaaan-q6wuq-cai"
+  },
+  "icpay_notifier": {
+    "ic": "2hvuh-xiaaa-aaaan-q6uua-cai"
   },
   "icpay_trade": {
     "ic": "gomfy-saaaa-aaaan-q6onq-cai"

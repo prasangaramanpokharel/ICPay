@@ -1,9 +1,10 @@
-/** Desktop wallet installers — served from GitHub Releases, not Vercel public/. */
-const RELEASE_BASE =
-  "https://github.com/prasangapokharel/ICPay/releases/latest/download"
-
 export const DESKTOP_DOWNLOADS = {
-  windows: `${RELEASE_BASE}/icpay-wallet-setup.exe`,
-  linuxRpm: `${RELEASE_BASE}/icpay-wallet-linux.rpm`,
-  linuxDeb: `${RELEASE_BASE}/icpay-wallet-linux.deb`,
+  windows:
+    "https://gitlab.com/-/project/87350466/uploads/c8943cf470ce12e0ba16d532f0fc0a60/icpay-wallet-windows.zip",
+  linux:
+    "https://gitlab.com/-/project/87350466/uploads/1540d4e061db752ce25fed49fbd0ee61/icpay-wallet-linux.zip",
+  linuxRpm:
+    "https://gitlab.com/-/project/87350466/uploads/1540d4e061db752ce25fed49fbd0ee61/icpay-wallet-linux.zip",
+  linuxDeb:
+    "https://gitlab.com/-/project/87350466/uploads/1540d4e061db752ce25fed49fbd0ee61/icpay-wallet-linux.zip",
 } as const

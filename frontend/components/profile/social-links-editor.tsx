@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Github01Icon, Linkedin01Icon, Globe02Icon, Add01Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
 import type { SocialLink, SocialPlatform, UserPublic } from "@/services/types"
 import { setSocialLink, removeSocialLink } from "@/services/sociallink/sociallink"
@@ -141,7 +142,8 @@ export function SocialLinksEditor({
                       disabled={saving || !url.trim()}
                       className="h-7 text-xs"
                     >
-                      {saved ? t("saved") : saving ? "…" : t("saveBtn")}
+                      {saving && <Spinner data-icon="inline-start" />}
+                      <span>{saved ? t("saved") : t("saveBtn")}</span>
                     </Button>
                     <Button
                       variant="ghost"

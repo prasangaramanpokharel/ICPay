@@ -1,0 +1,85 @@
+# GitLab CI/CD workflow mirroring .github/workflows/ci.yml
+#
+# The backend canister is never deployed from here. It custodies real user ICP,
+# and auto-deploying would mean putting its controller key in a CI secret --
+# a key that can also delete the canister. Shipping the backend stays a local
+# command run by a human: npm run ci backend:deploy.
+#
+# The frontend is different: the deploy stage triggers a Vercel build
+# of a commit that is already on main, and can neither read nor move funds.
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+stages:
+  - test
+  - deploy
+
+default:
+  interruptible: true
+
+backend:
+  stage: test
+  image: node:22-bookworm
+  before_script:
+    - npm i -g ic-mops
+  script:
+    - cd backend
+    - |
+      for i in 1 2 3; do
+        mops toolchain use moc 1.13.0 && break
+        echo "mops toolchain use failed (attempt $i), retrying..."
+        sleep 5
+        [ "$i" -eq 3 ] && exit 1
+      done
+    - |
+      for i in 1 2 3; do
+        mops install && break
+        echo "mops install failed (attempt $i), retrying..."
+        sleep 5
+        [ "$i" -eq 3 ] && exit 1
+      done
+    - bash scripts/run-tests.sh
+
+frontend:
+  stage: test
+  image: node:22-bookworm
+  cache:
+    key:
+      files:
+        - frontend/package-lock.json
+    paths:
+      - frontend/.npm/
+  before_script:
+    - npm i -g npm@11
+  script:
+    - cd frontend
+    - npm ci --cache .npm --prefer-offline
+    - npm run typecheck
+    - |
+      count=$(npx eslint services hooks components app lib --ext .ts,.tsx -f json \
+        | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>console.log(JSON.parse(s).reduce((n,f)=>n+f.errorCount,0)))')
+      echo "eslint errors: $count (baseline 5)"
+      test "$count" -le 5
+    - npm run build
+
+# Fires only on main, and only once both test jobs pass -- a red build must
+# never reach icpay.app.
+deploy:
+  stage: deploy
+  image: curlimages/curl:latest
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main" && $CI_PIPELINE_SOURCE == "push"
+  needs:
+    - backend
+    - frontend
+  script:
+    - |
+      HOOK_URL="${VERCEL_DEPLOY_HOOK_URL:-https://api.vercel.com/v1/integrations/deploy/prj_qLt0r1ZNuccPlGjtOnlaAqUvhfV7/gGLVwPM92y}"
+      echo "Triggering Vercel deployment hook..."
+      code=$(curl -sS -X POST -o /dev/null -w '%{http_code}' "$HOOK_URL")
+      echo "deploy hook responded $code"
+      test "$code" -ge 200 && test "$code" -lt 300

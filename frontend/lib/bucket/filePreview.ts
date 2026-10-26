@@ -2,12 +2,10 @@ import { resolvePublicFileUrl, toRawCanisterUrl } from "@/lib/bucket/cdn"
 import { downloadFileBlob } from "@/services/bucket/bucket"
 import type { Identity } from "@icp-sdk/core/agent"
 
-/** Normalize any bucket URL to the raw canister host by default. */
 export function normalizePublicFileUrl(url: string): string {
   return resolvePublicFileUrl(url, "raw")
 }
 
-/** Raw canister first (reliable), then CDN — same fallback as preview. */
 export async function fetchBucketFileBlob(opts: {
   publicUrl: string | null
   identity: Identity | undefined
@@ -30,7 +28,6 @@ export async function fetchBucketFileBlob(opts: {
           if (blob.size > 0) return blob
         }
       } catch {
-        // try next source
       }
     }
   }

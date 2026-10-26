@@ -2,6 +2,9 @@ import type { BucketStatusVariant, BucketVisibilityVariant } from "@/lib/bucket/
 
 export type { BucketStatusVariant, BucketVisibilityVariant }
 
+export type BucketBillingPeriod = "monthly" | "yearly"
+export type BucketBillingPeriodVariant = { Monthly: null } | { Yearly: null }
+
 export type BucketPublic = {
   id: string
   name: string
@@ -11,6 +14,7 @@ export type BucketPublic = {
   status: BucketStatusVariant
   expiresAt: bigint
   createdAt: bigint
+  storageCanisterId?: string
 }
 
 export type BucketStats = {
@@ -28,6 +32,7 @@ export type BucketStats = {
   renewPriceE8s: bigint
   periodDays: bigint
   publicBaseUrl: [] | [string]
+  storageCanisterId?: string
 }
 
 export type BucketRenewQuote = {
@@ -56,6 +61,11 @@ export type FilePublic = {
   metadata: [] | [string]
   tags: string[]
   publicUrl: [] | [string]
+}
+
+export type FilePathOp = {
+  source: string
+  destination: string
 }
 
 export type FileListPage = {

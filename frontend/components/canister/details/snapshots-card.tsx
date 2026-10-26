@@ -7,6 +7,8 @@ import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Camera01Icon, RefreshIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   AlertDialog,
@@ -172,7 +174,11 @@ export function SnapshotsCard({
                 disabled={busy || canControl === false}
                 onClick={() => void refreshList()}
               >
-                <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
+                {busy && rows === null ? (
+                  <Spinner data-icon="inline-start" />
+                ) : (
+                  <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
+                )}
                 <span>{busy && rows === null ? t("loading") : t("list")}</span>
               </Button>
               <Button
@@ -181,7 +187,11 @@ export function SnapshotsCard({
                 disabled={!parsedOk || busy || status.kind !== "ok" || canControl === false}
                 onClick={() => void onTake()}
               >
-                <HugeiconsIcon icon={Camera01Icon} className="size-3.5" />
+                {busy ? (
+                  <Spinner data-icon="inline-start" />
+                ) : (
+                  <HugeiconsIcon icon={Camera01Icon} className="size-3.5" />
+                )}
                 <span>{t("take")}</span>
               </Button>
             </div>
@@ -343,13 +353,15 @@ export function SnapshotsCard({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              variant={confirm?.kind === "delete" ? "destructive" : "default"}
-              onClick={() => void onConfirm()}
-            >
-              {confirm?.kind === "load" ? t("load") : t("delete")}
-            </AlertDialogAction>
+            <ButtonGroup>
+              <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+              <AlertDialogAction
+                variant={confirm?.kind === "delete" ? "destructive" : "default"}
+                onClick={() => void onConfirm()}
+              >
+                <span>{confirm?.kind === "load" ? t("load") : t("delete")}</span>
+              </AlertDialogAction>
+            </ButtonGroup>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

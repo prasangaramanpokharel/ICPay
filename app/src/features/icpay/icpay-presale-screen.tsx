@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { Pressable, View } from 'react-native'
 import { Image } from 'expo-image'
 import { useTranslations } from '@/components/i18n/locale-provider'
-import { BgImageCard } from '@/components/ui/bg-image-card'
 import { Button } from '@/components/ui/button'
 import { Spinner } from '@/components/ui/spinner'
 import { Text } from '@/components/ui/text'
@@ -18,7 +17,7 @@ import { useLiveBalance, useRefreshWallet } from '@/hooks/use-wallet-data'
 import { hasSeenPresaleGuide, markPresaleGuideSeen } from '@/lib/icpay/presaleGuide'
 import { buyIcpay, icpayReceiveAmount } from '@/services/icpay/sale'
 import type { IcpayPurchase } from '@/services/wallet'
-import { formatAmount, formatTokenAmount, parseTokenAmount } from '@/lib/wallet-utils'
+import { parseTokenAmount } from '@/lib/wallet-utils'
 import { images } from '@/constants/images'
 import { usePaymentPin } from '@/features/security/use-payment-pin'
 
@@ -87,52 +86,68 @@ export function IcpayPresaleScreen() {
   }
 
   return (
-    <View className="gap-4 pt-2">
+    <View className="gap-5 pt-2 pb-16">
       <View>
-        <Text className="text-xl font-bold">{t('heroTitle')}</Text>
-        <Text className="text-sm text-muted-foreground">{t('pageSubtitle')}</Text>
+        <Text className="text-2xl font-bold tracking-tight">{t('heroTitle')}</Text>
+        <Text className="mt-1 text-sm text-muted-foreground">{t('pageSubtitle')}</Text>
       </View>
-      <BgImageCard minHeight={420} contentClassName="gap-5 px-5 py-6">
-        <View className="flex-row items-start justify-between gap-3">
-          <View className="flex-row items-center gap-3">
-            <View className="size-13 overflow-hidden rounded-full">
+
+      <View className="gap-5 rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
+        {/* Token Header Row */}
+        <View className="flex-row items-center justify-between gap-3">
+          <View className="flex-row items-center gap-3.5">
+            <View className="size-13 overflow-hidden rounded-full border border-border/50 bg-muted">
               <Image source={images.icpayToken} className="size-full" contentFit="cover" />
             </View>
-            <View className="flex-1">
-              <View className="flex-row flex-wrap items-center gap-2">
-                <Text className="text-lg font-bold">{t('heroTitle')}</Text>
+            <View>
+              <View className="flex-row items-center gap-2">
+                <Text className="text-lg font-bold text-foreground">{t('heroTitle')}</Text>
                 {sale?.active ? (
-                  <View className="rounded-full bg-amber-300 px-2 py-0.5">
-                    <Text className="text-[10px] font-semibold text-amber-950">{t('liveBadge')}</Text>
+                  <View className="rounded-full bg-primary/10 border border-primary/20 px-2 py-0.5">
+                    <Text className="text-[10px] font-bold text-primary">{t('liveBadge')}</Text>
                   </View>
                 ) : null}
               </View>
-              <Text className="text-xs text-muted-foreground">{t('heroSubtitle')}</Text>
+              <Text className="mt-0.5 text-xs text-muted-foreground">{t('heroSubtitle')}</Text>
             </View>
           </View>
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={t('viewGuide')}
             onPress={() => setGuideOpen(true)}
-            className="size-8 items-center justify-center rounded-full"
+            className="size-8 items-center justify-center rounded-full bg-muted/60 active:bg-muted"
           >
-            <AppIcon name="info" size={18} />
+            <AppIcon name="info" size={16} />
           </Pressable>
         </View>
-        <View className="items-center py-2">
-          <Text className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
+
+        {/* Presale Rate Banner */}
+        <View className="items-center rounded-2xl border border-border/50 bg-muted/30 py-3.5 px-4">
+          <Text className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
             {t('rateInfoTitle')}
           </Text>
-          <Text className="mt-2 text-2xl font-bold text-amber-500">{t('heroRate')}</Text>
+          <Text className="mt-1 text-2xl font-bold tracking-tight text-foreground tabular-nums">{t('heroRate')}</Text>
         </View>
+
+        {/* Progress & Raised Stats */}
         <PresaleStatsPanel sale={sale} symbol={symbol} isLoading={isLoading} />
-        <View className="rounded-2xl border border-dashed border-primary/20 bg-primary/5 px-4 py-3">
+
+        {/* Liquidity Protection Note */}
+        <View className="rounded-2xl border border-dashed border-primary/30 bg-primary/5 p-4">
           <Text className="text-xs leading-relaxed text-muted-foreground">{t('liquidityInfo')}</Text>
         </View>
-        <Button size="lg" className="w-full bg-amber-300" disabled={!sale?.active} onPress={() => setBuyOpen(true)}>
-          <Text className="font-semibold text-amber-950">{sale?.active ? t('openBuy') : t('soldOut')}</Text>
+
+        {/* Action Button */}
+        <Button
+          size="lg"
+          className="w-full"
+          disabled={!sale?.active}
+          onPress={() => setBuyOpen(true)}
+        >
+          {sale?.active ? t('openBuy') : t('soldOut')}
         </Button>
-      </BgImageCard>
+      </View>
+
       <IcpayPresaleBuySheet
         open={buyOpen}
         onOpenChange={setBuyOpen}

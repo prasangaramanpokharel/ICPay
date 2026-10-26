@@ -51,6 +51,9 @@ mixin (buckets: BucketService.BucketService) {
     #ok: HttpTypes.HttpResponse;
   } {
     let path = CloudHttpService.stripQuery(url);
+    if (path == "/.well-known/ic-domains") {
+      return #ok(CloudHttpService.textResponse(200, "text/plain", "cloud.icpay.app\n"));
+    };
     switch (CloudHttpService.parseCloudPath(path)) {
       case (null) { #err(CloudHttpService.textResponse(404, "text/plain", "Not found")) };
       case (?parsed) {

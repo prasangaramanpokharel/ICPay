@@ -1,0 +1,446 @@
+# ICAcademy — Complete Course Academy Workflow Specification
+
+The goal is to build a complete, professional learning system inside ICAcademy where an administrator can create a course, organize it into modules and lessons, decide which content is free or paid, publish it, and let students learn through a structured course player.
+
+The entire feature should work as one connected system—not just a course page or a collection of videos.
+
+## 1. The complete system flow
+
+Admin / Instructor Dashboard
+
+Create, manage, edit and publish courses
+
+Course Builder
+
+Course details → Modules → Lessons → Resources
+
+Access & Publishing
+
+Draft → Validate → Preview → Publish
+
+Student Course Catalog
+
+Discover courses, view curriculum and pricing
+
+Free access
+
+Enroll and begin learning
+
+Paid access
+
+Checkout and verified enrollment
+
+Learning Experience
+
+Lessons, progress, quizzes, resources and completion
+
+## 2. Admin dashboard structure
+
+The admin should have a dedicated Academy section in the existing dashboard. Keep the navigation organized and consistent with the existing product design.
+
+Academy Overview
+
+Total courses, published courses, enrollments, revenue and student activity.
+
+Courses
+
+Create, search, filter, duplicate, archive and manage courses.
+
+Curriculum Builder
+
+Manage modules, lesson ordering, content and prerequisites.
+
+Students & Enrollments
+
+View student progress, course access, enrollment status and completion.
+
+Pricing & Transactions
+
+Configure course prices and review purchases, payment status and refunds.
+
+Academy Settings
+
+Certificates, completion policies, instructor permissions and default settings.
+
+## 3. Course creation workflow
+
+When the administrator clicks Create Course, open a guided builder with a clear progress indicator, autosave, draft status and a final publishing step.
+
+Step 1 — Basic information
+
+Course name, URL slug, summary, full description, cover image, category, instructor, level, language and learning outcomes.
+
+Step 2 — Curriculum
+
+Add modules and lessons, reorder them, and set each lesson's content type and access level.
+
+Step 3 — Content
+
+Build lessons using video, formatted text, code blocks, downloadable files, quizzes and assignments.
+
+Step 4 — Access and pricing
+
+Choose a free course, a paid course, or free preview lessons with premium content.
+
+Step 5 — Student experience
+
+Configure completion requirements, prerequisites, certificates and optional scheduled content.
+
+Step 6 — Review and publish
+
+Check the course, preview the student view, resolve validation errors and publish.
+
+Important behavior: saving a draft must not publish it automatically. Publishing should validate required information, curriculum integrity, content availability and pricing configuration.
+
+## 4. Curriculum builder — modules and lessons
+
+This is the core of the academy. It should be a dedicated editor, not merely a list of lesson names.
+
+## Course curriculum
+
+Example course · 2 modules
+
+Draft
+
+Module 1: Getting started
+
+3 lessons · 35 minutes
+
+Welcome to the course
+
+Video · 5 min
+
+Free
+
+Understanding the fundamentals
+
+Article · 15 min
+
+Paid
+
+Module assessment
+
+Quiz · 15 min
+
+Paid
+
+Explore curriculum builder requirements
+
+Module 2: Practical implementation
+
+2 lessons · 50 minutes
+
+\+ Add module
+
+\+ Add lesson
+
+### Module controls
+
+Every module should support:
+
+- Add, edit, duplicate, reorder, collapse and expand.
+- Set a title, description and sequence.
+- Show lesson count and estimated duration.
+- Move lessons between modules.
+- Archive or delete with confirmation and dependency checks.
+- Control whether its content is available to students, while respecting individual lesson permissions.
+
+### Lesson controls
+
+Every lesson should support:
+
+- Title, description, type and estimated duration.
+- Rich-text content, video, code examples, images, files or assessments.
+- Free-preview or enrolled-student access.
+- Draft, published and scheduled states.
+- Preview, duplicate, reorder and delete actions.
+- Completion requirements and optional prerequisites.
+
+The builder must preserve unsaved work, handle network errors and clearly report when a save succeeds or fails.
+
+## 5. Free and paid access rules
+
+The system should distinguish the course's commercial price from the access setting of each lesson.
+
+| Course configuration           | Student experience                                                                      |
+| ------------------------------ | --------------------------------------------------------------------------------------- |
+| Free course                    | Enroll for free; access all published course content.                                   |
+| Paid course                    | View course details and curriculum; purchase before accessing protected content.        |
+| Paid course with free previews | Access designated preview lessons; purchase to unlock premium content.                  |
+| Paid course already purchased  | Access all content included in the enrollment, subject to publication and course rules. |
+| Unpublished course             | Not publicly available; authorized administrators can preview it.                       |
+
+For individual lessons, the administrator should be able to choose:
+
+- Free preview: accessible without buying the course, subject to any required account rules.
+- Enrolled students: accessible to students with a valid enrollment.
+- Prerequisite required: accessible only when the defined learning conditions are satisfied.
+
+The system should never rely on a frontend lock icon alone. Lesson APIs, video delivery and protected file downloads must independently verify access on the server.
+
+A course-wide free setting should normally override the purchase requirement, but prerequisite and publication rules can still apply. This avoids confusing students with unexpected paywalls inside a free course.
+
+## 6. Student experience — from discovery to completion
+
+### A. Course catalog
+
+Students should see a searchable course catalog with a professional card for every published course.
+
+Each card should show:
+
+- Course thumbnail and title.
+- Short description and instructor.
+- Beginner, intermediate or advanced level.
+- Course duration and number of lessons.
+- Free or paid pricing.
+- Enrollment status or learning progress.
+- A clear action: View course, Start learning or Continue learning.
+
+Filters can include category, level, price, duration and learning status. Draft courses must never appear in public results.
+
+### B. Course detail page
+
+The detail page should explain the course before a student enrolls or pays.
+
+# Introduction to Web Development
+
+Example course · Beginner · 12 lessons
+
+Learn the fundamentals through guided lessons, practical examples and assessments.
+
+# Free
+
+Preview available
+
+Explore course page requirements
+
+### What students should see
+
+- Course overview and learning outcomes.
+- Full curriculum with expandable modules.
+- Lesson duration and preview labels.
+- Instructor information and prerequisites.
+- Pricing, refund information and enrollment terms.
+
+### C. Enrollment and checkout
+
+For a free course:
+
+1. Student signs in if required.
+2. Selects Enroll for free.
+3. The server creates a valid enrollment.
+4. The course appears in My Learning.
+5. The student can begin the first accessible lesson.
+
+For a paid course:
+
+1. Student reviews the course and price.
+2. Selects Purchase course.
+3. The server creates a pending order.
+4. The student completes checkout using a configured payment provider.
+5. The backend verifies the payment through a trusted provider response or verified webhook.
+6. The order becomes paid and the enrollment becomes active.
+7. The student receives confirmation and can start learning.
+
+If payment fails, the student should see a clear error and a retry option. A pending or failed order must not unlock paid lessons. Duplicate webhook events must not create duplicate purchases or enrollments.
+
+### D. Course player
+
+The player is where students spend most of their learning time. It should provide a consistent layout across lesson types.
+
+MY LEARNING / COURSE
+
+## Introduction to Web Development
+
+Lesson content area
+
+Video player, reading content, code editor or assessment
+
+Lesson 1 of 12
+
+8% complete
+
+Course introduction
+
+Completed
+
+HTML fundamentals
+
+Current lesson
+
+In progress
+
+Building your first project
+
+Complete the prerequisite first
+
+Previous lesson
+
+Next lesson
+
+The course player should support:
+
+- Curriculum sidebar with module expansion and lesson status.
+- Video playback and reading progress where applicable.
+- Lesson resources and downloadable attachments.
+- Previous and next navigation.
+- Mark complete or automatic completion rules.
+- Quiz attempts, scores and feedback.
+- Resume from the last lesson.
+- Mobile-friendly navigation.
+- Clear locked-content explanations and purchase links where appropriate.
+
+The percentage displayed must be calculated from the defined completion policy, not hardcoded or inferred only from how much of a video was watched.
+
+## 7. Student progress and course completion
+
+Each student's learning state should be saved independently for each enrollment.
+
+A useful initial progress model is:
+
+- Not started.
+- In progress.
+- Completed.
+- Locked because of access or prerequisites.
+
+The platform should track the last opened lesson, lesson completion timestamps, quiz results, assessment attempts and overall course progress where relevant.
+
+A course can be marked complete when all required lessons and assessments meet the course's configured completion rules. Optional lessons should not block completion unless the course explicitly requires them.
+
+Certificates should be optional and issued only when the configured completion conditions are satisfied.
+
+## 8. Recommended data model
+
+Use a normalized relational structure if the existing project uses a relational database. Adapt the names and conventions to the current schema rather than introducing a competing system.
+
+| Entity             | Responsibility                                                                   |
+| ------------------ | -------------------------------------------------------------------------------- |
+| `courses`          | Course details, slug, instructor, publication state and pricing mode.            |
+| `course_modules`   | Course association, title, description and module order.                         |
+| `lessons`          | Module association, title, type, content reference, order and publication state. |
+| `lesson_resources` | Files, attachments and supporting resources.                                     |
+| `enrollments`      | Student, course, status, enrollment source and access validity.                  |
+| `orders`           | Purchases, currency, amount and payment state.                                   |
+| `payments`         | Provider reference, verification status and payment events.                      |
+| `lesson_progress`  | Student enrollment, lesson status and completion timestamps.                     |
+| `quiz_attempts`    | Assessment attempts, scores and results.                                         |
+| `certificates`     | Completion records and certificate identifiers, if enabled.                      |
+
+Important relationships:
+
+- One course has many modules.
+- One module has many lessons.
+- One lesson can have many resources.
+- One student can have many enrollments.
+- One enrollment belongs to one course and student.
+- One enrollment can have progress records for multiple lessons.
+- An order can have payment attempts or provider events, with idempotent handling.
+- Course content and access policies must remain separate from student progress.
+
+Use foreign keys, unique constraints, transactions and appropriate indexes. For example, enforce a unique enrollment for each student/course pair where the product's enrollment rules require it.
+
+Do not store entire uploaded videos as database blobs by default. Store files in an appropriate object-storage service and keep their metadata and protected storage references in the database.
+
+## 9. API and backend architecture
+
+The feature should use the existing authentication, database, payment integrations and API conventions wherever possible. Do not create duplicate infrastructure just for the academy.
+
+A possible API design, subject to the existing architecture:
+
+| Method  | Endpoint                     | Purpose                                                            |
+| ------- | ---------------------------- | ------------------------------------------------------------------ |
+| `GET`   | `/courses`                   | List published courses                                             |
+| `GET`   | `/courses/:slug`             | View course details and permitted curriculum metadata              |
+| `POST`  | `/admin/courses`             | Create a course                                                    |
+| `PATCH` | `/admin/courses/:id`         | Update course details                                              |
+| `POST`  | `/admin/courses/:id/modules` | Add a module                                                       |
+| `POST`  | `/admin/modules/:id/lessons` | Add a lesson                                                       |
+| `PATCH` | `/admin/lessons/:id`         | Edit lesson content or access settings                             |
+| `POST`  | `/admin/courses/:id/publish` | Validate and publish a course                                      |
+| `POST`  | `/courses/:id/enroll`        | Enroll in a free course or initiate the configured enrollment flow |
+| `POST`  | `/courses/:id/checkout`      | Create a paid checkout                                             |
+| `POST`  | `/payments/webhook`          | Process verified payment-provider events                           |
+| `GET`   | `/me/courses`                | List the student's enrollments                                     |
+| `GET`   | `/me/courses/:id/progress`   | Read course progress                                               |
+| `POST`  | `/me/lessons/:id/complete`   | Record lesson completion                                           |
+
+These are proposed routes, not a claim that they already exist in your project.
+
+Security requirements
+
+- Verify authentication and role permissions on every protected operation.
+- Scope student access to their own enrollments and progress.
+- Check lesson access on the server before returning protected content.
+- Validate uploads, file types, sizes and storage permissions.
+- Verify webhook signatures and prevent duplicate processing.
+- Prevent unauthorized changes to prices, enrollment status and payment records.
+- Use consistent validation and error responses.
+- Audit important administrative actions.
+
+## 10. Edge cases the implementation must handle
+
+| Scenario                                  | Expected behavior                                                         |
+| ----------------------------------------- | ------------------------------------------------------------------------- |
+| A lesson is saved as a draft              | It is not accessible to ordinary students.                                |
+| A course is unpublished                   | It is removed from public discovery and new enrollment.                   |
+| A student directly requests a paid lesson | The server denies access without valid entitlement.                       |
+| Payment is still pending                  | Paid content remains locked.                                              |
+| Payment webhook is delivered twice        | Only one purchase and corresponding entitlement are created.              |
+| A module is reordered                     | Lesson order and student progress remain correct.                         |
+| A lesson is deleted                       | The system checks dependencies and preserves required historical records. |
+| A paid course changes price               | Existing purchases retain their original transaction records.             |
+| A student loses access                    | Future requests follow the configured revocation policy.                  |
+| A lesson changes after completion         | Existing progress is handled according to a defined versioning policy.    |
+| The network fails during editing          | The user receives a clear save status and can recover unsaved work.       |
+| A course has no lessons                   | Publishing is blocked unless the product explicitly allows empty courses. |
+
+## 11. Development plan and acceptance criteria
+
+Build the feature in stages so each part can be tested before the next one depends on it.
+
+Phase 1 — Foundation
+
+Required
+
+Inspect existing architecture, identify reusable components, define schema and permissions, and implement courses, modules and lessons.
+
+Acceptance: administrators can create, edit, reorder and save a complete curriculum.
+
+Phase 2 — Course experience
+
+Implement the course catalog, detail page, course player, lesson editor and responsive layouts.
+
+Acceptance: students can navigate published free courses and complete lessons with saved progress.
+
+Phase 3 — Access and payments
+
+Implement free enrollment, paid checkout, per-lesson previews and server-side authorization.
+
+Acceptance: free, paid, pending-payment and unauthorized-access scenarios pass automated tests.
+
+Phase 4 — Quality and launch
+
+Add assessments, completion rules, optional certificates, monitoring and documentation.
+
+Acceptance: end-to-end tests cover course creation, enrollment, payment, learning and completion.
+
+## 12. Final definition of done
+
+The ICAcademy module is ready for release when:
+
+- An authorized administrator can create and publish a course.
+- Each course can contain multiple ordered modules and lessons.
+- Lessons support the required content types and individual access rules.
+- Free enrollment works without a payment.
+- Paid enrollment works only after verified payment.
+- Free previews work without unlocking other premium content.
+- Students can see their courses and resume learning.
+- Progress and assessments persist correctly.
+- Course publication, editing, deletion and permissions are enforced.
+- The complete flow works on desktop and mobile.
+- Automated tests cover the critical paths and failure cases.
+- The feature follows the existing product's design system and engineering conventions.
+
+My recommendation: treat this as a full academy subsystem, with the curriculum builder at its center. Build the course hierarchy, access rules and enrollment model first; then connect the admin UI, student experience and payments to that foundation.
+
+One qualification: this is the proposed end-to-end specification, not a verified audit of your current repository. The actual implementation should begin by inspecting the existing project and adapting these requirements to its established architecture, avoiding duplicate routes, tables, components or payment logic.

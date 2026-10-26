@@ -1,0 +1,43 @@
+---
+title: "Configuration Reference"
+description: "Detailed breakdown of all client options, environment variables, and protocol flags."
+group: "Reference"
+order: 1
+---
+
+# Configuration Reference
+
+Complete technical specification of all configuration parameters supported by the ICBucket client library.
+
+## Client Options Schema
+
+```typescript
+interface ICBucketConfig {
+  /** Unique alphanumeric identifier for the target bucket */
+  bucketId: string
+
+  /** Secret API Key for write/read authentication */
+  apiKey?: string
+
+  /** Optional Internet Identity Identity instance */
+  identity?: Identity
+
+  /** Base URL for edge CDN requests (default: "https://cdn.icpay.app") */
+  cdnBase?: string
+
+  /** Chunk size in bytes for split uploads (default: 2097152 / 2MB) */
+  chunkSizeBytes?: number
+
+  /** Network timeout in milliseconds (default: 30000) */
+  timeoutMs?: number
+
+  /** Number of retry attempts on transient network error (default: 3) */
+  maxRetries?: number
+}
+```
+
+## Related Pages
+
+- [Types Reference](./types.mdx)
+- [Changelog](./changelog.mdx)
+- [Guides: Configuration](../../guides/configuration.mdx)

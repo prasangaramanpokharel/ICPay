@@ -1,4 +1,3 @@
-/** Maker fee (0.05% = 5 bps) for Limit Orders. Taker fee (0.15% = 15 bps) for Market Swaps. */
 export const TAKER_FEE_BPS = 15n
 export const MAKER_FEE_BPS = 5n
 export const SERVICE_FEE_BPS = TAKER_FEE_BPS
@@ -19,12 +18,10 @@ export function amountAfterServiceFee(amountIn: bigint, isMaker = false): bigint
   return amountIn > fee ? amountIn - fee : 0n
 }
 
-/** Wallet must cover input plus one ledger transfer to the trade canister. */
 export function requiredWalletDebit(amountIn: bigint, ledgerFee: bigint): bigint {
   return amountIn + ledgerFee
 }
 
-/** Minimum input so swap amount stays positive after 0.1% service fee and deposit ledger fee. */
 export function minTradeInput(ledgerFee: bigint): bigint {
   return ledgerFee * 3n + MIN_SERVICE_FEE + 1n
 }

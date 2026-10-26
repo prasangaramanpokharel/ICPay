@@ -7,7 +7,6 @@ import {
   swapPairKey,
 } from "@/lib/swap/config"
 
-/** Official ICPSwap SwapFactory + SwapPool shapes (camelCase). */
 export type IcpswapPoolRef = {
   poolId: string
   token0: string

@@ -6,6 +6,8 @@ import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   AlertDialog,
@@ -154,7 +156,8 @@ export function ManageCanisterCard() {
                   void login().finally(() => setConnecting(false))
                 }}
               >
-                {connecting || isLoading ? t("connecting") : t("signIn")}
+                {(connecting || isLoading) && <Spinner data-icon="inline-start" />}
+                <span>{connecting || isLoading ? t("connecting") : t("signIn")}</span>
               </Button>
             ) : (
               <div className="flex flex-wrap gap-2">
@@ -162,21 +165,24 @@ export function ManageCanisterCard() {
                   disabled={!canAct || busy !== null}
                   onClick={() => void run("start")}
                 >
-                  {busy === "start" ? t("starting") : t("start")}
+                  {busy === "start" && <Spinner data-icon="inline-start" />}
+                  <span>{busy === "start" ? t("starting") : t("start")}</span>
                 </Button>
                 <Button
                   variant="outline"
                   disabled={!canAct || busy !== null}
                   onClick={() => setStopOpen(true)}
                 >
-                  {busy === "stop" ? t("stopping") : t("stop")}
+                  {busy === "stop" && <Spinner data-icon="inline-start" />}
+                  <span>{busy === "stop" ? t("stopping") : t("stop")}</span>
                 </Button>
                 <Button
                   variant="secondary"
                   disabled={!canAct || busy !== null}
                   onClick={() => void onLogs()}
                 >
-                  {busy === "logs" ? t("loadingLogs") : t("fetchLogs")}
+                  {busy === "logs" && <Spinner data-icon="inline-start" />}
+                  <span>{busy === "logs" ? t("loadingLogs") : t("fetchLogs")}</span>
                 </Button>
                 <Button variant="ghost" nativeButton={false} render={<Link href="/topup" />}>
                   {t("topUpLink")}
@@ -188,16 +194,18 @@ export function ManageCanisterCard() {
                       <AlertDialogDescription>{t("stopConfirmBody")}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                      <AlertDialogAction
-                        variant="destructive"
-                        onClick={() => {
-                          setStopOpen(false)
-                          void run("stop")
-                        }}
-                      >
-                        {t("stop")}
-                      </AlertDialogAction>
+                      <ButtonGroup>
+                        <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+                        <AlertDialogAction
+                          variant="destructive"
+                          onClick={() => {
+                            setStopOpen(false)
+                            void run("stop")
+                          }}
+                        >
+                          <span>{t("stop")}</span>
+                        </AlertDialogAction>
+                      </ButtonGroup>
                     </AlertDialogFooter>
                   </AlertDialogContent>
                 </AlertDialog>

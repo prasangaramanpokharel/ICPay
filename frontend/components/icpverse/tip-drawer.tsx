@@ -32,9 +32,6 @@ import { cn } from "@/lib/ui/utils"
 
 const PRESETS = [1n, 5n, 10n] as const
 
-// Stamped onto the memo so the recipient can tell who tipped -- the ledger only
-// carries the canister's own principal as the sender. English in every locale:
-// it is on-chain data the recipient reads, not UI copy.
 function tipPrefix(sender: string): string {
   return `Tip by @${sender}`
 }
@@ -62,15 +59,10 @@ export function TipDrawer({
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // selected === null means the custom field is driving the amount.
   const amount = selected ?? parseIcp(custom)
   const total = amount === null ? null : amount + ICP_FEE
-  // The fee is charged on top, so the most that can be tipped is balance - fee.
   const sendable = balance === undefined ? undefined : balance > ICP_FEE ? balance - ICP_FEE : 0n
   const insufficient = total !== null && balance !== undefined && total > balance
-  // The prefix is charged against the same 32-byte ledger memo, so the field
-  // only gets what is left after it -- otherwise a full-length message would be
-  // accepted here and rejected by the canister.
   const prefix = senderUsername ? tipPrefix(senderUsername) : ""
   const prefixBytes = prefix ? memoByteLength(`${prefix}: `) : 0
   const messageBudget = MEMO_MAX_BYTES - prefixBytes
@@ -120,8 +112,6 @@ export function TipDrawer({
             {PRESETS.map((icp) => {
               const value = icp * E8S
               const active = selected === value
-              // Greyed out rather than hidden, so the row does not reflow as the
-              // balance changes and the user can see what a bigger tip needs.
               const tooBig = sendable !== undefined && value > sendable
               return (
                 <Button
@@ -213,12 +203,9 @@ export function TipDrawer({
         </div>
 
         <DrawerFooter>
-          {/* Insufficient balance is said on the button rather than in an alert
-              above it: the button is already locked, so a second element saying
-              so only pushes the form around. */}
           <Button disabled={!canSend} onClick={handleSend}>
-            {loading && <Spinner className="size-4" />}
-            {loading ? t("sending") : insufficient ? t("insufficient") : t("send")}
+            {loading && <Spinner data-icon="inline-start" />}
+            <span>{loading ? t("sending") : insufficient ? t("insufficient") : t("send")}</span>
           </Button>
         </DrawerFooter>
       </DrawerContent>

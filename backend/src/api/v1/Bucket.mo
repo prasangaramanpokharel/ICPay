@@ -11,6 +11,10 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
     BucketService.getPrice(capacityGB)
   };
 
+  public shared query func getBucketYearlyPrice(capacityGB: Nat) : async Types.ApiResult<Nat> {
+    BucketService.getYearlyPrice(capacityGB)
+  };
+
   public shared ({ caller }) func createBucket(
     name: Text,
     capacityGB: Nat,
@@ -25,6 +29,22 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
     )
   };
 
+  public shared ({ caller }) func createBucketPlan(
+    name: Text,
+    capacityGB: Nat,
+    visibility: Types.BucketVisibility,
+    period: Types.BucketBillingPeriod,
+  ) : async Types.ApiResult<Types.BucketId> {
+    await BucketService.createBucketWithPeriod(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      name,
+      capacityGB,
+      visibility,
+      period,
+    )
+  };
+
   public shared query ({ caller }) func getBucket(id: Types.BucketId) : async Types.ApiResult<Types.BucketPublic> {
     BucketService.getBucket(buckets, MiddlewareAuth.effectiveCaller(mwConfig, caller), id)
   };
@@ -35,6 +55,18 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
 
   public shared query ({ caller }) func getRenewQuote(bucketId: Types.BucketId) : async Types.ApiResult<Types.BucketRenewQuote> {
     BucketService.getRenewQuote(buckets, MiddlewareAuth.effectiveCaller(mwConfig, caller), bucketId)
+  };
+
+  public shared query ({ caller }) func getRenewQuotePlan(
+    bucketId: Types.BucketId,
+    period: Types.BucketBillingPeriod,
+  ) : async Types.ApiResult<Types.BucketRenewQuote> {
+    BucketService.getRenewQuoteWithPeriod(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      period,
+    )
   };
 
   public shared query ({ caller }) func listBuckets() : async Types.ApiResult<[Types.BucketPublic]> {
@@ -172,6 +204,18 @@ mixin (buckets: BucketService.BucketService, mwConfig: MiddlewareAuth.Config) {
       buckets,
       MiddlewareAuth.effectiveCaller(mwConfig, caller),
       bucketId,
+    )
+  };
+
+  public shared ({ caller }) func renewBucketPlan(
+    bucketId: Types.BucketId,
+    period: Types.BucketBillingPeriod,
+  ) : async Types.ApiResult<Types.BucketRenewResult> {
+    await BucketService.renewBucketWithPeriod(
+      buckets,
+      MiddlewareAuth.effectiveCaller(mwConfig, caller),
+      bucketId,
+      period,
     )
   };
 

@@ -11,14 +11,11 @@ import { ICP_INDEX_CANISTER_ID } from "@/lib/ic/constants"
 export type AccountStats = {
   balance: bigint
   txCount: number
-  // Absent for an account the index has never seen a transaction for.
   firstBlock?: bigint
   lastBlock?: bigint
   lastActivity?: bigint
 }
 
-// One page is enough to date the account and count its recent activity, and a
-// full history walk would be dozens of calls for a number nobody reads exactly.
 const PAGE = 100n
 
 function resolveAccountId(owner: string, subaccount?: Uint8Array) {
@@ -57,8 +54,6 @@ export async function fetchAccountStats(
       lastBlock: newest,
     }
   } catch {
-    // The index lags the ledger and rejects accounts it has not indexed yet, so
-    // the balance is still worth reporting on its own.
     const balance = await index.accountBalance({
       accountIdentifier,
       certified: false,

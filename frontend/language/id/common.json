@@ -1434,10 +1434,11 @@
         "charity": "Amal"
       },
       "community": {
-        "github": "GitHub",
+        "github": "GitLab",
         "x": "X",
         "linkedin": "LinkedIn",
-        "discord": "Discord"
+        "discord": "Discord",
+        "contact": "Support"
       },
       "sectionCompany": "Company",
       "sectionExplore": "Explore",
@@ -1601,7 +1602,7 @@
         "readMore": "Baca selengkapnya →",
         "items": {
           "github": {
-            "label": "Open source di GitHub",
+            "label": "Open source di GitLab",
             "description": "Motoko backend dan frontend Next.js bersifat publik. Periksa pergerakan dana, auth, dan jalur upgrade sendiri."
           },
           "backendCanister": {
@@ -1657,7 +1658,7 @@
         "title": "ICBucket",
         "tagline": "Simpan file on-chain dengan API kompatibel S3. Tanpa server, tanpa tagihan AWS — paket 30 hari sederhana dibayar ICP dari saldo ICPay Anda.",
         "tryIcBucket": "Coba ICBucket",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Paket",
         "imageAlt": "ICBucket di ponsel"
       },
@@ -1949,7 +1950,7 @@
         "copyCommand": "Salin perintah",
         "installHint": "Menginstal dependensi, deploy lokal, dan memulai dev server di localhost:3000",
         "npm": "npm",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Paket"
       },
       "problemSolution": {

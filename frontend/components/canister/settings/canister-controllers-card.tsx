@@ -12,6 +12,8 @@ import {
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
@@ -171,8 +173,12 @@ export function CanisterControllersCard({
                   disabled={adding || !newControllerText.trim()}
                   className="shrink-0"
                 >
-                  <HugeiconsIcon icon={UserAdd01Icon} data-icon="inline-start" />
-                  {adding ? "Adding…" : "Add Controller"}
+                  {adding ? (
+                    <Spinner data-icon="inline-start" />
+                  ) : (
+                    <HugeiconsIcon icon={UserAdd01Icon} data-icon="inline-start" />
+                  )}
+                  <span>{adding ? "Adding…" : "Add Controller"}</span>
                 </Button>
               </div>
             </form>
@@ -180,7 +186,6 @@ export function CanisterControllersCard({
         </CardContent>
       </Card>
 
-      {/* Confirmation Dialog */}
       <AlertDialog
         open={removeTarget != null}
         onOpenChange={(open) => !open && setRemoveTarget(null)}
@@ -198,14 +203,17 @@ export function CanisterControllersCard({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={removing}>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              variant="destructive"
-              disabled={removing}
-              onClick={handleRemove}
-            >
-              {removing ? "Removing…" : "Remove Controller"}
-            </AlertDialogAction>
+            <ButtonGroup>
+              <AlertDialogCancel disabled={removing}>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                variant="destructive"
+                disabled={removing}
+                onClick={handleRemove}
+              >
+                {removing && <Spinner data-icon="inline-start" />}
+                <span>{removing ? "Removing…" : "Remove Controller"}</span>
+              </AlertDialogAction>
+            </ButtonGroup>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

@@ -21,9 +21,33 @@
       "crate": "icpay_trade",
       "type": "rust"
     },
+    "icpay_index": {
+      "type": "custom",
+      "candid": "deps/index/index-ng.did",
+      "wasm": "deps/index/ic-icrc1-index-ng.wasm.gz",
+      "init_arg": "(opt variant { Init = record { ledger_id = principal \"5fsnk-rqaaa-aaaan-q6m4q-cai\" } })"
+    },
+    "cnsmangment": {
+      "candid": "rust/cnsmangment/cnsmangment.did",
+      "package": "cnsmangment",
+      "crate": "cnsmangment",
+      "type": "rust"
+    },
+    "icpay_academy": {
+      "candid": "rust/academy/icpay_academy.did",
+      "package": "icpay_academy",
+      "crate": "icpay_academy",
+      "type": "rust"
+    },
     "icp_blob_store": {
       "type": "motoko",
       "main": "blob_store/src/main.mo",
+      "init_arg": "(principal \"6vbhm-nqaaa-aaaan-q6muq-cai\")",
+      "metadata": [{ "name": "candid:service" }]
+    },
+    "icpay_notifier": {
+      "type": "motoko",
+      "main": "notifier/src/main.mo",
       "init_arg": "(principal \"6vbhm-nqaaa-aaaan-q6muq-cai\")",
       "metadata": [{ "name": "candid:service" }]
     },

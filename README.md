@@ -11,7 +11,9 @@
 <p align="center">
   <a href="https://icpay.app">icpay.app</a> ·
   <a href="https://63dke-waaaa-aaaan-q6mvq-cai.icp0.io">on-chain</a> ·
-  <a href="https://icpay.app/transparency">transparency</a>
+  <a href="https://icpay.app/transparency">transparency</a> ·
+  <a href="https://www.npmjs.com/package/icpay-bucket">icpay-bucket</a> ·
+  <a href="https://www.npmjs.com/package/create-icfalcon">create-icfalcon</a>
 </p>
 
 ICPay is a custodial wallet on the [Internet Computer](https://internetcomputer.org).
@@ -60,6 +62,14 @@ against the chain yourself.
 | Frontend assets | `63dke-waaaa-aaaan-q6mvq-cai` |
 | ICP ledger | `ryjl3-tyaaa-aaaaa-aaaba-cai` |
 
+## Packages
+
+| Package | Install | Registry & Source | Description |
+|---|---|---|---|
+| [`icpay-bucket`](https://www.npmjs.com/package/icpay-bucket) | `npm i icpay-bucket` | [![npm](https://img.shields.io/npm/v/icpay-bucket.svg)](https://www.npmjs.com/package/icpay-bucket) · [GitHub Package](https://github.com/prasangaramanpokharel/ICPay/pkgs/npm/icpay-bucket) | ICPay Bucket SDK — full on-chain file storage API for the Internet Computer |
+| [`create-icfalcon`](https://www.npmjs.com/package/create-icfalcon) | `npm create icfalcon@latest` | [![npm](https://img.shields.io/npm/v/create-icfalcon.svg)](https://www.npmjs.com/package/create-icfalcon) · [GitHub Package](https://github.com/prasangaramanpokharel/ICPay/pkgs/npm/create-icfalcon) | Scaffold an IcFalcon Internet Computer app in one command |
+
+
 ## Layout
 
 ```
@@ -97,7 +107,7 @@ writing anything that touches fund movement, username ownership or stored state.
 ## Security
 
 Report vulnerabilities at
-[GitHub issues](https://github.com/prasangapokharel/ICPay/issues). There is no
+[GitLab issues](https://gitlab.com/prasangapokharel/icpay/-/issues). There is no
 bug bounty and no private disclosure channel — **an issue is public**, so if a
 finding would put user funds at immediate risk, please weigh that before filing.
 Full policy in [SECURITY.md](SECURITY.md).

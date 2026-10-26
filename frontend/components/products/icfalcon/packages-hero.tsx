@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Particles } from "@/components/ui/particles"
 import { ShineBorder } from "@/components/ui/shine-border"
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text"
+import { Gitlab } from "@dev.icons/react"
 
 export function PackagesHero() {
   const { resolvedTheme } = useTheme()
@@ -149,12 +150,12 @@ export function PackagesHero() {
             nativeButton={false}
             render={
               <Link
-                href="https://github.com/prasangapokharel/icp-hub"
+                href="https://gitlab.com/prasangapokharel/falconpkg"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <HugeiconsIcon icon={CodeCircleIcon} className="size-3.5 text-primary" />
-                <span>icp-hub GitHub</span>
+                <Gitlab size={14} />
+                <span>falconpkg GitLab</span>
               </Link>
             }
           />

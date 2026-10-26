@@ -56,10 +56,10 @@ export function CommunityExplorer() {
     [mineQ.channels]
   )
   const activeSlug =
-    pathname.startsWith("/channels/") &&
-    channelSlug &&
-    channelSlug !== "new" &&
-    channelSlug !== "join"
+    (pathname === "/channels" || pathname.startsWith("/channels/")) &&
+      channelSlug &&
+      channelSlug !== "new" &&
+      channelSlug !== "join"
       ? channelSlug
       : ""
 
@@ -240,7 +240,7 @@ function ChannelList({
           <CommunityChannelCard
             key={ch.id}
             channel={ch}
-            href={`/channels/${encodeURIComponent(ch.slug)}`}
+            href={`/channels?id=${encodeURIComponent(ch.slug)}`}
             isOwner={ch.owner.toText() === principal}
             isJoined={joinedSlugs.has(ch.slug)}
             joining={joiningSlug === ch.slug}

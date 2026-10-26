@@ -7,8 +7,6 @@ export type DepositAddress = {
   accountId: string
 }
 
-// Both forms of one destination: the ICRC-1 account ICP wallets take, and the
-// legacy identifier exchanges ask for. Derived, so it never changes per user.
 export function getDepositAddress(
   identity: Identity | undefined
 ): Promise<DepositAddress> {
@@ -21,9 +19,6 @@ export function getDepositAddress(
   })
 }
 
-// Credits whatever landed on-ledger since the last sync. "No new deposits
-// found" is the normal answer, not a failure -- callers should render it as a
-// neutral note rather than an error state.
 export function syncDeposits(
   identity: Identity | undefined,
   ledgerId: string

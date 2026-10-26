@@ -1,39 +1,43 @@
 import { Pressable, View } from 'react-native'
-import { Image } from 'expo-image'
 import { useRouter } from 'expo-router'
+import {
+  ArrowUp01Icon,
+  ArrowDown01Icon,
+  Exchange01Icon,
+  ArrowDataTransferHorizontalIcon,
+} from '@hugeicons/core-free-icons'
 import { useTranslations } from '@/components/i18n/locale-provider'
+import { Icon } from '@/components/ui/icon'
 import { Text } from '@/components/ui/text'
 
-const actions: {
-  href: string
-  label: 'common.send' | 'common.swap' | 'common.receive'
-  imagePath: string
-}[] = [
-  { href: '/transfer', label: 'common.send', imagePath: require('../../../../assets/Icons8/arrow/icons8-circled-up-right-48.png') },
-  { href: '/swap', label: 'common.swap', imagePath: require('../../../../assets/Icons8/icons8-dividends-48.png') },
-  { href: '/deposit', label: 'common.receive', imagePath: require('../../../../assets/Icons8/arrow/icons8-circled-down-left-48.png') },
-]
+const actions = [
+  { href: '/transfer', label: 'common.send', icon: ArrowUp01Icon },
+  { href: '/deposit', label: 'common.receive', icon: ArrowDown01Icon },
+  { href: '/swap', label: 'common.swap', icon: Exchange01Icon },
+  { href: '/withdraw', label: 'transactions.type.transfer', icon: ArrowDataTransferHorizontalIcon },
+] as const
 
 export function DashboardActions() {
   const t = useTranslations()
   const router = useRouter()
 
   return (
-    <View className="flex-row justify-around px-6 pt-1">
+    <View className="flex-row justify-around px-4 pt-1">
       {actions.map((item) => (
         <Pressable
           key={item.href}
           accessibilityRole="button"
           accessibilityLabel={t(item.label)}
           onPress={() => router.push(item.href as never)}
-          className="items-center gap-1.5"
+          className="items-center gap-1.5 active:opacity-75 active:scale-95"
         >
-          <View className="size-11 items-center justify-center rounded-full bg-gray-800">
-            <Image source={item.imagePath} style={{ width: 20, height: 20 }} contentFit="contain"  />
+          <View className="size-11 items-center justify-center rounded-full bg-muted border border-border/70 shadow-xs">
+            <Icon icon={item.icon} size={20} strokeWidth={1.75} />
           </View>
-          <Text className="text-[11px] font-medium lowercase text-foreground">{t(item.label)}</Text>
+          <Text className="text-[11px] font-medium text-foreground">{t(item.label)}</Text>
         </Pressable>
       ))}
     </View>
   )
 }
+

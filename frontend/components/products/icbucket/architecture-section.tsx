@@ -1,129 +1,371 @@
 "use client"
 
-import { useEffect, useId, useRef, useState } from "react"
+import { useRef } from "react"
+import Image from "next/image"
 import { useTranslations } from "next-intl"
+import {
+  Globe,
+  Terminal,
+  Lock,
+  Database,
+  Cloud,
+  ArrowUpRight,
+  ArrowDownRight,
+  Workflow,
+} from "lucide-react"
+import { Nodejs, Python, Go } from "@dev.icons/react"
 import { Card, CardContent } from "@/components/ui/card"
-import { WALLET_CANISTER_ID } from "@/services/icp"
-
-const ARCHITECTURE_DIAGRAM = `flowchart TB
-  subgraph clients["Your app"]
-    web["Browser · icpay.app"]
-    sdk["SDKs · Node / Python / Go"]
-    script["CI · backend job"]
-  end
-
-  subgraph ic["Internet Computer"]
-    canister["ICPay wallet canister\\nMotoko bucket API"]
-    upload["Upload session\\nchunk → encrypt"]
-    memory[("Stable memory\\nencrypted blobs")]
-    http["HTTPS asset path\\n*.raw.icp0.io/cloud/…"]
-  end
-
-  users["Anyone with the link"]
-
-  web -->|"Internet Identity"| canister
-  sdk -->|"agent + API key"| canister
-  script -->|"signed update calls"| canister
-  canister --> upload
-  upload --> memory
-  memory --> canister
-  canister --> http
-  http --> users`
+import { AnimatedBeam } from "@/components/ui/animated-beam"
+import { APP_LOGO } from "@/lib/ui/brand-images"
 
 const UPLOAD_STEP_IDS = ["0", "1", "2"] as const
 const READ_STEP_IDS = ["0", "1", "2"] as const
 
 export function ArchitectureSection() {
   const t = useTranslations("publicSite.icbucket.architecture")
-  const rootId = useId().replace(/:/g, "")
-  const hostRef = useRef<HTMLDivElement>(null)
-  const [renderError, setRenderError] = useState(false)
 
-  useEffect(() => {
-    let cancelled = false
-    const host = hostRef.current
-    if (!host) return
-
-    void (async () => {
-      try {
-        const mermaid = (await import("mermaid")).default
-        mermaid.initialize({
-          startOnLoad: false,
-          theme: "neutral",
-          securityLevel: "loose",
-          flowchart: { curve: "basis", padding: 16 },
-        })
-        const { svg } = await mermaid.render(`icbucket-arch-${rootId}`, ARCHITECTURE_DIAGRAM)
-        if (!cancelled) {
-          host.innerHTML = svg
-          setRenderError(false)
-        }
-      } catch {
-        if (!cancelled) setRenderError(true)
-      }
-    })()
-
-    return () => {
-      cancelled = true
-    }
-  }, [rootId])
+  // Container & node refs for AnimatedBeam
+  const containerRef = useRef<HTMLDivElement>(null)
+  const browserRef = useRef<HTMLDivElement>(null)
+  const sdkRef = useRef<HTMLDivElement>(null)
+  const ciRef = useRef<HTMLDivElement>(null)
+  const canisterRef = useRef<HTMLDivElement>(null)
+  const uploadRef = useRef<HTMLDivElement>(null)
+  const memoryRef = useRef<HTMLDivElement>(null)
+  const httpRef = useRef<HTMLDivElement>(null)
 
   return (
     <section className="border-b border-border/60 bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 space-y-10">
+      <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 space-y-12">
         <div className="space-y-3 text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-xs">
+            <Workflow className="size-3.5 text-primary" />
+            <span>Storage Topography & Lifecycle</span>
+          </div>
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent md:text-5xl">
             {t("title")}
           </h2>
-          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">{t("subtitle")}</p>
-          <p className="font-mono text-xs text-muted-foreground">
-            {t("canisterId", { canisterId: WALLET_CANISTER_ID })}
+          <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base">
+            {t("subtitle")}
           </p>
         </div>
 
-        <Card className="overflow-hidden border-border/60 bg-card rounded-2xl shadow-sm">
-          <CardContent className="p-4 md:p-6">
-            {renderError ? (
-              <pre className="overflow-x-auto rounded-lg bg-muted/50 p-4 text-xs leading-relaxed">
-                {ARCHITECTURE_DIAGRAM}
-              </pre>
-            ) : (
+        {/* Animated Architecture Topology Card */}
+        <Card className="relative overflow-hidden rounded-3xl border border-border/80 bg-card/60 backdrop-blur-xs shadow-xs">
+          {/* Subtle architectural dot grid background */}
+          <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:24px_24px] opacity-60" />
+          {/* Ambient soft glow at center using globals primary token */}
+          <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 size-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-3xl" />
+
+          <CardContent className="p-0">
+            {/* Scrollable Canvas Container */}
+            <div className="w-full overflow-x-auto">
               <div
-                ref={hostRef}
-                className="flex justify-center overflow-x-auto [&_svg]:max-w-full [&_svg]:h-auto"
-                aria-label={t("diagramAriaLabel")}
-              />
-            )}
+                ref={containerRef}
+                className="relative mx-auto flex min-w-[720px] max-w-4xl items-center justify-between gap-6 px-8 py-16 md:py-20"
+              >
+                {/* Animated Beams: Client Inputs → Canister Hub */}
+                <AnimatedBeam
+                  containerRef={containerRef}
+                  fromRef={browserRef}
+                  toRef={canisterRef}
+                  curvature={-32}
+                  duration={4}
+                  delay={0}
+                  gradientStartColor="var(--primary)"
+                  gradientStopColor="var(--primary)"
+                  pathColor="var(--border)"
+                  pathOpacity={0.7}
+                  pathWidth={1.5}
+                />
+                <AnimatedBeam
+                  containerRef={containerRef}
+                  fromRef={sdkRef}
+                  toRef={canisterRef}
+                  curvature={0}
+                  duration={4}
+                  delay={0.8}
+                  gradientStartColor="var(--primary)"
+                  gradientStopColor="var(--primary)"
+                  pathColor="var(--border)"
+                  pathOpacity={0.7}
+                  pathWidth={1.5}
+                />
+                <AnimatedBeam
+                  containerRef={containerRef}
+                  fromRef={ciRef}
+                  toRef={canisterRef}
+                  curvature={32}
+                  duration={4}
+                  delay={1.6}
+                  gradientStartColor="var(--primary)"
+                  gradientStopColor="var(--primary)"
+                  pathColor="var(--border)"
+                  pathOpacity={0.7}
+                  pathWidth={1.5}
+                />
+
+                {/* Animated Beams: Canister Hub → Storage & CDN */}
+                <AnimatedBeam
+                  containerRef={containerRef}
+                  fromRef={canisterRef}
+                  toRef={uploadRef}
+                  curvature={-32}
+                  duration={4}
+                  delay={0.4}
+                  gradientStartColor="var(--primary)"
+                  gradientStopColor="var(--primary)"
+                  pathColor="var(--border)"
+                  pathOpacity={0.7}
+                  pathWidth={1.5}
+                />
+                <AnimatedBeam
+                  containerRef={containerRef}
+                  fromRef={canisterRef}
+                  toRef={memoryRef}
+                  curvature={0}
+                  duration={4}
+                  delay={1.2}
+                  gradientStartColor="var(--primary)"
+                  gradientStopColor="var(--primary)"
+                  pathColor="var(--border)"
+                  pathOpacity={0.7}
+                  pathWidth={1.5}
+                />
+                <AnimatedBeam
+                  containerRef={containerRef}
+                  fromRef={canisterRef}
+                  toRef={httpRef}
+                  curvature={32}
+                  duration={4}
+                  delay={2}
+                  gradientStartColor="var(--primary)"
+                  gradientStopColor="var(--primary)"
+                  pathColor="var(--border)"
+                  pathOpacity={0.7}
+                  pathWidth={1.5}
+                />
+
+                {/* Column 1: Client Apps & Integrations */}
+                <div className="flex flex-col items-center gap-8">
+                  <span className="inline-flex items-center rounded-full border border-border/80 bg-background/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground shadow-2xs backdrop-blur-xs">
+                    Your Application
+                  </span>
+
+                  <div className="flex flex-col items-center gap-7">
+                    {/* Node 1: Browser */}
+                    <div className="flex flex-col items-center gap-2 text-center">
+                      <div
+                        ref={browserRef}
+                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
+                      >
+                        <Globe className="size-5 text-foreground" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-semibold tracking-tight text-foreground">Browser App</p>
+                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                          Internet Identity
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Node 2: SDKs */}
+                    <div className="flex flex-col items-center gap-2 text-center">
+                      <div
+                        ref={sdkRef}
+                        className="z-10 flex size-12 items-center justify-center gap-1.5 rounded-2xl border border-border bg-card px-2 shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
+                      >
+                        <Nodejs size={14} />
+                        <Python size={14} />
+                        <Go size={14} />
+                      </div>
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-semibold tracking-tight text-foreground">Client SDKs</p>
+                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                          Agent + API Key
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Node 3: CI / Automation */}
+                    <div className="flex flex-col items-center gap-2 text-center">
+                      <div
+                        ref={ciRef}
+                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
+                      >
+                        <Terminal className="size-5 text-foreground" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-semibold tracking-tight text-foreground">CI & Automation</p>
+                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                          Signed Updates
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Column 2: On-Chain Core Canister Hub */}
+                <div className="flex flex-col items-center gap-8">
+                  <span className="inline-flex items-center rounded-full border border-border/80 bg-background/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground shadow-2xs backdrop-blur-xs">
+                    Internet Computer
+                  </span>
+
+                  <div className="relative flex flex-col items-center gap-3 text-center">
+                    <div className="pointer-events-none absolute -inset-6 rounded-full bg-primary/15 blur-2xl" />
+                    <div
+                      ref={canisterRef}
+                      className="z-10 relative flex size-24 items-center justify-center rounded-3xl border-2 border-primary/50 bg-card p-3 shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-primary"
+                    >
+                      <Image
+                        src={APP_LOGO}
+                        alt="ICPay Canister"
+                        width={48}
+                        height={48}
+                        className="size-12 rounded-2xl object-contain drop-shadow-sm"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-center gap-1.5">
+                        <span className="size-2 rounded-full bg-success" />
+                        <p className="text-xs font-bold tracking-tight text-foreground">
+                          ICPay Bucket Canister
+                        </p>
+                      </div>
+                      <p className="font-mono text-[11px] text-muted-foreground">
+                        Motoko Bucket Engine
+                      </p>
+                      <span className="inline-flex items-center rounded-md border border-border/80 bg-muted/50 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                        Subaccount Isolated
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Column 3: Storage & Delivery */}
+                <div className="flex flex-col items-center gap-8">
+                  <span className="inline-flex items-center rounded-full border border-border/80 bg-background/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground shadow-2xs backdrop-blur-xs">
+                    Storage & Delivery
+                  </span>
+
+                  <div className="flex flex-col items-center gap-7">
+                    {/* Node 4: Upload Session */}
+                    <div className="flex flex-col items-center gap-2 text-center">
+                      <div
+                        ref={uploadRef}
+                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
+                      >
+                        <Lock className="size-5 text-foreground" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-semibold tracking-tight text-foreground">Upload Session</p>
+                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                          Chunk → Encrypt
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Node 5: Stable Memory */}
+                    <div className="flex flex-col items-center gap-2 text-center">
+                      <div
+                        ref={memoryRef}
+                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
+                      >
+                        <Database className="size-5 text-foreground" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-semibold tracking-tight text-foreground">Stable Memory</p>
+                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                          Encrypted Blobs
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Node 6: HTTPS CDN */}
+                    <div className="flex flex-col items-center gap-2 text-center">
+                      <div
+                        ref={httpRef}
+                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
+                      >
+                        <Cloud className="size-5 text-foreground" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-semibold tracking-tight text-foreground">HTTPS Gateway</p>
+                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                          *.raw.icp0.io · CDN
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
+        {/* Step-by-Step Technical Path Details */}
         <div className="grid gap-6 md:grid-cols-2">
-          <Card size="sm" className="border-border/60 bg-card rounded-2xl shadow-sm">
-              <CardContent className="space-y-3 pt-6">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">
-                  {t("writePath")}
-                </h3>
-                <ol className="list-decimal space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
-                  {UPLOAD_STEP_IDS.map((id) => (
-                    <li key={id}>{t(`uploadSteps.${id}`)}</li>
-                  ))}
-                </ol>
-              </CardContent>
-            </Card>
-            <Card size="sm">
-              <CardContent className="space-y-3 pt-6">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">
-                  {t("readPath")}
-                </h3>
-                <ol className="list-decimal space-y-2 pl-4 text-sm leading-relaxed text-muted-foreground">
-                  {READ_STEP_IDS.map((id) => (
-                    <li key={id}>{t(`readSteps.${id}`)}</li>
-                  ))}
-                </ol>
-              </CardContent>
-            </Card>
-          </div>
+          <Card className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs transition-colors">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-border/60 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 items-center justify-center rounded-lg border border-border bg-muted/50 text-primary">
+                    <ArrowUpRight className="size-4" />
+                  </div>
+                  <h3 className="text-sm font-semibold tracking-tight text-foreground">
+                    {t("writePath")}
+                  </h3>
+                </div>
+                <span className="rounded-md border border-border/60 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                  Upload & Encryption
+                </span>
+              </div>
+              <div className="space-y-3">
+                {UPLOAD_STEP_IDS.map((id, index) => (
+                  <div key={id} className="flex items-start gap-3 text-sm">
+                    <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-[11px] font-semibold text-primary">
+                      {index + 1}
+                    </span>
+                    <p className="leading-relaxed text-muted-foreground">
+                      {t(`uploadSteps.${id}`)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
+
+          <Card className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs transition-colors">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-border/60 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 items-center justify-center rounded-lg border border-border bg-muted/50 text-primary">
+                    <ArrowDownRight className="size-4" />
+                  </div>
+                  <h3 className="text-sm font-semibold tracking-tight text-foreground">
+                    {t("readPath")}
+                  </h3>
+                </div>
+                <span className="rounded-md border border-border/60 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                  Decryption & Edge CDN
+                </span>
+              </div>
+              <div className="space-y-3">
+                {READ_STEP_IDS.map((id, index) => (
+                  <div key={id} className="flex items-start gap-3 text-sm">
+                    <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-[11px] font-semibold text-primary">
+                      {index + 1}
+                    </span>
+                    <p className="leading-relaxed text-muted-foreground">
+                      {t(`readSteps.${id}`)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
         </div>
+      </div>
     </section>
   )
 }

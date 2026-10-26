@@ -34,7 +34,6 @@ async function loadSnsRegistry(identity?: Identity): Promise<SnsRegistryRow[]> {
   })
 }
 
-/** Query SNS-W for every deployed SNS. Concurrent callers share one in-flight request. */
 export async function fetchSnsRegistryList(identity?: Identity): Promise<SnsRegistryRow[]> {
   if (!inflight) {
     inflight = loadSnsRegistry(identity).finally(() => {

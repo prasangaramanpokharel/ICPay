@@ -43,7 +43,7 @@ export default function NewChannelPage() {
           <div className="w-full max-w-lg">
             <PremiumLockedCard
               title="Premium Channel Broadcasting"
-              description="Creating broadcast channels is exclusive to verified premium handles (1–4 characters). Upgrade your handle to broadcast news, announcements, and host paid channels across the ICPay network."
+              description="The shorter the username, the higher the trust and credibility. Exclusive to verified premium handles (1–4 characters) to broadcast news, announcements, and host paid channels across the ICPay network."
               actionText="Get Premium Handle"
               href="/username"
             />
@@ -72,7 +72,7 @@ export default function NewChannelPage() {
             if (code) {
               sessionStorage.setItem(`community-invite-${result.channelId}`, code)
             }
-            router.push(`/channels/${encodeURIComponent(result.channelId)}`)
+            router.push(`/channels?id=${encodeURIComponent(result.channelId)}`)
             return null
           } catch (e) {
             return e instanceof Error ? e.message : t("createFailed")

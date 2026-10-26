@@ -14,11 +14,17 @@ export const PAGE_IMAGES = {
     paymentFlow: page("landing/payment-flow.webp"),
   },
   icbucket: {
-    hero: page("icbucket/hero.png"),
+    hero: page("icbucket/hero.gif"),
+    heroPng: page("icbucket/hero.png"),
+    og: page("icbucket/og.png"),
     videoPoster: page("icbucket/video-poster.webp"),
   },
   icfalcon: {
     hero: page("icfalcon/hero.webp"),
+    og: page("icfalcon/og.png"),
+  },
+  icacademy: {
+    hero: page("icacademy/hero.png"),
   },
   login: {
     bg: page("login/bg.webp"),

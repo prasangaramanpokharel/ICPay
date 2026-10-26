@@ -69,7 +69,7 @@ export function IcpayTokenCard() {
           <div className="flex items-center gap-1.5">
             <p
               className={`text-sm font-medium tabular-nums ${
-                change > 0 ? "text-emerald-500" : change < 0 ? "text-destructive" : "text-muted-foreground"
+                change > 0 ? "text-success" : change < 0 ? "text-destructive" : "text-muted-foreground"
               }`}
             >
               {change > 0 ? "+" : ""}

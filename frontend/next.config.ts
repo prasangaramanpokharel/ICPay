@@ -15,12 +15,43 @@ const frontendRoot = path.dirname(fileURLToPath(import.meta.url))
 // cloud.icpay.app → *.raw.icp0.io/cloud/* with the correct upstream Host.
 const staticExport = process.env.ICP_STATIC_EXPORT === "1"
 
-export default (phase: string): NextConfig => ({
-  turbopack: {
-    root: frontendRoot,
-  },
-  output: staticExport && phase === PHASE_PRODUCTION_BUILD ? "export" : undefined,
-  images: { unoptimized: true },
-})
+export default (phase: string): NextConfig => {
+  const isStatic = staticExport && phase === PHASE_PRODUCTION_BUILD
+  return {
+    turbopack: {
+      root: frontendRoot,
+    },
+    output: isStatic ? "export" : undefined,
+    images: { unoptimized: true },
+    ...(isStatic
+      ? {}
+      : {
+          async rewrites() {
+            return [
+              {
+                source: "/bucket/docs.md",
+                destination: "/api/bucket/docs-raw",
+              },
+              {
+                source: "/bucket/docs/:path*.md",
+                destination: "/api/bucket/docs-raw/:path*",
+              },
+              {
+                source: "/channels/join/:id",
+                destination: "/channels/join?id=:id",
+              },
+              {
+                source: "/channels/:id/:messageId(\\d+)",
+                destination: "/channels?id=:id&messageId=:messageId",
+              },
+              {
+                source: "/channels/:id((?!new$|join$).*)",
+                destination: "/channels?id=:id",
+              },
+            ]
+          },
+        }),
+  }
+}
 
 

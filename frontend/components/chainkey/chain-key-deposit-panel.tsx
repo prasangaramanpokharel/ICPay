@@ -64,7 +64,8 @@ export function ChainKeyDepositPanel({ ledgerId }: { ledgerId: string }) {
           disabled={busy}
           onClick={onCheck}
         >
-          {busy ? <Spinner className="size-4" /> : t("checkDeposit")}
+          {busy && <Spinner data-icon="inline-start" />}
+          {t("checkDeposit")}
         </Button>
       ) : null}
 

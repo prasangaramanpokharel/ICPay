@@ -1,13 +1,15 @@
 "use client"
 
 import { Select as SelectPrimitive } from "@base-ui/react/select"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Globe02Icon } from "@hugeicons/core-free-icons"
 import { LOCALES } from "@/language/config"
 import { useLocale } from "@/components/i18n/locale-provider"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
 import { SelectContent, SelectItem } from "@/components/ui/select"
 import { cn } from "@/lib/ui/utils"
 
-export function LanguageSwitch({ variant = "icon" }: { variant?: "icon" | "row" }) {
+export function LanguageSwitch({ variant = "icon" }: { variant?: "icon" | "row" | "globe" }) {
   const { locale, setLocale } = useLocale()
   const active = LOCALES.find((l) => l.code === locale) ?? LOCALES[0]
 
@@ -22,14 +24,26 @@ export function LanguageSwitch({ variant = "icon" }: { variant?: "icon" | "row" 
           "flex items-center outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
           variant === "icon"
             ? "size-8 justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground active:scale-95 sm:size-9"
-            : "h-8 w-full gap-2.5 rounded-lg px-2.5 text-[13px] text-foreground hover:bg-muted",
+            : variant === "globe"
+              ? "size-8 justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground active:scale-95"
+              : "h-8 w-full gap-2.5 rounded-lg px-2.5 text-[13px] text-foreground hover:bg-muted",
         )}
       >
         {variant === "row" ? (
           <>
-            <LocaleFlag country={active.country} label={active.label} size="sm" priority />
+            <HugeiconsIcon
+              icon={Globe02Icon}
+              className="size-4 shrink-0 text-muted-foreground"
+              strokeWidth={1.75}
+            />
             <span className="min-w-0 flex-1 truncate text-left">{active.label}</span>
           </>
+        ) : variant === "globe" ? (
+          <HugeiconsIcon
+            icon={Globe02Icon}
+            className="size-4.5 shrink-0"
+            strokeWidth={1.75}
+          />
         ) : (
           <LocaleFlag country={active.country} label={active.label} size="sm" priority />
         )}

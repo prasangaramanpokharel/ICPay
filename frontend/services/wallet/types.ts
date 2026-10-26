@@ -73,11 +73,19 @@ export interface WalletActor {
   addBookmark: (targetUserId: string) => Promise<ApiResult_17>
   removeBookmark: (targetUserId: string) => Promise<ApiResult_19>
   getBucketPrice: (capacityGB: bigint) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
+  getBucketYearlyPrice?: (capacityGB: bigint) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
   createBucket: (name: string, capacityGB: bigint, visibility: { Public: null } | { Private: null }) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
+  createBucketPlan?: (name: string, capacityGB: bigint, visibility: { Public: null } | { Private: null }, period: { Monthly: null } | { Yearly: null }) => Promise<{ ok: string; err?: never } | { err: string; ok?: never }>
   getBucket: (id: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   getBucketStats: (id: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   getRenewQuote: (bucketId: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  getRenewQuotePlan?: (bucketId: string, period: { Monthly: null } | { Yearly: null }) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   listBuckets: () => Promise<{ ok: Record<string, unknown>[]; err?: never } | { err: string; ok?: never }>
+  updateBucket?: (
+    bucketId: string,
+    name: [] | [string],
+    visibility: [] | [{ Public: null } | { Private: null }]
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   uploadFile: (
     bucketId: string,
     path: string,
@@ -122,6 +130,17 @@ export interface WalletActor {
     paths: string[],
     apiKey: [] | [string]
   ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
+  moveFile: (
+    bucketId: string,
+    sourcePath: string,
+    destinationPath: string,
+    apiKey: [] | [string]
+  ) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  bulkMoveFiles: (
+    bucketId: string,
+    operations: { source: string; destination: string }[],
+    apiKey: [] | [string]
+  ) => Promise<{ ok: bigint; err?: never } | { err: string; ok?: never }>
   listFiles: (
     bucketId: string,
     page: bigint,
@@ -153,6 +172,7 @@ export interface WalletActor {
     apiKey: [] | [string]
   ) => Promise<{ ok: null; err?: never } | { err: string; ok?: never }>
   renewBucket: (bucketId: string) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
+  renewBucketPlan?: (bucketId: string, period: { Monthly: null } | { Yearly: null }) => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   getBucketCycleStatus: () => Promise<{ ok: Record<string, unknown>; err?: never } | { err: string; ok?: never }>
   createApiKey: (
     bucketId: string,

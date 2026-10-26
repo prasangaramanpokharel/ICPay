@@ -3,15 +3,16 @@
 import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Badge } from "@/components/ui/badge"
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
   Drawer,
@@ -35,8 +36,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { BookmarkAdd01Icon, QrCodeScanIcon } from "@hugeicons/core-free-icons"
 import { AmountInput } from "@/components/shared/amount-input"
 import { RecipientCard, RecipientLookup } from "@/components/transfer/recipient-card"
-import { BookmarkDrawer } from "@/components/bookmark/bookmark-drawer"
-import { BookmarkButton } from "@/components/bookmark/bookmark-drawer"
+import { BookmarkDrawer, BookmarkButton } from "@/components/bookmark/bookmark-drawer"
 import { useResolvedUsername, useRecipientProfile } from "@/hooks/wallet/useWalletData"
 import { useDebounced } from "@/hooks/ui/useDebounced"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
@@ -51,14 +51,6 @@ import type { TransferMode } from "@/services/transfer/transfer"
 import { USERNAME_MIN_LENGTH } from "@/lib/profile/username"
 import { cn } from "@/lib/ui/utils"
 
-const labelKeys = {
-  username: { label: "labelUsername", placeholder: "placeholderUsername" },
-  principal: { label: "labelPrincipal", placeholder: "placeholderPrincipal" },
-  account: { label: "labelAccount", placeholder: "placeholderAccount" },
-} as const satisfies Record<TransferMode, { label: string; placeholder: string }>
-
-// An ICRC-1 address names an account under a principal, so it fills the
-// principal tab and carries its subaccount alongside.
 const modeFor: Record<ScannedAddress["kind"], TransferMode> = {
   account: "account",
   icrc1: "principal",
@@ -72,8 +64,23 @@ function toHex(bytes: Uint8Array): string {
     .join("")
 }
 
+function classifyMode(value: string): TransferMode {
+  const trimmed = value.trim().replace(/^@/, "")
+  if (!trimmed) return "username"
+  if (isHexAccountId(trimmed)) return "account"
+  if (trimmed.includes("-") || trimmed.length > 20) {
+    try {
+      Principal.fromText(trimmed)
+      return "principal"
+    } catch {
+      return "username"
+    }
+  }
+  return "username"
+}
+
 function isValidFor(mode: TransferMode, v: string): boolean {
-  const t = v.trim()
+  const t = v.trim().replace(/^@/, "")
   if (!t) return false
   if (mode === "account") return isHexAccountId(t)
   if (mode === "principal") {
@@ -85,18 +92,6 @@ function isValidFor(mode: TransferMode, v: string): boolean {
     }
   }
   return t.length >= USERNAME_MIN_LENGTH
-}
-
-function detectInitialMode(value: string): TransferMode {
-  const trimmed = value.trim().replace(/^@/, "")
-  if (!trimmed) return "username"
-  if (isHexAccountId(trimmed)) return "account"
-  try {
-    Principal.fromText(trimmed)
-    return "principal"
-  } catch {
-    return "username"
-  }
 }
 
 export function TransferForm({
@@ -117,9 +112,9 @@ export function TransferForm({
   const t = useTranslations("transfer")
   const tc = useTranslations("common")
   const [mode, setMode] = useState<TransferMode>(() =>
-    initialTo ? detectInitialMode(initialTo) : "username"
+    initialTo ? classifyMode(initialTo) : "username"
   )
-  const [to, setTo] = useState(() => initialTo?.replace(/^@/, "") ?? "")
+  const [to, setTo] = useState(() => initialTo ?? "")
   const [amount, setAmount] = useState("")
   const [memo, setMemo] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -127,8 +122,6 @@ export function TransferForm({
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [scanOpen, setScanOpen] = useState(false)
   const [bookmarkOpen, setBookmarkOpen] = useState(false)
-  // Only ever set by a scan. Held apart from `to` because the recipient field
-  // shows the owner, while the money is owed to one account underneath it.
   const [subaccount, setSubaccount] = useState<Uint8Array | null>(null)
 
   const applyScan = (hit: ScannedAddress, raw: string) => {
@@ -137,9 +130,6 @@ export function TransferForm({
     setSubaccount(hit.kind === "icrc1" ? hit.subaccount : null)
     setError(null)
 
-    // A payment link asks for a specific amount, for a specific thing. Filling
-    // both is the whole point of scanning one -- but they stay editable, since
-    // someone tipping above the asking price should be able to.
     const req = parsePaymentLink(raw)
     if (req) {
       if (req.amount !== undefined) setAmount(amountFieldValue(req.amount))
@@ -151,60 +141,52 @@ export function TransferForm({
     if (icrcPay?.amount) setAmount(icrcPay.amount)
   }
 
-  // Pasting a principal into the username tab used to sit there failing lookup
-  // until the user noticed the tabs. The typed detector only fires on forms that
-  // are unambiguous and self-delimiting, so it cannot steal a half-typed handle.
   const handleRecipientChange = (raw: string) => {
-    const hit = detectTypedAddress(raw)
+    const trimmed = raw.trim()
+    const hit = detectTypedAddress(trimmed)
     if (hit) {
-      applyScan(hit, raw)
+      applyScan(hit, trimmed)
       return
     }
     setTo(raw)
-    // A subaccount left over from a scan would silently redirect a
-    // hand-typed principal's payment to a different account.
     setSubaccount(null)
     setError(null)
+    setMode(classifyMode(raw))
   }
 
-  // A scan started elsewhere in the app lands here through session storage.
-  // Reading it during render is not an option: the page is prerendered at build
-  // time, where sessionStorage does not exist, so a filled field would mismatch
-  // the baked HTML on hydration.
   useEffect(() => {
     const scanned = takeScannedAddress()
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (scanned) applyScan(scanned.hit, scanned.raw)
+    if (scanned) {
+      queueMicrotask(() => {
+        applyScan(scanned.hit, scanned.raw)
+      })
+    }
   }, [])
 
+  const cleanTo = to.trim().replace(/^@/, "")
   const parsed = parseIcp(amount)
   const total = parsed === null ? null : parsed + ICP_FEE
   const { price } = useIcpPrice()
   const sendUsd =
     parsed !== null && price ? (Number(parsed) / Number(E8S)) * price.usd : null
   const sendFiat = useFiatValue(sendUsd)
-  // Only username mode is resolvable; a principal or account id has no profile
-  // to look up. Debounced so a lookup runs per typing pause, not per keystroke.
-  const debouncedTo = useDebounced(mode === "username" ? to : "")
+  const debouncedTo = useDebounced(mode === "username" ? cleanTo : "")
   const { principal: resolved, isLoading: resolving } = useResolvedUsername(debouncedTo)
-  const recipientProfile = useRecipientProfile(to.trim(), resolved ?? null)
-  // True only once the lookup has settled on a miss, so the Review button is not
-  // disabled while a valid name is still in flight.
+  const recipientProfile = useRecipientProfile(cleanTo, resolved ?? null)
   const unknownRecipient =
     mode === "username" &&
-    to.trim().length >= USERNAME_MIN_LENGTH &&
-    debouncedTo.trim() === to.trim() &&
+    cleanTo.length >= USERNAME_MIN_LENGTH &&
+    debouncedTo === cleanTo &&
     !resolving &&
     resolved === null
-  // The fee is taken on top of the amount, so the largest sendable amount is
-  // balance - fee. Anything above that is rejected by the ledger, not here.
+
   const sendable = balance === undefined ? undefined : balance > ICP_FEE ? balance - ICP_FEE : 0n
   const insufficient =
     total !== null && balance !== undefined && total > balance
   const memoTooLong = memoByteLength(memo.trim()) > MEMO_MAX_BYTES
   const canReview =
     parsed !== null &&
-    isValidFor(mode, to) &&
+    isValidFor(mode, cleanTo) &&
     !insufficient &&
     !unknownRecipient &&
     !memoTooLong
@@ -214,7 +196,8 @@ export function TransferForm({
     primeSuccessChime()
     setLoading(true)
     setError(null)
-    const err = await onTransfer(mode, to.trim(), parsed, memo.trim() || undefined, subaccount ?? undefined)
+    const target = mode === "username" ? cleanTo : to.trim()
+    const err = await onTransfer(mode, target, parsed, memo.trim() || undefined, subaccount ?? undefined)
     setLoading(false)
     if (err) {
       setError(err)
@@ -228,69 +211,61 @@ export function TransferForm({
     setMemo("")
   }
 
+  const placeholderText = `${t("placeholderUsername")}, ${t("tabPrincipal").toLowerCase()}, ${t("tabAccount").toLowerCase()}`
+
   return (
     <FieldGroup className="gap-5">
-      <Tabs
-        value={mode}
-        onValueChange={(v) => {
-          setMode(v as TransferMode)
-          setTo("")
-          setSubaccount(null)
-          setError(null)
-        }}
-      >
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="username">{t("tabUsername")}</TabsTrigger>
-          <TabsTrigger value="principal">{t("tabPrincipal")}</TabsTrigger>
-          <TabsTrigger value="account">{t("tabAccount")}</TabsTrigger>
-        </TabsList>
-      </Tabs>
       <Field className="gap-2">
-        <FieldLabel htmlFor="to">{t(labelKeys[mode].label)}</FieldLabel>
+        <div className="flex items-center justify-between">
+          <FieldLabel htmlFor="to">{t("rowTo")}</FieldLabel>
+          {to.trim() && mode !== "username" ? (
+            <Badge variant="secondary" className="font-mono text-[10px] tracking-wider uppercase">
+              {mode === "principal" ? t("tabPrincipal") : t("tabAccount")}
+            </Badge>
+          ) : null}
+        </div>
         <div className="relative">
           <Input
             id="to"
             size="lg"
-            placeholder={t(labelKeys[mode].placeholder)}
+            placeholder={placeholderText}
             autoComplete="off"
             spellCheck={false}
             value={to}
             onChange={(e) => handleRecipientChange(e.target.value)}
             className={cn(
-              "pr-14 font-mono text-xs",
-              mode === "username" && "pr-[4.5rem] font-sans text-sm",
+              "pr-20 text-sm",
+              mode !== "username" && "font-mono text-xs"
             )}
           />
-          <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-0.5">
-            {mode === "username" && (
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                onClick={() => setBookmarkOpen(true)}
-                aria-label={t("bookmarks")}
-                className="size-8 rounded-lg text-muted-foreground"
-              >
-                <HugeiconsIcon icon={BookmarkAdd01Icon} className="size-4" strokeWidth={1.75} />
-              </Button>
-            )}
+          <div className="absolute top-1/2 right-2 flex -translate-y-1/2 items-center gap-0.5">
+            <Button
+              variant="ghost"
+              size="icon-xs"
+              onClick={() => setBookmarkOpen(true)}
+              aria-label={t("bookmarks")}
+              className="size-8 rounded-lg text-muted-foreground hover:text-foreground"
+            >
+              <HugeiconsIcon icon={BookmarkAdd01Icon} className="size-4" strokeWidth={1.75} />
+            </Button>
             <Button
               variant="ghost"
               size="icon-xs"
               onClick={() => setScanOpen(true)}
               aria-label={t("scanQr")}
-              className="size-8 rounded-lg text-muted-foreground"
+              className="size-8 rounded-lg text-muted-foreground hover:text-foreground"
             >
               <HugeiconsIcon icon={QrCodeScanIcon} className="size-4" strokeWidth={1.75} />
             </Button>
           </div>
         </div>
-        {mode === "username" && (
+        {mode === "username" ? (
           <RecipientLookup
-            username={to}
+            username={cleanTo}
             principal={resolved}
-            isLoading={resolving || debouncedTo.trim() !== to.trim()}
+            isLoading={resolving || debouncedTo !== cleanTo}
           />
-        )}
+        ) : null}
       </Field>
 
       <div>
@@ -306,11 +281,11 @@ export function TransferForm({
           maxE8s={sendable}
           size="default"
         />
-        {sendable !== undefined && (
+        {sendable !== undefined ? (
           <FieldDescription className="mt-1.5 text-xs text-muted-foreground">
             {t("maxSendable", { amount: formatAmount(sendable), fee: formatAmount(ICP_FEE) })}
           </FieldDescription>
-        )}
+        ) : null}
       </div>
 
       <QrScanner open={scanOpen} onOpenChange={setScanOpen} onScan={applyScan} />
@@ -344,28 +319,25 @@ export function TransferForm({
           value={memo}
           onChange={(e) => setMemo(e.target.value)}
         />
-        {memoTooLong && (
+        {memoTooLong ? (
           <FieldDescription className="text-destructive">
             {t("memoTooLong", { max: MEMO_MAX_BYTES })}
           </FieldDescription>
-        )}
+        ) : null}
       </Field>
 
-      {error && (
+      {error ? (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
-      )}
+      ) : null}
 
-      {/* Insufficient balance is said on the button rather than in an alert
-          above it: the button is already locked, so a second element saying so
-          only pushes the form around. */}
       <Button
         className="w-full"
         disabled={!canReview}
         onClick={() => setConfirmOpen(true)}
       >
-        {insufficient ? t("insufficientShort") : t("review")}
+        <span>{insufficient ? t("insufficientShort") : t("review")}</span>
       </Button>
 
       <Drawer open={confirmOpen} onOpenChange={setConfirmOpen} showSwipeHandle>
@@ -381,49 +353,50 @@ export function TransferForm({
                 {parsed === null ? "—" : formatAmount(parsed)}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">ICP</p>
-              {sendFiat.formatted !== null && (
+              {sendFiat.formatted !== null ? (
                 <p className="mt-1 text-xs tabular-nums text-muted-foreground">
                   ≈ {sendFiat.symbol}
                   {sendFiat.formatted} {sendFiat.currency}
                 </p>
-              )}
+              ) : null}
             </div>
 
-            {mode === "username" && resolved && recipientProfile && (
+            {mode === "username" && resolved && recipientProfile ? (
               <div className="flex items-center gap-2">
                 <RecipientCard
-                  username={to.trim()}
+                  username={cleanTo}
                   principal={resolved}
                   className="min-w-0 flex-1"
                 />
                 <BookmarkButton
                   targetUserId={recipientProfile.id}
-                  username={to.trim()}
+                  username={cleanTo}
                 />
               </div>
-            )}
-            {mode === "username" && resolved && !recipientProfile && (
-              <RecipientCard username={to.trim()} principal={resolved} />
-            )}
+            ) : null}
+            {mode === "username" && resolved && !recipientProfile ? (
+              <RecipientCard username={cleanTo} principal={resolved} />
+            ) : null}
 
-            <div className="space-y-2 rounded-2xl border p-4">
-              {!(mode === "username" && resolved) && (
+            <div className="space-y-2 rounded-2xl border border-border p-4">
+              {!(mode === "username" && resolved) ? (
                 <Row label={t("rowTo")} value={to.trim()} mono />
-              )}
-              {subaccount && <Row label={t("rowSubaccount")} value={toHex(subaccount)} mono />}
+              ) : null}
+              {subaccount ? <Row label={t("rowSubaccount")} value={toHex(subaccount)} mono /> : null}
               <Row label={t("rowNetworkFee")} value={`${formatAmount(ICP_FEE)} ICP`} />
               <Row
                 label={t("rowTotalDeducted")}
                 value={total === null ? "—" : `${formatAmount(total)} ICP`}
                 emphasis
               />
-              {memo.trim() && <Row label={t("rowMemo")} value={memo.trim()} />}
+              {memo.trim() ? <Row label={t("rowMemo")} value={memo.trim()} /> : null}
             </div>
           </div>
 
           <DrawerFooter className="mt-3">
             <Button onClick={handleConfirm} disabled={loading}>
-              {loading ? t("sending") : t("confirmSend")}
+              {loading ? <Spinner data-icon="inline-start" /> : null}
+              <span>{loading ? t("sending") : t("confirmSend")}</span>
             </Button>
             <DrawerClose
               render={
@@ -454,11 +427,11 @@ function Row({
     <div className="flex items-start justify-between gap-4">
       <span className="shrink-0 text-xs text-muted-foreground">{label}</span>
       <span
-        className={[
+        className={cn(
           "min-w-0 break-all text-right text-sm",
-          mono ? "font-mono text-xs" : "",
-          emphasis ? "font-semibold tabular-nums" : "",
-        ].join(" ")}
+          mono && "font-mono text-xs",
+          emphasis && "font-semibold tabular-nums"
+        )}
       >
         {value}
       </span>

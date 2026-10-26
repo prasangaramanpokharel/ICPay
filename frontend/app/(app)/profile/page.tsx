@@ -8,6 +8,7 @@ import { ShareProfileCard } from "@/components/profile/share-profile-card"
 import { SocialLinksEditor } from "@/components/profile/social-links-editor"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { PremiumBadge } from "@/components/verified/premium-badge"
 import { useAuth } from "@/components/auth/auth-provider"
 import { usePatchDashboardUser, useOwnProfile } from "@/hooks/wallet/useWalletData"
@@ -30,30 +31,29 @@ export default function ProfilePage() {
     if ("err" in result) return result.err
 
     mutate(result.ok, { revalidate: false })
-    // The dashboard holds its own copy of the user, and the mandatory username
-    // prompt keys off it. The canister already returned the saved record, so
-    // patch it in rather than paying another getDashboard.
     patchDashboardUser(result.ok)
     return null
   }
 
-  // Copies the full principal, not the truncated form on screen -- a shortened
-  // one pasted into a send field would address nothing.
   const handleCopyPrincipal = async () => {
     await copyText(principal)
     setCopied(true)
     setTimeout(() => setCopied(false), 1500)
   }
 
-  if (isLoading && !user) return <div className="flex justify-center py-12"><p className="text-muted-foreground">{tc("loading")}</p></div>
+  if (isLoading && !user) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <Spinner className="size-5 text-muted-foreground" />
+      </div>
+    )
+  }
   if (!user) return null
 
   const claimed = user.username?.[0]
 
   return (
     <div className="mx-auto max-w-lg space-y-6 pt-2">
-      {/* The handle and the principal are what this page is about, so they lead
-          rather than sitting as two more rows inside a settings card. */}
       <div className="flex flex-col items-center">
         <Avatar className="size-20">
           <AvatarImage src={avatarUriFor(claimed ?? principal)} alt="" />

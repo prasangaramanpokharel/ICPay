@@ -1,6 +1,18 @@
-export const CAPACITY_TIERS_GB = [1, 2, 3] as const
+export const CAPACITY_TIERS_GB = [1, 5, 10, 25, 50, 100] as const
 
 export const FILES_PAGE_SIZE = 20
+
+export {
+  BUCKET_CDN_ORIGIN,
+  getBucketCdnBase,
+  bucketCdnBaseUrl,
+  bucketRawBaseUrl,
+  bucketCdnFileUrl,
+  bucketRawFileUrl,
+  toCdnUrl,
+  toRawCanisterUrl,
+  resolvePublicFileUrl,
+} from "@/lib/bucket/cdn"
 
 export {
   BUCKET_MAX_FILE_BYTES,
@@ -21,7 +33,6 @@ import {
 } from "@/lib/bucket/allowedFiles"
 import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/uploadChunk"
 
-/** @deprecated use guessFileMime */
 export const guessImageMime = guessFileMime
 
 type BucketErrorKey =
@@ -82,20 +93,51 @@ export type BucketVisibilityVariant =
 
 export type BucketStatusVariant = { ACTIVE: null } | { EXPIRED: null }
 
+export const BUCKET_GRACE_PERIOD_MS = 7 * 86_400 * 1000
+export const BUCKET_FROZEN_PERIOD_MS = 14 * 86_400 * 1000
+export const BUCKET_TOMBSTONE_DELAY_MS = 21 * 86_400 * 1000
+
 export function isPublicVisibility(v: BucketVisibilityVariant): boolean {
   return "Public" in v
 }
 
 export function isBucketActive(status: BucketStatusVariant): boolean {
-  return "ACTIVE" in status
+  return Boolean(status && "ACTIVE" in status)
+}
+
+export function isBucketFrozen(status: BucketStatusVariant, expiresAt: bigint | number, now = Date.now()): boolean {
+  if (isBucketActive(status)) return false
+  const expiresMs = expiresAtToMs(expiresAt)
+  return now >= expiresMs + BUCKET_GRACE_PERIOD_MS && now < expiresMs + BUCKET_TOMBSTONE_DELAY_MS
+}
+
+export function isBucketTombstoned(status: BucketStatusVariant, expiresAt: bigint | number, now = Date.now()): boolean {
+  if (isBucketActive(status)) return false
+  const expiresMs = expiresAtToMs(expiresAt)
+  return now >= expiresMs + BUCKET_TOMBSTONE_DELAY_MS
+}
+
+export function getBucketStatusLabel(
+  status: BucketStatusVariant,
+  expiresAt: bigint | number,
+  now = Date.now()
+): "Active" | "Expired" | "Frozen" | "Tombstoned" {
+  if (isBucketActive(status)) return "Active"
+  if (isBucketTombstoned(status, expiresAt, now)) return "Tombstoned"
+  if (isBucketFrozen(status, expiresAt, now)) return "Frozen"
+  return "Expired"
 }
 
 export function formatBytes(bytes: bigint | number): string {
   const n = typeof bytes === "bigint" ? Number(bytes) : bytes
+  if (n <= 0) return "0 B"
+  if (n >= 1_000_000_000 && n % 1_000_000_000 === 0) {
+    return `${n / 1_000_000_000} GB`
+  }
   if (n < 1024) return `${n} B`
   if (n < 1024 ** 2) return `${(n / 1024).toFixed(1)} KB`
   if (n < 1024 ** 3) return `${(n / 1024 ** 2).toFixed(1)} MB`
-  return `${(n / 1024 ** 3).toFixed(2)} GB`
+  return `${Number((n / 1024 ** 3).toFixed(2))} GB`
 }
 
 export function formatUsageLabel(used: bigint, capacity: bigint): string {
@@ -127,17 +169,21 @@ export function isImageUploadFile(file: File): boolean {
   return guessFileMime(file).startsWith("image/")
 }
 
-/** @deprecated use isImageUploadFile */
 export const isRasterImageFile = isImageUploadFile
 
 export function isAllowedUpload(file: File): boolean {
   return isAllowedByExtension(file, BUCKET_MAX_FILE_BYTES)
 }
 
-/** @deprecated use isAllowedUpload */
 export const isAllowedImage = isAllowedUpload
 
-export function expiresAtToMs(expiresAt: bigint): number {
+export function expiresAtToMs(expiresAt: bigint | number): number {
+  if (typeof expiresAt === "number") {
+    if (expiresAt > 1e14) {
+      return Math.floor(expiresAt / 1_000_000)
+    }
+    return expiresAt
+  }
   return Number(expiresAt / 1_000_000n)
 }
 
@@ -145,5 +191,4 @@ export function optionalText(value: [] | [string]): string | null {
   return value.length === 0 ? null : value[0]
 }
 
-/** @deprecated use fileTypeChip from allowed-files */
 export const imageTypeChip = fileTypeChip

@@ -17,7 +17,8 @@ import { QrScanner } from '@/components/scan/qr-scanner'
 import { BookmarkSheet } from '@/features/transfer/bookmark-sheet'
 import { PostSendUsernameUpsell } from '@/features/shared/post-send-upsell'
 import { useAuth } from '@/components/auth/auth-provider'
-import { useLiveBalance, useRefreshWallet, useOwnProfile } from '@/hooks/use-wallet-data'
+import { useLiveBalance, useRefreshWallet, useOwnProfile, useResolvedUsername } from '@/hooks/use-wallet-data'
+import { useDebounced } from '@/hooks/use-debounced'
 import { useIcpPrice } from '@/hooks/use-icp-price'
 import { transfer, type TransferMode } from '@/services/transfer/transfer'
 import { ICP_LEDGER_ID } from '@/services/tokens'
@@ -26,6 +27,7 @@ import { amountFieldValue, parsePaymentLink } from '@/lib/pay-link'
 import { formatAmount, ICP_FEE, parseIcp } from '@/lib/wallet-utils'
 import { ConfirmPin } from '@/features/security/confirm-pin'
 import { usePaymentPin } from '@/features/security/use-payment-pin'
+import { RecipientCard, RecipientLookup } from '@/features/transfer/recipient-card'
 
 const MODE_FOR: Record<ScannedAddress['kind'], TransferMode> = {
   account: 'account',
@@ -60,6 +62,15 @@ export function TransferScreen() {
   const [showUpsell, setShowUpsell] = useState(false)
   const { data: profile } = useOwnProfile()
   const hasUsername = !!profile?.username?.[0]
+  const cleanTo = to.trim().replace(/^@/, '')
+  const debouncedTo = useDebounced(mode === 'username' ? cleanTo : '')
+  const { principal: resolved, isLoading: resolving } = useResolvedUsername(debouncedTo)
+  const unknownRecipient =
+    mode === 'username' &&
+    cleanTo.length >= 1 &&
+    debouncedTo === cleanTo &&
+    !resolving &&
+    resolved === null
   const parsed = parseIcp(amount)
   const total = parsed !== null ? parsed + ICP_FEE : null
   const insufficient = parsed !== null && balance != null && total != null && total > balance
@@ -179,7 +190,46 @@ export function TransferScreen() {
           </Button>
         </View>
       </View>
-      <Input value={amount} onChangeText={setAmount} keyboardType="decimal-pad" placeholder={tc('amount')} size="amount" />
+      {mode === 'username' && cleanTo.length > 0 ? (
+        <RecipientLookup
+          username={cleanTo}
+          principal={resolved}
+          isLoading={resolving || debouncedTo !== cleanTo}
+        />
+      ) : null}
+      <View className="gap-2">
+        <View className="flex-row items-center justify-between">
+          <Text className="text-xs font-semibold text-foreground">{tc('amount')}</Text>
+          {balance != null ? (
+            <View className="rounded-full bg-muted/60 px-2.5 py-0.5">
+              <Text className="text-[11px] text-muted-foreground">
+                Balance: <Text className="font-semibold text-foreground">{formatAmount(balance)} ICP</Text>
+              </Text>
+            </View>
+          ) : null}
+        </View>
+        <Input value={amount} onChangeText={setAmount} keyboardType="decimal-pad" placeholder="0.00" size="amount" />
+        <View className="flex-row gap-1.5">
+          {[25, 50, 75, 100].map((pct) => (
+            <Pressable
+              key={pct}
+              disabled={balance == null || balance <= ICP_FEE}
+              onPress={() => {
+                const sendable = balance != null && balance > ICP_FEE ? balance - ICP_FEE : 0n
+                const val = (sendable * BigInt(pct)) / 100n
+                const whole = val / 100_000_000n
+                const fraction = (val % 100_000_000n).toString().padStart(8, '0').replace(/0+$/, '')
+                setAmount(fraction ? `${whole}.${fraction}` : `${whole}`)
+              }}
+              className="flex-1 items-center justify-center rounded-xl border border-border/50 bg-muted/30 py-2 active:bg-muted"
+            >
+              <Text className="text-xs font-semibold text-muted-foreground">
+                {pct === 100 ? 'Max' : `${pct}%`}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
       <FiatAmount usd={usd} />
       {balance != null ? (
         <Text className="text-xs text-muted-foreground">
@@ -195,7 +245,11 @@ export function TransferScreen() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
-      <Button size="lg" disabled={!to || !parsed || insufficient} onPress={() => setConfirmOpen(true)}>
+      <Button
+        size="lg"
+        disabled={!to || !parsed || insufficient || unknownRecipient || (mode === 'username' && resolving)}
+        onPress={() => setConfirmOpen(true)}
+      >
         {insufficient ? t('insufficientShort') : t('review')}
       </Button>
       <Sheet
@@ -219,9 +273,18 @@ export function TransferScreen() {
               <Text className="mt-2 text-base text-muted-foreground">ICP</Text>
               <FiatAmount usd={usd} className="mt-2" />
             </View>
-            <View className="mb-4 flex-row items-center gap-3 rounded-2xl bg-muted/50 p-3">
-              <UserAvatar seed={mode === 'username' && !to.startsWith('@') ? `@${to.trim()}` : to.trim()} size={40} />
-              <Text className="min-w-0 flex-1 text-sm">{to.trim()}</Text>
+            <View className="mb-4">
+              {mode === 'username' ? (
+                <RecipientCard
+                  username={cleanTo}
+                  principal={resolved}
+                />
+              ) : (
+                <View className="flex-row items-center gap-3 rounded-2xl bg-muted/50 p-3">
+                  <UserAvatar seed={to.trim()} size={40} />
+                  <Text className="min-w-0 flex-1 font-mono text-xs text-foreground" numberOfLines={1}>{to.trim()}</Text>
+                </View>
+              )}
             </View>
             {subaccount ? <Row label={t('rowSubaccount')} value={toHex(subaccount)} /> : null}
             <View className="rounded-xl bg-muted/30 p-3">

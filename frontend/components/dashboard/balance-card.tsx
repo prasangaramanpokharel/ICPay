@@ -10,7 +10,6 @@ import { cn } from "@/lib/ui/utils"
 import type { IcpPrice } from "@/lib/market/icpPrice"
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 
-/** Number of e8s (10^-8 ICP) in one whole ICP token. */
 const E8S_PER_ICP = 100_000_000
 
 type BalanceCardProps = {
@@ -42,79 +41,94 @@ export function BalanceCard({
   const fiat = useFiatValue(usdValue)
 
   return (
-    <div className="rounded-3xl bg-blue-200/80 pt-3 shadow-accent-foreground">
-      <div className="relative mt-2 rounded-3xl bg-primary p-3 text-primary-foreground shadow-lg">
-        {/* Chip + username */}
-        <div className="relative z-10 flex min-w-0 items-center gap-2.5">
+    <div className="relative overflow-hidden rounded-3xl bg-card dark:bg-background p-5 text-foreground select-none sm:p-6">
+      <div className="relative z-10 flex min-w-0 items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2.5">
           <EmvChip />
 
-          {username && (
-            <span className="flex min-w-0 items-center gap-1 font-mono text-sm font-medium tracking-tight text-primary-foreground/80">
-              <span className="truncate">{username}</span>
+          {username ? (
+            <span className="flex min-w-0 items-center gap-1 font-mono text-sm font-semibold tracking-tight text-foreground">
+              <span className="truncate">@{username}</span>
               <PremiumBadge name={username} className="size-3.5" />
+            </span>
+          ) : (
+            <span className="font-mono text-xs font-medium tracking-tight text-muted-foreground">
+              ICPay Wallet
             </span>
           )}
         </div>
 
-        {/* Balance */}
-        <div className="relative z-10 mt-6 flex items-baseline gap-2">
-          <Button
-            variant="ghost"
-            onClick={() => void onRefreshPrice()}
-            className="h-auto p-0 text-[clamp(1.75rem,9vw,2.75rem)] font-semibold leading-tight tracking-tight tabular-nums hover:bg-transparent hover:opacity-80 active:opacity-60"
-          >
-            {hidden ? "•• •••• ••••" : <FormattedBalance value={balance} />}
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            aria-label={hidden ? t("showBalance") : t("hideBalance")}
-            onClick={onToggleHidden}
-            className="text-primary-foreground/60 hover:bg-primary-foreground/15 hover:text-primary-foreground"
-          >
-            <HugeiconsIcon icon={hidden ? ViewOffIcon : EyeIcon} className="size-5" strokeWidth={1.75} />
-          </Button>
-        </div>
+       
+      </div>
 
-        {/* Fiat value */}
-        <div className="relative z-10 mt-1 flex items-center justify-between gap-2">
-          <span className="liquid-glass-primary inline-block rounded-full px-2.5 py-1 text-sm font-medium tabular-nums">
-            {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
-          </span>
-          <div className="flex items-center gap-1.5">
-            {!hidden && price && (
-              <span className="text-xs font-medium tabular-nums text-primary-foreground/70">
-                1 ICP = {price.usd.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "USD",
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 4,
-                })}
-              </span>
-            )}
-            {!hidden && price && price.change24h !== 0 && (
-              <span
-                className={cn(
-                  "text-xs font-semibold tabular-nums",
-                  price.change24h > 0 ? "text-green-400" : "text-red-400"
-                )}
-              >
-                {price.change24h > 0 ? "+" : ""}
-                {price.change24h.toFixed(2)}%
-              </span>
-            )}
-          </div>
+      <div className="relative z-10 mt-6 flex items-baseline justify-between gap-2">
+        <Button
+          variant="ghost"
+          onClick={() => void onRefreshPrice()}
+          title="Click to refresh balance & price"
+          className="h-auto p-0 text-[clamp(1.85rem,8.5vw,2.85rem)] font-bold leading-none tracking-tight tabular-nums hover:bg-transparent hover:opacity-85 active:opacity-60 cursor-pointer text-foreground"
+        >
+          {hidden ? (
+            <span>••••••••</span>
+          ) : (
+            <span className="flex items-baseline">
+              <FormattedBalance value={balance} />
+              <span className="ml-1.5 text-xs sm:text-sm font-semibold text-muted-foreground">ICP</span>
+            </span>
+          )}
+        </Button>
+
+        <Button
+          variant="ghost"
+          size="icon-xs"
+          aria-label={hidden ? t("showBalance") : t("hideBalance")}
+          onClick={onToggleHidden}
+          className="size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+        >
+          <HugeiconsIcon icon={hidden ? ViewOffIcon : EyeIcon} className="size-4.5" strokeWidth={1.75} />
+        </Button>
+      </div>
+
+      <div className="relative z-10 mt-4 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border/60">
+        <button
+          type="button"
+          onClick={() => void onRefreshPrice()}
+          title="Click to refresh balance & price"
+          className="inline-flex items-center rounded-full  hover:bg-muted px-3 py-1 text-xs font-medium tabular-nums text-foreground transition-all cursor-pointer border border-border/40"
+        >
+          {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
+        </button>
+
+        <div className="flex items-center gap-1.5 text-xs">
+          {!hidden && price && (
+            <span className="font-medium tabular-nums text-muted-foreground">
+              1 ICP = {price.usd.toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 4,
+              })}
+            </span>
+          )}
+          {!hidden && price && price.change24h !== 0 && (
+            <span
+              className={cn(
+                "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold tabular-nums",
+                price.change24h > 0
+                  ? "text-success"
+                  : "text-destructive"
+              )}
+            >
+              {price.change24h > 0 ? "+" : ""}
+              {price.change24h.toFixed(2)}%
+            </span>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
-/**
- * Splits a balance string on its decimal point and renders the fractional
- * tail smaller and dimmed, so the eye lands on the whole-number amount
- * first — the same pattern Coinbase/Robinhood-style balances use.
- */
 function FormattedBalance({ value }: { value: string }) {
   const dotIndex = value.indexOf(".")
   if (dotIndex === -1) return <>{value}</>
@@ -124,20 +138,23 @@ function FormattedBalance({ value }: { value: string }) {
 
   return (
     <>
-      {whole}
-      <span className="text-[0.55em] font-medium text-primary-foreground/50">{decimals}</span>
+      <span className="text-foreground">{whole}</span>
+      <span className="text-[0.6em] font-medium text-muted-foreground">{decimals}</span>
     </>
   )
 }
 
-/** Metallic EMV-style chip icon shown next to the username. */
 function EmvChip() {
   return (
-    <span className="relative flex h-6 w-8 shrink-0 overflow-hidden rounded-md bg-gradient-to-br from-amber-200 via-yellow-300 to-amber-500 shadow-[inset_0_1px_1px_rgba(255,255,255,0.8),inset_0_-1px_2px_rgba(120,80,10,0.4),0_1px_2px_rgba(0,0,0,0.25)]">
-      <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-amber-800/30" />
-      <span className="absolute inset-y-0 left-1/3 w-px bg-amber-800/30" />
-      <span className="absolute inset-y-0 left-2/3 w-px bg-amber-800/30" />
-      <span className="absolute left-0 top-1/2 h-2.5 w-full -translate-y-1/2 rounded-[2px] border border-amber-800/25" />
+    <span
+      aria-hidden="true"
+      className="relative flex h-5 w-7 shrink-0 items-center justify-center rounded-sm bg-gradient-to-br from-amber-200 via-amber-300 to-amber-400 p-0.5 shadow-xs border border-amber-500/40"
+    >
+      <span className="relative size-full rounded-[2px] border border-amber-700/30">
+        <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-amber-700/30" />
+        <span className="absolute inset-y-0 left-1/3 w-px bg-amber-700/30" />
+        <span className="absolute inset-y-0 right-1/3 w-px bg-amber-700/30" />
+      </span>
     </span>
   )
 }

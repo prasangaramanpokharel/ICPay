@@ -24,6 +24,7 @@ interface HeroVideoProps {
   thumbnailSrc: string
   thumbnailAlt?: string
   className?: string
+  triggerClassName?: string
 }
 
 const animationVariants = {
@@ -60,7 +61,7 @@ const animationVariants = {
   "top-in-bottom-out": {
     initial: { y: "-100%", opacity: 0 },
     animate: { y: 0, opacity: 1 },
-    exit: { y: "100%", opacity: 0 },
+    exit: { y: "-100%", opacity: 0 },
   },
   "left-in-right-out": {
     initial: { x: "-100%", opacity: 0 },
@@ -84,6 +85,7 @@ export function HeroVideoDialog({
   thumbnailSrc,
   thumbnailAlt = "Video thumbnail",
   className,
+  triggerClassName,
 }: HeroVideoProps) {
   const [isVideoOpen, setIsVideoOpen] = useState(false)
   const selectedAnimation = animationVariants[animationStyle]
@@ -94,7 +96,10 @@ export function HeroVideoDialog({
       <button
         type="button"
         aria-label="Play video"
-        className="group relative block w-full cursor-pointer overflow-hidden rounded-2xl border border-border/70 bg-card p-0 shadow-sm transition-all duration-300 hover:border-border hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        className={cn(
+          "group relative block w-full cursor-pointer overflow-hidden rounded-2xl border border-border/70 bg-card p-0 shadow-sm transition-all duration-300 hover:border-border hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          triggerClassName
+        )}
         onClick={() => setIsVideoOpen(true)}
       >
         <div className="relative aspect-video w-full overflow-hidden">
@@ -107,7 +112,6 @@ export function HeroVideoDialog({
           />
         </div>
 
-        {/* Play Button Overlay */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="flex size-20 sm:size-24 items-center justify-center rounded-full bg-background/20 p-2 backdrop-blur-md transition-all duration-300 group-hover:scale-110 group-hover:bg-background/30">
             <div className="flex size-14 sm:size-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-300 group-hover:scale-105">

@@ -4,15 +4,12 @@ import {
   Clock01Icon,
   CloudIcon,
   Coins01Icon,
-  CrownIcon,
   Download01Icon,
   Globe02Icon,
-  Home01Icon,
-  JusticeScale01Icon,
+  Home03Icon,
   Message01Icon,
   Rocket01Icon,
   SentIcon,
-  ShoppingBag01Icon,
   ThreeDViewIcon,
 } from "@hugeicons/core-free-icons"
 import { APP_NAV_ITEMS, isAppNavActive } from "@/lib/navigation/app-nav-items"
@@ -30,32 +27,12 @@ export type SidebarNavSection = {
   items: SidebarNavItem[]
 }
 
-export const SIDEBAR_FOOTER: SidebarNavItem[] = [
-  {
-    href: "/governance",
-    labelKey: "settings.items.governance",
-    icon: JusticeScale01Icon,
-  },
-  {
-    href: "/username",
-    labelKey: "settings.items.buyPremium",
-    icon: CrownIcon,
-    badgeKey: "settings.items.buyNameBadge",
-    badgeType: "gradient",
-  },
-  {
-    href: "/icpay/presale",
-    labelKey: "settings.items.icpayToken",
-    icon: ShoppingBag01Icon,
-    badgeKey: "buyIcpay.liveBadge",
-    badgeType: "gradient",
-  },
-]
+export const SIDEBAR_FOOTER: SidebarNavItem[] = []
 
 export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
   {
     sectionKey: "overview",
-    items: [{ href: "/home", labelKey: "nav.home", icon: Home01Icon }],
+    items: [{ href: "/home", labelKey: "nav.home", icon: Home03Icon }],
   },
   {
     sectionKey: "payments",
@@ -91,8 +68,6 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
         href: "/channels",
         labelKey: "settings.items.community",
         icon: Message01Icon,
-        badgeKey: "settings.items.communityBadge",
-        badgeType: "gradient",
       },
     ],
   },
@@ -128,6 +103,9 @@ export function resolveAppPageTitle(
   if (sidebar) return translate(sidebar.labelKey)
 
   if (pathname.startsWith("/channels")) return translate("settings.items.community")
+  if (pathname.startsWith("/governance")) return translate("settings.items.governance")
+  if (pathname.startsWith("/username")) return translate("settings.items.buyPremium")
+  if (pathname.startsWith("/icpay/presale")) return translate("settings.items.icpayToken")
   if (pathname.startsWith("/profile")) return translate("settings.items.profile")
   if (pathname.startsWith("/transfer")) return translate("common.send")
   if (pathname.startsWith("/deposit")) return translate("common.receive")

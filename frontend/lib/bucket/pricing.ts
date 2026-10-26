@@ -1,15 +1,13 @@
 import { CAPACITY_TIERS_GB } from "@/lib/bucket/bucket"
 
-/** Mirrors backend BillingService.mo — keep constants in sync. */
 const CYCLES_PER_GB_MONTH = 333_860_000_000n
 const CYCLES_PER_ICP = 1_000_000_000_000n
 const E8S_PER_ICP = 100_000_000n
 const MARGIN_PERCENT = 20n
-/** Previous margin — shown struck through in the UI. */
 const LIST_MARGIN_PERCENT = 50n
 const HALF_ICP_E8S = 50_000_000n
 
-export const BUCKET_POPULAR_TIER_GB = 2
+export const BUCKET_POPULAR_TIER_GB = 5
 
 export type BucketPricingTier = {
   gb: number
@@ -31,21 +29,26 @@ function priceWithMarginE8s(capacityGB: number, marginPercent: bigint): bigint {
   return roundToHalfIcp(preRound)
 }
 
-/** Cycle cost for 30 days — no margin. */
 export function calculateCostE8s(capacityGB: number): bigint {
   const gb = BigInt(capacityGB)
   const cycles = gb * CYCLES_PER_GB_MONTH
   return (cycles * E8S_PER_ICP) / CYCLES_PER_ICP
 }
 
-/** Client estimate when the canister query is unavailable. */
 export function calculatePriceE8s(capacityGB: number): bigint {
   return priceWithMarginE8s(capacityGB, MARGIN_PERCENT)
 }
 
-/** Legacy list price (50% margin) for strikethrough display. */
 export function calculateListPriceE8s(capacityGB: number): bigint {
   return priceWithMarginE8s(capacityGB, LIST_MARGIN_PERCENT)
+}
+
+export function calculateYearlyPriceE8s(capacityGB: number): bigint {
+  return calculatePriceE8s(capacityGB) * 10n
+}
+
+export function calculateYearlyListPriceE8s(capacityGB: number): bigint {
+  return calculateListPriceE8s(capacityGB) * 12n
 }
 
 export function buildPricingTier(gb: number, priceE8s: bigint): BucketPricingTier {
@@ -54,6 +57,16 @@ export function buildPricingTier(gb: number, priceE8s: bigint): BucketPricingTie
   return { gb, priceE8s, listPriceE8s, costE8s, marginE8s: priceE8s - costE8s }
 }
 
+export function buildYearlyPricingTier(gb: number, yearlyPriceE8s: bigint): BucketPricingTier {
+  const costE8s = calculateCostE8s(gb) * 12n
+  const listPriceE8s = calculateYearlyListPriceE8s(gb)
+  return { gb, priceE8s: yearlyPriceE8s, listPriceE8s, costE8s, marginE8s: yearlyPriceE8s - costE8s }
+}
+
 export function buildEstimatedPricingTiers(): BucketPricingTier[] {
   return CAPACITY_TIERS_GB.map((gb) => buildPricingTier(gb, calculatePriceE8s(gb)))
+}
+
+export function buildEstimatedYearlyPricingTiers(): BucketPricingTier[] {
+  return CAPACITY_TIERS_GB.map((gb) => buildYearlyPricingTier(gb, calculateYearlyPriceE8s(gb)))
 }

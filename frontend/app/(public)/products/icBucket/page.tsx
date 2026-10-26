@@ -6,7 +6,7 @@ import { FeaturesSection } from "@/components/products/icbucket/features-section
 import { ArchitectureSection } from "@/components/products/icbucket/architecture-section"
 import { ComparisonSection } from "@/components/products/icbucket/comparison-section"
 import { PricingSection } from "@/components/products/icbucket/pricing-section"
-import { ApiGuideSection } from "@/components/products/icbucket/api-guide-section"
+import { IntegrateSection } from "@/components/products/icbucket/integrate-section"
 import { FaqSection } from "@/components/products/icbucket/faq-section"
 import { PAGE_IMAGES, pageImageUrl } from "@/lib/public/page-images"
 
@@ -43,9 +43,9 @@ export const metadata: Metadata = {
     siteName: "ICPay",
     images: [
       {
-        url: pageImageUrl(PAGE_IMAGES.icbucket.hero),
-        width: 1200,
-        height: 630,
+        url: pageImageUrl(PAGE_IMAGES.icbucket.og),
+        width: 1920,
+        height: 1080,
         alt: "ICBucket - On-Chain Cloud Storage",
       },
     ],
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
     title: "ICBucket - On-Chain Cloud Storage for Web3",
     description:
       "Store files on-chain with API keys and SDKs. 30-day ICP plans — no servers, no AWS bills.",
-    images: [pageImageUrl(PAGE_IMAGES.icbucket.hero)],
+    images: [pageImageUrl(PAGE_IMAGES.icbucket.og)],
     creator: "@IcpayOfficial",
   },
   alternates: {
@@ -69,13 +69,13 @@ export default function ICBucketPage() {
   return (
     <div className="min-h-screen">
       <HeroSection />
+      <IntegrateSection />
       <ProblemSolution />
       <TwitterSection />
       <FeaturesSection />
       <ArchitectureSection />
       <ComparisonSection />
       <PricingSection />
-      <ApiGuideSection />
       <FaqSection />
     </div>
   )

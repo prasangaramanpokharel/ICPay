@@ -16,8 +16,8 @@ export default function PackagesPage() {
       .then((data) => {
         if (!cancelled) setPackages(data)
       })
-      .catch((error) => {
-        console.error("Failed to fetch packages:", error)
+      .catch(() => {
+        // Fallback already guaranteed by fetchFalconPackages
       })
       .finally(() => {
         if (!cancelled) setLoading(false)

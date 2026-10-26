@@ -7,12 +7,10 @@ import { useSWRConfig } from "swr"
 import { useAuth } from "@/components/auth/auth-provider"
 import { FILES_PAGE_SIZE } from "@/lib/bucket/bucket"
 import {
+  bucketAllFilesKey,
   bucketCycleKey,
   bucketFilesKey,
   bucketListKey,
-  bucketPriceKey,
-  bucketPricingTableKey,
-  bucketRenewQuoteKey,
   bucketSearchKey,
   bucketStatsKey,
   isBucketCacheKey,
@@ -20,24 +18,31 @@ import {
 import { CAPACITY_TIERS_GB } from "@/lib/bucket/bucket"
 import {
   buildEstimatedPricingTiers,
+  buildEstimatedYearlyPricingTiers,
   buildPricingTier,
+  buildYearlyPricingTier,
   calculatePriceE8s,
+  calculateYearlyPriceE8s,
   type BucketPricingTier,
 } from "@/lib/bucket/pricing"
 import {
   getBucketCycleStatus,
   getBucketPrice,
+  getBucketYearlyPrice,
   getBucketStats,
   getRenewQuote,
   listBuckets,
+  listFiles,
   listFolder,
   searchFiles,
 } from "@/services/bucket/bucket"
+import type { BucketBillingPeriod, FileListPage, FilePublic } from "@/services/bucket/types"
 import { apiListFolderPrefix } from "@/lib/bucket/folderPath"
 
 export const BUCKET_QUERY = {
-  revalidateOnFocus: false,
-  revalidateIfStale: false,
+  revalidateOnFocus: true,
+  revalidateIfStale: true,
+  revalidateOnMount: true,
   errorRetryCount: 3,
 } as const
 
@@ -47,7 +52,6 @@ export function useInvalidateBucketCache() {
 
   return useCallback(async () => {
     if (!identity) return
-    // Revalidate in place — never pass undefined or the UI blanks while fetching.
     await mutate((key) => isBucketCacheKey(key, identity))
   }, [identity, mutate])
 }
@@ -55,27 +59,27 @@ export function useInvalidateBucketCache() {
 export function useBucketList() {
   const { identity } = useAuth()
 
-  const { data, error, isLoading, mutate } = useSWR(
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
     bucketListKey(identity),
     () => listBuckets(identity),
-    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 30_000 }
+    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 4_000 }
   )
 
-  return { buckets: data ?? [], error, isLoading, refresh: mutate }
+  return { buckets: data ?? [], error, isLoading, isValidating, refresh: mutate }
 }
 
 export function useBucketStats(bucketId: string | null) {
   const { identity } = useAuth()
 
-  const { data, error, isLoading, mutate } = useSWR(
+  const { data, error, isLoading, isValidating, mutate } = useSWR(
     bucketId ? bucketStatsKey(identity, bucketId) : null,
     () => getBucketStats(identity!, bucketId!),
-    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 15_000 }
+    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 2_000 }
   )
 
   const initialLoad = isLoading && data === undefined
 
-  return { stats: data ?? null, error, isLoading: initialLoad, refresh: mutate }
+  return { stats: data ?? null, error, isLoading: initialLoad, isValidating, refresh: mutate }
 }
 
 export function useBucketFiles(bucketId: string | null, prefix: string, page: number) {
@@ -85,7 +89,7 @@ export function useBucketFiles(bucketId: string | null, prefix: string, page: nu
   const { data, error, isLoading, mutate } = useSWR(
     bucketId ? bucketFilesKey(identity, bucketId, apiPrefix, page) : null,
     () => listFolder(identity!, bucketId!, apiPrefix, page, FILES_PAGE_SIZE),
-    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 10_000 }
+    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 2_000 }
   )
 
   const total = data ? Number(data.total) : 0
@@ -106,6 +110,45 @@ export function useBucketFiles(bucketId: string | null, prefix: string, page: nu
   }
 }
 
+export function useBucketAllFiles(bucketId: string | null) {
+  const { identity } = useAuth()
+
+  const { data, error, isLoading, mutate } = useSWR(
+    bucketId ? bucketAllFilesKey(identity, bucketId) : null,
+    async () => {
+      if (!identity || !bucketId) return []
+      const firstPage = await listFiles(identity, bucketId, 0, 50)
+      const items: FilePublic[] = firstPage?.items ? [...firstPage.items] : []
+      const total = firstPage?.total ? Number(firstPage.total) : 0
+      const pageSize = firstPage?.pageSize ? Number(firstPage.pageSize) : 50
+      if (total <= items.length || pageSize <= 0) {
+        return items
+      }
+      const totalPages = Math.ceil(total / pageSize)
+      const maxPagesToFetch = Math.min(totalPages, 20)
+      const remainingPromises: Promise<FileListPage>[] = []
+      for (let p = 1; p < maxPagesToFetch; p++) {
+        remainingPromises.push(listFiles(identity, bucketId, p, pageSize))
+      }
+      const remainingPages = await Promise.all(remainingPromises)
+      for (const page of remainingPages) {
+        if (page?.items) {
+          items.push(...page.items)
+        }
+      }
+      return items
+    },
+    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 4_000 }
+  )
+
+  return {
+    allFiles: data ?? [],
+    isLoading: isLoading && data === undefined,
+    error,
+    refresh: mutate,
+  }
+}
+
 export function useBucketSearch(
   bucketId: string | null,
   searchQuery: string,
@@ -117,7 +160,7 @@ export function useBucketSearch(
   const { data, error, isLoading, mutate } = useSWR(
     bucketId && trimmed ? bucketSearchKey(identity, bucketId, trimmed, page) : null,
     () => searchFiles(identity!, bucketId!, trimmed, page, FILES_PAGE_SIZE),
-    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 10_000 }
+    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 2_000 }
   )
 
   const total = data ? Number(data.total) : 0
@@ -137,12 +180,20 @@ export function useBucketSearch(
   }
 }
 
-export function useBucketPrice(capacityGB: number | null) {
+export function useBucketPrice(
+  capacityGB: number | null,
+  period: BucketBillingPeriod = "monthly"
+) {
   const { identity } = useAuth()
 
   const { data, isLoading } = useSWR(
-    capacityGB !== null ? bucketPriceKey(capacityGB) : null,
-    () => getBucketPrice(identity, capacityGB!),
+    capacityGB !== null ? ["bucket-price", String(capacityGB), period] as const : null,
+    async () => {
+      if (period === "yearly") {
+        return getBucketYearlyPrice(identity, capacityGB!)
+      }
+      return getBucketPrice(identity, capacityGB!)
+    },
     { ...BUCKET_QUERY, dedupingInterval: 60_000 }
   )
 
@@ -150,7 +201,9 @@ export function useBucketPrice(capacityGB: number | null) {
     data && "ok" in data
       ? data.ok
       : capacityGB !== null
-        ? calculatePriceE8s(capacityGB)
+        ? period === "yearly"
+          ? calculateYearlyPriceE8s(capacityGB)
+          : calculatePriceE8s(capacityGB)
         : null
   const priceError = data && "err" in data ? data.err : null
   const fromCanister = Boolean(data && "ok" in data)
@@ -163,14 +216,20 @@ export function useBucketPrice(capacityGB: number | null) {
   }
 }
 
-export function useBucketPricingTiers() {
+export function useBucketPricingTiers(period: BucketBillingPeriod = "monthly") {
   const { identity } = useAuth()
 
   const { data, error, isLoading } = useSWRImmutable(
-    bucketPricingTableKey(),
+    ["bucket-pricing-table", period] as const,
     async (): Promise<BucketPricingTier[]> => {
       const rows = await Promise.all(
         CAPACITY_TIERS_GB.map(async (gb) => {
+          if (period === "yearly") {
+            const res = await getBucketYearlyPrice(identity, gb)
+            const priceE8s =
+              "ok" in res ? res.ok : calculateYearlyPriceE8s(gb)
+            return buildYearlyPricingTier(gb, priceE8s)
+          }
           const res = await getBucketPrice(identity, gb)
           const priceE8s =
             "ok" in res ? res.ok : calculatePriceE8s(gb)
@@ -179,22 +238,39 @@ export function useBucketPricingTiers() {
       )
       return rows
     },
-    { ...BUCKET_QUERY, dedupingInterval: 300_000, fallbackData: buildEstimatedPricingTiers() }
+    {
+      ...BUCKET_QUERY,
+      dedupingInterval: 300_000,
+      fallbackData:
+        period === "yearly"
+          ? buildEstimatedYearlyPricingTiers()
+          : buildEstimatedPricingTiers(),
+    }
   )
 
   return {
-    tiers: data ?? buildEstimatedPricingTiers(),
+    tiers:
+      data ??
+      (period === "yearly"
+        ? buildEstimatedYearlyPricingTiers()
+        : buildEstimatedPricingTiers()),
     error,
     isLoading: isLoading && !data,
   }
 }
 
-export function useRenewQuote(bucketId: string | null, enabled: boolean) {
+export function useRenewQuote(
+  bucketId: string | null,
+  enabled: boolean,
+  period: BucketBillingPeriod = "monthly"
+) {
   const { identity } = useAuth()
 
   const { data, isLoading, mutate } = useSWR(
-    enabled && bucketId ? bucketRenewQuoteKey(identity, bucketId) : null,
-    () => getRenewQuote(identity!, bucketId!),
+    enabled && bucketId
+      ? (["bucket-renew-quote", bucketId, period, identity?.getPrincipal().toText()] as const)
+      : null,
+    () => getRenewQuote(identity!, bucketId!, period),
     { ...BUCKET_QUERY, dedupingInterval: 5_000 }
   )
 

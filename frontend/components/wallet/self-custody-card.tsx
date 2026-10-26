@@ -65,7 +65,7 @@ export function SelfCustodyCard({
   return (
     <div
       className={`space-y-3 rounded-2xl border p-4 ${
-        net > 0n ? "border-amber-500/40 bg-amber-500/5" : "bg-muted/30"
+        net > 0n ? "border-warning/40 bg-warning/5" : "bg-muted/30"
       }`}
     >
       <div className="space-y-1">
@@ -111,8 +111,8 @@ export function SelfCustodyCard({
               onClick={handleSweep}
               disabled={loading || !deposit || checkingSupport}
             >
-              {loading && <Spinner className="size-4" />}
-              {loading ? t("selfCustodyMoving") : t("selfCustodyMove")}
+              {loading && <Spinner data-icon="inline-start" />}
+              <span>{loading ? t("selfCustodyMoving") : t("selfCustodyMove")}</span>
             </Button>
           )}
         </>

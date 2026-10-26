@@ -35,7 +35,7 @@ export default function RootLayout() {
 
   if (!ready) {
     return (
-      <View className="flex-1 items-center justify-center bg-background">
+      <View className="dark flex-1 items-center justify-center bg-background">
         <Spinner />
       </View>
     )

@@ -2,34 +2,44 @@ import Link from "next/link"
 
 const HUB_CARDS = [
   {
-    href: "/bucket/docs/getting-started/overview",
-    title: "What you get",
-    description: "Encrypted buckets, CDN delivery, and monthly ICP billing from your ICPay balance.",
+    href: "/bucket/docs/overview/introduction",
+    title: "Introduction",
+    description: "Decentralized on-chain storage, architecture, and comparison with AWS S3 & IPFS.",
   },
   {
-    href: "/bucket/docs/getting-started/quickstart",
-    title: "Quickstart",
-    description: "Install icpay-bucket and upload your first file in under two minutes.",
+    href: "/bucket/docs/overview/quick-start",
+    title: "Quick Start",
+    description: "Install icpay-bucket and upload your first decentralized file in under 5 minutes.",
   },
   {
-    href: "/bucket/docs/sdk/typescript",
-    title: "TypeScript SDK",
-    description: "Install, client setup, and upload for icpay-bucket v1.2+.",
+    href: "/bucket/docs/overview/installation",
+    title: "Installation & CLI",
+    description: "Ecosystem package managers (npm, pip, cargo, go) and developer CLI installer.",
   },
   {
-    href: "/bucket/docs/sdk/python",
-    title: "Python SDK",
-    description: "pip install icpay-bucket and connect with your bucket API key.",
+    href: "/bucket/docs/guides/configuration",
+    title: "Configuration",
+    description: "Client options, environment variables, timeout parameters, and Edge CDN routing.",
   },
   {
-    href: "/bucket/docs/cdn/urls",
-    title: "Public CDN URLs",
-    description: "Raw IC gateway links and cloud.icpay.app CDN toggle.",
+    href: "/bucket/docs/guides/basic-usage",
+    title: "Basic Usage",
+    description: "File uploads, chunking, folder listings, pagination, and deletion.",
   },
   {
-    href: "/bucket/docs/api/methods",
-    title: "API reference",
-    description: "Full canister method list with TypeScript, Python, and curl examples.",
+    href: "/bucket/docs/api/endpoints",
+    title: "API Endpoints",
+    description: "Comprehensive REST endpoints and Canister RPC actor methods with interactive examples.",
+  },
+  {
+    href: "/bucket/docs/errors/error-handling",
+    title: "Error Handling",
+    description: "Status codes, retry mechanisms, exponential backoff, and network error resolution.",
+  },
+  {
+    href: "/bucket/docs/faq",
+    title: "Frequently Asked Questions",
+    description: "Pricing, cycles billing, file durability, security, and custom domains.",
   },
 ] as const
 

@@ -3,6 +3,7 @@ import Nat "mo:core/Nat";
 import Text "mo:core/Text";
 import Result "mo:core/Result";
 import Debug "mo:core/Debug";
+import Types "../types";
 
 module {
   private let CYCLES_PER_GB_MONTH : Nat = 333_860_000_000;
@@ -30,6 +31,18 @@ module {
     let cyclesWithMargin = cyclesNeeded * (100 + MARGIN_PERCENT) / 100;
     let priceE8s = cyclesWithMargin * 100_000_000 / CYCLES_PER_ICP;
     roundToHalfICP(priceE8s)
+  };
+
+  // 10 months of price = 2 months free (~17% discount) for an annual subscription
+  public func calculateYearlyPrice(capacityBytes: Nat) : Nat {
+    calculatePrice(capacityBytes) * 10
+  };
+
+  public func calculatePriceForPeriod(capacityBytes: Nat, period: Types.BucketBillingPeriod) : Nat {
+    switch (period) {
+      case (#Monthly) calculatePrice(capacityBytes);
+      case (#Yearly) calculateYearlyPrice(capacityBytes);
+    }
   };
 
   private func roundToHalfICP(e8s: Nat) : Nat {

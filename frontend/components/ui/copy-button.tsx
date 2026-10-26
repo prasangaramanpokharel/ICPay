@@ -1,61 +1,128 @@
 "use client"
 
-import { useState } from "react"
+import * as React from "react"
+import { motion, useReducedMotion } from "motion/react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { Copy01Icon } from "@hugeicons/core-free-icons"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { copyText } from "@/lib/wallet/utils"
 import { cn } from "@/lib/ui/utils"
+
+export interface CopyIconIndicatorProps {
+  copied: boolean
+  className?: string
+  iconClassName?: string
+}
+
+/**
+ * Animated copy icon indicator that transitions smoothly from Copy01Icon
+ * to our signature green circular checkmark badge with spring and pathLength drawing.
+ */
+export function CopyIconIndicator({
+  copied,
+  className,
+  iconClassName = "size-3",
+}: CopyIconIndicatorProps) {
+  const shouldReduceMotion = useReducedMotion()
+
+  return (
+    <span className={cn("relative flex items-center justify-center", iconClassName, className)}>
+      <motion.span
+        initial={false}
+        animate={
+          shouldReduceMotion
+            ? { opacity: copied ? 0 : 1 }
+            : {
+                scale: copied ? 0 : 1,
+                opacity: copied ? 0 : 1,
+              }
+        }
+        transition={{ duration: 0.15 }}
+        className="absolute inset-0 flex items-center justify-center"
+      >
+        <HugeiconsIcon icon={Copy01Icon} className={iconClassName} strokeWidth={2} />
+      </motion.span>
+      <motion.span
+        initial={false}
+        animate={
+          shouldReduceMotion
+            ? { opacity: copied ? 1 : 0 }
+            : {
+                scale: copied ? 1 : 0,
+                opacity: copied ? 1 : 0,
+              }
+        }
+        transition={{ type: "spring", stiffness: 380, damping: 20 }}
+        className="absolute inset-0 flex items-center justify-center rounded-full bg-success text-background"
+      >
+        <svg
+          className="size-[55%]"
+          viewBox="0 0 16 16"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={3}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <motion.path
+            d="M3.5 8.5L6.5 11.5L12.5 5"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: copied ? 1 : 0 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+          />
+        </svg>
+      </motion.span>
+    </span>
+  )
+}
+
+export interface CopyButtonProps extends React.ComponentProps<typeof Button> {
+  value?: string
+  text?: string
+  successMessage?: string
+  iconClassName?: string
+  onCopySuccess?: () => void
+}
 
 export function CopyButton({
   value,
-  label = "Copy",
-  size = "icon-sm",
-  variant = "ghost",
+  text,
+  successMessage = "Successfully copied",
+  iconClassName = "size-3",
+  onCopySuccess,
   className,
-}: {
-  value: string
-  label?: string
-  size?: "icon-sm" | "icon" | "sm"
-  variant?: "ghost" | "outline"
-  className?: string
-}) {
-  const [copied, setCopied] = useState(false)
+  onClick,
+  ...props
+}: CopyButtonProps) {
+  const [copied, setCopied] = React.useState(false)
+  const targetText = value ?? text ?? ""
 
-  const handleCopy = async () => {
+  const handleCopy: React.ComponentProps<typeof Button>["onClick"] = async (e) => {
+    onClick?.(e)
+    if (e.defaultPrevented || !targetText) return
+
     try {
-      await navigator.clipboard.writeText(value)
+      await copyText(targetText)
       setCopied(true)
+      toast.success(successMessage)
+      onCopySuccess?.()
       setTimeout(() => setCopied(false), 2000)
-    } catch (err) {
-      console.error("Failed to copy:", err)
+    } catch {
+      toast.error("Failed to copy")
     }
   }
 
   return (
-    <Tooltip open={copied ? true : undefined}>
-      <TooltipTrigger>
-        <Button
-          type="button"
-          variant={variant}
-          size={size}
-          onClick={handleCopy}
-          className={cn("transition-colors", className)}
-          aria-label={label}
-        >
-          <HugeiconsIcon
-            icon={copied ? Tick02Icon : Copy01Icon}
-            className={cn(
-              "size-4 transition-all",
-              copied && "text-success"
-            )}
-            strokeWidth={2}
-          />
-        </Button>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p className="text-xs">{copied ? "Copied!" : label}</p>
-      </TooltipContent>
-    </Tooltip>
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon-xs"
+      onClick={handleCopy}
+      className={cn("shrink-0 cursor-pointer", className)}
+      {...props}
+    >
+      <CopyIconIndicator copied={copied} iconClassName={iconClassName} />
+    </Button>
   )
 }

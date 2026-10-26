@@ -18,12 +18,16 @@ module {
 
   public let resolveBucketId = Lifecycle.resolveBucketId;
   public let getPrice = Lifecycle.getPrice;
+  public let getYearlyPrice = Lifecycle.getYearlyPrice;
   public let createBucket = Lifecycle.createBucket;
+  public let createBucketWithPeriod = Lifecycle.createBucketWithPeriod;
   public let getBucket = Lifecycle.getBucket;
   public let getBucketStats = Lifecycle.getBucketStats;
   public let getRenewQuote = Lifecycle.getRenewQuote;
+  public let getRenewQuoteWithPeriod = Lifecycle.getRenewQuoteWithPeriod;
   public let listBuckets = Lifecycle.listBuckets;
   public let renewBucket = Lifecycle.renewBucket;
+  public let renewBucketWithPeriod = Lifecycle.renewBucketWithPeriod;
   public let updateBucket = Lifecycle.updateBucket;
   public let deleteBucket = Lifecycle.deleteBucket;
 

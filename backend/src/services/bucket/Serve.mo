@@ -61,6 +61,45 @@ module {
     }
   };
 
+  func checkPublicServeAllowed(
+    service: Context.BucketService,
+    bucket: Types.Bucket,
+    caller: ?Principal,
+  ) : ?Text {
+    Auth.refreshBucketStatus(service.store, service.names, bucket);
+    let now = Time.now();
+    if (Auth.isTombstoned(bucket, now)) {
+      return ?("Bucket tombstoned — files purged");
+    };
+    if (Auth.isFrozen(bucket, now)) {
+      switch (caller) {
+        case (?who) {
+          if (who != bucket.owner) {
+            return ?("Bucket frozen — lease expired");
+          };
+        };
+        case (null) {
+          return ?("Bucket frozen — lease expired");
+        };
+      };
+    };
+    switch (caller) {
+      case (null) {
+        switch (bucket.visibility) {
+          case (#Private) ?("Bucket is private");
+          case (#Public) null;
+        };
+      };
+      case (?who) {
+        if (not Auth.canRead(bucket, who)) {
+          ?("Access denied")
+        } else {
+          null
+        };
+      };
+    }
+  };
+
   func loadPublicFile(
     service: Context.BucketService,
     bucketId: Types.BucketId,
@@ -77,18 +116,9 @@ module {
       case (?b) b;
     };
 
-    switch (caller) {
-      case (null) {
-        switch (bucket.visibility) {
-          case (#Private) { return #err("Bucket is private") };
-          case (#Public) {};
-        };
-      };
-      case (?who) {
-        if (not Auth.canRead(bucket, who)) {
-          return #err("Access denied");
-        };
-      };
+    switch (checkPublicServeAllowed(service, bucket, caller)) {
+      case (?err) { return #err(err) };
+      case (null) {};
     };
 
     let file = switch (BucketRepo.getFileByPath(service.store, bucketId, path)) {
@@ -126,18 +156,9 @@ module {
       case (?b) b;
     };
 
-    switch (caller) {
-      case (null) {
-        switch (bucket.visibility) {
-          case (#Private) { return #err("Bucket is private") };
-          case (#Public) {};
-        };
-      };
-      case (?who) {
-        if (not Auth.canRead(bucket, who)) {
-          return #err("Access denied");
-        };
-      };
+    switch (checkPublicServeAllowed(service, bucket, caller)) {
+      case (?err) { return #err(err) };
+      case (null) {};
     };
 
     let file = switch (BucketRepo.getFileByPath(service.store, bucketId, path)) {
@@ -231,9 +252,9 @@ module {
       case (?b) b;
     };
 
-    switch (bucket.visibility) {
-      case (#Private) { return #err("Bucket is private") };
-      case (#Public) {};
+    switch (checkPublicServeAllowed(service, bucket, null)) {
+      case (?err) { return #err(err) };
+      case (null) {};
     };
 
     let file = switch (BucketRepo.getFileByPath(service.store, bucketId, path)) {

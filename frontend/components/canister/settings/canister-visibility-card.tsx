@@ -8,6 +8,7 @@ import { EyeIcon, FloppyDiskIcon } from "@hugeicons/core-free-icons"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/components/auth/auth-provider"
 import {
   LogVisibility,
@@ -100,8 +101,12 @@ export function CanisterVisibilityCard({
         {isController && (
           <div className="flex justify-end pt-1">
             <Button type="button" size="sm" disabled={saving} onClick={handleSave}>
-              <HugeiconsIcon icon={FloppyDiskIcon} data-icon="inline-start" />
-              {saving ? "Saving…" : "Save Visibility"}
+              {saving ? (
+                <Spinner data-icon="inline-start" />
+              ) : (
+                <HugeiconsIcon icon={FloppyDiskIcon} data-icon="inline-start" />
+              )}
+              <span>{saving ? "Saving…" : "Save Visibility"}</span>
             </Button>
           </div>
         )}

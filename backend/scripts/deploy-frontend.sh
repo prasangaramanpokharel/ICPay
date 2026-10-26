@@ -26,16 +26,25 @@ dfx deploy --network ic icp_wallet_frontend
 echo
 echo "Deployed. Verifying the canister actually serves the new build:"
 base="https://63dke-waaaa-aaaan-q6mvq-cai.icp0.io"
-for path in /terms.html /privacy.html /transparency.html /.well-known/ii-alternative-origins; do
+for path in /terms.html /privacy.html /transparency.html /.well-known/ii-alternative-origins /.well-known/ii-app-metadata; do
   printf '  %-40s %s\n' "$path" "$(curl -s -o /dev/null -w '%{http_code}' "$base$path")"
 done
 
 # A stale build still answers 200 on every path because the SPA fallback serves
 # index.html, so the status code proves nothing on its own -- only the copy does.
 echo
-if curl -s "$base/terms.html" | grep -q "Terms of Service"; then
-  echo "  OK: /terms.html contains the legal copy."
-else
+verified=0
+for i in {1..15}; do
+  if curl -s -H 'Cache-Control: no-cache' "$base/terms.html?_t=$(date +%s)" | grep -q "Terms of Service"; then
+    echo "  OK: /terms.html contains the legal copy."
+    verified=1
+    break
+  fi
+  echo "  Waiting for edge boundary nodes to propagate... ($i/15)"
+  sleep 2
+done
+
+if [ "$verified" -ne 1 ]; then
   echo "  STALE: /terms.html is the SPA fallback, not the terms page." >&2
   exit 1
 fi

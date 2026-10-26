@@ -40,7 +40,7 @@ export function PresaleStatsPanel({
       <View className="gap-1">
         <Text className="text-right text-xs font-medium tabular-nums">{percentLabel}%</Text>
         <View className="h-1.5 overflow-hidden rounded-full bg-muted/70">
-          <View className="h-full rounded-full bg-amber-400" style={{ width: `${percent}%` }} />
+          <View className="h-full rounded-full bg-primary" style={{ width: `${percent}%` }} />
         </View>
       </View>
       <View className="flex-row flex-wrap items-center justify-center gap-x-3 gap-y-1">
@@ -56,7 +56,7 @@ export function PresaleStatsPanel({
         </Text>
       </View>
       {!sale.active ? (
-        <Text className="text-center text-xs font-medium text-amber-500">{t('soldOut')}</Text>
+        <Text className="text-center text-xs font-medium text-muted-foreground">{t('soldOut')}</Text>
       ) : null}
     </View>
   )

@@ -12,15 +12,142 @@
     "ignore": false
   },
   {
+    "match": ".well-known/ii-app-metadata",
+    "headers": {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "ignore": false
+  },
+  {
+    "match": ".well-known/ii-auth-callbacks",
+    "headers": {
+      "Content-Type": "application/json",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "ignore": false
+  },
+  {
+    "match": ".well-known/ic-domains",
+    "headers": {
+      "Content-Type": "text/plain",
+      "Access-Control-Allow-Origin": "*"
+    },
+    "ignore": false
+  },
+  {
+    "match": "images/**/*",
+    "headers": {
+      "Cache-Control": "public, max-age=604800, stale-while-revalidate=86400",
+      "Access-Control-Allow-Origin": "*"
+    }
+  },
+  {
+    "match": "audio/**/*",
+    "headers": {
+      "Cache-Control": "public, max-age=604800, stale-while-revalidate=86400"
+    }
+  },
+  {
+    "match": "bu/**/*",
+    "headers": {
+      "Cache-Control": "public, max-age=604800, stale-while-revalidate=86400"
+    }
+  },
+  {
+    "match": "flc/**/*",
+    "headers": {
+      "Cache-Control": "public, max-age=604800, stale-while-revalidate=86400"
+    }
+  },
+  {
+    "match": "**/*.png",
+    "headers": {
+      "Cache-Control": "public, max-age=604800, stale-while-revalidate=86400",
+      "Access-Control-Allow-Origin": "*"
+    }
+  },
+  {
+    "match": "**/*.jpg",
+    "headers": {
+      "Cache-Control": "public, max-age=604800, stale-while-revalidate=86400",
+      "Access-Control-Allow-Origin": "*"
+    }
+  },
+  {
+    "match": "**/*.jpeg",
+    "headers": {
+      "Cache-Control": "public, max-age=604800, stale-while-revalidate=86400",
+      "Access-Control-Allow-Origin": "*"
+    }
+  },
+  {
+    "match": "**/*.webp",
+    "headers": {
+      "Cache-Control": "public, max-age=604800, stale-while-revalidate=86400",
+      "Access-Control-Allow-Origin": "*"
+    }
+  },
+  {
+    "match": "**/*.svg",
+    "headers": {
+      "Cache-Control": "public, max-age=604800, stale-while-revalidate=86400",
+      "Access-Control-Allow-Origin": "*"
+    }
+  },
+  {
+    "match": "**/*.ico",
+    "headers": {
+      "Cache-Control": "public, max-age=604800, stale-while-revalidate=86400",
+      "Access-Control-Allow-Origin": "*"
+    }
+  },
+  {
+    "match": "**/*.woff2",
+    "headers": {
+      "Cache-Control": "public, max-age=31536000, immutable",
+      "Access-Control-Allow-Origin": "*"
+    }
+  },
+  {
     "match": "_next/**/*",
     "headers": {
       "Cache-Control": "public, max-age=31536000, immutable"
     }
   },
   {
+    "match": "**/*.html",
+    "headers": {
+      "Cache-Control": "public, max-age=0, must-revalidate"
+    }
+  },
+  {
+    // Next.js App Router static export emits RSC flight payloads as .txt files
+    // that the client router parses. They require text/x-component to avoid
+    // flight decoding errors during client-side navigation.
+    "match": "**/*.txt",
+    "headers": {
+      "Content-Type": "text/x-component",
+      "Cache-Control": "public, max-age=0, must-revalidate"
+    }
+  },
+  {
+    "match": "robots.txt",
+    "headers": {
+      "Content-Type": "text/plain"
+    }
+  },
+  {
+    "match": "llm*.txt",
+    "headers": {
+      "Content-Type": "text/plain"
+    }
+  },
+  {
     // Deep links with runtime ids 404 without a fallback; onchain-shell.js
     // then swaps in the prerendered shell HTML before Next hydrates.
     "match": "**/*",
-    "enable_aliasing": true
+    "enable_aliasing": true,
+    "disable_security_policy_warning": true
   }
 ]

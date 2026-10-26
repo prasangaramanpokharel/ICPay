@@ -11,10 +11,12 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarRail,
 } from "@/components/ui/sidebar"
 import { DashboardNavFooter, DashboardNavMain } from "@/components/layout/dashboard/nav-main"
-import { LanguageSwitch } from "@/components/i18n/language-switch"
-import { APP_LOGO_ALT, SIDEBAR_HEADER_LOGO } from "@/lib/ui/brand-images"
+import { SidebarUserFooter } from "@/components/layout/dashboard/sidebar-user-footer"
+import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
+import { SIDEBAR_FOOTER } from "@/lib/navigation/app-sidebar-nav"
 
 export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
   return (
@@ -27,16 +29,18 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:p-1.5!"
               render={<Link href="/home" />}
             >
-              <div className="flex h-8 items-center px-1">
+              <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg">
                 <Image
-                  src={SIDEBAR_HEADER_LOGO}
+                  src={APP_LOGO}
                   alt={APP_LOGO_ALT}
-                  width={140}
-                  height={30}
+                  width={32}
+                  height={32}
                   priority
-                  className="h-7 w-auto object-contain"
+                  loading="eager"
+                  className="size-8 object-cover"
                 />
-              </div>
+              </span>
+              <span className="text-sm font-semibold">ICPay</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -44,11 +48,15 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
       <SidebarContent className="gap-0 pt-1">
         <DashboardNavMain />
       </SidebarContent>
-      <SidebarFooter className="gap-1 border-t border-sidebar-border/60 p-2">
-        <DashboardNavFooter />
-        <LanguageSwitch variant="row" />
-        <p className="px-2.5 pt-1 text-[11px] text-muted-foreground">ICPay</p>
+      <SidebarFooter className="mt-auto border-t border-sidebar-border/40 p-2.5 pb-3">
+        {SIDEBAR_FOOTER.length > 0 ? (
+          <div className="mb-2 border-b border-sidebar-border/60 pb-2">
+            <DashboardNavFooter />
+          </div>
+        ) : null}
+        <SidebarUserFooter />
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   )
 }

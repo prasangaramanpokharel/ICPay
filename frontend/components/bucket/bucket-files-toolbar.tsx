@@ -2,10 +2,14 @@
 
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Refresh01Icon, Search01Icon } from "@hugeicons/core-free-icons"
+import {
+  GridViewIcon,
+  ListViewIcon,
+  Refresh01Icon,
+  Search01Icon,
+} from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Kbd, KbdGroup } from "@/components/ui/kbd"
 import {
   Select,
   SelectContent,
@@ -13,26 +17,43 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import type { FileCategory } from "@/components/bucket/bucket-file-icon"
 
 export type FileSortKey = "name" | "size" | "type"
 
 const SORT_ITEMS: FileSortKey[] = ["name", "size", "type"]
 
+const CATEGORY_ITEMS: { value: FileCategory; label: string }[] = [
+  { value: "all", label: "All types" },
+  { value: "images", label: "Images" },
+  { value: "documents", label: "Documents" },
+  { value: "media", label: "Media" },
+  { value: "archives", label: "Archives" },
+  { value: "code", label: "Code" },
+]
+
 export function BucketFilesToolbar({
   query,
   sort,
+  category = "all",
+  viewMode = "list",
   refreshing,
-  canWrite,
   onQueryChange,
   onSortChange,
+  onCategoryChange,
+  onViewModeChange,
   onRefresh,
 }: {
   query: string
   sort: FileSortKey
+  category?: FileCategory
+  viewMode?: "list" | "grid"
   refreshing: boolean
-  canWrite: boolean
+  canWrite?: boolean
   onQueryChange: (value: string) => void
   onSortChange: (value: FileSortKey) => void
+  onCategoryChange?: (value: FileCategory) => void
+  onViewModeChange?: (value: "list" | "grid") => void
   onRefresh: () => void
 }) {
   const t = useTranslations("bucket")
@@ -57,7 +78,26 @@ export function BucketFilesToolbar({
           spellCheck={false}
         />
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
+        {onCategoryChange ? (
+          <Select
+            value={category}
+            onValueChange={(value) => onCategoryChange(value as FileCategory)}
+            items={CATEGORY_ITEMS}
+          >
+            <SelectTrigger size="sm" className="w-[7.5rem]" aria-label="Filter by type">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {CATEGORY_ITEMS.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : null}
+
         <Select
           value={sort}
           onValueChange={(value) => {
@@ -65,7 +105,7 @@ export function BucketFilesToolbar({
           }}
           items={items}
         >
-          <SelectTrigger size="sm" className="w-[8.5rem]" aria-label={t("sortBy")}>
+          <SelectTrigger size="sm" className="w-[8rem]" aria-label={t("sortBy")}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -76,6 +116,32 @@ export function BucketFilesToolbar({
             ))}
           </SelectContent>
         </Select>
+
+        {onViewModeChange ? (
+          <div className="inline-flex items-center rounded-lg border border-border bg-muted/40 p-0.5">
+            <Button
+              type="button"
+              variant={viewMode === "list" ? "secondary" : "ghost"}
+              size="icon-xs"
+              className="size-7"
+              aria-label="List view"
+              onClick={() => onViewModeChange("list")}
+            >
+              <HugeiconsIcon icon={ListViewIcon} className="size-3.5" />
+            </Button>
+            <Button
+              type="button"
+              variant={viewMode === "grid" ? "secondary" : "ghost"}
+              size="icon-xs"
+              className="size-7"
+              aria-label="Grid view"
+              onClick={() => onViewModeChange("grid")}
+            >
+              <HugeiconsIcon icon={GridViewIcon} className="size-3.5" />
+            </Button>
+          </div>
+        ) : null}
+
         <Button
           type="button"
           variant="outline"
@@ -90,26 +156,8 @@ export function BucketFilesToolbar({
             strokeWidth={1.75}
           />
         </Button>
-        {canWrite ? (
-          <div className="hidden items-center gap-2 lg:flex">
-            <KbdGroup>
-              <Kbd>Ctrl</Kbd>
-              <span className="text-xs text-muted-foreground">+</span>
-              <Kbd>A</Kbd>
-            </KbdGroup>
-            <KbdGroup>
-              <Kbd>Ctrl</Kbd>
-              <span className="text-xs text-muted-foreground">+</span>
-              <Kbd>D</Kbd>
-            </KbdGroup>
-            <KbdGroup>
-              <Kbd>Ctrl</Kbd>
-              <span className="text-xs text-muted-foreground">+</span>
-              <Kbd>F</Kbd>
-            </KbdGroup>
-          </div>
-        ) : null}
       </div>
     </div>
   )
 }
+

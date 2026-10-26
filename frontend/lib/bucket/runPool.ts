@@ -1,4 +1,3 @@
-/** Run async work over items with a fixed concurrency limit (IC chunk + file uploads). */
 export async function runPool<T>(
   items: readonly T[],
   limit: number,

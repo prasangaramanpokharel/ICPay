@@ -14,7 +14,6 @@ import { Badge } from "@/components/ui/badge"
 import { useOwnProfile } from "@/hooks/wallet/useWalletData"
 import { isPremiumHandle } from "@/lib/verified/premiumTick"
 import { PremiumLockedCard } from "@/components/shared/premium-gate"
-import { CanisterGuideCard } from "./canister-guide-card"
 import { CanisterControllersCard } from "./canister-controllers-card"
 import { CanisterResourcesCard } from "./canister-resources-card"
 import { CanisterVisibilityCard } from "./canister-visibility-card"
@@ -39,9 +38,6 @@ export function CanisterSettingsView({
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Educational Guide Card */}
-      <CanisterGuideCard />
-
       {/* Settings Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col gap-4">
         <TabsList variant="line" className="w-full justify-start border-b border-border/40 gap-4 sm:gap-6">

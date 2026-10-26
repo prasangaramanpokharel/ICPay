@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { View } from 'react-native'
+import { Pressable, View } from 'react-native'
 import { QrCodeScanIcon } from '@hugeicons/core-free-icons'
 import { useTranslations } from '@/components/i18n/locale-provider'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -21,6 +21,10 @@ import { formatAmount, ICP_FEE, isHexAccountId, parseIcp } from '@/lib/wallet-ut
 import { ConfirmPin } from '@/features/security/confirm-pin'
 import { usePaymentPin } from '@/features/security/use-payment-pin'
 import { Principal } from '@icp-sdk/core/principal'
+import { cn } from '@/lib/utils'
+
+const PERCENTAGES = [25, 50, 75, 100] as const
+
 
 const E8S = 100_000_000
 
@@ -135,13 +139,35 @@ export function WithdrawScreen() {
           </Button>
         </View>
       </View>
-      <Input
-        value={amount}
-        onChangeText={setAmount}
-        keyboardType="decimal-pad"
-        placeholder={tc('amount')}
-        size="amount"
-      />
+      <View className="gap-2">
+        <Input
+          value={amount}
+          onChangeText={setAmount}
+          keyboardType="decimal-pad"
+          placeholder={tc('amount')}
+          size="amount"
+        />
+        <View className="flex-row gap-1.5 pt-1">
+          {PERCENTAGES.map((pct) => (
+            <Pressable
+              key={pct}
+              accessibilityRole="button"
+              onPress={() => {
+                const sendable = balance != null && balance > ICP_FEE ? balance - ICP_FEE : 0n
+                const val = (sendable * BigInt(pct)) / 100n
+                const whole = val / 100_000_000n
+                const fraction = (val % 100_000_000n).toString().padStart(8, '0').replace(/0+$/, '')
+                setAmount(fraction ? `${whole}.${fraction}` : `${whole}`)
+              }}
+              className="flex-1 items-center justify-center rounded-xl border border-border/50 bg-muted/30 py-2 active:bg-muted"
+            >
+              <Text className="text-xs font-semibold text-muted-foreground">
+                {pct === 100 ? 'Max' : `${pct}%`}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+      </View>
       <FiatAmount usd={usd} />
       {balance != null ? (
         <Text className="text-xs text-muted-foreground">
@@ -160,9 +186,16 @@ export function WithdrawScreen() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
-      <Button size="lg" disabled={!validDest || !parsed} onPress={() => setConfirmOpen(true)}>
+      <Button
+        size="lg"
+        disabled={!validDest || !parsed}
+        className={cn('h-12 w-full rounded-2xl', (!validDest || !parsed) && 'bg-muted/40')}
+        textClassName={cn((!validDest || !parsed) && 'text-muted-foreground font-semibold')}
+        onPress={() => setConfirmOpen(true)}
+      >
         {t('submit')}
       </Button>
+
       <Sheet
         open={confirmOpen}
         onOpenChange={setConfirmOpen}

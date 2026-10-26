@@ -12,7 +12,43 @@ import ru from '@/language/ru/common.json'
 import { DEFAULT_LOCALE, STORAGE_KEY, isLocale, type Locale } from '@/language/config'
 import { getItem, setItem, subscribeKv } from '@/services/storage/kv'
 
-const MESSAGES: Record<Locale, typeof en> = { en, hi, zh, ja, ko, es, fr, de, pt, ru }
+const mergeLocale = (override: object): typeof en => ({
+  ...en,
+  ...override,
+  settings: {
+    ...en.settings,
+    ...(override as { settings?: object }).settings,
+    sections: {
+      ...en.settings.sections,
+      ...((override as { settings?: { sections?: object } }).settings?.sections ?? {}),
+    },
+    items: {
+      ...en.settings.items,
+      ...((override as { settings?: { items?: object } }).settings?.items ?? {}),
+    },
+  },
+  myCanisters: {
+    ...en.myCanisters,
+    ...((override as { myCanisters?: object }).myCanisters ?? {}),
+  },
+  transactions: {
+    ...en.transactions,
+    ...((override as { transactions?: object }).transactions ?? {}),
+  },
+})
+
+const MESSAGES: Record<Locale, typeof en> = {
+  en,
+  hi: mergeLocale(hi),
+  zh: mergeLocale(zh),
+  ja: mergeLocale(ja),
+  ko: mergeLocale(ko),
+  es: mergeLocale(es),
+  fr: mergeLocale(fr),
+  de: mergeLocale(de),
+  pt: mergeLocale(pt),
+  ru: mergeLocale(ru),
+}
 
 type LocaleContextType = {
   locale: Locale

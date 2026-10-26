@@ -8,7 +8,6 @@ import {
 
 export type UploadValidationError = "size" | "video" | "blocked"
 
-/** UX pre-check before prepare/upload — not a security boundary. */
 export function uploadValidationError(file: File): UploadValidationError | null {
   const normalized = normalizeUploadFile(file)
 

@@ -1,0 +1,190 @@
+For ICAcademy, I recommend building a professional course academy where each course contains modules, each module contains lessons, and every lesson can be configured as free or paid. The experience should feel like a modern learning platform, with a clear student journey and a well-organized instructor dashboard.
+
+# ICAcademy — Course & Module System
+
+## 1. Professional course structure
+
+## Course
+
+Course title, cover, description, instructor, pricing and learning outcomes.
+
+Module 01 — Introduction
+
+Module title, summary, sequence and completion requirements.
+
+Lesson 1 — Welcome
+
+Free preview · Video and notes
+
+Free
+
+Lesson 2 — Core concepts
+
+Video, resources and exercises
+
+Paid
+
+Lesson 3 — Knowledge check
+
+Quiz and assessment
+
+Paid
+
+Module 02 — Practical implementation
+
+More lessons, projects, downloads and assessments.
+
+The essential rule: a course contains modules, modules contain lessons, and each lesson has its own content, access rules and completion status.
+
+## 2. Course access and pricing
+
+I would build three distinct access levels so ICAcademy can support free education and paid premium content.
+
+Free course
+
+Students enroll without payment and access all published lessons, quizzes and resources included in the course.
+
+Free enrollment
+
+Paid course
+
+Students see the course outline and purchase the course to unlock its protected modules and lessons.
+
+Purchase required
+
+Free preview + premium lessons
+
+Allow selected lessons to be viewed for free, while the remaining content requires enrollment or payment.
+
+Recommended model
+
+This mixed-access approach is supported by established learning platforms, which offer preview lessons alongside protected premium content.&#x20;
+
+[image](https://www.google.com/s2/favicons?domain=https://help.kajabi.com\&sz=32)
+
+Kajabi Help Center
+
++2
+
+
+
+## 3. Admin dashboard — course creation flow
+
+The course creator should have a step-by-step workflow instead of a single complicated form.
+
+### 01
+
+Course details
+
+Title, slug, description, thumbnail, category, instructor and learning objectives.
+
+### 02
+
+Curriculum builder
+
+Create modules, add lessons, reorder content and preview the complete outline.
+
+### 03
+
+Lesson editor
+
+Add video, rich text, images, code examples, attachments, quizzes and assignments.
+
+### 04
+
+Access & pricing
+
+Choose free or paid, set the price, define preview lessons and configure enrollment.
+
+### 05
+
+Course settings
+
+Configure prerequisites, completion rules, certificates, publishing and optional scheduled releases.
+
+### 06
+
+Preview & publish
+
+Validate required fields, preview the student experience and publish the course.
+
+## 4. What each lesson should contain
+
+Every lesson should have its own editor and settings.
+
+| Field        | Purpose                                                |
+| ------------ | ------------------------------------------------------ |
+| Lesson title | Clear name shown in the curriculum                     |
+| Lesson type  | Video, article, code, quiz, assignment or resource     |
+| Content      | Main lesson material                                   |
+| Duration     | Estimated learning time                                |
+| Access       | Free preview, enrolled students or premium restriction |
+| Resources    | Downloads, links, attachments and code files           |
+| Completion   | Manual completion, quiz pass or other defined rule     |
+| Visibility   | Draft, published or scheduled                          |
+| Order        | Position within its module                             |
+
+## 5. Student learning flow
+
+Course catalog
+
+Browse courses and view prices
+
+Course detail page
+
+Description, instructor, curriculum and access options
+
+Free access
+
+Enroll or start the free preview
+
+Paid access
+
+Checkout and verify payment
+
+Course player
+
+Modules, lessons, progress tracking and next lesson
+
+Course completion
+
+Completion status, final assessment and optional certificate
+
+## 6. Important technical requirements
+
+For a professional implementation, I would make these requirements mandatory:
+
+- Server-side access control: hiding a locked lesson in the UI is not enough. The API must reject unauthorized requests for lesson content and protected resources.
+- Reliable payment verification: unlock paid access only after the server verifies a successful payment; support payment retries and duplicate-event protection.
+- Separate enrollment and purchase records: free enrollment and paid enrollment should use the same learning experience without confusing purchase status with progress.
+- Progress tracking: store lesson completion and course progress per student.
+- Flexible permissions: support course-wide pricing as well as individual free-preview lessons.
+- Publishing workflow: drafts should not appear as published courses; changes should be validated before publication.
+- Responsive course player: a persistent curriculum sidebar on desktop and a collapsible lesson list on mobile.
+- Testing: verify free access, paid access, expired or revoked access, direct URL attempts, payment failures and lesson completion.
+
+## 7. Recommended initial release
+
+Start with course creation, modules, lessons, free/paid access, checkout integration, a student dashboard and progress tracking. Add certificates, scheduled lesson releases, discussion areas and advanced analytics once the core flow is reliable.
+
+One important question before I define the implementation for your existing ICAcademy system:
+
+What do you want me to prepare next?
+
+Review my existing project and design the course module to fit it.
+
+Write a complete professional feature specification and development roadmap.
+
+Design the complete admin dashboard and student course-player UI.
+
+Plan the database, API, access control and implementation code.
+
+What technology does ICAcademy use?
+
+Review the existing project first
+
+Next.js / React / TypeScript
+
+Another stack
+
+Continue

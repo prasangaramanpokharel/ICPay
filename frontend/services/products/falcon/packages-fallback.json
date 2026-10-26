@@ -1,0 +1,716 @@
+{
+  "version": 1,
+  "registry": "gitlab.com/prasangapokharel/falconpkg",
+  "packages": {
+    "crud": {
+      "version": "1.0.0",
+      "description": "Generic Map CRUD helpers for mo:core",
+      "path": "packages/crud",
+      "import": "mo:pkg/crud/crud"
+    },
+    "rbac": {
+      "version": "1.0.0",
+      "description": "Role-based access control",
+      "path": "packages/rbac",
+      "import": "mo:pkg/rbac/rbac"
+    },
+    "errors": {
+      "version": "1.0.0",
+      "description": "ApiResult and HTTP-style error codes",
+      "path": "packages/errors",
+      "import": "mo:pkg/errors/result"
+    },
+    "caller": {
+      "version": "1.0.0",
+      "description": "Principal auth helpers",
+      "path": "packages/principal",
+      "import": "mo:pkg/principal/caller"
+    },
+    "validate-text": {
+      "version": "1.0.0",
+      "description": "Text input validation",
+      "path": "packages/validate-text",
+      "import": "mo:pkg/validate/text"
+    },
+    "validate-nat": {
+      "version": "1.0.0",
+      "description": "Nat validation helpers",
+      "path": "packages/validate-nat",
+      "import": "mo:pkg/validate/nat"
+    },
+    "pagination": {
+      "version": "1.0.0",
+      "description": "Page type and helpers",
+      "path": "packages/pagination",
+      "import": "mo:pkg/pagination/pg"
+    },
+    "time": {
+      "version": "1.0.0",
+      "description": "Timestamp helpers",
+      "path": "packages/time",
+      "import": "mo:pkg/time/now"
+    },
+    "uuid": {
+      "version": "1.0.0",
+      "description": "ID generation from Principal",
+      "path": "packages/id",
+      "import": "mo:pkg/id/uuid"
+    },
+    "slug": {
+      "version": "1.0.0",
+      "description": "Text slugify for URLs and keys",
+      "path": "packages/slug",
+      "import": "mo:pkg/slug/slug"
+    },
+    "storage": {
+      "version": "1.0.0",
+      "description": "Generic stable Map store wrappers",
+      "path": "packages/storage",
+      "import": "mo:pkg/storage/storage"
+    },
+    "cache": {
+      "version": "1.0.0",
+      "description": "TTL in-memory cache",
+      "path": "packages/cache",
+      "import": "mo:pkg/cache/cache"
+    },
+    "search": {
+      "version": "1.0.0",
+      "description": "Text search helpers",
+      "path": "packages/search",
+      "import": "mo:pkg/search/search"
+    },
+    "sort": {
+      "version": "1.0.0",
+      "description": "Generic sorting helpers",
+      "path": "packages/sort",
+      "import": "mo:pkg/sort/sort"
+    },
+    "filter": {
+      "version": "1.0.0",
+      "description": "Collection filter builder",
+      "path": "packages/filter",
+      "import": "mo:pkg/filter/filter"
+    },
+    "indexer": {
+      "version": "1.0.0",
+      "description": "Secondary index for maps",
+      "path": "packages/indexer",
+      "import": "mo:pkg/indexer/indexer"
+    },
+    "migration": {
+      "version": "1.0.0",
+      "description": "Upgrade migration helpers",
+      "path": "packages/migration",
+      "import": "mo:pkg/migration/migration"
+    },
+    "session": {
+      "version": "1.0.0",
+      "description": "Session token store",
+      "path": "packages/session",
+      "import": "mo:pkg/session/session"
+    },
+    "rate-limit": {
+      "version": "1.0.0",
+      "description": "Per-principal rate limiting",
+      "path": "packages/rate-limit",
+      "import": "mo:pkg/rate-limit/limit"
+    },
+    "multisig": {
+      "version": "1.0.0",
+      "description": "Multi-approver action pattern",
+      "path": "packages/multisig",
+      "import": "mo:pkg/multisig/multisig"
+    },
+    "whitelist": {
+      "version": "1.0.0",
+      "description": "Allow/deny list management",
+      "path": "packages/whitelist",
+      "import": "mo:pkg/whitelist/whitelist"
+    },
+    "api-key": {
+      "version": "1.0.0",
+      "description": "API key validation",
+      "path": "packages/api-key",
+      "import": "mo:pkg/api-key/apikey"
+    },
+    "retry": {
+      "version": "1.0.0",
+      "description": "Retry with backoff",
+      "path": "packages/retry",
+      "import": "mo:pkg/retry/retry"
+    },
+    "circuit-breaker": {
+      "version": "1.0.0",
+      "description": "Failure isolation pattern",
+      "path": "packages/circuit-breaker",
+      "import": "mo:pkg/circuit-breaker/breaker"
+    },
+    "validate-email": {
+      "version": "1.0.0",
+      "description": "Email format validation",
+      "path": "packages/validate-email",
+      "import": "mo:pkg/validate/email"
+    },
+    "validate-url": {
+      "version": "1.0.0",
+      "description": "URL format validation",
+      "path": "packages/validate-url",
+      "import": "mo:pkg/validate/url"
+    },
+    "validate-json": {
+      "version": "1.0.0",
+      "description": "JSON string validation",
+      "path": "packages/validate-json",
+      "import": "mo:pkg/validate/json"
+    },
+    "validate-principal": {
+      "version": "1.0.0",
+      "description": "Principal format checks",
+      "path": "packages/validate-principal",
+      "import": "mo:pkg/validate/principal"
+    },
+    "sanitize": {
+      "version": "1.0.0",
+      "description": "Input sanitization",
+      "path": "packages/sanitize",
+      "import": "mo:pkg/sanitize/sanitize"
+    },
+    "nanoid": {
+      "version": "1.0.0",
+      "description": "Short unique IDs",
+      "path": "packages/nanoid",
+      "import": "mo:pkg/nanoid/nanoid"
+    },
+    "date": {
+      "version": "1.0.0",
+      "description": "Date formatting helpers",
+      "path": "packages/date",
+      "import": "mo:pkg/date/date"
+    },
+    "cron": {
+      "version": "1.0.0",
+      "description": "Scheduled task pattern",
+      "path": "packages/cron",
+      "import": "mo:pkg/cron/cron"
+    },
+    "icrc1": {
+      "version": "2.0.0",
+      "description": "ICRC-1 transfer types, builders, and LedgerActor type",
+      "path": "packages/icrc1",
+      "import": "mo:pkg/icrc1/icrc1",
+      "tier": "L2"
+    },
+    "icrc2": {
+      "version": "2.0.0",
+      "description": "ICRC-2 approve and transfer_from builders",
+      "path": "packages/icrc2",
+      "import": "mo:pkg/icrc2/icrc2",
+      "tier": "L2"
+    },
+    "ledger": {
+      "version": "2.0.0",
+      "description": "ICP ledger helpers, TokenRef, and account identifiers",
+      "path": "packages/ledger",
+      "import": "mo:pkg/ledger/ledger",
+      "tier": "L2"
+    },
+    "ckbtc": {
+      "version": "2.0.0",
+      "description": "ckBTC token ref, satoshi math, and address validation",
+      "path": "packages/ckbtc",
+      "import": "mo:pkg/ckbtc/ckbtc",
+      "tier": "L2"
+    },
+    "escrow": {
+      "version": "1.0.0",
+      "description": "Hold/release payment pattern",
+      "path": "packages/escrow",
+      "import": "mo:pkg/escrow/escrow"
+    },
+    "wallet": {
+      "version": "2.0.0",
+      "description": "Custodial wallet account derivation and deposit addresses",
+      "path": "packages/wallet",
+      "import": "mo:pkg/wallet/wallet",
+      "tier": "L2"
+    },
+    "subaccount": {
+      "version": "1.0.0",
+      "description": "Deterministic 32-byte ICRC subaccount derivation",
+      "path": "packages/subaccount",
+      "import": "mo:pkg/subaccount/subaccount",
+      "tier": "L2"
+    },
+    "transaction": {
+      "version": "1.0.0",
+      "description": "Transaction record types and map helpers",
+      "path": "packages/transaction",
+      "import": "mo:pkg/transaction/transaction",
+      "tier": "L2"
+    },
+    "transfer": {
+      "version": "1.0.0",
+      "description": "ICRC transfer args builder, validation, and tx record helpers",
+      "path": "packages/transfer",
+      "import": "mo:pkg/transfer/transfer",
+      "tier": "L2"
+    },
+    "nft": {
+      "version": "1.0.0",
+      "description": "ICRC-7 NFT helpers",
+      "path": "packages/nft",
+      "import": "mo:pkg/nft/nft"
+    },
+    "http": {
+      "version": "1.0.0",
+      "description": "HTTP outcall helpers",
+      "path": "packages/http",
+      "import": "mo:pkg/http/http"
+    },
+    "canister-call": {
+      "version": "1.0.0",
+      "description": "Inter-canister call wrapper",
+      "path": "packages/canister-call",
+      "import": "mo:pkg/canister-call/call"
+    },
+    "webhook": {
+      "version": "1.0.0",
+      "description": "Outbound event dispatch",
+      "path": "packages/webhook",
+      "import": "mo:pkg/webhook/webhook"
+    },
+    "json": {
+      "version": "1.0.0",
+      "description": "JSON encode helpers",
+      "path": "packages/json",
+      "import": "mo:pkg/json/json"
+    },
+    "csv": {
+      "version": "1.0.0",
+      "description": "CSV parse/generate",
+      "path": "packages/csv",
+      "import": "mo:pkg/csv/csv"
+    },
+    "base64": {
+      "version": "1.0.0",
+      "description": "Hex encoding helpers",
+      "path": "packages/base64",
+      "import": "mo:pkg/base64/base64"
+    },
+    "candid-utils": {
+      "version": "1.0.0",
+      "description": "Candid conversion helpers",
+      "path": "packages/candid-utils",
+      "import": "mo:pkg/candid-utils/utils"
+    },
+    "array": {
+      "version": "1.0.0",
+      "description": "Array utilities",
+      "path": "packages/array",
+      "import": "mo:pkg/array/array"
+    },
+    "list": {
+      "version": "1.0.0",
+      "description": "List utilities",
+      "path": "packages/list",
+      "import": "mo:pkg/list/list"
+    },
+    "math": {
+      "version": "1.0.0",
+      "description": "Math helpers",
+      "path": "packages/math",
+      "import": "mo:pkg/math/math"
+    },
+    "string": {
+      "version": "1.0.0",
+      "description": "String manipulation",
+      "path": "packages/string",
+      "import": "mo:pkg/string/string"
+    },
+    "random": {
+      "version": "1.0.0",
+      "description": "Random helpers",
+      "path": "packages/random",
+      "import": "mo:pkg/random/random"
+    },
+    "logger": {
+      "version": "1.0.0",
+      "description": "Structured logging",
+      "path": "packages/logger",
+      "import": "mo:pkg/logger/logger"
+    },
+    "env": {
+      "version": "1.0.0",
+      "description": "Canister config pattern",
+      "path": "packages/env",
+      "import": "mo:pkg/env/env"
+    },
+    "feature-flag": {
+      "version": "1.0.0",
+      "description": "Feature toggles",
+      "path": "packages/feature-flag",
+      "import": "mo:pkg/feature-flag/flag"
+    },
+    "asset": {
+      "version": "1.0.0",
+      "description": "Asset canister helpers",
+      "path": "packages/asset",
+      "import": "mo:pkg/asset/asset"
+    },
+    "blob": {
+      "version": "1.0.0",
+      "description": "Blob chunking",
+      "path": "packages/blob",
+      "import": "mo:pkg/blob/blob"
+    },
+    "upload": {
+      "version": "1.0.0",
+      "description": "File upload pattern",
+      "path": "packages/upload",
+      "import": "mo:pkg/upload/upload"
+    },
+    "test": {
+      "version": "1.0.0",
+      "description": "Test assertion helpers",
+      "path": "packages/test",
+      "import": "mo:pkg/test/test"
+    },
+    "mock": {
+      "version": "1.0.0",
+      "description": "Mock data generators",
+      "path": "packages/mock",
+      "import": "mo:pkg/mock/mock"
+    },
+    "seed": {
+      "version": "1.0.0",
+      "description": "DB seeding helpers",
+      "path": "packages/seed",
+      "import": "mo:pkg/seed/seed"
+    },
+    "dao": {
+      "version": "1.0.0",
+      "description": "Proposal/voting pattern",
+      "path": "packages/dao",
+      "import": "mo:pkg/dao/dao"
+    },
+    "upgrade": {
+      "version": "1.0.0",
+      "description": "Pre/post upgrade helpers",
+      "path": "packages/upgrade",
+      "import": "mo:pkg/upgrade/upgrade"
+    },
+    "cycles": {
+      "version": "1.0.0",
+      "description": "Cycles monitoring helpers",
+      "path": "packages/cycles",
+      "import": "mo:pkg/cycles/cycles"
+    },
+    "email": {
+      "version": "1.0.0",
+      "description": "Transactional email types and message validation",
+      "path": "packages/email",
+      "import": "mo:pkg/email/email"
+    },
+    "email-verify": {
+      "version": "1.0.0",
+      "description": "Email verification token and link helpers",
+      "path": "packages/email-verify",
+      "import": "mo:pkg/email-verify/email-verify"
+    },
+    "email-template": {
+      "version": "1.0.0",
+      "description": "Email placeholder render and HTML escape",
+      "path": "packages/email-template",
+      "import": "mo:pkg/email-template/email-template"
+    },
+    "sendgrid": {
+      "version": "1.0.0",
+      "description": "SendGrid API payload and auth helpers",
+      "path": "packages/sendgrid",
+      "import": "mo:pkg/sendgrid/sendgrid"
+    },
+    "resend": {
+      "version": "1.0.0",
+      "description": "Resend API payload and auth helpers",
+      "path": "packages/resend",
+      "import": "mo:pkg/resend/resend"
+    },
+    "openai": {
+      "version": "1.0.0",
+      "description": "OpenAI API config, chat types, and JSON body builders",
+      "path": "packages/openai",
+      "import": "mo:pkg/openai/openai"
+    },
+    "anthropic": {
+      "version": "1.0.0",
+      "description": "Anthropic Claude API config and message body builders",
+      "path": "packages/anthropic",
+      "import": "mo:pkg/anthropic/anthropic"
+    },
+    "gemini": {
+      "version": "1.0.0",
+      "description": "Google Gemini API URL and prompt body helpers",
+      "path": "packages/gemini",
+      "import": "mo:pkg/gemini/gemini"
+    },
+    "embeddings": {
+      "version": "1.0.0",
+      "description": "Vector cosine similarity and dimension validation",
+      "path": "packages/embeddings",
+      "import": "mo:pkg/embeddings/embeddings"
+    },
+    "llm-router": {
+      "version": "1.0.0",
+      "description": "LLM provider enum and token estimate helpers",
+      "path": "packages/llm-router",
+      "import": "mo:pkg/llm-router/llm-router"
+    },
+    "stripe": {
+      "version": "1.0.0",
+      "description": "Stripe checkout session types and validation",
+      "path": "packages/stripe",
+      "import": "mo:pkg/stripe/stripe"
+    },
+    "paypal": {
+      "version": "1.0.0",
+      "description": "PayPal order types and validation helpers",
+      "path": "packages/paypal",
+      "import": "mo:pkg/paypal/paypal"
+    },
+    "invoice": {
+      "version": "1.0.0",
+      "description": "Invoice line items and total calculation",
+      "path": "packages/invoice",
+      "import": "mo:pkg/invoice/invoice"
+    },
+    "subscription": {
+      "version": "1.0.0",
+      "description": "Subscription plan and renewal helpers",
+      "path": "packages/subscription",
+      "import": "mo:pkg/subscription/subscription"
+    },
+    "slack": {
+      "version": "1.0.0",
+      "description": "Slack chat.postMessage config and form body helpers",
+      "path": "packages/slack",
+      "import": "mo:pkg/slack/slack"
+    },
+    "discord": {
+      "version": "1.0.0",
+      "description": "Discord webhook URL validation and embed payload builder",
+      "path": "packages/discord",
+      "import": "mo:pkg/discord/discord"
+    },
+    "telegram": {
+      "version": "1.0.0",
+      "description": "Telegram Bot API sendMessage helpers",
+      "path": "packages/telegram",
+      "import": "mo:pkg/telegram/telegram"
+    },
+    "x-post": {
+      "version": "1.0.0",
+      "description": "X Twitter post API config and tweet validation",
+      "path": "packages/x-post",
+      "import": "mo:pkg/x-post/x-post"
+    },
+    "whatsapp": {
+      "version": "1.0.0",
+      "description": "WhatsApp Business template message payload builder",
+      "path": "packages/whatsapp",
+      "import": "mo:pkg/whatsapp/whatsapp"
+    },
+    "google-oauth": {
+      "version": "1.0.0",
+      "description": "Google OAuth2 PKCE URL and token exchange helpers",
+      "path": "packages/google-oauth",
+      "import": "mo:pkg/google-oauth/google-oauth"
+    },
+    "google-mail": {
+      "version": "1.0.0",
+      "description": "Gmail API URL and raw MIME message helpers",
+      "path": "packages/google-mail",
+      "import": "mo:pkg/google-mail/google-mail"
+    },
+    "google-calendar": {
+      "version": "1.0.0",
+      "description": "Google Calendar API URL and event body helpers",
+      "path": "packages/google-calendar",
+      "import": "mo:pkg/google-calendar/google-calendar"
+    },
+    "http-outcall": {
+      "version": "1.0.0",
+      "description": "HTTP outcall request types, headers, and size limits",
+      "path": "packages/http-outcall",
+      "import": "mo:pkg/http-outcall/http-outcall"
+    },
+    "webhook-verify": {
+      "version": "1.0.0",
+      "description": "Webhook signature header names and timing-safe compare",
+      "path": "packages/webhook-verify",
+      "import": "mo:pkg/webhook-verify/webhook-verify"
+    },
+    "oauth2": {
+      "version": "1.0.0",
+      "description": "Generic OAuth2 grant types and redirect URI helpers",
+      "path": "packages/oauth2",
+      "import": "mo:pkg/oauth2/oauth2"
+    },
+    "object-storage": {
+      "version": "1.0.0",
+      "description": "ExternalBlob type alias and file metadata validation",
+      "path": "packages/object-storage",
+      "import": "mo:pkg/object-storage/object-storage"
+    },
+    "ipfs": {
+      "version": "1.0.0",
+      "description": "IPFS CID validation and gateway URL builder",
+      "path": "packages/ipfs",
+      "import": "mo:pkg/ipfs/ipfs"
+    },
+    "image-meta": {
+      "version": "1.0.0",
+      "description": "MIME sniff from bytes and upload size validation",
+      "path": "packages/image-meta",
+      "import": "mo:pkg/image-meta/image-meta"
+    },
+    "vetkeys": {
+      "version": "1.0.0",
+      "description": "vetKD encrypt/decrypt request types and validation",
+      "path": "packages/vetkeys",
+      "import": "mo:pkg/vetkeys/vetkeys"
+    },
+    "universe": {
+      "version": "1.0.0",
+      "description": "Event-driven multi-canister mesh for Motoko (Kafka-style pub/sub, outbox, and idempotent inbox)",
+      "path": "packages/universe",
+      "import": "mo:pkg/universe/universe"
+    },
+    "audit-log": {
+      "version": "1.0.0",
+      "description": "Append-only enterprise audit trail store with operator, action, and filter",
+      "path": "packages/audit-log",
+      "import": "mo:pkg/audit-log/audit-log"
+    },
+    "batch": {
+      "version": "1.0.0",
+      "description": "Batch chunking, partitioning, and batched execution helpers",
+      "path": "packages/batch",
+      "import": "mo:pkg/batch/batch"
+    },
+    "bitset": {
+      "version": "1.0.0",
+      "description": "High-density 64-bit word bitfield and bit flags manipulator",
+      "path": "packages/bitset",
+      "import": "mo:pkg/bitset/bitset"
+    },
+    "bloom-filter": {
+      "version": "1.0.0",
+      "description": "Probabilistic set membership filter with 3 fast hash functions",
+      "path": "packages/bloom-filter",
+      "import": "mo:pkg/bloom-filter/bloom-filter"
+    },
+    "dead-letter-queue": {
+      "version": "1.0.0",
+      "description": "Dead Letter Queue (DLQ) for failed messages and retry tracking",
+      "path": "packages/dead-letter-queue",
+      "import": "mo:pkg/dead-letter-queue/dead-letter-queue"
+    },
+    "event-emitter": {
+      "version": "1.0.0",
+      "description": "In-memory typed pub/sub event emitter with on, once, off, emit",
+      "path": "packages/event-emitter",
+      "import": "mo:pkg/event-emitter/event-emitter"
+    },
+    "graph": {
+      "version": "1.0.0",
+      "description": "Directed graph with adjacency list, cycle detection, and topological sort",
+      "path": "packages/graph",
+      "import": "mo:pkg/graph/graph"
+    },
+    "hmac": {
+      "version": "1.0.0",
+      "description": "HMAC block padding, key normalization, and constant-time equality",
+      "path": "packages/hmac",
+      "import": "mo:pkg/hmac/hmac"
+    },
+    "job-queue": {
+      "version": "1.0.0",
+      "description": "Background job queue with pending/processing/completed states and retries",
+      "path": "packages/job-queue",
+      "import": "mo:pkg/job-queue/job-queue"
+    },
+    "jwt": {
+      "version": "1.0.0",
+      "description": "JSON Web Token claims structure, base64url decode, and expiry validation",
+      "path": "packages/jwt",
+      "import": "mo:pkg/jwt/jwt"
+    },
+    "lock": {
+      "version": "1.0.0",
+      "description": "Distributed mutex and lease manager with TTL expiry to guard async race conditions",
+      "path": "packages/lock",
+      "import": "mo:pkg/lock/lock"
+    },
+    "lru-cache": {
+      "version": "1.0.0",
+      "description": "Least Recently Used (LRU) in-memory cache with capacity eviction and TTL",
+      "path": "packages/lru-cache",
+      "import": "mo:pkg/lru-cache/lru-cache"
+    },
+    "merkle-tree": {
+      "version": "1.0.0",
+      "description": "Merkle tree parent node hashing, root computation, and cryptographic proof verification",
+      "path": "packages/merkle-tree",
+      "import": "mo:pkg/merkle-tree/merkle-tree"
+    },
+    "password-hash": {
+      "version": "1.0.0",
+      "description": "Password hash formatting, salt extraction, and constant-time comparison",
+      "path": "packages/password-hash",
+      "import": "mo:pkg/password-hash/password-hash"
+    },
+    "priority-queue": {
+      "version": "1.0.0",
+      "description": "Binary min/max heap priority queue for task scheduling and deadline ordering",
+      "path": "packages/priority-queue",
+      "import": "mo:pkg/priority-queue/priority-queue"
+    },
+    "ring-buffer": {
+      "version": "1.0.0",
+      "description": "Fixed-capacity circular ring buffer for streaming and zero-alloc logs",
+      "path": "packages/ring-buffer",
+      "import": "mo:pkg/ring-buffer/ring-buffer"
+    },
+    "saga": {
+      "version": "1.0.0",
+      "description": "Distributed transaction orchestrator with automatic step compensation and rollback",
+      "path": "packages/saga",
+      "import": "mo:pkg/saga/saga"
+    },
+    "state-machine": {
+      "version": "1.0.0",
+      "description": "Finite State Machine (FSM) engine with guards, transitions, and state triggers",
+      "path": "packages/state-machine",
+      "import": "mo:pkg/state-machine/state-machine"
+    },
+    "tenant": {
+      "version": "1.0.0",
+      "description": "Multi-tenancy context, key namespacing, and tenant ID validator",
+      "path": "packages/tenant",
+      "import": "mo:pkg/tenant/tenant"
+    },
+    "totp": {
+      "version": "1.0.0",
+      "description": "RFC 6238 Time-based One-Time Password for 2FA validation and drift windows",
+      "path": "packages/totp",
+      "import": "mo:pkg/totp/totp"
+    },
+    "trie": {
+      "version": "1.0.0",
+      "description": "Prefix tree (Trie) for autocomplete, prefix search, and routing tables",
+      "path": "packages/trie",
+      "import": "mo:pkg/trie/trie"
+    }
+  }
+}

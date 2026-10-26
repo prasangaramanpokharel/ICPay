@@ -1,0 +1,63 @@
+---
+title: "API Endpoints"
+description: "Detailed endpoint reference for uploading, fetching, listing, and managing on-chain bucket assets."
+group: "API Reference"
+order: 2
+---
+
+# API Endpoints
+
+Explore the full list of HTTP endpoints and actor methods supported by ICBucket.
+
+## Prerequisites
+
+- Read operations: public access.
+- Write operations: API key or delegation.
+
+## Core Endpoints
+
+### 1. Download / Stream File
+
+```http
+GET /cloud/{bucketName}/{filePath}
+Host: cdn.icpay.app
+```
+
+Returns the binary file body with original `Content-Type` and HTTP caching headers.
+
+### 2. Single-Call File Upload
+
+```http
+PUT /api/v1/bucket/{bucketName}/files/{filePath}
+Host: cdn.icpay.app
+Authorization: Bearer <API_KEY>
+Content-Type: <MIME_TYPE>
+
+<binary file content>
+```
+
+Payload limit: 2MB. For larger files, use chunked session endpoints below.
+
+### 3. Chunked Upload Session
+
+1. **Initialize Session**: `POST /api/v1/bucket/{bucketName}/upload/start`
+2. **Upload Chunk**: `PUT /api/v1/bucket/{bucketName}/upload/{sessionId}/chunk/{chunkIndex}`
+3. **Commit Upload**: `POST /api/v1/bucket/{bucketName}/upload/{sessionId}/complete`
+
+### 4. List Folder Contents
+
+```http
+GET /api/v1/bucket/{bucketName}/files?prefix=assets/&page=1&pageSize=10
+Host: cdn.icpay.app
+Authorization: Bearer <API_KEY>
+```
+
+## Interactive Code Examples
+
+<CodeTabs section="upload" />
+
+## Related Pages
+
+- [Requests](./requests.mdx)
+- [Responses](./responses.mdx)
+- [Error Codes](../../errors/error-codes.mdx)

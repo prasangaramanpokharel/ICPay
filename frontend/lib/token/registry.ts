@@ -2,10 +2,7 @@
 
 import useSWR from "swr"
 
-// The NNS dashboard's public token index. It returns metadata and a USD quote
-// for every ledger on the IC in one request, which replaces one icrc1_metadata
-// call per ledger and is the only source of a price for anything but ICP.
-const REGISTRY_URL = "https://icrc-api.internetcomputer.org/api/v1/ledgers?limit=100"
+const REGISTRY_URL = "https://icrc-api.internetcomputer.org/api/v2/ledgers?limit=100"
 
 export type TokenMarket = {
   ledgerId: string
@@ -39,19 +36,12 @@ function toRow(r: RegistryRow): TokenMarket | null {
     name: md?.icrc1_name || symbol,
     decimals: Number.isFinite(decimals) ? decimals : 8,
     fee: md?.icrc1_fee ? BigInt(md.icrc1_fee) : 0n,
-    // Hosted URLs here, where the ledgers serve inline data URIs. Both render;
-    // anything else is dropped rather than handed to next/image as a bad src.
     logo: logo?.startsWith("https://") || logo?.startsWith("data:") ? logo : undefined,
     priceUsd: typeof price === "number" ? price : undefined,
   }
 }
 
 export async function fetchTokenRegistry(): Promise<Map<string, TokenMarket>> {
-  // Coalesces concurrent callers only, and is released as soon as the request
-  // settles. The metadata path calls this once per held token in the same tick,
-  // so without it twelve holdings mean twelve identical requests -- but holding
-  // the result past that would freeze the price for the rest of the session,
-  // which is what the SWR entry below is for.
   if (!inFlight) {
     inFlight = loadRegistry().finally(() => {
       inFlight = null
@@ -75,9 +65,6 @@ async function loadRegistry(): Promise<Map<string, TokenMarket>> {
 
 const REGISTRY_KEY = "token-registry"
 
-// Every consumer shares one entry and one request. Symbols and decimals never
-// change and a stale price is decorative, so this is held for five minutes and
-// never revalidated on focus -- the same treatment useIcpPrice gets.
 export function useTokenRegistry(): Map<string, TokenMarket> | undefined {
   const { data } = useSWR(REGISTRY_KEY, fetchTokenRegistry, {
     dedupingInterval: 300_000,

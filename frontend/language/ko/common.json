@@ -1434,10 +1434,11 @@
         "charity": "기부"
       },
       "community": {
-        "github": "GitHub",
+        "github": "GitLab",
         "x": "X",
         "linkedin": "LinkedIn",
-        "discord": "Discord"
+        "discord": "Discord",
+        "contact": "Support"
       },
       "sectionCompany": "회사",
       "sectionExplore": "탐색",
@@ -1601,7 +1602,7 @@
         "readMore": "더 보기 →",
         "items": {
           "github": {
-            "label": "GitHub 오픈소스",
+            "label": "GitLab 오픈소스",
             "description": "백엔드 Motoko와 Next.js 프론트엔드가 공개되어 있습니다. 자금 이동, 인증, 업그레이드 경로를 직접 확인하세요."
           },
           "backendCanister": {
@@ -1657,7 +1658,7 @@
         "title": "ICBucket",
         "tagline": "S3 호환 API로 파일을 온체인에 저장하세요. 서버도, AWS 요금도 없습니다 — ICPay 잔액의 ICP로 결제하는 간단한 30일 요금제.",
         "tryIcBucket": "ICBucket 사용해 보기",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "패키지",
         "imageAlt": "모바일의 ICBucket"
       },
@@ -1949,7 +1950,7 @@
         "copyCommand": "명령 복사",
         "installHint": "의존성 설치, 로컬 배포, localhost:3000에서 개발 서버 시작",
         "npm": "npm",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "패키지"
       },
       "problemSolution": {

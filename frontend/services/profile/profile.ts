@@ -3,8 +3,6 @@ import { call, query, type Outcome } from "@/services/client"
 import { getWalletActor } from "@/services/wallet"
 import type { UserPublic } from "@/services/types"
 
-// Returns null for a principal with no account yet, which is how the caller
-// distinguishes a new user from a load failure.
 export function getProfile(
   identity: Identity | undefined
 ): Promise<UserPublic | null> {
@@ -14,8 +12,6 @@ export function getProfile(
   })
 }
 
-// Claims a free handle. The canister enforces the length floor that keeps short
-// names as paid inventory, and a claim is permanent.
 export function updateUsername(
   identity: Identity | undefined,
   username: string
@@ -32,10 +28,6 @@ export function searchUsers(
   return query(identity, (actor) => actor.searchUsers(search))
 }
 
-// Resolves a handle to the principal behind it, or null when unclaimed.
-// The canister method takes no caller, so this runs anonymously rather than
-// through query(), which rejects without an identity -- a public payment link
-// has to resolve for a stranger with no account.
 export async function resolveUsername(
   identity: Identity | undefined,
   name: string

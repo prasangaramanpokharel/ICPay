@@ -35,13 +35,8 @@
   ],
   "rewrites": [
     {
-      "source": "/cloud/:bucket/:path*",
-      "has": [{ "type": "host", "value": "cloud.icpay.app" }],
-      "destination": "/api/cloud/:bucket/:path*"
-    },
-    {
       "source": "/icpverse/:username",
-      "destination": "/icpverse/profile"
+      "destination": "/icpverse?id=:username"
     },
     {
       "source": "/token/:ledgerId/deposit",
@@ -65,7 +60,7 @@
     },
     {
       "source": "/bucket/:id",
-      "destination": "/bucket/id"
+      "destination": "/bucket?id=:id"
     },
     {
       "source": "/transactions/:id",
@@ -76,20 +71,36 @@
       "destination": "/live/id"
     },
     {
-      "source": "/channels/join/:slug",
-      "destination": "/channels/join/:slug"
+      "source": "/channels/join/:id",
+      "destination": "/channels/join?id=:id"
     },
     {
-      "source": "/channels/:slug/:messageId",
-      "destination": "/channels/:slug/:messageId"
+      "source": "/channels/:id/:messageId",
+      "destination": "/channels?id=:id&messageId=:messageId"
     },
     {
-      "source": "/channels/:slug",
-      "destination": "/channels/:slug"
+      "source": "/channels/:id((?!new$|join$).*)",
+      "destination": "/channels?id=:id"
     },
     {
       "source": "/:username([A-Za-z0-9_]{1,8})",
       "destination": "/u"
     }
+  ],
+  "headers": [
+    {
+      "source": "/.well-known/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" },
+        { "key": "Content-Type", "value": "application/json" }
+      ]
+    },
+    {
+      "source": "/images/logo/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
+    }
   ]
 }
+

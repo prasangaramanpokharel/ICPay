@@ -2,10 +2,10 @@ import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Github01Icon, Package01Icon } from "@hugeicons/core-free-icons"
+import { Package01Icon } from "@hugeicons/core-free-icons"
 import { PublicFooter } from "@/components/public/footer"
 import { ICPAY_TOKEN_ICON } from "@/lib/ui/brand-images"
-import { Npm, Python, Go } from "@dev.icons/react"
+import { Npm, Python, Go, Gitlab } from "@dev.icons/react"
 
 export type ProductPackageLink = {
   label: string
@@ -15,17 +15,19 @@ export type ProductPackageLink = {
 export const ICBUCKET_PACKAGE_LINKS: ProductPackageLink[] = [
   { label: "npm", href: "https://www.npmjs.com/package/icpay-bucket" },
   { label: "PyPI", href: "https://pypi.org/project/icpay-bucket/" },
-  { label: "Go", href: "https://github.com/prasangapokharel/icpay-bucket-go" },
+  { label: "Go", href: "https://gitlab.com/prasangapokharel/icpay-bucket-go" },
 ]
 
 type ProductOpenSourceBannerProps = {
   packageLinks?: ProductPackageLink[]
   openSourceDescription?: string
+  repoUrl?: string
 }
 
 export function ProductOpenSourceBanner({
   packageLinks,
-  openSourceDescription = "All ICPay products are open source and available on GitHub",
+  openSourceDescription = "All ICPay products are open source and available on GitLab",
+  repoUrl = "https://gitlab.com/prasangapokharel/icpay",
 }: ProductOpenSourceBannerProps) {
   return (
     <section className="border-t bg-muted/30 py-12">
@@ -73,13 +75,13 @@ export function ProductOpenSourceBanner({
                 </div>
               ) : (
                 <Link
-                  href="https://github.com/prasangapokharel/ICPay"
+                  href={repoUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
                 >
-                  <HugeiconsIcon icon={Github01Icon} className="size-4" />
-                  View on GitHub
+                  <Gitlab size={16} />
+                  View on GitLab
                 </Link>
               )}
             </CardContent>

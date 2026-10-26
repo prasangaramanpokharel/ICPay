@@ -3,8 +3,7 @@
 import Link from "next/link"
 import { useMemo } from "react"
 import { useTranslations } from "next-intl"
-import { createAvatar } from "@dicebear/core"
-import { adventurer } from "@dicebear/collection"
+import { avatarUriFor } from "@/lib/profile/avatar"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { InboxIcon, Message01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -37,7 +36,7 @@ export function RecentTransactions({ transactions, embedded }: RecentTransaction
     <section className={embedded ? "space-y-0" : "space-y-3"}>
       {!embedded && (
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold">{t("latestTransactions")}</h2>
+          <h2 className="text-sm font-semibold text-balance">{t("latestTransactions")}</h2>
           {hasTransactions && (
             <Button
               variant="ghost"
@@ -80,17 +79,14 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
   const handle = counterparty.startsWith("@") ? counterparty.slice(1) : null
   const memo = tx.memo?.[0]
 
-  const avatarUri = useMemo(
-    () => createAvatar(adventurer, { seed: counterparty }).toDataUri(),
-    [counterparty]
-  )
+  const avatarUri = useMemo(() => avatarUriFor(counterparty), [counterparty])
 
   return (
-    <li>
+    <li className="[content-visibility:auto] [contain-intrinsic-size:auto_64px]">
       <Link
-        href={`/transactions/${encodeURIComponent(tx.id)}`}
+        href={`/transactions?id=${encodeURIComponent(tx.id)}`}
         prefetch
-        className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/40 active:bg-muted/60"
+        className="group flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/50 active:bg-muted/70"
       >
         <Avatar className="size-10 shrink-0">
           <AvatarImage src={avatarUri} alt="" />
@@ -100,18 +96,20 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
         </Avatar>
 
         <div className="min-w-0 flex-1">
-          <p className={cn("flex items-center gap-1 truncate text-sm font-medium", !handle && "font-mono tracking-tight")}>
+          <p className={cn("flex items-center gap-1.5 truncate text-sm font-medium", !handle && "font-mono tracking-tight")}>
             {handle ?? shortenCounterparty(counterparty)}
             <PremiumBadge name={handle} className="size-3.5" />
           </p>
-          <p className="mt-0.5 text-xs text-muted-foreground/80">
+          <p className="mt-0.5 text-xs font-normal text-muted-foreground">
             {t(`type.${txTypeKey(tx.txType)}`)} · {formatTime(tx.createdAt)}
           </p>
           {memo && (
-            <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-              <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0" />
-              <span className="truncate rounded-full bg-muted px-2.5 py-0.5">{memo}</span>
-            </p>
+            <div className="mt-1 flex items-center">
+              <span className="inline-flex max-w-[220px] items-center gap-1 rounded-md border border-border/60 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-foreground/85">
+                <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0 text-muted-foreground" />
+                <span className="truncate">{memo}</span>
+              </span>
+            </div>
           )}
         </div>
 
@@ -132,7 +130,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
               </Badge>
             )}
           </div>
-          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground/60" strokeWidth={1.75} />
+          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
         </div>
       </Link>
     </li>

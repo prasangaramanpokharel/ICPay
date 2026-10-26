@@ -128,7 +128,6 @@ function writeStored(principal: string, stored: Stored) {
       new CustomEvent(CUSTOM_TOKENS_EVENT, { detail: { principal } satisfies { principal: string } })
     )
   } catch {
-    // Private-browsing quota rejections must not break the wallet.
   }
 }
 

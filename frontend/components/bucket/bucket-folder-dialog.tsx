@@ -103,10 +103,8 @@ export function BucketFolderDialog({
               {tCommon("cancel")}
             </Button>
             <Button type="submit" disabled={!safe || busy} className="min-w-[7.5rem]">
-              <span className="inline-flex items-center justify-center gap-2">
-                {busy ? <Spinner className="size-4" /> : null}
-                {t("createFolder")}
-              </span>
+              {busy ? <Spinner data-icon="inline-start" /> : null}
+              {t("createFolder")}
             </Button>
           </DialogFooter>
         </form>

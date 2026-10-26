@@ -5,8 +5,7 @@ import { useTranslations } from "next-intl"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { File01Icon } from "@hugeicons/core-free-icons"
+import { BucketFileIcon } from "@/components/bucket/bucket-file-icon"
 import { fileTypeChip } from "@/lib/bucket/bucket"
 import { useBucketFilePreview } from "@/hooks/bucket/useBucketFilePreview"
 import { cn } from "@/lib/ui/utils"
@@ -42,15 +41,14 @@ export function BucketFileThumb({
   ) : loading && isPreviewableImage(file.contentType) ? (
     <Skeleton className="size-full rounded-lg" />
   ) : (
-    <HugeiconsIcon
-      icon={File01Icon}
-      className="size-6 text-muted-foreground"
-      strokeWidth={1.5}
+    <BucketFileIcon
+      path={file.path}
+      className={size === "md" ? "size-6" : "size-4"}
     />
   )
 
   const box = cn(
-    "relative shrink-0 overflow-hidden rounded-lg",
+    "relative flex shrink-0 items-center justify-center overflow-hidden rounded-lg",
     size === "md" ? "size-11" : "size-8"
   )
 

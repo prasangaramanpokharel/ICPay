@@ -233,6 +233,11 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     Private: IDL.Null,
   })
 
+  const BucketBillingPeriod = IDL.Variant({
+    Monthly: IDL.Null,
+    Yearly: IDL.Null,
+  })
+
   const BucketStatus = IDL.Variant({
     ACTIVE: IDL.Null,
     EXPIRED: IDL.Null,
@@ -529,10 +534,21 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     addBookmark: IDL.Func([IDL.Text], [IDL.Variant({ ok: Bookmark, err: IDL.Text })], []),
     removeBookmark: IDL.Func([IDL.Text], [IDL.Variant({ ok: IDL.Null, err: IDL.Text })], []),
     getBucketPrice: IDL.Func([IDL.Nat], [ApiResultNat], ["query"]),
+    getBucketYearlyPrice: IDL.Func([IDL.Nat], [ApiResultNat], ["query"]),
     createBucket: IDL.Func([IDL.Text, IDL.Nat, BucketVisibility], [ApiResultBucketId], []),
+    createBucketPlan: IDL.Func(
+      [IDL.Text, IDL.Nat, BucketVisibility, BucketBillingPeriod],
+      [ApiResultBucketId],
+      []
+    ),
     getBucket: IDL.Func([IDL.Text], [ApiResultBucketPublic], ["query"]),
     getBucketStats: IDL.Func([IDL.Text], [ApiResultBucketStats], ["query"]),
     getRenewQuote: IDL.Func([IDL.Text], [ApiResultRenewQuote], ["query"]),
+    getRenewQuotePlan: IDL.Func(
+      [IDL.Text, BucketBillingPeriod],
+      [ApiResultRenewQuote],
+      ["query"]
+    ),
     listBuckets: IDL.Func([], [ApiResultBucketList], ["query"]),
     uploadFile: IDL.Func(
       [IDL.Text, IDL.Text, IDL.Vec(IDL.Nat8), IDL.Text, IDL.Opt(IDL.Text)],
@@ -564,6 +580,7 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     deleteFile: IDL.Func([IDL.Text, IDL.Text, IDL.Opt(IDL.Text)], [ApiResultUnit], []),
     listFiles: IDL.Func([IDL.Text, IDL.Nat, IDL.Nat, IDL.Opt(IDL.Text)], [ApiResultFileList], ["query"]),
     renewBucket: IDL.Func([IDL.Text], [ApiResultRenew], []),
+    renewBucketPlan: IDL.Func([IDL.Text, BucketBillingPeriod], [ApiResultRenew], []),
     getBucketCycleStatus: IDL.Func([], [ApiResultCycleStatus], ["query"]),
     createApiKey: IDL.Func(
       [IDL.Text, IDL.Text, ApiKeyPermissions],

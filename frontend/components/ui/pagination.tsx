@@ -1,8 +1,12 @@
 import * as React from "react"
-
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
+  MoreHorizontalIcon,
+} from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/ui/utils"
 import { Button } from "@/components/ui/button"
-import { ChevronLeftIcon, ChevronRightIcon, MoreHorizontalIcon } from "lucide-react"
 
 function Pagination({ className, ...props }: React.ComponentProps<"nav">) {
   return (
@@ -35,47 +39,76 @@ function PaginationItem({ ...props }: React.ComponentProps<"li">) {
 
 type PaginationLinkProps = {
   isActive?: boolean
+  disabled?: boolean
 } & Pick<React.ComponentProps<typeof Button>, "size"> &
-  React.ComponentProps<"a">
+  React.ComponentProps<"a"> &
+  React.ComponentProps<"button">
 
 function PaginationLink({
   className,
   isActive,
   size = "icon",
+  disabled,
+  href,
+  children,
   ...props
 }: PaginationLinkProps) {
+  if (href) {
+    return (
+      <Button
+        variant={isActive ? "outline" : "ghost"}
+        size={size}
+        disabled={disabled}
+        className={cn(className)}
+        nativeButton={false}
+        render={
+          <a
+            href={href}
+            aria-current={isActive ? "page" : undefined}
+            data-slot="pagination-link"
+            data-active={isActive}
+            {...(props as React.ComponentProps<"a">)}
+          >
+            {children}
+          </a>
+        }
+      />
+    )
+  }
+
   return (
     <Button
+      type="button"
       variant={isActive ? "outline" : "ghost"}
       size={size}
+      disabled={disabled}
+      aria-current={isActive ? "page" : undefined}
+      data-slot="pagination-link"
+      data-active={isActive}
       className={cn(className)}
-      nativeButton={false}
-      render={
-        <a
-          aria-current={isActive ? "page" : undefined}
-          data-slot="pagination-link"
-          data-active={isActive}
-          {...props}
-        />
-      }
-    />
+      {...(props as React.ComponentProps<typeof Button>)}
+    >
+      {children}
+    </Button>
   )
 }
 
 function PaginationPrevious({
   className,
   text = "Previous",
+  disabled,
   ...props
 }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
     <PaginationLink
       aria-label="Go to previous page"
       size="default"
-      className={cn("pl-2!", className)}
+      disabled={disabled}
+      className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
       {...props}
     >
-      <ChevronLeftIcon data-icon="inline-start" />
-      <span className="hidden sm:block">{text}</span>
+      <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" data-icon="inline-start" />
+      <span className="hidden sm:inline-block">{text}</span>
     </PaginationLink>
   )
 }
@@ -83,17 +116,19 @@ function PaginationPrevious({
 function PaginationNext({
   className,
   text = "Next",
+  disabled,
   ...props
 }: React.ComponentProps<typeof PaginationLink> & { text?: string }) {
   return (
     <PaginationLink
       aria-label="Go to next page"
       size="default"
-      className={cn("pr-2!", className)}
+      disabled={disabled}
+      className={cn("gap-1 px-2.5 sm:pr-2.5", className)}
       {...props}
     >
-      <span className="hidden sm:block">{text}</span>
-      <ChevronRightIcon data-icon="inline-end" />
+      <span className="hidden sm:inline-block">{text}</span>
+      <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" data-icon="inline-end" />
     </PaginationLink>
   )
 }
@@ -112,8 +147,7 @@ function PaginationEllipsis({
       )}
       {...props}
     >
-      <MoreHorizontalIcon
-      />
+      <HugeiconsIcon icon={MoreHorizontalIcon} className="size-4" />
       <span className="sr-only">More pages</span>
     </span>
   )

@@ -92,11 +92,11 @@ export function PresaleGuideDialog({
         </div>
 
         <div className="space-y-4 px-6 py-5">
-          <div className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-            <HugeiconsIcon icon={current.icon} className="size-5" strokeWidth={1.75} />
-          </div>
           <div className="space-y-2">
-            <p className="text-base font-semibold">{t(current.titleKey)}</p>
+            <div className="flex items-center gap-2">
+              <HugeiconsIcon icon={current.icon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+              <p className="text-base font-semibold">{t(current.titleKey)}</p>
+            </div>
             <p className="text-sm leading-relaxed text-muted-foreground">{t(current.bodyKey)}</p>
           </div>
           <div className="flex justify-center gap-1.5 pt-1">

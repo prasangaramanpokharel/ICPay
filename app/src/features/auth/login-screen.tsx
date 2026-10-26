@@ -126,22 +126,12 @@ export function LoginScreen() {
   }
 
   return (
-    <View className="flex-1 items-center bg-background">
-      <View className="relative w-full flex-1 overflow-hidden px-6 pb-10 pt-16">
-        <Image
-          source={images.connectBg}
-          className="absolute inset-0"
-          contentFit="cover"
-          style={{ opacity: resolved === 'dark' ? 0.35 : 1 }}
-        />
-        <View
-          className="absolute inset-0"
-          style={{ backgroundColor: resolved === 'dark' ? 'rgba(10,10,10,0.75)' : 'rgba(255,255,255,0.5)' }}
-        />
+    <View className="flex-1 items-center justify-center bg-background">
+      <View className="relative w-full max-w-md flex-1 overflow-hidden px-6 pb-10 pt-16">
         <View className="absolute top-4 right-4 z-10">
           <LanguageSwitch />
         </View>
-        <ScrollView contentContainerClassName="flex-grow" showsVerticalScrollIndicator={false}>
+        <ScrollView contentContainerClassName="flex-grow justify-center" showsVerticalScrollIndicator={false}>
           <View className="flex-1 items-center justify-center">
             <MarketStats />
             <Image source={images.logo} className="mt-6 size-24" contentFit="contain" />
@@ -223,9 +213,13 @@ export function LoginScreen() {
             <Text className="text-center text-xs text-muted-foreground">
               {t('legalPrefix')} {t('legalTerms')} {t('legalAnd')} {t('legalPrivacy')}.
             </Text>
-            <View className="flex-row justify-center gap-4">
+            <View className="flex-row justify-center gap-4 py-1">
               {(['about', 'faq', 'roadmap', 'transparency'] as const).map((key) => (
-                <Pressable key={key} onPress={() => router.push(`/${key}` as never)}>
+                <Pressable
+                  key={key}
+                  hitSlop={{ top: 10, bottom: 10, left: 6, right: 6 }}
+                  onPress={() => router.push(`/${key}` as never)}
+                >
                   <Text className="text-xs text-muted-foreground underline">{tSettings(`items.${key}`)}</Text>
                 </Pressable>
               ))}

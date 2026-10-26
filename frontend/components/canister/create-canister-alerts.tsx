@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, LinkSquare02Icon, Tick02Icon, ZapIcon } from "@hugeicons/core-free-icons"
+import { LinkSquare02Icon, Tick02Icon, ZapIcon } from "@hugeicons/core-free-icons"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { CopyButton } from "@/components/ui/copy-button"
 import {
   Dialog,
   DialogContent,
@@ -35,17 +35,6 @@ export function CreateCanisterAlerts({
 }) {
   const t = useTranslations("canisterCreate")
   const tc = useTranslations("common")
-  const [copied, setCopied] = useState(false)
-
-  const copyCanister = async (id: string) => {
-    try {
-      await navigator.clipboard.writeText(id)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 1500)
-    } catch {
-      /* ignore */
-    }
-  }
 
   return (
     <>
@@ -60,17 +49,14 @@ export function CreateCanisterAlerts({
         open={lastOk != null}
         onOpenChange={(open) => {
           if (!open) {
-            setCopied(false)
             onDismissSuccess()
           }
         }}
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="items-center text-center sm:items-center sm:text-center">
-            <div className="animate-in fade-in zoom-in-75 mb-1 flex size-16 items-center justify-center rounded-full bg-success/10 duration-300 ease-out">
-              <span className="flex size-11 items-center justify-center rounded-full bg-success text-background shadow-sm">
-                <HugeiconsIcon icon={Tick02Icon} className="size-7" strokeWidth={3} />
-              </span>
+            <div className="animate-in fade-in zoom-in-75 mb-1 flex items-center justify-center text-success duration-200">
+              <HugeiconsIcon icon={Tick02Icon} className="size-10" strokeWidth={2.25} />
             </div>
             <DialogTitle>{t("successTitle")}</DialogTitle>
             <DialogDescription className="sr-only">
@@ -81,23 +67,11 @@ export function CreateCanisterAlerts({
           {lastOk && (
             <div className="space-y-4 text-center">
               <div className="space-y-1.5">
-                <div className="flex items-center justify-center gap-1">
+                <div className="flex items-center justify-center gap-1.5">
                   <p className="max-w-[85%] break-all font-mono text-sm text-foreground/80">
                     {lastOk.canister}
                   </p>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    className="shrink-0"
-                    aria-label={tc("copy")}
-                    onClick={() => void copyCanister(lastOk.canister)}
-                  >
-                    <HugeiconsIcon
-                      icon={copied ? Tick02Icon : Copy01Icon}
-                      className="size-3.5"
-                    />
-                  </Button>
+                  <CopyButton text={lastOk.canister} size="icon-sm" className="shrink-0" />
                 </div>
                 <p className="text-sm text-foreground">
                   {t("amountPaid")}:{" "}

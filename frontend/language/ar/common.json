@@ -1434,10 +1434,11 @@
         "charity": "الخيرية"
       },
       "community": {
-        "github": "GitHub",
+        "github": "GitLab",
         "x": "X",
         "linkedin": "LinkedIn",
-        "discord": "Discord"
+        "discord": "Discord",
+        "contact": "Support"
       },
       "sectionCompany": "Company",
       "sectionExplore": "Explore",
@@ -1601,7 +1602,7 @@
         "readMore": "اقرأ المزيد ←",
         "items": {
           "github": {
-            "label": "مفتوح المصدر على GitHub",
+            "label": "مفتوح المصدر على GitLab",
             "description": "Motoko للخلفية وNext.js للواجهة عامان. افحص حركة الأموال والمصادقة ومسارات الترقية بنفسك."
           },
           "backendCanister": {
@@ -1657,7 +1658,7 @@
         "title": "ICBucket",
         "tagline": "خزّن الملفات على السلسلة بواجهة متوافقة مع S3. بدون خوادم وبدون فواتير AWS — خطط 30 يوماً بسيطة تُدفع بـ ICP من رصيد ICPay.",
         "tryIcBucket": "جرّب ICBucket",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "الحزم",
         "imageAlt": "ICBucket على الجوال"
       },
@@ -1949,7 +1950,7 @@
         "copyCommand": "نسخ الأمر",
         "installHint": "يثبّت التبعيات وينشر محلياً ويشغّل خادم التطوير على localhost:3000",
         "npm": "npm",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "الحزم"
       },
       "problemSolution": {

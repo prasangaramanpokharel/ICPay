@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { View } from 'react-native'
+import { ActivityIndicator, Pressable, View } from 'react-native'
 import { useTranslations } from '@/components/i18n/locale-provider'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
@@ -27,6 +27,9 @@ import { SwapTokenSelect } from '@/features/swap/swap-token-select'
 import { ICP_LEDGER_ID, type TokenHolding } from '@/services/tokens'
 import { ConfirmPin } from '@/features/security/confirm-pin'
 import { usePaymentPin } from '@/features/security/use-payment-pin'
+import { cn } from '@/lib/utils'
+
+const PERCENTAGES = [25, 50, 75, 100] as const
 
 type Done = {
   amountIn: bigint
@@ -56,6 +59,7 @@ export function SwapScreen() {
   const [fail, setFail] = useState<string | null>(null)
   const pin = usePaymentPin(confirmOpen)
   const [done, setDone] = useState<Done | null>(null)
+
   const tokenIn = tokens.find((item) => item.ledgerId === (inId ?? pair?.tokenIn.ledgerId)) ?? null
   const tokenOut = tokens.find((item) => item.ledgerId === (outId ?? pair?.tokenOut.ledgerId)) ?? null
   const parsed = tokenIn ? parseTokenAmount(amount, tokenIn.decimals) : null
@@ -79,6 +83,34 @@ export function SwapScreen() {
     icpToken.balance < serviceDebit
   const insufficient = insufficientToken || insufficientIcp
 
+  const maxIn = useMemo(() => {
+    if (!tokenIn) return 0n
+    return maxSwapInput(
+      tokenIn.balance,
+      tokenIn.fee,
+      tokenIn.ledgerId === ICP_LEDGER_ID ? icpServiceDebit(tokenIn.fee) : undefined,
+    )
+  }, [tokenIn])
+
+  const applyPercent = (pct: number) => {
+    if (!tokenIn || maxIn <= 0n) return
+    const slice = (maxIn * BigInt(pct)) / 100n
+    setAmount(toPlainTokenAmount(slice > 0n ? slice : 0n, tokenIn.decimals))
+  }
+
+  const applyMax = () => {
+    if (!tokenIn || maxIn <= 0n) return
+    setAmount(toPlainTokenAmount(maxIn, tokenIn.decimals))
+  }
+
+  const flip = () => {
+    if (!tokenIn || !tokenOut) return
+    setInId(tokenOut.ledgerId)
+    setOutId(tokenIn.ledgerId)
+    setAmount('')
+    setFail(null)
+  }
+
   const pickIn = (token: TokenHolding) => {
     setInId(token.ledgerId)
     if (token.ledgerId === (outId ?? tokenOut?.ledgerId)) setOutId(tokenIn?.ledgerId ?? null)
@@ -87,6 +119,17 @@ export function SwapScreen() {
     setOutId(token.ledgerId)
     if (token.ledgerId === (inId ?? tokenIn?.ledgerId)) setInId(tokenOut?.ledgerId ?? null)
   }
+
+  const canReview =
+    !isLoading &&
+    quote &&
+    quote.amountOut > 0n &&
+    tokenIn &&
+    tokenOut &&
+    tokenIn.ledgerId !== tokenOut.ledgerId &&
+    parsed !== null &&
+    parsed > 0n &&
+    !insufficient
 
   const submit = async () => {
     if (!parsed || !quote || !tokenIn || !tokenOut) return
@@ -123,6 +166,14 @@ export function SwapScreen() {
 
   if (done) return <SwapSuccessView {...done} onDone={() => setDone(null)} />
 
+  if (tokensLoading && tokens.length === 0) {
+    return (
+      <View className="items-center justify-center py-20">
+        <ActivityIndicator size="small" />
+      </View>
+    )
+  }
+
   if (!tokensLoading && tokens.length < 2) {
     return (
       <View className="pt-6">
@@ -133,58 +184,62 @@ export function SwapScreen() {
     )
   }
 
+  const receiveText =
+    quote && tokenOut
+      ? formatTokenAmount(quote.amountOut, tokenOut.decimals)
+      : isLoading
+        ? '…'
+        : '0'
+
   return (
     <View className="gap-4 pt-2">
       <View>
         <Text className="text-xl font-bold">{t('title')}</Text>
         <Text className="text-sm text-muted-foreground">{t('subtitle')}</Text>
       </View>
-      <SwapTokenSelect
-        label={t('youPay')}
-        token={tokenIn}
-        amountText={amount}
-        onAmountChange={setAmount}
-        onPickToken={() => {
-          if (!tokensLoading) setPicker('in')
-        }}
-        balance={tokenIn?.balance}
-        onMax={
-          tokenIn
-            ? () => {
-                const max = maxSwapInput(
-                  tokenIn.balance,
-                  tokenIn.fee,
-                  tokenIn.ledgerId === ICP_LEDGER_ID ? icpServiceDebit(tokenIn.fee) : undefined,
-                )
-                setAmount(toPlainTokenAmount(max, tokenIn.decimals))
-              }
-            : undefined
-        }
-      />
-      <Button
-        variant="outline"
-        size="icon"
-        accessibilityLabel={t('flip')}
-        className="size-12 self-center rounded-full shadow-md"
-        onPress={() => {
-          setInId(tokenOut?.ledgerId ?? null)
-          setOutId(tokenIn?.ledgerId ?? null)
-        }}
-      >
-        <AppIcon name="swap" size={18} />
-      </Button>
-      <SwapTokenSelect
-        label={t('youReceive')}
-        token={tokenOut}
-        amountText={
-          quote && tokenOut ? formatTokenAmount(quote.amountOut, tokenOut.decimals) : isLoading ? '…' : '0'
-        }
-        onPickToken={() => {
-          if (!tokensLoading) setPicker('out')
-        }}
-        readOnly
-      />
-      {parsed !== null && tokenIn ? (
+
+      {/* Unified trade card matching frontend TradeForm */}
+      <View className="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
+        <SwapTokenSelect
+          label={t('youPay')}
+          token={tokenIn}
+          amountText={amount}
+          onAmountChange={setAmount}
+          onPickToken={() => {
+            if (!tokensLoading) setPicker('in')
+          }}
+          balance={tokenIn?.balance}
+          onMax={maxIn > 0n ? applyMax : undefined}
+          percentages={PERCENTAGES}
+          onPercent={applyPercent}
+        />
+
+        {/* Divider with central flip icon button */}
+        <View className="relative border-y border-border/40 py-2.5 items-center justify-center">
+          <View className="absolute inset-x-0 top-1/2 -translate-y-1/2 items-center justify-center z-10">
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={t('flip')}
+              onPress={flip}
+              className="size-10 items-center justify-center rounded-xl border-4 border-card bg-background shadow-sm active:scale-95"
+            >
+              <AppIcon name="swap" size={18} />
+            </Pressable>
+          </View>
+        </View>
+
+        <SwapTokenSelect
+          label={t('youReceive')}
+          token={tokenOut}
+          amountText={receiveText}
+          onPickToken={() => {
+            if (!tokensLoading) setPicker('out')
+          }}
+          readOnly
+        />
+      </View>
+
+      {parsed !== null && parsed > 0n && tokenIn ? (
         <SwapFeeStats
           tokenIn={tokenIn}
           tokenOut={tokenOut}
@@ -193,6 +248,7 @@ export function SwapScreen() {
           icpToken={icpToken}
         />
       ) : null}
+
       {insufficient ? (
         <Alert variant="destructive">
           <AlertDescription>
@@ -204,14 +260,25 @@ export function SwapScreen() {
           </AlertDescription>
         </Alert>
       ) : null}
+
       {error || fail ? (
         <Alert variant="destructive">
           <AlertDescription>{fail ?? (error instanceof Error ? error.message : 'Quote failed')}</AlertDescription>
         </Alert>
       ) : null}
-      <Button size="lg" disabled={isLoading || !quote || !tokenIn || !tokenOut || insufficient} onPress={() => setConfirmOpen(true)}>
+
+      <Button
+        size="lg"
+        disabled={!canReview}
+        className={cn('h-12 w-full rounded-2xl', !canReview && 'bg-muted/40')}
+        textClassName={cn(!canReview && 'text-muted-foreground font-semibold')}
+        onPress={() => setConfirmOpen(true)}
+      >
         {isLoading ? t('fetchingQuote') : t('review')}
       </Button>
+
+      <Text className="text-center text-xs text-muted-foreground">{t('processHint')}</Text>
+
       <Sheet
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
@@ -249,6 +316,7 @@ export function SwapScreen() {
           </>
         )}
       </Sheet>
+
       <SwapTokenPicker
         open={picker === 'in'}
         onOpenChange={(open) => setPicker(open ? 'in' : null)}

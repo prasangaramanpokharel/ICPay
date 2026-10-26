@@ -1434,10 +1434,11 @@
         "charity": "Từ thiện"
       },
       "community": {
-        "github": "GitHub",
+        "github": "GitLab",
         "x": "X",
         "linkedin": "LinkedIn",
-        "discord": "Discord"
+        "discord": "Discord",
+        "contact": "Support"
       },
       "sectionCompany": "Company",
       "sectionExplore": "Explore",
@@ -1601,7 +1602,7 @@
         "readMore": "Đọc thêm →",
         "items": {
           "github": {
-            "label": "Mã nguồn mở trên GitHub",
+            "label": "Mã nguồn mở trên GitLab",
             "description": "Motoko backend và frontend Next.js công khai. Tự kiểm tra luồng tiền, xác thực và đường nâng cấp."
           },
           "backendCanister": {
@@ -1657,7 +1658,7 @@
         "title": "ICBucket",
         "tagline": "Lưu file on-chain với API tương thích S3. Không server, không hóa đơn AWS — gói 30 ngày đơn giản trả bằng ICP từ số dư ICPay.",
         "tryIcBucket": "Dùng thử ICBucket",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Gói",
         "imageAlt": "ICBucket trên di động"
       },
@@ -1949,7 +1950,7 @@
         "copyCommand": "Sao chép lệnh",
         "installHint": "Cài phụ thuộc, triển khai cục bộ và khởi động dev server tại localhost:3000",
         "npm": "npm",
-        "github": "GitHub",
+        "github": "GitLab",
         "packages": "Gói"
       },
       "problemSolution": {

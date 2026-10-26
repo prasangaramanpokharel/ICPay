@@ -12,8 +12,6 @@ export type ScannedAddress =
 
 const SUBACCOUNT_BYTES = 32
 
-// Wallets hand out addresses as bare text or wrapped in a payment URI, and the
-// query tail carries hints (amount, memo) this form collects on its own screens.
 function stripUri(raw: string): string {
   const trimmed = raw.trim()
   const withoutScheme = trimmed.replace(/^(icp|ic|internet-computer):/i, "")
@@ -21,8 +19,6 @@ function stripUri(raw: string): string {
 }
 
 function fromHex(hex: string): Uint8Array | null {
-  // The encoder strips leading zeros, which can cut a byte in half, so an odd
-  // length is expected rather than malformed.
   const even = hex.length % 2 === 0 ? hex : `0${hex}`
   const out = new Uint8Array(even.length / 2)
   for (let i = 0; i < out.length; i++) {
@@ -33,8 +29,6 @@ function fromHex(hex: string): Uint8Array | null {
   return out
 }
 
-// icrc1Account strips leading zero bytes before hex-encoding, so the subaccount
-// is right-aligned into a full-width buffer to recover the bytes it hashed.
 function padSubaccount(bytes: Uint8Array): Uint8Array | null {
   if (bytes.length > SUBACCOUNT_BYTES) return null
   const out = new Uint8Array(SUBACCOUNT_BYTES)
@@ -53,8 +47,6 @@ function checksumFor(owner: Principal, subaccount: Uint8Array): string {
   return base32NoPad(bytes)
 }
 
-// The long ICRC-1 form is `<principal>-<checksum>.<subaccount>`. Principals
-// contain dashes of their own, so the split is on the last one.
 function parseIcrc1(value: string): ScannedAddress | null {
   const dot = value.indexOf(".")
   if (dot < 0) return null
@@ -80,12 +72,8 @@ function parseIcrc1(value: string): ScannedAddress | null {
   const subaccount = padSubaccount(decoded)
   if (!subaccount) return null
 
-  // A mismatch means the scan was misread rather than that the address is
-  // exotic, and sending to a corrupted destination is unrecoverable.
   if (checksumFor(owner, subaccount) !== claimed.toLowerCase()) return null
 
-  // A zero subaccount is the owner's default account, which the plain principal
-  // already addresses.
   if (subaccount.every((b) => b === 0)) {
     return { kind: "principal", principal: owner.toText() }
   }
@@ -93,12 +81,6 @@ function parseIcrc1(value: string): ScannedAddress | null {
   return { kind: "icrc1", owner: owner.toText(), subaccount, text: value }
 }
 
-// An ICPay payment link names the recipient in its path -- icpay.app/alice. The
-// amount and memo it may also carry are not part of an address, so they are read
-// separately by the form that prefills them (services/pay).
-//
-// Without this, ICPay's own scanner could not read ICPay's own QR: a URL is not
-// hex, not ICRC-1, not a principal, and too long to be a username.
 function usernameFromUrl(raw: string): ScannedAddress | null {
   if (!/^https?:\/\//i.test(raw)) return null
 
@@ -109,23 +91,15 @@ function usernameFromUrl(raw: string): ScannedAddress | null {
     return null
   }
 
-  // Exactly one segment. A deeper path is a different page of the app --
-  // /icpverse/alice is a profile to look at, not a request to pay.
   const segments = url.pathname.split("/").filter(Boolean)
   if (segments.length !== 1) return null
 
   const username = decodeURIComponent(segments[0]).replace(/^@/, "").toLowerCase()
-  // A reserved name is a page of the app, not a handle anyone can hold, so a URL
-  // pointing at one is a link to somewhere rather than an address to pay.
   if (isReservedHandle(username)) return null
   return validateUsername(username) === null ? { kind: "username", username } : null
 }
 
-// Detection runs most-specific first: every account identifier is also valid
-// hex, and every principal is also a plausible username.
 export function parseAddress(raw: string): ScannedAddress | null {
-  // Tried on the untouched input, since stripUri discards the query tail that
-  // tells a payment link apart from a bare profile link.
   const fromUrl = usernameFromUrl(raw.trim())
   if (fromUrl) return fromUrl
 
@@ -140,7 +114,6 @@ export function parseAddress(raw: string): ScannedAddress | null {
   try {
     return { kind: "principal", principal: Principal.fromText(value).toText() }
   } catch {
-    // Not a principal, so fall through to the username test.
   }
 
   const username = value.replace(/^@/, "").toLowerCase()
@@ -149,7 +122,6 @@ export function parseAddress(raw: string): ScannedAddress | null {
   return null
 }
 
-// What the transfer form puts in its recipient field for a given scan.
 export function addressText(hit: ScannedAddress): string {
   switch (hit.kind) {
     case "account":
@@ -163,19 +135,9 @@ export function addressText(hit: ScannedAddress): string {
   }
 }
 
-// parseAddress for text a person typed or pasted, rather than scanned.
-//
-// The difference is the bare-username fallback, which is dropped here: it
-// matches almost anything short, so a form that auto-switched on it would yank
-// the user to the username tab on the first character of a principal. Every
-// other form is unambiguous and complete before it parses at all -- a 64-char
-// hex string, a principal with a valid checksum, an ICRC-1 address, a payment
-// link -- so recognising those on the fly can only help.
 export function detectTypedAddress(raw: string): ScannedAddress | null {
   const hit = parseAddress(raw)
   if (!hit) return null
-  // A payment link still resolves to a username, and that one is deliberate:
-  // the URL form is unmistakable.
   if (hit.kind === "username" && !/^https?:\/\//i.test(raw.trim())) return null
   return hit
 }

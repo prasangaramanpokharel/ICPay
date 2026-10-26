@@ -7,7 +7,7 @@ export default function LegalLayout() {
   const insets = useSafeAreaInsets()
   const router = useRouter()
   return (
-    <View className="flex-1 bg-background" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-background" style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}>
       <Pressable onPress={() => router.back()} className="px-4 py-3">
         <Text className="text-sm text-primary">Back</Text>
       </Pressable>

@@ -1,0 +1,57 @@
+---
+title: "Best Practices"
+description: "Optimization patterns for optimal throughput, caching headers, cycle burn minimization, and edge delivery."
+group: "Guides"
+order: 4
+---
+
+# Best Practices
+
+Follow these production guidelines to maximize performance and minimize cycles consumption when storing on-chain with ICBucket.
+
+## Prerequisites
+
+- Active production bucket with high-volume asset distribution.
+
+## Key Recommendations
+
+### 1. Chunk Sizing (2MB Limit)
+
+The Internet Computer consensus layer has an ingress message payload threshold (2MB). When uploading large files:
+- Split blobs into chunks between **1.5MB and 2.0MB**.
+- Upload chunks sequentially or in parallel batches of at most 3 to avoid throttling.
+
+### 2. Edge CDN Cache Headers
+
+Static assets (images, fonts, scripts, media) should leverage long-lived immutable cache directives:
+
+```typescript
+await bucket.uploadFile("banner.webp", buffer, {
+  contentType: "image/webp",
+  cacheControl: "public, max-age=31536000, immutable",
+})
+```
+
+This guarantees sub-50ms latency from regional edge caches without touching canister update cycles.
+
+### 3. Read Queries vs Update Calls
+
+- **Reading files via CDN or raw HTTP gateway is a query** and costs **0 cycles**.
+- Only writing, uploading, modifying, and deleting files are update calls billed against the canister.
+- Never trigger unnecessary writes inside frequently-polled loops.
+
+## Verification
+
+Inspect cache response headers with curl:
+
+```bash
+curl -I https://cdn.icpay.app/cloud/my-assets/banner.webp
+```
+
+Verify that `Cache-Control: public, max-age=31536000, immutable` and `CF-Cache-Status: HIT` are returned.
+
+## Related Pages
+
+- [Configuration](./configuration.mdx)
+- [Endpoints](../../api/endpoints.mdx)
+- [Error Handling](../../errors/error-handling.mdx)

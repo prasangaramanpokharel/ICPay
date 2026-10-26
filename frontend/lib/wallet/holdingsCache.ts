@@ -1,9 +1,5 @@
 import type { TokenHolding } from "@/services/tokens"
 
-// A reload starts with an empty SWR cache, so /wallet and the token page both
-// painted skeletons for the several seconds the ledger sweep takes -- a wallet
-// that looks empty every time you refresh. Seeding from the last known holdings
-// paints real numbers immediately and lets the live values replace them.
 const KEY = "icpay:holdings:"
 
 type Stored = Omit<TokenHolding, "balance" | "fee"> & { balance: string; fee: string }
@@ -19,8 +15,6 @@ export function readHoldings(principal: string): TokenHolding[] | undefined {
       fee: BigInt(h.fee),
     }))
   } catch {
-    // An entry written by an older shape is not worth reasoning about; the
-    // ledgers are already being read and will overwrite it.
     return undefined
   }
 }
@@ -43,11 +37,9 @@ export function writeHoldings(principal: string, holdings: TokenHolding[]) {
       )
     )
   } catch {
-    // Private-browsing quota rejections must not break the wallet.
   }
 }
 
-/** Apply ledger deltas to the last cached holdings so /wallet updates before the sweep returns. */
 export function patchHoldings(
   principal: string,
   updates: { ledgerId: string; delta: bigint }[]

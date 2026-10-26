@@ -206,16 +206,23 @@ export default function PrivacyPage() {
 
       <Section title="Contact">
         <p>
-          Privacy questions and security reports go to{" "}
+          Privacy inquiries and questions can be sent directly to{" "}
           <a
-            href="https://github.com/prasangapokharel/ICPay/issues"
+            href="mailto:contact@icpay.cloud"
+            className="underline underline-offset-2 font-medium"
+          >
+            contact@icpay.cloud
+          </a>
+          . Public bug reports and security findings can also be posted to{" "}
+          <a
+            href="https://gitlab.com/prasangapokharel/icpay/-/issues"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-2"
           >
-            GitHub issues
+            GitLab issues
           </a>
-          . Note that an issue is public.
+          . Note that GitLab issues are public.
         </p>
       </Section>
 

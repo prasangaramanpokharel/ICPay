@@ -260,7 +260,7 @@ module {
     pageSize: Nat,
   ) : Types.ApiResult<Types.FileListPage> {
     let files = BucketRepo.getFilesByBucket(ctx.store, bucket.id);
-    let filtered = filterPublic(bucket, files, func(f) { FilePath.hasPrefix(f.path, prefix) });
+    let filtered = filterPublic(bucket, files, func(f) { FolderPath.isDirectChildFile(f.path, prefix) });
     let filePaths = Array.map<Types.StoredFile, Text>(files, func(f) { f.path });
     let storedFolders = BucketRepo.listFolderPaths(ctx.store, bucket.id);
     let folderNames = FolderPath.childFolderNames(filePaths, storedFolders, prefix);

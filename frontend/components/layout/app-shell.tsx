@@ -12,8 +12,15 @@ function isChannelsRoute(pathname: string): boolean {
 }
 
 function isChannelChatRoute(pathname: string): boolean {
+  if (typeof window !== "undefined" && pathname === "/channels") {
+    try {
+      const params = new URLSearchParams(window.location.search)
+      const id = params.get("id") || params.get("slug")
+      return Boolean(id && id !== "new" && id !== "join")
+    } catch {}
+  }
   if (!pathname.startsWith("/channels/")) return false
-  return pathname !== "/channels/new"
+  return pathname !== "/channels/new" && !pathname.startsWith("/channels/join")
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -26,18 +33,18 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className={cn("md:hidden", channelChat && "hidden")}>
         <AppHeader />
       </div>
-      <main
+      <div
         className={cn(
-          "mx-auto flex min-h-0 w-full flex-1 flex-col max-w-md md:max-w-none",
+          "mx-auto flex w-full flex-1 flex-col max-w-md md:max-w-none",
           channels
             ? channelChat
-              ? "h-full overflow-hidden p-0"
+              ? "h-full min-h-0 overflow-hidden p-0"
               : cn("px-0 pt-0", bottomNavSpacerClass, "md:pb-0")
             : cn("px-4 pt-2", bottomNavSpacerClass, "md:px-6 md:py-6 md:pb-6"),
         )}
       >
         {children}
-      </main>
+      </div>
       <div className={cn("md:hidden", channelChat && "hidden")}>
         <BottomNav />
       </div>

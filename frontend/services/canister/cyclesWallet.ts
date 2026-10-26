@@ -25,7 +25,6 @@ import {
 } from "@/services/cycles/topUp"
 import { cmcCreateAccount } from "@/services/canister/createCanister"
 
-/** NNS CMC memo for notify_mint_cycles ("MINT" little-endian). */
 export const MINT_CYCLES_MEMO = 0x544e494dn
 
 export const CYCLES_LEDGER_ID = "um5iw-rqaaa-aaaaq-qaaba-cai"
