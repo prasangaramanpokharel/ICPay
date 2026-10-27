@@ -46,6 +46,8 @@ frontend/.agents/skills/vercel-react-best-practices
 !/docs/problem&solution/**
 !/docs/indexToken/
 !/docs/indexToken/**
+!/docs/chatgpt/
+!/docs/chatgpt/**
 !/docs/workflow.md
 
 # docs/bucket/ stays local (PDF exports, not committed)
