@@ -24,6 +24,7 @@ module {
     toEmail: Text,
     subject: Text,
     htmlBody: Text,
+    idempotencyKey: Text,
     transformCallback: ?(shared query { response: Types.CanisterHttpResponse; context: Blob } -> async Types.CanisterHttpResponse)
   ) : async { #ok: Nat; #err: Text } {
     if (Text.equal(apiKey, "")) {
@@ -40,11 +41,21 @@ module {
     let maxRespBytes : Nat64 = 2048;
     let cycleFee = estimateCycles(reqBytes, Nat64.toNat(maxRespBytes));
 
-    let headers : [Types.HttpHeader] = [
+    // Deduplicates outcalls across all subnet replicas so Resend dispatches exactly one email.
+    var headers : [Types.HttpHeader] = [
       { name = "Content-Type"; value = "application/json" },
       { name = "Authorization"; value = "Bearer " # apiKey },
       { name = "User-Agent"; value = "ICPay-Notifier/1.0" }
     ];
+
+    if (not Text.equal(idempotencyKey, "")) {
+      headers := [
+        { name = "Content-Type"; value = "application/json" },
+        { name = "Authorization"; value = "Bearer " # apiKey },
+        { name = "Idempotency-Key"; value = idempotencyKey },
+        { name = "User-Agent"; value = "ICPay-Notifier/1.0" }
+      ];
+    };
 
     let request : Types.CanisterHttpRequest = {
       url = "https://api.resend.com/emails";

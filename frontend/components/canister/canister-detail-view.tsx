@@ -18,7 +18,7 @@ export function CanisterDetailView({ canisterId: canisterIdProp }: { canisterId?
 
   const tabParam = searchParams.get("tab") as CanisterDetailTab | null
   const defaultTab: CanisterDetailTab =
-    tabParam === "settings" || tabParam === "snapshots" ? tabParam : "overview"
+    tabParam === "settings" || tabParam === "snapshots" || tabParam === "logs" ? tabParam : "overview"
 
   const principal = identity?.getPrincipal().toText() ?? null
   const entries = useSavedCanisterEntries(principal)
@@ -40,19 +40,17 @@ export function CanisterDetailView({ canisterId: canisterIdProp }: { canisterId?
 
   return (
     <AppPage>
-      <div className="mx-auto max-w-4xl">
-        {canisterId ? (
-          <MyCanisterDetails
-            canisterId={canisterId}
-            localName={localName}
-            meta={meta}
-            status={status}
-            defaultTab={defaultTab}
-            onCopyId={() => void navigator.clipboard.writeText(canisterId)}
-            onRefresh={() => status.refresh()}
-          />
-        ) : null}
-      </div>
+      {canisterId ? (
+        <MyCanisterDetails
+          canisterId={canisterId}
+          localName={localName}
+          meta={meta}
+          status={status}
+          defaultTab={defaultTab}
+          onCopyId={() => void navigator.clipboard.writeText(canisterId)}
+          onRefresh={() => status.refresh()}
+        />
+      ) : null}
     </AppPage>
   )
 }

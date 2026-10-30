@@ -98,8 +98,9 @@ export function useCommunityChannel(slug: string) {
 
 export function useCommunityChannelLookup(slug: string | null) {
   const { identity } = useAuth()
+  const p = identity ? identity.getPrincipal().toText() : "anonymous"
   const { data, error, isLoading } = useSWR(
-    slug ? (["community-channel-lookup", slug, identity?.getPrincipal().toText()] as const) : null,
+    slug ? (["community-channel-lookup", slug, p] as const) : null,
     () => getCommunityChannel(identity, slug!),
     QUERY_OPTS
   )

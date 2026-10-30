@@ -1,19 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  UserGroupIcon,
-  CpuIcon,
-  EyeIcon,
-  Alert02Icon,
-} from "@hugeicons/core-free-icons"
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { useOwnProfile } from "@/hooks/wallet/useWalletData"
-import { isPremiumHandle } from "@/lib/verified/premiumTick"
-import { PremiumLockedCard } from "@/components/shared/premium-gate"
 import { CanisterControllersCard } from "./canister-controllers-card"
 import { CanisterResourcesCard } from "./canister-resources-card"
 import { CanisterVisibilityCard } from "./canister-visibility-card"
@@ -32,44 +20,25 @@ export function CanisterSettingsView({
   onRefresh: () => void
 }) {
   const [activeTab, setActiveTab] = useState("controllers")
-  const { data: profile } = useOwnProfile()
-  const username = profile?.username[0] ?? null
-  const isPremium = isPremiumHandle(username)
 
   return (
     <div className="flex flex-col gap-5">
-      {/* Settings Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col gap-4">
-        <TabsList variant="line" className="w-full justify-start border-b border-border/40 gap-4 sm:gap-6">
-          <TabsTrigger value="controllers" className="gap-1.5 pb-2 text-xs sm:text-sm cursor-pointer">
-            <HugeiconsIcon icon={UserGroupIcon} className="size-4" strokeWidth={1.75} />
-            <span>Controllers</span>
+        <TabsList>
+          <TabsTrigger value="controllers" className="cursor-pointer">
+            Controllers
           </TabsTrigger>
-          <TabsTrigger value="resources" className="gap-1.5 pb-2 text-xs sm:text-sm cursor-pointer">
-            <HugeiconsIcon icon={CpuIcon} className="size-4" strokeWidth={1.75} />
-            <span>Resources</span>
-            {!isPremium && (
-              <Badge variant="outline" className="ml-1 h-4 px-1 text-[9px] font-semibold text-primary border-primary/30 bg-primary/5">
-                PRO
-              </Badge>
-            )}
+          <TabsTrigger value="resources" className="cursor-pointer">
+            Resources
           </TabsTrigger>
-          <TabsTrigger value="visibility" className="gap-1.5 pb-2 text-xs sm:text-sm cursor-pointer">
-            <HugeiconsIcon icon={EyeIcon} className="size-4" strokeWidth={1.75} />
-            <span>Visibility</span>
-            {!isPremium && (
-              <Badge variant="outline" className="ml-1 h-4 px-1 text-[9px] font-semibold text-primary border-primary/30 bg-primary/5">
-                PRO
-              </Badge>
-            )}
+          <TabsTrigger value="visibility" className="cursor-pointer">
+            Visibility
           </TabsTrigger>
-          <TabsTrigger value="danger" className="gap-1.5 pb-2 text-xs sm:text-sm text-destructive cursor-pointer">
-            <HugeiconsIcon icon={Alert02Icon} className="size-4" strokeWidth={1.75} />
-            <span>Lifecycle</span>
+          <TabsTrigger value="danger" className="cursor-pointer text-destructive data-active:text-destructive">
+            Lifecycle
           </TabsTrigger>
         </TabsList>
 
-        {/* Controllers */}
         <TabsContent value="controllers" className="flex flex-col gap-4">
           <CanisterControllersCard
             canisterId={canisterId}
@@ -79,45 +48,24 @@ export function CanisterSettingsView({
           />
         </TabsContent>
 
-        {/* Resources */}
         <TabsContent value="resources" className="flex flex-col gap-4">
-          {isPremium ? (
-            <CanisterResourcesCard
-              canisterId={canisterId}
-              data={data}
-              isController={isController}
-              onRefresh={onRefresh}
-            />
-          ) : (
-            <PremiumLockedCard
-              title="Resource & Compute Limits"
-              description="Configuring on-chain compute allocation, guaranteed physical RAM reservation, 32-bit Wasm memory limits, and custom freezing protection thresholds is reserved for Premium handle owners (1–4 characters)."
-              actionText="Get Premium Handle"
-              href="/username"
-            />
-          )}
+          <CanisterResourcesCard
+            canisterId={canisterId}
+            data={data}
+            isController={isController}
+            onRefresh={onRefresh}
+          />
         </TabsContent>
 
-        {/* Visibility */}
         <TabsContent value="visibility" className="flex flex-col gap-4">
-          {isPremium ? (
-            <CanisterVisibilityCard
-              canisterId={canisterId}
-              initialLogVisibility={data.logVisibility}
-              isController={isController}
-              onRefresh={onRefresh}
-            />
-          ) : (
-            <PremiumLockedCard
-              title="Canister Log Visibility"
-              description="Configuring public log streaming versus controller-only inspection for autonomous on-chain diagnostics is reserved for Premium handle owners (1–4 characters)."
-              actionText="Get Premium Handle"
-              href="/username"
-            />
-          )}
+          <CanisterVisibilityCard
+            canisterId={canisterId}
+            initialLogVisibility={data.logVisibility}
+            isController={isController}
+            onRefresh={onRefresh}
+          />
         </TabsContent>
 
-        {/* Lifecycle / Danger */}
         <TabsContent value="danger" className="flex flex-col gap-4">
           <CanisterLifecycleCard
             canisterId={canisterId}

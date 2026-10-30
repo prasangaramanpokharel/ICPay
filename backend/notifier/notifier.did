@@ -36,6 +36,7 @@ service : (principal) -> {
   setTimerActive : (bool) -> ();
   setBackendPrincipal : (principal) -> ();
   triggerManualSweep : () -> (nat);
+  restartTimer : () -> ();
   getStatus : () -> (NotifierStatus) query;
   transform : (TransformArgs) -> (CanisterHttpResponse) query;
 }

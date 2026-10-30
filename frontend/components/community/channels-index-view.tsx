@@ -4,7 +4,8 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { CommunityEmptyPane } from "@/components/community/community-empty-pane"
 import { CommunityWorkspace } from "@/components/community/community-workspace"
 import { ChannelsPublicDirectory } from "@/components/community/channels-public-directory"
-import { ChannelSlugView } from "@/components/community/channel-slug-view"
+import { ChannelPublicLanding } from "@/components/community/channel-public-landing"
+import { CommunityChannelScreen } from "@/app/(app)/channels/[slug]/community-channel-screen"
 import { useChannelSlug } from "@/lib/routing/rewrittenRoute"
 import { AppShell } from "@/components/layout/app-shell"
 import { Spinner } from "@/components/ui/spinner"
@@ -22,19 +23,23 @@ export function ChannelsIndexView({ channels }: { channels: CommunityChannelSnap
     )
   }
 
-  if (slug && slug !== "slug") {
-    const knownChannel = channels.find((c) => c.slug === slug) ?? null
-    return <ChannelSlugView key={slug} slug={slug} channel={knownChannel} />
-  }
-
   if (isAuthenticated) {
     return (
       <AppShell>
         <CommunityWorkspace>
-          <CommunityEmptyPane />
+          {slug && slug !== "slug" ? (
+            <CommunityChannelScreen key={slug} slug={slug} />
+          ) : (
+            <CommunityEmptyPane />
+          )}
         </CommunityWorkspace>
       </AppShell>
     )
+  }
+
+  if (slug && slug !== "slug") {
+    const knownChannel = channels.find((c) => c.slug === slug) ?? null
+    return <ChannelPublicLanding key={slug} slug={slug} channel={knownChannel} />
   }
 
   return <ChannelsPublicDirectory channels={channels} />

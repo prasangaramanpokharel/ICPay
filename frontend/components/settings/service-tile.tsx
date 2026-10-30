@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { AppIcon, type AppIconName } from "@/components/ui/app-icon"
-import { GradientBadge } from "@/components/ui/gradient-badge"
+import { Badge } from "@/components/ui/badge"
 
 export function ServiceTile({
   href,
@@ -27,9 +27,12 @@ export function ServiceTile({
           <AppIcon name={icon} size={20} className="text-primary" />
         </span>
         {badge ? (
-          <GradientBadge className="absolute -right-2 -top-2 z-10" size="sm">
+          <Badge
+            variant="secondary"
+            className="absolute -top-2 -right-2 z-10 h-4.5 px-1.5 text-[9px] font-semibold tracking-wider uppercase"
+          >
             {badge}
-          </GradientBadge>
+          </Badge>
         ) : null}
       </span>
       <span className="text-[11px] font-medium leading-tight">{label}</span>

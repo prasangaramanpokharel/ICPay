@@ -1,0 +1,152 @@
+---
+title: "DFX Identity & Security"
+description: "Master cryptographic identities in dfx — managing keys, principals, account IDs, air-gapped signing, and role-based access control."
+group: "DFX CLI Guide"
+order: 5
+eyebrow: "Deep Dive"
+---
+
+# Identity & Security Guide
+
+On the Internet Computer, all interactions are signed cryptographically. **`dfx identity`** manages the cryptographic keypairs used to authenticate requests, author transactions, and prove controller authority.
+
+---
+
+## Principals vs. Account Identifiers
+
+| Identifier Type | Format | Where It Is Used | Example |
+|---|---|---|---|
+| **Principal** | Base32 text with checksum hyphens | Canister calls, ICRC-1/ICRC-2 token ledgers, canister controllers | `2vxsx-fae` or `w3dso-p2iik-...` |
+| **Account Identifier** | 64-character hexadecimal SHA-224 hash | Legacy ICP Ledger canister transactions | `5f98a760b263914a82c4488ad7ff6e...` |
+
+> [!NOTE]
+> Every principal has a default Account Identifier calculated from the principal plus a zeroed 32-byte subaccount. You can check both using:
+> ```bash
+> dfx identity get-principal
+> dfx ledger account-id
+> ```
+
+---
+
+## Identity Management Commands
+
+### 1. View Current Identity
+```bash
+dfx identity whoami
+# Output: default
+```
+
+### 2. View Active Principal
+```bash
+dfx identity get-principal
+# Output: x4z3m-5iaaa-aaaam-qaxka-cai
+```
+
+### 3. List All Installed Identities
+```bash
+dfx identity list
+```
+
+**Example Output:**
+```
+* default
+  deployer
+  testing_user
+  alice
+```
+The asterisk (`*`) marks the currently active identity.
+
+### 4. Create a New Identity
+
+```bash
+# Password-protected encrypted identity (Recommended for mainnet)
+dfx identity new deployer
+
+# Plaintext unencrypted identity (Useful for automated testing scripts)
+dfx identity new alice --disable-encryption
+```
+
+### 5. Switch Active Identity
+```bash
+dfx identity use deployer
+```
+
+### 6. Remove an Identity
+```bash
+dfx identity remove alice
+```
+
+---
+
+## Multi-User Local Testing
+
+A common pattern when developing smart contracts is testing role-based permissions (e.g. Admin vs Standard User vs Unauthenticated Anonymous):
+
+```bash
+# 1. Switch to admin identity
+dfx identity use default
+ADMIN_PRINCIPAL=$(dfx identity get-principal)
+
+# 2. Deploy canister with admin principal
+dfx deploy backend --argument "(record { admin = principal \"$ADMIN_PRINCIPAL\" })"
+
+# 3. Create a standard user identity
+dfx identity new bob --disable-encryption
+dfx identity use bob
+
+# 4. Attempt an admin-only call (should trap / fail)
+dfx canister call backend updateConfig '(100 : nat)'
+# Error: Caller is not the authorized administrator!
+
+# 5. Call public method as Bob
+dfx canister call backend getPublicData --query
+```
+
+---
+
+## Exporting & Importing Identities
+
+Identities are stored locally on your machine at `~/.config/dfx/identity/<name>/identity.pem`.
+
+### Exporting an Identity
+To back up an identity or move it to another development machine:
+
+```bash
+# Export the decrypted PEM private key
+dfx identity export deployer > deployer.pem
+```
+
+> [!CAUTION]
+> Treat exported `.pem` files as private keys. Anyone with access to your `.pem` file can spend your tokens and control your canisters. Never commit `.pem` files to Git.
+
+### Importing an Identity
+To restore from a backup `.pem` file:
+
+```bash
+dfx identity import my_backup deployer.pem
+dfx identity use my_backup
+```
+
+---
+
+## Air-Gapped Offline Signing (`dfx canister sign` & `send`)
+
+For maximum mainnet security, production canisters can be upgraded without exposing private keys on an internet-connected device:
+
+```bash
+# 1. Generate an unsigned message on the online machine
+dfx canister --network ic sign backend upgrade --mode upgrade > call.json
+
+# 2. Transfer call.json to your cold / offline machine and sign it
+dfx canister sign --message call.json > signed.json
+
+# 3. Transfer signed.json back to the online machine and broadcast
+dfx canister --network ic send signed.json
+```
+
+---
+
+## Next Steps
+
+- [Ledger & Cycles Guide](./ledger-cycles.mdx) — Check token balances and convert ICP to Cycles.
+- [Canister Deep Dive](./canister.mdx) — Inspect canister settings and call methods.

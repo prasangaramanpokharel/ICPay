@@ -19,6 +19,7 @@ export type SidebarNavItem = {
   labelKey: string
   icon: IconSvgElement
   badgeKey?: string
+  badgeVariant?: "default" | "secondary" | "outline"
   badgeType?: "gradient" | "text"
 }
 
@@ -52,7 +53,7 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
   {
     sectionKey: "services",
     items: [
-      { href: "/bucket", labelKey: "settings.items.bucket", icon: CloudIcon, badgeKey: "settings.items.bucketBadge", badgeType: "gradient" },
+      { href: "/bucket", labelKey: "settings.items.bucket", icon: CloudIcon, badgeKey: "settings.items.bucketBadge", badgeVariant: "secondary" },
       {
         href: "/canister",
         labelKey: "settings.items.canisters",

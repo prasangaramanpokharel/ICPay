@@ -100,7 +100,12 @@ export function CanisterLifecycleCard({
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          {/* Start / Stop Section */}
+          {!isController && (
+            <div className="rounded-xl border border-border/40 bg-muted/20 p-3 text-xs text-muted-foreground">
+              Read-only view · Only authorized controllers can change canister execution state or delete it.
+            </div>
+          )}
+
           <div className="flex flex-col gap-3 rounded-xl border border-border/40 bg-muted/20 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-foreground">
@@ -143,7 +148,6 @@ export function CanisterLifecycleCard({
             )}
           </div>
 
-          {/* Delete Canister Section */}
           <div className="flex flex-col gap-3 rounded-xl border border-destructive/20 bg-destructive/5 p-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm font-medium text-destructive">Delete Canister</p>

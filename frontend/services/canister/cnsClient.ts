@@ -145,3 +145,29 @@ export async function batchSyncLocalCanistersToCloud(
     console.debug("[cnsClient] batchSyncLocalCanistersToCloud error:", err)
   }
 }
+
+export async function updateCanisterNameOnCloud(
+  identity: Identity | null | undefined,
+  canisterIdText: string,
+  name: string
+): Promise<boolean> {
+  if (!identity || !CNSMANAGEMENT_CANISTER_ID) return false
+  const cleanName = name.trim()
+  try {
+    const actor = await getCnsActor(identity, CNSMANAGEMENT_CANISTER_ID)
+    const canister_id = Principal.fromText(canisterIdText.trim())
+    const res = await actor.update_canister_name(canister_id, cleanName)
+    if ("Err" in res) {
+      const linkRes = await actor.link_canister({
+        canister_id,
+        name: cleanName,
+        description: [],
+      })
+      return "Ok" in linkRes
+    }
+    return true
+  } catch (err) {
+    console.debug("[cnsClient] updateCanisterNameOnCloud error:", err)
+    return false
+  }
+}

@@ -51,13 +51,13 @@ export function ArchitectureSection() {
         </div>
 
         {/* Animated Architecture Topology Card */}
-        <Card className="relative overflow-hidden rounded-3xl border border-border/80 bg-card/60 backdrop-blur-xs shadow-xs">
+        <Card className="relative overflow-hidden bg-background">
           {/* Subtle architectural dot grid background */}
-          <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(var(--border)_1px,transparent_1px)] [background-size:24px_24px] opacity-60" />
+         
           {/* Ambient soft glow at center using globals primary token */}
-          <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 size-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/5 blur-3xl" />
+         
 
-          <CardContent className="p-0">
+          <CardContent className="">
             {/* Scrollable Canvas Container */}
             <div className="w-full overflow-x-auto">
               <div
@@ -212,7 +212,7 @@ export function ArchitectureSection() {
                   </span>
 
                   <div className="relative flex flex-col items-center gap-3 text-center">
-                    <div className="pointer-events-none absolute -inset-6 rounded-full bg-primary/15 blur-2xl" />
+                    <div className="" />
                     <div
                       ref={canisterRef}
                       className="z-10 relative flex size-24 items-center justify-center rounded-3xl border-2 border-primary/50 bg-card p-3 shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-primary"
@@ -222,22 +222,18 @@ export function ArchitectureSection() {
                         alt="ICPay Canister"
                         width={48}
                         height={48}
-                        className="size-12 rounded-2xl object-contain drop-shadow-sm"
+                        className="size-18 rounded-2xl object-contain drop-shadow-sm"
                       />
                     </div>
                     <div className="space-y-1">
                       <div className="flex items-center justify-center gap-1.5">
-                        <span className="size-2 rounded-full bg-success" />
+                        
                         <p className="text-xs font-bold tracking-tight text-foreground">
                           ICPay Bucket Canister
                         </p>
                       </div>
-                      <p className="font-mono text-[11px] text-muted-foreground">
-                        Motoko Bucket Engine
-                      </p>
-                      <span className="inline-flex items-center rounded-md border border-border/80 bg-muted/50 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
-                        Subaccount Isolated
-                      </span>
+
+                    
                     </div>
                   </div>
                 </div>

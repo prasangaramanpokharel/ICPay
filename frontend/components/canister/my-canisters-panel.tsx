@@ -5,17 +5,17 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
+  Add01Icon,
   ConnectIcon,
-  InformationCircleIcon,
+  Link01Icon,
   Package01Icon,
 } from "@hugeicons/core-free-icons"
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { ButtonGroup } from "@/components/ui/button-group"
-import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Card, CardContent } from "@/components/ui/card"
+import { CopyButton } from "@/components/ui/copy-button"
+import { Table, TableBody } from "@/components/ui/table"
 import { LinkCanisterDialog } from "@/components/canister/link-canister-dialog"
 import { ConnectControllerDialog } from "@/components/canister/connect-controller-dialog"
 import { MyCanisterRow } from "@/components/canister/my-canister-row"
@@ -29,8 +29,6 @@ import {
   useSyncCloudCanisters,
 } from "@/hooks/canister/useSavedCanisters"
 import { displayCanisterLabel } from "@/lib/canister/savedCanisters"
-import { subnetLabel } from "@/services/canister/controlledCanisters"
-import { shortSubnetId } from "@/services/canister/subnetLocations"
 
 function EmptyBlock({
   message,
@@ -101,47 +99,65 @@ export function MyCanistersPanel() {
       title={t("title")}
       description={t("subtitle")}
       actions={
-        <ButtonGroup>
-          <Button type="button" variant="outline" size="sm" onClick={openLink}>
-            {t("link")}
+        <div className="flex items-center gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={openLink}
+            className="h-8 gap-1.5 px-3 text-xs font-medium cursor-pointer"
+          >
+            <HugeiconsIcon icon={Link01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+            <span>{t("link")}</span>
           </Button>
-          <Button size="sm" nativeButton={false} render={<Link href="/canister/create" />}>
-            {t("create")}
+          <Button
+            size="sm"
+            className="h-8 gap-1.5 px-3.5 text-xs font-medium cursor-pointer"
+            nativeButton={false}
+            render={<Link href="/canister/create" />}
+          >
+            <HugeiconsIcon icon={Add01Icon} className="size-3.5" strokeWidth={2} />
+            <span>{t("create")}</span>
           </Button>
-        </ButtonGroup>
+        </div>
       }
     >
-      <Alert className="bg-muted/30">
-        <HugeiconsIcon icon={InformationCircleIcon} />
+      <Alert className="bg-muted/30 pr-28">
         <AlertTitle>{t("yourPrincipal")}</AlertTitle>
         <AlertDescription>
-          <p className="break-all font-mono text-xs text-foreground">{principal ?? "—"}</p>
+          <div className="flex items-center gap-1.5">
+            <span className="break-all font-mono text-xs text-foreground">{principal ?? "—"}</span>
+            {principal ? (
+              <CopyButton
+                variant="ghost"
+                size="icon-xs"
+                value={principal}
+                className="size-5 shrink-0 p-0 text-muted-foreground hover:bg-transparent hover:text-foreground cursor-pointer"
+                iconClassName="size-3.5"
+                aria-label="Copy principal"
+              />
+            ) : null}
+          </div>
         </AlertDescription>
         {principal ? (
-          <AlertAction>
+          <AlertAction className="top-1/2 -translate-y-1/2 right-3">
             <Button
               type="button"
               variant="outline"
-              size="xs"
-              className="h-7 gap-1 px-2.5 text-xs font-medium"
+              size="sm"
+              className="h-8 gap-1.5 px-3 text-xs font-medium cursor-pointer"
               onClick={() => handleOpenConnect()}
             >
-              <HugeiconsIcon icon={ConnectIcon} className="size-3.5 text-primary" />
+              <HugeiconsIcon icon={ConnectIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
               <span>Connect</span>
             </Button>
           </AlertAction>
         ) : null}
       </Alert>
 
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <Card className="min-w-0 flex-1 gap-0">
-          <CardHeader className="border-b pb-3">
-            <div className="flex flex-wrap items-center gap-2">
-              <CardTitle className="text-base">{t("listTitle")}</CardTitle>
-              <Badge variant="secondary">{t("count", { count: mine.ids.length })}</Badge>
-            </div>
-            <CardDescription>{t("listHint")}</CardDescription>
-          </CardHeader>
+      <div className="space-y-3">
+        <h2 className="text-base font-semibold text-foreground">Projects</h2>
+        <Card className="min-w-0 overflow-hidden p-0">
           <CardContent className="p-0">
             {mine.isLoading ? (
               <div className="p-2">
@@ -165,34 +181,17 @@ export function MyCanistersPanel() {
               </div>
             ) : (
               <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>{t("listTitle")}</TableHead>
-                    <TableHead className="text-right">Cycles</TableHead>
-                    <TableHead className="w-[140px] text-right">{t("menuActions")}</TableHead>
-                  </TableRow>
-                </TableHeader>
                 <TableBody>
                   {mine.ids.map((id) => {
                     const row = mine.metaById.get(id)
                     const savedName = nameById.get(id) ?? ""
                     const label =
                       savedName || row?.name || displayCanisterLabel({ id, name: "" })
-                    const hasFlags = Boolean(row?.countries.length)
-                    const place = row
-                      ? hasFlags
-                        ? row.nodeCount > 0
-                          ? `${row.nodeCount} nodes`
-                          : ""
-                        : subnetLabel(row) || shortSubnetId(row.subnetId)
-                      : ""
                     return (
                       <MyCanisterRow
                         key={id}
                         id={id}
                         label={label}
-                        place={place}
-                        countries={row?.countries}
                         selected={false}
                         status={previews.map[id]}
                         statusLoading={previews.isLoading}

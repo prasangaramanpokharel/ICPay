@@ -10,6 +10,7 @@ import { createAgent } from "@/services/icp"
 import { parseCanisterId } from "@/services/cycles/topUp"
 import {
   formatBytes,
+  formatLogTimestamp,
   formatModuleHash,
   formatNsTimestamp,
   parseRunStatus,
@@ -248,16 +249,26 @@ export async function stopCanister(identity: Identity, canisterIdText: string): 
   await mgmt.stopCanister(parseCanisterId(canisterIdText))
 }
 
+export type CanisterLogEntry = {
+  idx: string
+  timestampNanos: bigint
+  at: string
+  time: string
+  text: string
+}
+
 export async function fetchCanisterLogs(
   identity: Identity,
   canisterIdText: string
-): Promise<{ idx: string; at: string; text: string }[]> {
+): Promise<CanisterLogEntry[]> {
   const mgmt = await management(identity)
   const res = await mgmt.fetchCanisterLogs(parseCanisterId(canisterIdText))
   return res.canister_log_records.map((row) => ({
     idx: row.idx.toString(),
+    timestampNanos: row.timestamp_nanos,
     at: formatNsTimestamp(row.timestamp_nanos),
-    text: new TextDecoder().decode(row.content),
+    time: formatLogTimestamp(row.timestamp_nanos),
+    text: new TextDecoder("utf-8", { fatal: false }).decode(row.content),
   }))
 }
 

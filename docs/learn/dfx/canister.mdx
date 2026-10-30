@@ -1,0 +1,174 @@
+---
+title: "DFX Canister Management"
+description: "Master dfx canister commands — Candid argument syntax, query vs update calls, upgrades, snapshots, logs, and controller permissions."
+group: "DFX CLI Guide"
+order: 4
+eyebrow: "Deep Dive"
+---
+
+# Canister Management Guide
+
+The `dfx canister` subcommand is the workhorse of Internet Computer development. This guide covers how to inspect, call, upgrade, configure, and debug deployed canisters.
+
+---
+
+## Candid Parameter Syntax
+
+When calling canister methods via `dfx canister call`, arguments must be provided in **Candid Text format** wrapped in parentheses `'()'`.
+
+### Primitive Types
+```bash
+# text (strings)
+dfx canister call my_canister setUsername '("alice_crypto")'
+
+# nat (unsigned natural numbers) & int (signed integers)
+dfx canister call my_canister setAge '(28 : nat)'
+dfx canister call my_canister setTemperature '(-5 : int)'
+
+# bool (true / false)
+dfx canister call my_canister setVerified '(true)'
+
+# principal (Internet Computer address)
+dfx canister call my_canister addAdmin '(principal "2vxsx-fae")'
+```
+
+### Complex Types
+
+#### Records (Objects / Structs)
+```bash
+dfx canister call my_canister createUser '(record {
+  username = "saturn";
+  email = "saturn@icpay.app";
+  tier = 1 : nat8;
+})'
+```
+
+#### Variants (Enums / Tagged Unions)
+```bash
+# Variant without payload
+dfx canister call my_canister setStatus '(variant { Active })'
+
+# Variant with payload
+dfx canister call my_canister logEvent '(variant { UserBanned = record { reason = "spam"; until = 1750000000 : nat64 } })'
+```
+
+#### Vectors (Arrays / Lists)
+```bash
+# Vector of text
+dfx canister call my_canister addTags '(vec { "crypto"; "defi"; "storage" })'
+
+# Vector of numbers
+dfx canister call my_canister setPerms '(vec { 1 : nat8; 4 : nat8; 8 : nat8 })'
+```
+
+#### Options (`null` or `opt value`)
+```bash
+# None / null
+dfx canister call my_canister updateProfile '(record { bio = null })'
+
+# Some / opt
+dfx canister call my_canister updateProfile '(record { bio = opt "Web3 builder" })'
+```
+
+---
+
+## Query vs. Update Calls
+
+| Dimension | Query Call (`--query`) | Update Call (Default) |
+|---|---|---|
+| **Consensus** | Single node execution (no consensus) | Distributed Byzantine Fault Tolerant consensus |
+| **State Changes** | Read-only (changes are discarded) | Committed to persistent canister memory |
+| **Latency** | Extremely fast (~50–100ms) | Consensus block time (~1.5–2.0s) |
+| **Cycle Cost** | Free to the caller | Deducts cycles from canister balance |
+| **CLI Flag** | Must pass `--query` | Omit flag |
+
+### Query Example:
+```bash
+dfx canister --network ic call backend getBalance '(principal "2vxsx-fae")' --query
+```
+
+### Update Example:
+```bash
+dfx canister --network ic call backend transfer '(record { to = principal "2vxsx-fae"; amount = 10_000_000 : nat })'
+```
+
+---
+
+## Inspecting Canister Health & Memory
+
+```bash
+dfx canister --network ic status backend
+```
+
+Key fields to monitor:
+- **`Memory Size`**: Canister Wasm 32-bit linear memory + 64-bit stable memory. The maximum allocation per canister is 400 GiB (using 64-bit stable memory).
+- **`Balance`**: Remaining cycles. If balance drops below the `Freezing threshold`, the canister stops executing update calls until topped up.
+- **`Controllers`**: Only controller principals can upgrade code, change settings, or fetch status.
+
+---
+
+## Upgrades vs. Reinstallation
+
+### Safe Upgrade (Preserves State)
+An upgrade stops the canister, executes pre-upgrade hooks, installs new Wasm bytecode, and runs post-upgrade hooks to restore state:
+
+```bash
+dfx deploy backend --network ic --mode upgrade
+```
+
+### Dangerous Reinstallation (Erases All State)
+```bash
+# WARNING: This deletes all canister data forever!
+dfx deploy backend --mode reinstall
+```
+
+---
+
+## Canister Controllers & Access Control
+
+Controllers hold administrative sovereignty over a canister. You can add hardware devices, automated deployers, or decentralized DAOs:
+
+```bash
+# Add a second controller
+dfx canister --network ic update-settings backend --add-controller 6vbhm-nqaaa-aaaan-q6muq-cai
+
+# Remove a controller
+dfx canister --network ic update-settings backend --remove-controller <old-principal>
+
+# Set multiple controllers at once
+dfx canister --network ic update-settings backend --set-controller <p1> --set-controller <p2>
+```
+
+---
+
+## Canister Snapshots
+
+Snapshots let you capture a point-in-time state of a canister's memory before performing major migrations:
+
+```bash
+# Create a snapshot
+dfx canister --network ic snapshot create backend
+
+# List existing snapshots
+dfx canister --network ic snapshot list backend
+
+# Restore a snapshot (rolls back memory to snapshot state)
+dfx canister --network ic snapshot load backend <snapshot-id>
+```
+
+---
+
+## Reading Live Logs
+
+Canisters can emit debug and audit logs directly to boundary nodes:
+
+```bash
+dfx canister --network ic logs backend
+```
+
+---
+
+## Next Steps
+
+- [Identity & Key Management](./identity.mdx) — Configure deployment controllers and signers.
+- [Ledger & Cycles](./ledger-cycles.mdx) — Fund your canisters and prevent freezing.
