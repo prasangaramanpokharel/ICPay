@@ -1,6 +1,8 @@
-import { createAvatar } from "@dicebear/core"
-import { identicon } from "@dicebear/collection"
+import { Style, Avatar, type StyleDefinition } from "@dicebear/core"
+import definition from "@dicebear/styles/identicon.json" with { type: "json" }
 import { communityAvatarSeed } from "@/lib/community/avatar"
+
+const style = new Style(definition as unknown as StyleDefinition)
 
 const IDENTICON_ROW_COLORS = [
   "0ea5e9",
@@ -12,9 +14,10 @@ const IDENTICON_ROW_COLORS = [
 ] as const
 
 export function communityIdenticonSvg(slug: string, pixels = 512): string {
-  return createAvatar(identicon, {
+  const avatar = new Avatar(style, {
     seed: communityAvatarSeed(slug),
     size: pixels,
     rowColor: [...IDENTICON_ROW_COLORS],
-  }).toString()
+  })
+  return avatar.toString()
 }

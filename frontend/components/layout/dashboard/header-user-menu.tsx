@@ -3,8 +3,6 @@
 import Link from "next/link"
 import { useMemo } from "react"
 import { useTranslations } from "next-intl"
-import { createAvatar } from "@dicebear/core"
-import { adventurer } from "@dicebear/collection"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { BookOpen02Icon, Logout01Icon, Settings01Icon, UserIcon } from "@hugeicons/core-free-icons"
 import {
@@ -24,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useDashboard } from "@/hooks/wallet/useWalletData"
+import { avatarUriFor } from "@/lib/profile/avatar"
 
 export function HeaderUserMenu() {
   const { identity, logout } = useAuth()
@@ -35,7 +34,7 @@ export function HeaderUserMenu() {
   const displayName = username ? `@${username}` : principal.slice(0, 8) + "…"
 
   const avatarUri = useMemo(
-    () => (principal ? createAvatar(adventurer, { seed: principal }).toDataUri() : ""),
+    () => (principal ? avatarUriFor(principal) : ""),
     [principal],
   )
 

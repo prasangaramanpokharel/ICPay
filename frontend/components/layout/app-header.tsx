@@ -3,11 +3,10 @@
 import Link from "next/link"
 import { useMemo } from "react"
 import { useTranslations } from "next-intl"
-import { createAvatar } from "@dicebear/core"
-import { adventurer } from "@dicebear/collection"
 import { useAuth } from "@/components/auth/auth-provider"
 import { LanguageSwitch } from "@/components/i18n/language-switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { avatarUriFor } from "@/lib/profile/avatar"
 
 export function AppHeader() {
   const t = useTranslations("header")
@@ -16,7 +15,7 @@ export function AppHeader() {
   const principal = identity?.getPrincipal().toText() ?? ""
 
   const avatarUri = useMemo(
-    () => (principal ? createAvatar(adventurer, { seed: principal }).toDataUri() : ""),
+    () => (principal ? avatarUriFor(principal) : ""),
     [principal]
   )
 

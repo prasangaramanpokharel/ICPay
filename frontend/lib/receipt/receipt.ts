@@ -1,7 +1,6 @@
 import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet/utils"
 import { ICP_LOGO } from "@/lib/token/icon"
-import { createAvatar } from "@dicebear/core"
-import { adventurer } from "@dicebear/collection"
+import { avatarSvgFor } from "@/lib/profile/avatar"
 
 export type Receipt = {
   amount: bigint
@@ -68,7 +67,7 @@ function logoDataUri(): Promise<string> {
 }
 
 function avatarDataUri(seed: string): string {
-  const svg = createAvatar(adventurer, { seed }).toString()
+  const svg = avatarSvgFor(seed)
   return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`
 }
 

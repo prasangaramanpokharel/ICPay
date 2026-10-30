@@ -3,11 +3,10 @@
 import Link from "next/link"
 import { useMemo, useSyncExternalStore } from "react"
 import { useTranslations } from "next-intl"
-import { createAvatar } from "@dicebear/core"
-import { adventurer } from "@dicebear/collection"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { avatarUriFor } from "@/lib/profile/avatar"
 
 export function PublicNavAuth() {
   const t = useTranslations("publicSite.nav")
@@ -21,7 +20,7 @@ export function PublicNavAuth() {
   )
 
   const avatarUri = useMemo(
-    () => (principal ? createAvatar(adventurer, { seed: principal }).toDataUri() : ""),
+    () => (principal ? avatarUriFor(principal) : ""),
     [principal]
   )
 
