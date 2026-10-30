@@ -3,8 +3,6 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { createAvatar } from "@dicebear/core"
-import { glass } from "@dicebear/collection"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ConnectIcon, FuelStationIcon, ViewIcon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -13,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import type { MineRowStatus } from "@/hooks/canister/useMineStatusMap"
+import { projectAvatarUriFor } from "@/lib/profile/avatar"
 import { cn } from "@/lib/ui/utils"
 
 export function MyCanisterRow({
@@ -36,7 +35,7 @@ export function MyCanisterRow({
   const ts = useTranslations("canisterStatus")
 
   const avatarUri = useMemo(
-    () => createAvatar(glass, { seed: id || label }).toDataUri(),
+    () => projectAvatarUriFor(id || label),
     [id, label]
   )
 

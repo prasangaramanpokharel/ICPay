@@ -1,6 +1,7 @@
-import { createAvatar } from "@dicebear/core"
-import { identicon } from "@dicebear/collection"
+import { Style, Avatar, type StyleDefinition } from "@dicebear/core"
+import definition from "@dicebear/styles/identicon.json" with { type: "json" }
 
+const style = new Style(definition as unknown as StyleDefinition)
 const CHANNEL_SEED_PREFIX = "icpay:channel:"
 
 const IDENTICON_ROW_COLORS = [
@@ -17,9 +18,10 @@ export function communityAvatarSeed(slug: string): string {
 }
 
 export function communityAvatarUri(slug: string, pixels = 80): string {
-  return createAvatar(identicon, {
+  const avatar = new Avatar(style, {
     seed: communityAvatarSeed(slug),
     size: pixels,
     rowColor: [...IDENTICON_ROW_COLORS],
-  }).toDataUri()
+  })
+  return avatar.toDataUri()
 }
