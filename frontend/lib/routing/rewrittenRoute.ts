@@ -68,13 +68,12 @@ function getBrowserTokenLedgerId(): string {
   return tokenLedgerIdFromPath(window.location.pathname)
 }
 
-
 export function useRewrittenLastSegment(): string {
   const pathname = usePathname()
   void pathname
 
   return useSyncExternalStore(
-    subscribe,
+    subscribeNavigation,
     getBrowserLastSegment,
     () => "",
   )
@@ -85,7 +84,7 @@ export function useTokenLedgerId(): string {
   void pathname
 
   return useSyncExternalStore(
-    subscribe,
+    subscribeNavigation,
     getBrowserTokenLedgerId,
     () => "",
   )
@@ -93,33 +92,68 @@ export function useTokenLedgerId(): string {
 
 export function useChannelSlug(): string {
   const pathname = usePathname()
-  const browserSlug = useSyncExternalStore(subscribe, getBrowserChannelSlug, () => "")
+  const browserSlug = useSyncExternalStore(subscribeNavigation, getBrowserChannelSlug, () => "")
 
   if (browserSlug && browserSlug !== "slug" && browserSlug !== "new" && browserSlug !== "join") {
     return browserSlug
   }
+
   const routerSlug = channelSlugFromPath(pathname)
   if (routerSlug && routerSlug !== "slug") return routerSlug
+
   return ""
 }
 
 export function useChannelMessageId(): string {
   const pathname = usePathname()
-  const browserMsg = useSyncExternalStore(subscribe, getBrowserChannelMessageId, () => "")
+  const browserMsg = useSyncExternalStore(subscribeNavigation, getBrowserChannelMessageId, () => "")
 
   if (browserMsg && /^\d+$/.test(browserMsg)) {
     return browserMsg
   }
+
   const routerMessageId = channelMessageIdFromPath(pathname)
   if (routerMessageId && routerMessageId !== "message") return routerMessageId
+
   return ""
 }
 
-function subscribe(onStoreChange: () => void) {
+let historyPatched = false
+let locationChangeTimer: ReturnType<typeof setTimeout> | null = null
+
+function scheduleLocationChange() {
+  if (locationChangeTimer !== null) return
+  locationChangeTimer = setTimeout(() => {
+    locationChangeTimer = null
+    window.dispatchEvent(new Event("locationchange"))
+  }, 0)
+}
+
+function patchBrowserHistory() {
+  if (typeof window === "undefined" || historyPatched) return
+  historyPatched = true
+  const origPush = window.history.pushState
+  window.history.pushState = function (...args) {
+    const res = origPush.apply(this, args)
+    scheduleLocationChange()
+    return res
+  }
+  const origReplace = window.history.replaceState
+  window.history.replaceState = function (...args) {
+    const res = origReplace.apply(this, args)
+    scheduleLocationChange()
+    return res
+  }
+}
+
+export function subscribeNavigation(onStoreChange: () => void) {
+  patchBrowserHistory()
   window.addEventListener("popstate", onStoreChange)
   window.addEventListener("hashchange", onStoreChange)
+  window.addEventListener("locationchange", onStoreChange)
   return () => {
     window.removeEventListener("popstate", onStoreChange)
     window.removeEventListener("hashchange", onStoreChange)
+    window.removeEventListener("locationchange", onStoreChange)
   }
 }

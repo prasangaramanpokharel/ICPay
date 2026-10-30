@@ -1,0 +1,151 @@
+---
+title: "DFX Ledger & Cycles Guide"
+description: "Master Internet Computer token economics with dfx — checking ICP balances, converting ICP to cycles, funding canisters, and runway management."
+group: "DFX CLI Guide"
+order: 6
+eyebrow: "Deep Dive"
+---
+
+# Ledger & Cycles Management
+
+Every canister on the Internet Computer consumes **Cycles** to pay for CPU instructions, 64-bit stable memory allocation, network ingress, and HTTPS outcalls. This guide explains how to manage ICP tokens, convert them to Cycles, and fund your canisters using `dfx`.
+
+---
+
+## Token Overview: ICP vs. Cycles
+
+| Asset | Precision | Backing / Value | Use Case |
+|---|---|---|---|
+| **ICP** | 8 decimals ($1 \text{ ICP} = 10^8 \text{ e8s}$) | Free-floating market price on global exchanges | Governance voting, value transfer, staking neurons |
+| **Cycles** | Integer units | Pegged to IMF SDR basket ($1 \text{ Trillion Cycles} = 1 \text{ XDR}$) | Fuel for canister compute, memory, and networking |
+
+```
+[ICP Tokens] ──> [Cycles Minting Canister (CMC)] ──> [Cycles] ──> [Canisters]
+```
+
+---
+
+## Checking Token & Cycles Balances
+
+### 1. Check Liquid ICP Balance
+```bash
+# Check on Mainnet
+dfx ledger balance --network ic
+
+# Output:
+# 12.50000000 ICP
+```
+
+### 2. Check Cycles Ledger Balance
+The modern Internet Computer uses the **Cycles Ledger** (`um5iw-rqaaa-aaaaq-qaaba-cai`), allowing your principal to hold cycles directly without deploying an expensive cycles wallet:
+
+```bash
+dfx cycles balance --network ic
+
+# Output:
+# 25.800 TC (Trillion Cycles)
+```
+
+---
+
+## Transferring ICP
+
+To send ICP from your active identity to another user's Account Identifier or Principal:
+
+```bash
+# Transfer 2.5 ICP to an Account Identifier
+dfx ledger transfer --network ic \
+  --amount 2.5 \
+  --memo 0 \
+  5f98a760b263914a82c4488ad7ff6e542efc...
+```
+
+The standard ledger transaction fee is $0.0001 \text{ ICP}$ ($10,000 \text{ e8s}$).
+
+---
+
+## Converting ICP to Cycles (`dfx cycles convert`)
+
+To mint cycles from your liquid ICP balance, use the `dfx cycles convert` command. It contacts the Cycles Minting Canister (CMC), burns the ICP at the current exchange rate, and deposits the resulting cycles into your cycles ledger account:
+
+```bash
+# Convert 1.0 ICP into Cycles
+dfx cycles convert --network ic --amount 1.0
+```
+
+> [!TIP]
+> At an ICP price of \$10 USD and 1 XDR = \$1.30 USD, 1 ICP mints approximately **7.69 Trillion Cycles**.
+
+---
+
+## Topping Up Canisters
+
+Keep your canisters funded to prevent them from freezing or being evicted from subnet nodes:
+
+### Top Up Using Cycles Ledger (Recommended)
+```bash
+# Deposit 2 Trillion Cycles (2,000,000,000,000) into a canister
+dfx cycles top-up --network ic 2000000000000 6vbhm-nqaaa-aaaan-q6muq-cai
+```
+
+### Top Up Directly from ICP (`dfx ledger top-up`)
+If you hold liquid ICP and want to convert and deposit in a single atomic transaction:
+
+```bash
+dfx ledger top-up --network ic --amount 0.5 6vbhm-nqaaa-aaaan-q6muq-cai
+```
+
+---
+
+## Local Development: Fabricating Cycles
+
+On your local replica, you do not need real ICP or mainnet connectivity. You can fabricate cycles out of thin air:
+
+```bash
+# Add 10 Trillion cycles to a local canister
+dfx ledger fabricate-cycles --canister backend --cycles 10000000000000
+
+# Fabricate for all canisters in dfx.json
+dfx ledger fabricate-cycles --all
+```
+
+---
+
+## Calculating Canister Cycle Runway
+
+To check how many days of execution runway your canister has left before reaching its freezing threshold:
+
+1. Check current memory size and balance:
+   ```bash
+   dfx canister --network ic status backend
+   ```
+2. Note the **`Memory Size`** and **`Balance`**.
+3. **Canister Burn Rate Formula**:
+   - Idle burn reserve: $\approx 60.9 \text{ Billion Cycles / day}$
+   - Storage cost: $\approx 127,000 \text{ Cycles / GiB / second}$ ($\approx 10.9 \text{ Billion Cycles / GiB / day}$)
+   - Total Daily Burn:
+     $$\text{Daily Burn} = 60.9\text{B} + (\text{Memory in GiB} \times 10.9\text{B})$$
+
+For example, a canister holding 2.2 GiB of data burns:
+$$\approx 60.9\text{B} + (2.2 \times 10.9\text{B}) \approx 84.88 \text{ Billion Cycles / day}$$
+
+A balance of $8.5 \text{ Trillion Cycles}$ provides roughly **100 days** of uninterrupted runway.
+
+---
+
+## Recovering Stuck Transfers (`dfx ledger notify`)
+
+If a network interruption occurred during an ICP-to-cycles top-up, your ICP may have been deducted without the canister receiving its cycles. Recover the transaction by providing the block height:
+
+```bash
+dfx ledger notify --network ic create-canister <block-height>
+# Or for top-ups:
+dfx ledger notify --network ic top-up <canister-id> <block-height>
+```
+
+---
+
+## Next Steps
+
+- [DFX Help & Full Command Reference](./dfx-help.mdx) — Global flags and complete command index.
+- [Canister Deep Dive](./canister.mdx) — Inspecting canister status and running upgrades.

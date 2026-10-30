@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Add01Icon, Book02Icon, CloudIcon, PlayIcon, Search01Icon } from "@hugeicons/core-free-icons"
+import { Add01Icon, Book02Icon, CloudIcon, Key01Icon, PlayIcon, Search01Icon } from "@hugeicons/core-free-icons"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { BucketCard } from "@/components/bucket/bucket-card"
 import { BucketCreateForm } from "@/components/bucket/bucket-create-form"
@@ -95,6 +95,17 @@ export function BucketListPanel() {
       actions={
         <>
           <div className="inline-flex items-center rounded-lg border border-border bg-muted/40 p-0.5 shadow-2xs">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 gap-1.5 px-3 text-xs font-medium text-foreground hover:bg-background hover:text-foreground"
+              nativeButton={false}
+              render={<Link href="/bucket/api" />}
+            >
+              <HugeiconsIcon icon={Key01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+              <span>API</span>
+            </Button>
+            <div className="h-4 w-px bg-border/80" />
             <Button
               variant="ghost"
               size="sm"

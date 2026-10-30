@@ -32,6 +32,8 @@ import {
 import { tip } from "@/services/transfer/transfer"
 import { useTranslations } from "next-intl"
 import { useSearchParams } from "next/navigation"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
 
 import { useMemo, useEffect, useState } from "react"
 
@@ -156,7 +158,15 @@ function CommunityChannelScreenBody({ slug }: { slug: string }) {
   }
 
   if (!channel) {
-    return null
+    return (
+      <div className="flex h-full min-h-0 flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
+        <p className="text-sm font-medium text-foreground">{t("channelNotFound")}</p>
+        <p className="text-xs text-muted-foreground">{t("searchChannelsHint")}</p>
+        <Button size="sm" variant="outline" nativeButton={false} render={<Link href="/channels" />}>
+          {t("title")}
+        </Button>
+      </div>
+    )
   }
 
   const pinnedId = channel.pinnedMessageId[0]

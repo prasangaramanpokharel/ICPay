@@ -16,7 +16,7 @@ export function CommunityWorkspace({ children }: { children: ReactNode }) {
   const pathname = usePathname()
   const slug = useChannelSlug()
   const isDesktop = useIsDesktop()
-  const hasSelectedChannel = Boolean(slug && slug !== "new" && slug !== "join")
+  const hasSelectedChannel = Boolean(slug && slug !== "slug" && slug !== "new" && slug !== "join")
   const onList = pathname === "/channels" && !hasSelectedChannel
   const hideExplorer = pathname === "/channels/new" || pathname.startsWith("/channels/join")
 

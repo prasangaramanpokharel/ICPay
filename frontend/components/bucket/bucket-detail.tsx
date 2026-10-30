@@ -419,7 +419,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
                   <HugeiconsIcon icon={BellIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
                   <span>Alerts</span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setApiKeysOpen(true)} className="gap-2">
+                <DropdownMenuItem onClick={() => router.push(`/bucket/api?bucket=${encodeURIComponent(bucketId)}`)} className="gap-2">
                   <HugeiconsIcon icon={Key01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
                   <span>{t("apiKeysShort")}</span>
                 </DropdownMenuItem>

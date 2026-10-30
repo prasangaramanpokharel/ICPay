@@ -99,6 +99,22 @@ export function rememberCanister(
   writeEntries(principal, next)
 }
 
+export function updateSavedCanisterName(
+  principal: string,
+  canisterId: string,
+  name: string
+): void {
+  const id = canisterId.trim()
+  if (!principal || !id) return
+  const cleanName = name.trim()
+  const prev = readEntries(principal)
+  const existing = prev.find((e) => e.id === id)
+  const next = existing
+    ? prev.map((e) => (e.id === id ? { ...e, name: cleanName } : e))
+    : [{ id, name: cleanName }, ...prev]
+  writeEntries(principal, next)
+}
+
 export function forgetCanister(principal: string, canisterId: string): void {
   const id = canisterId.trim()
   if (!principal || !id) return

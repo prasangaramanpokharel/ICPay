@@ -1,0 +1,195 @@
+---
+title: "Installing DFX"
+description: "Step-by-step instructions to install, verify, configure, and upgrade the DFINITY Canister SDK (dfx) on macOS, Linux, and Windows WSL2."
+group: "DFX CLI Guide"
+order: 2
+eyebrow: "Environment Setup"
+---
+
+# Installing DFX
+
+This guide walks you through installing the official **DFINITY Canister SDK (`dfx`)** on your local machine, configuring your shell environment, and managing SDK versions with `dfxvm`.
+
+---
+
+## System Requirements
+
+Before installing `dfx`, ensure your machine meets the minimum requirements:
+
+- **macOS**: macOS 12 (Monterey) or later (Apple Silicon M1/M2/M3/M4 or Intel x86_64).
+- **Linux**: Ubuntu 20.04+, Debian 11+, Fedora 36+, or Arch Linux (glibc 2.31+).
+- **Windows**: Windows 10/11 with **WSL2** (Windows Subsystem for Linux running Ubuntu 22.04 LTS). Native Windows PowerShell is not supported.
+- **Dependencies**: `curl`, `tar`, and `gzip`.
+
+---
+
+## Quick Installation
+
+Run the official installation script in your terminal:
+
+```bash
+sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+```
+
+The script will:
+1. Detect your operating system and CPU architecture.
+2. Download and install `dfxvm` (the official DFX version manager).
+3. Download the latest stable release of `dfx`.
+4. Place the binaries into `~/.local/share/dfx/bin` (or `~/.dfx/bin`).
+
+---
+
+## Installing a Specific Version
+
+If your project requires a specific version (such as `0.32.0`), specify the `DFX_VERSION` environment variable during installation:
+
+```bash
+DFX_VERSION=0.32.0 sh -ci "$(curl -fsSL https://internetcomputer.org/install.sh)"
+```
+
+---
+
+## Verify the Installation
+
+After running the installer, reopen your terminal (or run `source ~/.zshrc` / `source ~/.bashrc`) and check the version:
+
+```bash
+dfx --version
+```
+
+**Expected output:**
+```
+dfx 0.32.0
+```
+
+---
+
+## Configuring Your PATH
+
+If running `dfx --version` returns `command not found: dfx`, your shell does not have the installation directory in its search path. Add it manually:
+
+### For Zsh (`~/.zshrc` — Default on macOS):
+```bash
+echo 'export PATH="$HOME/.local/share/dfx/bin:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+### For Bash (`~/.bashrc` — Default on Ubuntu / WSL2):
+```bash
+echo 'export PATH="$HOME/.local/share/dfx/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+---
+
+## Managing Versions with `dfxvm`
+
+Modern installations include **`dfxvm`**, the toolchain manager for `dfx` (similar to `rustup` or `nvm`):
+
+```bash
+# List all available and installed versions
+dfxvm list
+
+# Install a specific version
+dfxvm install 0.32.0
+
+# Set the global default version
+dfxvm default 0.32.0
+
+# Update to the latest stable version
+dfxvm update
+
+# Uninstall an older version
+dfxvm uninstall 0.24.0
+```
+
+> [!TIP]
+> You can pin a specific `dfx` version per project by adding `"dfx": "0.32.0"` in the root of your `dfx.json`. `dfxvm` will automatically switch to that version when inside the project directory.
+
+---
+
+## Shell Autocompletion
+
+Enable tab autocompletion for `dfx` subcommands, canister names, and network flags:
+
+### Zsh:
+```bash
+mkdir -p ~/.zsh/completion
+dfx completion zsh > ~/.zsh/completion/_dfx
+echo 'fpath=(~/.zsh/completion $fpath)' >> ~/.zshrc
+echo 'autoload -Uz compinit && compinit' >> ~/.zshrc
+source ~/.zshrc
+```
+
+### Bash:
+```bash
+dfx completion bash >> ~/.bashrc
+source ~/.bashrc
+```
+
+### Fish:
+```bash
+mkdir -p ~/.config/fish/completions
+dfx completion fish > ~/.config/fish/completions/dfx.fish
+```
+
+---
+
+## Recommended Development Tools
+
+Depending on the language you choose for your canisters, install these companion tools:
+
+### 1. Node.js (Frontend & TypeScript Bindings)
+```bash
+# Verify Node.js (v18 or v20 LTS recommended)
+node --version
+npm --version
+```
+
+### 2. Rust Toolchain (For Rust Canisters)
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+rustup target add wasm32-unknown-unknown
+```
+
+### 3. MOPS (Motoko Package Manager)
+```bash
+npm install -g ic-mops
+mops --version
+```
+
+---
+
+## Common Troubleshooting
+
+### 1. macOS Developer Tool Warning
+If macOS prompts for missing developer tools, run:
+```bash
+xcode-select --install
+```
+
+### 2. Mainnet Plaintext Identity Warning
+When running `dfx` against mainnet without an encrypted keyring, you may see:
+```
+WARNING: The plaintext identity is used on mainnet...
+```
+To suppress this warning in automated environments or CI pipelines:
+```bash
+export DFX_WARNING=-mainnet_plaintext_identity
+```
+
+### 3. Killing Stuck Local Replica Processes
+If `dfx start` fails with `Address already in use (port 4943)`:
+```bash
+dfx killall
+# Or cleanly reset
+dfx stop
+```
+
+---
+
+## Next Steps
+
+Now that `dfx` is installed, explore the full CLI command reference:
+- [DFX Help & Commands Reference](./dfx-help.mdx) — The complete cheat sheet for every `dfx` command.
+- [Canister Management](./canister.mdx) — Create, build, and deploy your first canister.

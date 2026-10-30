@@ -135,19 +135,21 @@ export function CommunityChannelView({
   return (
     <div
       className={cn(
-        "relative flex h-full min-h-0 flex-1 flex-col overflow-hidden"
+        "relative flex h-full min-h-0 flex-1 flex-col overflow-hidden bg-background"
       )}
     >
-      <Image
-        aria-hidden
-        src={wallpaperUrl}
-        alt=""
-        fill
-        unoptimized
-        priority
-        className="pointer-events-none object-cover object-center"
-        draggable={false}
-      />
+      {wallpaperUrl ? (
+        <Image
+          aria-hidden
+          src={wallpaperUrl}
+          alt=""
+          fill
+          unoptimized
+          priority
+          className="pointer-events-none object-cover object-center"
+          draggable={false}
+        />
+      ) : null}
 
       <header
         className={cn(

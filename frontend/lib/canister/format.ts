@@ -62,3 +62,13 @@ export function formatNsTimestamp(ns: bigint): string {
   if (!Number.isFinite(ms)) return "—"
   return new Date(ms).toLocaleString()
 }
+
+export function formatLogTimestamp(ns: bigint): string {
+  if (ns <= 0n) return "—"
+  const ms = Number(ns / 1_000_000n)
+  if (!Number.isFinite(ms)) return "—"
+  const date = new Date(ms)
+  const time = date.toLocaleTimeString([], { hour12: false })
+  const millis = String(date.getMilliseconds()).padStart(3, "0")
+  return `${time}.${millis}`
+}

@@ -17,6 +17,8 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
   var totalEmailsSent : Nat = 0;
   var lastSweepAt : Int = 0;
   var timerActive : Bool = true;
+  var activeTimerId : ?Nat = null;
+  let COOLDOWN_NANOS : Int = 20 * 3600 * 1_000_000_000;
 
   // Stable registry: bucketId -> NotificationSubscriber
   let subscribers = Map.empty<Text, Types.NotificationSubscriber>();
@@ -65,6 +67,36 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
       var lastNotifiedStage = "none";
     };
     subscribers.add(bucketId, sub);
+
+    // Dispatches welcome email upon bucket registration with idempotency key
+    if (not Text.equal(apiKey, "")) {
+      try {
+        let statsRes = await getWalletBackend().getBucketStats(bucketId);
+        let (bucketName, capGB) = switch (statsRes) {
+          case (#ok(s)) {
+            let gb = if (s.capacity > 1000) s.capacity / (1024 * 1024 * 1024) else s.capacity;
+            (s.name, gb)
+          };
+          case (#err(_)) (bucketId, 5);
+        };
+        let subject = "✨ Your ICPay Storage Bucket '" # bucketName # "' is Ready";
+        let html = EmailTemplate.renderBucketCreated(bucketName, bucketId, capGB);
+        let idempotencyKey = "created-" # bucketId;
+
+        ignore await HttpOutcall.sendResendEmail(
+          apiKey,
+          fromEmail,
+          email,
+          subject,
+          html,
+          idempotencyKey,
+          ?(transform)
+        );
+      } catch (_) {
+        ();
+      };
+    };
+
     #ok(())
   };
 
@@ -106,6 +138,7 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
   public func runDailySweep() : async Nat {
     lastSweepAt := Time.now();
     var sentThisRun = 0;
+    let now = Time.now();
 
     let entries = subscribers.entries();
     for ((_bId, sub) in entries) {
@@ -115,11 +148,13 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
           case (#err(_)) (); // Bucket not found or query error, skip
           case (#ok(stats)) {
             let daysLeft = stats.daysRemaining;
+            let isCooledDown = (now - sub.lastNotifiedAt) >= COOLDOWN_NANOS;
 
             // Scenario 1: Expiring Soon Warning (<= 3 days left and Active)
-            if (stats.status == #ACTIVE and daysLeft <= 3 and sub.lastNotifiedStage != "soon") {
+            if (stats.status == #ACTIVE and daysLeft <= 3 and sub.lastNotifiedStage != "soon" and isCooledDown) {
               let subject = "⚠️ Action Required: ICPay Bucket '" # stats.name # "' expires in " # Nat.toText(daysLeft) # " day(s)";
               let html = EmailTemplate.renderExpirySoon(stats.name, stats.id, daysLeft);
+              let idempotencyKey = "expiry-" # sub.bucketId # "-" # Nat.toText(daysLeft);
 
               let sendRes = await HttpOutcall.sendResendEmail(
                 apiKey,
@@ -127,6 +162,7 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
                 sub.email,
                 subject,
                 html,
+                idempotencyKey,
                 ?(transform)
               );
 
@@ -141,9 +177,10 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
               };
             }
             // Scenario 2: Plan Expired — Grace Period Warning (Day 1-7)
-            else if (stats.status == #EXPIRED and sub.lastNotifiedStage != "grace") {
+            else if (stats.status == #EXPIRED and sub.lastNotifiedStage != "grace" and isCooledDown) {
               let subject = "🚨 Plan Expired: ICPay Bucket '" # stats.name # "' is now in Read-Only Grace Period";
               let html = EmailTemplate.renderGracePeriod(stats.name, stats.id);
+              let idempotencyKey = "grace-" # sub.bucketId;
 
               let sendRes = await HttpOutcall.sendResendEmail(
                 apiKey,
@@ -151,6 +188,7 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
                 sub.email,
                 subject,
                 html,
+                idempotencyKey,
                 ?(transform)
               );
 
@@ -179,15 +217,12 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
     sentThisRun
   };
 
-  // -------------------------------------------------------------------------
-  // HTTP Outcall Response Transform (Consensus Consensus Normalization)
-  // -------------------------------------------------------------------------
+  // Normalizes headers and empties response body to guarantee deterministic subnet consensus.
   public query func transform(args: { response: Types.CanisterHttpResponse; context: Blob }) : async Types.CanisterHttpResponse {
-    // Strip dynamic/nondeterministic HTTP headers (date, cookie, req-id) so IC replica consensus matches
     {
       status = args.response.status;
       headers = [];
-      body = args.response.body;
+      body = Blob.fromArray([]);
     }
   };
 
@@ -219,6 +254,11 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
     await runDailySweep()
   };
 
+  public shared(msg) func restartTimer() : async () {
+    assert isController(msg.caller);
+    armSweepTimer<system>();
+  };
+
   public shared query(msg) func getStatus() : async Types.NotifierStatus {
     assert isController(msg.caller);
     {
@@ -230,10 +270,22 @@ persistent actor class Notifier(initBackendPrincipal: Principal) {
     }
   };
 
-  // Arm recurring 24-hour timer at bottom of actor
-  ignore Timer.recurringTimer<system>(#hours 24, func() : async () {
-    if (timerActive) {
-      ignore await runDailySweep();
+  // Ensures only one active recurring timer runs across upgrades.
+  func armSweepTimer<system>() {
+    switch (activeTimerId) {
+      case (?tid) {
+        Timer.cancelTimer(tid);
+        activeTimerId := null;
+      };
+      case (null) ();
     };
-  });
+    let tid = Timer.recurringTimer<system>(#hours 24, func() : async () {
+      if (timerActive) {
+        ignore await runDailySweep();
+      };
+    });
+    activeTimerId := ?tid;
+  };
+
+  armSweepTimer<system>();
 };

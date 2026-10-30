@@ -58,6 +58,7 @@ export function CommunityExplorer() {
   const activeSlug =
     (pathname === "/channels" || pathname.startsWith("/channels/")) &&
       channelSlug &&
+      channelSlug !== "slug" &&
       channelSlug !== "new" &&
       channelSlug !== "join"
       ? channelSlug
