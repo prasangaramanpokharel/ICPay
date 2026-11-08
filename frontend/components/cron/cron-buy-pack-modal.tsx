@@ -16,6 +16,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ZapIcon, Coins01Icon } from "@hugeicons/core-free-icons"
+import { useAuth } from "@/components/auth/auth-provider"
 import { buyPack, getPackQuotes } from "@/services/cron/client"
 import { getWalletActor } from "@/services/wallet/actor"
 import type { RemoteCreditBalance, RemotePackQuote } from "@/services/cron/types"
@@ -33,6 +34,7 @@ export function CronBuyPackModal({
   credits,
   onPurchased,
 }: CronBuyPackModalProps) {
+  const { identity } = useAuth()
   const [quotes, setQuotes] = React.useState<RemotePackQuote[]>([])
   const [loadingQuotes, setLoadingQuotes] = React.useState(false)
   const [purchasingTier, setPurchasingTier] = React.useState<number | null>(null)
@@ -42,7 +44,7 @@ export function CronBuyPackModal({
   React.useEffect(() => {
     if (!open) return
     let active = true
-    getPackQuotes()
+    getPackQuotes(identity ?? undefined)
       .then((data) => {
         if (active) setQuotes(data)
       })
@@ -55,7 +57,7 @@ export function CronBuyPackModal({
     return () => {
       active = false
     }
-  }, [open])
+  }, [open, identity])
 
   const handleBuy = async (quote: RemotePackQuote) => {
     setPurchasingTier(quote.pack_tier)
@@ -79,7 +81,7 @@ export function CronBuyPackModal({
       }
 
       const blockIndex = transferRes.ok.blockIndex
-      const newBalance = await buyPack(quote.pack_tier, blockIndex)
+      const newBalance = await buyPack(quote.pack_tier, blockIndex, identity ?? undefined)
       const msg = `Added ${quote.credits.toLocaleString()} credits! New balance: ${newBalance.toLocaleString()}`
       setSuccessMsg(msg)
       toast.success(msg)

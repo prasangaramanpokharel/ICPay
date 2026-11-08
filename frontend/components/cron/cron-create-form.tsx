@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
+import { useAuth } from "@/components/auth/auth-provider"
 import { createJob } from "@/services/cron/client"
 import type { RemoteJobTarget } from "@/services/cron/types"
 import {
@@ -26,6 +27,7 @@ interface CronCreateFormProps {
 }
 
 export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps) {
+  const { identity } = useAuth()
   const [jobType, setJobType] = React.useState<"php" | "custom" | "canister">("custom")
   const [command, setCommand] = React.useState(
     "wget -O /dev/null https://commandosecurity.com.np/wp-cron.php/"
@@ -105,13 +107,22 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
         }
       }
 
-      const created = await createJob({
-        project_id: projectId,
-        label: label.trim() || "Cron Job",
-        target,
-        cron_expression: cronExpression,
-        max_retries: [10],
-      })
+      if (!identity) {
+        setError("Please sign in with Internet Identity first.")
+        toast.error("Please sign in with Internet Identity first.")
+        return
+      }
+
+      const created = await createJob(
+        {
+          project_id: projectId,
+          label: label.trim() || "Cron Job",
+          target,
+          cron_expression: cronExpression,
+          max_retries: [10],
+        },
+        identity
+      )
 
       setSuccess(true)
       toast.success(`Job "${created.label}" created successfully.`)

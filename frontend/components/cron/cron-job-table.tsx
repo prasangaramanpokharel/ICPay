@@ -20,6 +20,7 @@ import {
   PlayIcon,
   PauseIcon,
 } from "@hugeicons/core-free-icons"
+import { useAuth } from "@/components/auth/auth-provider"
 import { deleteJob, pauseJob, resumeJob, triggerJob } from "@/services/cron/client"
 import type { RemoteJobSummary } from "@/services/cron/types"
 import { CronOutputDrawer } from "./cron-output-drawer"
@@ -31,6 +32,7 @@ interface CronJobTableProps {
 }
 
 export function CronJobTable({ jobs, loading, onRefresh }: CronJobTableProps) {
+  const { identity } = useAuth()
   const [selectedJob, setSelectedJob] = React.useState<RemoteJobSummary | null>(null)
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [actionInProgress, setActionInProgress] = React.useState<string | null>(null)
@@ -62,9 +64,13 @@ export function CronJobTable({ jobs, loading, onRefresh }: CronJobTableProps) {
 
   const handleDelete = async (job: RemoteJobSummary) => {
     if (!confirm(`Are you sure you want to delete job "${job.label}"?`)) return
+    if (!identity) {
+      toast.error("Please sign in with Internet Identity first.")
+      return
+    }
     setActionInProgress(`delete-${job.id}`)
     try {
-      await deleteJob(job.id)
+      await deleteJob(job.id, identity)
       onRefresh()
       toast.success(`Job "${job.label}" deleted successfully.`)
     } catch (err) {
@@ -75,14 +81,18 @@ export function CronJobTable({ jobs, loading, onRefresh }: CronJobTableProps) {
   }
 
   const handleTogglePause = async (job: RemoteJobSummary) => {
+    if (!identity) {
+      toast.error("Please sign in with Internet Identity first.")
+      return
+    }
     const isPaused = job.status === "Paused"
     setActionInProgress(`pause-${job.id}`)
     try {
       if (isPaused) {
-        await resumeJob(job.id)
+        await resumeJob(job.id, identity)
         toast.success(`Job "${job.label}" resumed successfully.`)
       } else {
-        await pauseJob(job.id)
+        await pauseJob(job.id, identity)
         toast.success(`Job "${job.label}" paused successfully.`)
       }
       onRefresh()
@@ -94,9 +104,13 @@ export function CronJobTable({ jobs, loading, onRefresh }: CronJobTableProps) {
   }
 
   const handleRunNow = async (job: RemoteJobSummary) => {
+    if (!identity) {
+      toast.error("Please sign in with Internet Identity first.")
+      return
+    }
     setActionInProgress(`run-${job.id}`)
     try {
-      await triggerJob(job.id)
+      await triggerJob(job.id, identity)
       onRefresh()
       toast.success(`Job "${job.label}" triggered successfully.`)
     } catch (err) {

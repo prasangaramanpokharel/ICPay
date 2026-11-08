@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Card } from "@/components/ui/card"
 import {
   Dialog,
   DialogContent,
@@ -37,12 +38,14 @@ import type {
   RemoteJobSummary,
   RemoteProjectRecord,
 } from "@/services/cron/types"
+import { useAuth } from "@/components/auth/auth-provider"
 import { CronCreateForm } from "./cron-create-form"
 import { CronJobTable } from "./cron-job-table"
 import { CronApiKeysCard } from "./cron-api-keys-card"
 import { CronBuyPackModal } from "./cron-buy-pack-modal"
 
 export function CronWorkspaceView() {
+  const { identity } = useAuth()
   const [projects, setProjects] = React.useState<RemoteProjectRecord[]>([])
   const [selectedProjectId, setSelectedProjectId] = React.useState<bigint | null>(null)
   const [jobs, setJobs] = React.useState<RemoteJobSummary[]>([])
@@ -62,43 +65,36 @@ export function CronWorkspaceView() {
 
   const [buyModalOpen, setBuyModalOpen] = React.useState(false)
 
-
   const refreshJobs = React.useCallback(async () => {
     if (!selectedProjectId) return
     setLoadingJobs(true)
     try {
-      const data = await listJobs(selectedProjectId)
+      const data = await listJobs(selectedProjectId, identity ?? undefined)
       setJobs(data)
     } catch {
       setJobs([])
     } finally {
       setLoadingJobs(false)
     }
-  }, [selectedProjectId])
+  }, [selectedProjectId, identity])
 
   const refreshCredits = React.useCallback(async () => {
     try {
-      const creds = await getMyCredits()
+      const creds = await getMyCredits(identity ?? undefined)
       setCredits(creds)
     } catch {
     }
-  }, [])
+  }, [identity])
 
   React.useEffect(() => {
+    if (!identity) return
     let active = true
-    listProjects()
+    listProjects(identity)
       .then((data) => {
         if (!active) return
         setProjects(data)
-        if (data.length > 0 && selectedProjectId === null) {
+        if (data.length > 0 && (selectedProjectId === null || !data.some((p) => p.id === selectedProjectId))) {
           setSelectedProjectId(data[0].id)
-        } else if (data.length === 0) {
-          createProject("Default Project").then((autoProj) => {
-            if (active) {
-              setProjects([autoProj])
-              setSelectedProjectId(autoProj.id)
-            }
-          })
         }
       })
       .catch(() => {
@@ -108,7 +104,7 @@ export function CronWorkspaceView() {
         if (active) setLoadingProjects(false)
       })
 
-    getMyCredits()
+    getMyCredits(identity)
       .then((creds) => {
         if (active) setCredits(creds)
       })
@@ -117,35 +113,38 @@ export function CronWorkspaceView() {
     return () => {
       active = false
     }
-  }, [selectedProjectId])
+  }, [identity, selectedProjectId])
 
   React.useEffect(() => {
+    if (!identity || !selectedProjectId) return
     let active = true
-    if (selectedProjectId) {
-      listJobs(selectedProjectId)
-        .then((data) => {
-          if (active) setJobs(data)
-        })
-        .catch(() => {
-          if (active) setJobs([])
-        })
-        .finally(() => {
-          if (active) setLoadingJobs(false)
-        })
-    }
+    listJobs(selectedProjectId, identity)
+      .then((data) => {
+        if (active) setJobs(data)
+      })
+      .catch(() => {
+        if (active) setJobs([])
+      })
+      .finally(() => {
+        if (active) setLoadingJobs(false)
+      })
     return () => {
       active = false
     }
-  }, [selectedProjectId])
+  }, [selectedProjectId, identity])
 
   const currentProject = projects.find((p) => p.id === selectedProjectId)
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newProjectName.trim()) return
+    if (!identity) {
+      toast.error("Please sign in with Internet Identity first.")
+      return
+    }
     setCreatingProject(true)
     try {
-      const proj = await createProject(newProjectName.trim())
+      const proj = await createProject(newProjectName.trim(), identity)
       setProjects((prev) => [...prev, proj])
       setSelectedProjectId(proj.id)
       setNewProjectName("")
@@ -161,9 +160,13 @@ export function CronWorkspaceView() {
   const handleRenameProject = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!selectedProjectId || !renameProjectName.trim()) return
+    if (!identity) {
+      toast.error("Please sign in with Internet Identity first.")
+      return
+    }
     setRenamingProject(true)
     try {
-      const updated = await renameProject(selectedProjectId, renameProjectName.trim())
+      const updated = await renameProject(selectedProjectId, renameProjectName.trim(), identity)
       setProjects((prev) =>
         prev.map((p) => (p.id === updated.id ? { ...p, name: updated.name } : p))
       )
@@ -178,9 +181,13 @@ export function CronWorkspaceView() {
 
   const handlePauseAllJobs = async () => {
     if (!selectedProjectId) return
+    if (!identity) {
+      toast.error("Please sign in with Internet Identity first.")
+      return
+    }
     setActionLoading(true)
     try {
-      const count = await pauseProject(selectedProjectId)
+      const count = await pauseProject(selectedProjectId, identity)
       await refreshJobs()
       toast.success(`Project "${currentProject?.name}" paused successfully (${count.toString()} jobs paused).`)
     } catch (err) {
@@ -192,9 +199,13 @@ export function CronWorkspaceView() {
 
   const handleResumeAllJobs = async () => {
     if (!selectedProjectId) return
+    if (!identity) {
+      toast.error("Please sign in with Internet Identity first.")
+      return
+    }
     setActionLoading(true)
     try {
-      const count = await resumeProject(selectedProjectId)
+      const count = await resumeProject(selectedProjectId, identity)
       await refreshJobs()
       toast.success(`Project "${currentProject?.name}" resumed successfully (${count.toString()} jobs resumed).`)
     } catch (err) {
@@ -206,10 +217,14 @@ export function CronWorkspaceView() {
 
   const handleDeleteProject = async () => {
     if (!selectedProjectId) return
+    if (!identity) {
+      toast.error("Please sign in with Internet Identity first.")
+      return
+    }
     setActionLoading(true)
     try {
       const name = currentProject?.name ?? "Project"
-      await deleteProject(selectedProjectId)
+      await deleteProject(selectedProjectId, identity)
       const remaining = projects.filter((p) => p.id !== selectedProjectId)
       setProjects(remaining)
       if (remaining.length > 0) {
@@ -348,6 +363,26 @@ export function CronWorkspaceView() {
           </Button>
         </div>
       </div>
+
+      {!loadingProjects && projects.length === 0 && (
+        <Card className="border border-border/80 bg-card p-12 text-center shadow-xs">
+          <div className="flex flex-col items-center justify-center gap-3">
+            <HugeiconsIcon icon={Folder01Icon} className="size-10 text-muted-foreground" />
+            <h3 className="text-base font-semibold text-foreground">No projects found</h3>
+            <p className="text-sm text-muted-foreground max-w-sm">
+              Create a project to organize and schedule your automated cron jobs, recurring HTTP webhooks, and canister tasks.
+            </p>
+            <Button
+              size="sm"
+              onClick={() => setCreateProjectOpen(true)}
+              className="mt-2 gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
+              Create Your First Project
+            </Button>
+          </div>
+        </Card>
+      )}
 
       {selectedProjectId && (
         <>

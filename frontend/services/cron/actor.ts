@@ -1,6 +1,5 @@
-import { Actor, type Identity } from "@icp-sdk/core/agent"
+import { Actor, HttpAgent, type Identity } from "@icp-sdk/core/agent"
 import { Principal } from "@icp-sdk/core/principal"
-import { createAgent } from "@/services/icp"
 import { cronIdl } from "./idl"
 import type {
   RemoteApiKeySummary,
@@ -16,6 +15,9 @@ import type {
 
 export const CRON_CANISTER_ID =
   process.env.NEXT_PUBLIC_CRON_CANISTER_ID?.trim() || "x36fa-6aaaa-aaaan-q63da-cai"
+
+export const CRON_HOST =
+  process.env.NEXT_PUBLIC_CRON_HOST?.trim() || "https://icp0.io"
 
 export type CronService = {
   create_project: (name: string) => Promise<{ Ok: RemoteProjectRecord } | { Err: string }>
@@ -52,7 +54,13 @@ export async function createCronActor(
   identity?: Identity,
   canisterIdText: string = CRON_CANISTER_ID
 ): Promise<CronService> {
-  const agent = await createAgent(identity)
+  const host = CRON_HOST
+  const isLocal = host.includes("127.0.0.1") || host.includes("localhost")
+  const agent = HttpAgent.createSync({ identity, host })
+  if (isLocal) {
+    await agent.fetchRootKey()
+  }
+
   return Actor.createActor<CronService>(cronIdl, {
     agent,
     canisterId: Principal.fromText(canisterIdText),

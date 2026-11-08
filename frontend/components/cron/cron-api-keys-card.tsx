@@ -16,6 +16,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Key01Icon, Copy01Icon, Delete02Icon, CancelCircleIcon } from "@hugeicons/core-free-icons"
+import { useAuth } from "@/components/auth/auth-provider"
 import { createApiKey, deleteApiKey, listApiKeys, revokeApiKey } from "@/services/cron/client"
 import type { RemoteApiKeySummary } from "@/services/cron/types"
 
@@ -24,6 +25,7 @@ interface CronApiKeysCardProps {
 }
 
 export function CronApiKeysCard({ projectId }: CronApiKeysCardProps) {
+  const { identity } = useAuth()
   const [keys, setKeys] = React.useState<RemoteApiKeySummary[]>([])
   const [loading, setLoading] = React.useState(false)
   const [newKeyLabel, setNewKeyLabel] = React.useState("")
@@ -34,8 +36,9 @@ export function CronApiKeysCard({ projectId }: CronApiKeysCardProps) {
   const [copied, setCopied] = React.useState(false)
 
   React.useEffect(() => {
+    if (!identity) return
     let active = true
-    listApiKeys(projectId)
+    listApiKeys(projectId, identity)
       .then((data) => {
         if (active) setKeys(data)
       })
@@ -48,10 +51,11 @@ export function CronApiKeysCard({ projectId }: CronApiKeysCardProps) {
     return () => {
       active = false
     }
-  }, [projectId])
+  }, [projectId, identity])
 
   const refreshKeys = () => {
-    listApiKeys(projectId)
+    if (!identity) return
+    listApiKeys(projectId, identity)
       .then((data) => setKeys(data))
       .catch(() => setKeys([]))
   }
@@ -59,9 +63,13 @@ export function CronApiKeysCard({ projectId }: CronApiKeysCardProps) {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newKeyLabel.trim()) return
+    if (!identity) {
+      toast.error("Please sign in with Internet Identity first.")
+      return
+    }
     setGenerating(true)
     try {
-      const rawKey = await createApiKey(projectId, newKeyLabel.trim())
+      const rawKey = await createApiKey(projectId, newKeyLabel.trim(), identity)
       setGeneratedKey(rawKey)
       setKeyModalOpen(true)
       setNewKeyLabel("")
@@ -76,8 +84,12 @@ export function CronApiKeysCard({ projectId }: CronApiKeysCardProps) {
 
   const handleRevoke = async (keyHash: Uint8Array) => {
     if (!confirm("Are you sure you want to revoke this API key?")) return
+    if (!identity) {
+      toast.error("Please sign in with Internet Identity first.")
+      return
+    }
     try {
-      await revokeApiKey(keyHash)
+      await revokeApiKey(keyHash, identity)
       refreshKeys()
       toast.success("API key revoked successfully.")
     } catch (err) {
@@ -87,8 +99,12 @@ export function CronApiKeysCard({ projectId }: CronApiKeysCardProps) {
 
   const handleDelete = async (keyHash: Uint8Array) => {
     if (!confirm("Are you sure you want to permanently delete this API key?")) return
+    if (!identity) {
+      toast.error("Please sign in with Internet Identity first.")
+      return
+    }
     try {
-      await deleteApiKey(keyHash)
+      await deleteApiKey(keyHash, identity)
       refreshKeys()
       toast.success("API key deleted successfully.")
     } catch (err) {

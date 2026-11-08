@@ -19,6 +19,7 @@ import {
   CheckmarkCircle02Icon,
   CancelCircleIcon,
 } from "@hugeicons/core-free-icons"
+import { useAuth } from "@/components/auth/auth-provider"
 import { getJobLogs, triggerJob } from "@/services/cron/client"
 import type { RemoteExecutionLog, RemoteJobSummary } from "@/services/cron/types"
 
@@ -29,6 +30,7 @@ interface CronOutputDrawerProps {
 }
 
 export function CronOutputDrawer({ job, open, onOpenChange }: CronOutputDrawerProps) {
+  const { identity } = useAuth()
   const [logs, setLogs] = React.useState<RemoteExecutionLog[]>([])
   const [loading, setLoading] = React.useState(false)
   const [triggering, setTriggering] = React.useState(false)
@@ -37,19 +39,19 @@ export function CronOutputDrawer({ job, open, onOpenChange }: CronOutputDrawerPr
     if (!job) return
     setLoading(true)
     try {
-      const data = await getJobLogs(job.id, 50n)
+      const data = await getJobLogs(job.id, 50n, identity ?? undefined)
       setLogs(data)
     } catch {
       setLogs([])
     } finally {
       setLoading(false)
     }
-  }, [job])
+  }, [job, identity])
 
   React.useEffect(() => {
     let active = true
     if (open && job) {
-      getJobLogs(job.id, 50n)
+      getJobLogs(job.id, 50n, identity ?? undefined)
         .then((data) => {
           if (active) setLogs(data)
         })
@@ -63,13 +65,17 @@ export function CronOutputDrawer({ job, open, onOpenChange }: CronOutputDrawerPr
     return () => {
       active = false
     }
-  }, [open, job])
+  }, [open, job, identity])
 
   const handleRunNow = async () => {
     if (!job) return
+    if (!identity) {
+      toast.error("Please sign in with Internet Identity first.")
+      return
+    }
     setTriggering(true)
     try {
-      await triggerJob(job.id)
+      await triggerJob(job.id, identity)
       toast.success(`Job "${job.label}" triggered successfully.`)
       setTimeout(() => {
         fetchLogs()
