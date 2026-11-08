@@ -1,5 +1,6 @@
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
+import { spawnSync } from "node:child_process"
 import {
   BACKEND,
   canisterIds,
@@ -7,6 +8,7 @@ import {
   dfx,
   dfxOut,
   moduleHash,
+  network,
   run,
   step,
 } from "../lib.ts"
@@ -28,6 +30,33 @@ run("cargo", ["test"], iccronDir)
 
 step("ICCRON BUILD")
 run("cargo", ["build", "--target", "wasm32-unknown-unknown", "--release"], iccronDir)
+
+if (network() === "local") {
+  step("LOCAL ENVIRONMENT CHECK")
+  const ping = spawnSync("dfx", ["ping", "local"], { cwd: BACKEND, encoding: "utf8" })
+  if (ping.status !== 0) {
+    console.error("\nError: Local dfx replica is not running.")
+    console.error("Start it in another terminal with:")
+    console.error("  cd backend && dfx start --background --clean\n")
+    process.exit(1)
+  }
+
+  step("CANISTER INIT (LOCAL)")
+  try {
+    dfx(["canister", "create", CANISTER_NAME], BACKEND)
+  } catch {}
+
+  step("DEPLOY (LOCAL)")
+  dfx(["deploy", CANISTER_NAME, "--yes"], BACKEND)
+
+  step("RESULT")
+  const localId = dfxOut(["canister", "id", CANISTER_NAME], BACKEND)
+  console.log(`\n${CANISTER_NAME} local canister id: ${localId}`)
+  console.log(`\nTest queries and updates:`)
+  console.log(`  dfx canister call ${CANISTER_NAME} list_my_projects '()'`)
+  console.log(`  dfx canister call ${CANISTER_NAME} get_my_credits '()'`)
+  process.exit(0)
+}
 
 const ids = canisterIds()
 const canisterId = ids[CANISTER_NAME]?.ic
