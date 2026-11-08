@@ -1,0 +1,266 @@
+"use client"
+
+import * as React from "react"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Spinner } from "@/components/ui/spinner"
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  Sorting01Icon,
+  PlayIcon,
+  PauseIcon,
+} from "@hugeicons/core-free-icons"
+import { deleteJob, pauseJob, resumeJob, triggerJob } from "@/services/cron/client"
+import type { RemoteJobSummary } from "@/services/cron/types"
+import { CronOutputDrawer } from "./cron-output-drawer"
+
+interface CronJobTableProps {
+  jobs: RemoteJobSummary[]
+  loading: boolean
+  onRefresh: () => void
+}
+
+export function CronJobTable({ jobs, loading, onRefresh }: CronJobTableProps) {
+  const [selectedJob, setSelectedJob] = React.useState<RemoteJobSummary | null>(null)
+  const [drawerOpen, setDrawerOpen] = React.useState(false)
+  const [actionInProgress, setActionInProgress] = React.useState<string | null>(null)
+  const [sortField, setSortField] = React.useState<"time" | "command">("time")
+  const [sortAsc, setSortAsc] = React.useState(true)
+
+  const handleToggleSort = (field: "time" | "command") => {
+    if (sortField === field) {
+      setSortAsc(!sortAsc)
+    } else {
+      setSortField(field)
+      setSortAsc(true)
+    }
+  }
+
+  const sortedJobs = React.useMemo(() => {
+    return [...jobs].sort((a, b) => {
+      if (sortField === "time") {
+        return sortAsc
+          ? a.cron_expression.localeCompare(b.cron_expression)
+          : b.cron_expression.localeCompare(a.cron_expression)
+      } else {
+        return sortAsc
+          ? a.target_preview.localeCompare(b.target_preview)
+          : b.target_preview.localeCompare(a.target_preview)
+      }
+    })
+  }, [jobs, sortField, sortAsc])
+
+  const handleDelete = async (jobId: bigint) => {
+    if (!confirm("Are you sure you want to delete this cron job?")) return
+    setActionInProgress(`delete-${jobId}`)
+    try {
+      await deleteJob(jobId)
+      onRefresh()
+    } catch {
+    } finally {
+      setActionInProgress(null)
+    }
+  }
+
+  const handleTogglePause = async (job: RemoteJobSummary) => {
+    const isPaused = job.status === "Paused"
+    setActionInProgress(`pause-${job.id}`)
+    try {
+      if (isPaused) {
+        await resumeJob(job.id)
+      } else {
+        await pauseJob(job.id)
+      }
+      onRefresh()
+    } catch {
+    } finally {
+      setActionInProgress(null)
+    }
+  }
+
+  const handleRunNow = async (jobId: bigint) => {
+    setActionInProgress(`run-${jobId}`)
+    try {
+      await triggerJob(jobId)
+      onRefresh()
+    } catch {
+    } finally {
+      setActionInProgress(null)
+    }
+  }
+
+  const handleViewOutput = (job: RemoteJobSummary) => {
+    setSelectedJob(job)
+    setDrawerOpen(true)
+  }
+
+  return (
+    <>
+      <Card className="border border-border/80 bg-card text-card-foreground shadow-xs">
+        <CardHeader className="pb-4">
+          <CardTitle className="text-xl font-semibold tracking-tight text-foreground">
+            List of Cron Jobs
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-0">
+          {loading ? (
+            <div className="flex h-48 items-center justify-center">
+              <Spinner className="size-6 text-primary" />
+            </div>
+          ) : sortedJobs.length === 0 ? (
+            <div className="p-8 text-center text-sm text-muted-foreground">
+              No cron jobs configured yet. Create a new job above.
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border hover:bg-transparent">
+                    <TableHead
+                      className="cursor-pointer select-none text-muted-foreground font-semibold py-3.5 w-44"
+                      onClick={() => handleToggleSort("time")}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span>Time</span>
+                        <HugeiconsIcon icon={Sorting01Icon} className="size-4" />
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer select-none text-muted-foreground font-semibold py-3.5"
+                      onClick={() => handleToggleSort("command")}
+                    >
+                      <div className="flex items-center gap-1.5">
+                        <span>Command to Run</span>
+                        <HugeiconsIcon icon={Sorting01Icon} className="size-4" />
+                      </div>
+                    </TableHead>
+                    <TableHead className="text-right text-muted-foreground font-semibold py-3.5 pr-6 w-72">
+                      Actions
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {sortedJobs.map((job) => {
+                    const isDeleting = actionInProgress === `delete-${job.id}`
+                    const isToggling = actionInProgress === `pause-${job.id}`
+                    const isRunning = actionInProgress === `run-${job.id}`
+
+                    return (
+                      <TableRow
+                        key={job.id.toString()}
+                        className="border-border hover:bg-muted/40 transition-colors"
+                      >
+                        <TableCell className="font-mono text-sm font-semibold text-foreground py-4">
+                          <div className="flex flex-col gap-1">
+                            <span>{job.cron_expression}</span>
+                            <div className="flex items-center gap-1.5">
+                              <Badge
+                                variant={job.status === "Active" ? "outline" : "secondary"}
+                                className="text-[10px] py-0 px-1 font-sans"
+                              >
+                                {job.status}
+                              </Badge>
+                              {job.consecutive_failures > 0 && (
+                                <Badge
+                                  variant="destructive"
+                                  className="text-[10px] py-0 px-1 font-sans"
+                                >
+                                  {job.consecutive_failures} fails
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        </TableCell>
+
+                        <TableCell className="font-mono text-sm text-foreground py-4 break-all">
+                          <div className="flex flex-col gap-1">
+                            <span className="text-foreground">{job.target_preview}</span>
+                            {job.label && (
+                              <span className="text-xs font-sans text-muted-foreground">
+                                {job.label} · Total runs: {job.total_runs.toString()}
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+
+                        <TableCell className="text-right py-4 pr-6">
+                          <div className="flex items-center justify-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              title="Run Now"
+                              disabled={isRunning}
+                              onClick={() => handleRunNow(job.id)}
+                              className="size-8 rounded-md"
+                            >
+                              {isRunning ? (
+                                <Spinner className="size-3.5" />
+                              ) : (
+                                <HugeiconsIcon icon={PlayIcon} className="size-3.5 text-foreground" />
+                              )}
+                            </Button>
+
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              title={job.status === "Paused" ? "Resume" : "Pause"}
+                              disabled={isToggling}
+                              onClick={() => handleTogglePause(job)}
+                              className="size-8 rounded-md"
+                            >
+                              {isToggling ? (
+                                <Spinner className="size-3.5" />
+                              ) : (
+                                <HugeiconsIcon
+                                  icon={job.status === "Paused" ? PlayIcon : PauseIcon}
+                                  className="size-3.5 text-foreground"
+                                />
+                              )}
+                            </Button>
+
+                            <Button
+                              size="sm"
+                              onClick={() => handleViewOutput(job)}
+                              className="bg-primary text-primary-foreground hover:bg-primary/90 font-medium px-3.5 rounded-md text-xs h-8"
+                            >
+                              View Output
+                            </Button>
+
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={isDeleting}
+                              onClick={() => handleDelete(job.id)}
+                              className="text-destructive hover:bg-destructive/10 hover:text-destructive border-border font-medium px-3.5 rounded-md text-xs h-8"
+                            >
+                              {isDeleting ? <Spinner className="size-3" /> : "Delete"}
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <CronOutputDrawer
+        job={selectedJob}
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+      />
+    </>
+  )
+}

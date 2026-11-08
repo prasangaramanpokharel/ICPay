@@ -11,6 +11,7 @@ import {
   Rocket01Icon,
   SentIcon,
   ThreeDViewIcon,
+  TimeScheduleIcon,
 } from "@hugeicons/core-free-icons"
 import { APP_NAV_ITEMS, isAppNavActive } from "@/lib/navigation/app-nav-items"
 
@@ -58,6 +59,13 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
         href: "/canister",
         labelKey: "settings.items.canisters",
         icon: ThreeDViewIcon,
+      },
+      {
+        href: "/cron",
+        labelKey: "settings.items.cron",
+        icon: TimeScheduleIcon,
+        badgeKey: "settings.items.cronBadge",
+        badgeVariant: "secondary",
       },
     ],
   },
@@ -114,7 +122,7 @@ export function resolveAppPageTitle(
     return translate("common.swap")
   }
   if (pathname.startsWith("/withdraw")) return translate("transactions.type.transfer")
-  if (pathname.startsWith("/token/")) return translate("settings.items.tokens")
+  if (pathname === "/token" || pathname.startsWith("/token")) return translate("settings.items.launch")
   if (pathname === "/blog" || pathname.startsWith("/blog/")) {
     return translate("settings.items.blog")
   }
