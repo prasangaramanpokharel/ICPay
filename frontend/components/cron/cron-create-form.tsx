@@ -217,19 +217,6 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
           </div>
 
           <div className="flex flex-col gap-2">
-            <Label htmlFor="job-label" className="text-sm font-medium text-foreground">
-              Job Name / Label
-            </Label>
-            <Input
-              id="job-label"
-              value={label}
-              onChange={(e) => setLabel(e.target.value)}
-              placeholder="e.g. Sync Balances"
-              className="text-sm"
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
             <Label htmlFor="common-options" className="text-sm font-medium text-foreground">
               Common Options
             </Label>

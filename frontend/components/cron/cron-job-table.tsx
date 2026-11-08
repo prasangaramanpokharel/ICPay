@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import {
   Table,
   TableBody,
@@ -9,8 +10,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
@@ -18,7 +20,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Sorting01Icon,
   PlayIcon,
-  PauseIcon,
+  PlusSignIcon,
 } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
 import { deleteJob, pauseJob, resumeJob, triggerJob } from "@/services/cron/client"
@@ -28,10 +30,11 @@ import { CronOutputDrawer } from "./cron-output-drawer"
 interface CronJobTableProps {
   jobs: RemoteJobSummary[]
   loading: boolean
+  projectId?: bigint
   onRefresh: () => void
 }
 
-export function CronJobTable({ jobs, loading, onRefresh }: CronJobTableProps) {
+export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTableProps) {
   const { identity } = useAuth()
   const [selectedJob, setSelectedJob] = React.useState<RemoteJobSummary | null>(null)
   const [drawerOpen, setDrawerOpen] = React.useState(false)
@@ -128,10 +131,21 @@ export function CronJobTable({ jobs, loading, onRefresh }: CronJobTableProps) {
   return (
     <>
       <Card className="border border-border/80 bg-card text-card-foreground shadow-xs">
-        <CardHeader className="pb-4">
+        <CardHeader className="flex flex-row items-center justify-between pb-4">
           <CardTitle className="text-xl font-semibold tracking-tight text-foreground">
             List of Cron Jobs
           </CardTitle>
+          <Link
+            href={projectId ? `/cron/create?projectId=${projectId.toString()}` : "/cron/create"}
+            className={buttonVariants({
+              variant: "default",
+              size: "sm",
+              className: "gap-1.5 text-xs h-8",
+            })}
+          >
+            <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
+            New Cron Job
+          </Link>
         </CardHeader>
         <CardContent className="p-0">
           {loading ? (
@@ -139,8 +153,21 @@ export function CronJobTable({ jobs, loading, onRefresh }: CronJobTableProps) {
               <Spinner className="size-6 text-primary" />
             </div>
           ) : sortedJobs.length === 0 ? (
-            <div className="p-8 text-center text-sm text-muted-foreground">
-              No cron jobs configured yet. Create a new job above.
+            <div className="flex flex-col items-center justify-center p-12 text-center">
+              <span className="text-sm text-muted-foreground">
+                No cron jobs configured yet in this project.
+              </span>
+              <Link
+                href={projectId ? `/cron/create?projectId=${projectId.toString()}` : "/cron/create"}
+                className={buttonVariants({
+                  variant: "default",
+                  size: "sm",
+                  className: "mt-4 gap-1.5 text-xs h-8",
+                })}
+              >
+                <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
+                Create Your First Cron Job
+              </Link>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -231,23 +258,20 @@ export function CronJobTable({ jobs, loading, onRefresh }: CronJobTableProps) {
                               )}
                             </Button>
 
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              title={job.status === "Paused" ? "Resume" : "Pause"}
-                              disabled={isToggling}
-                              onClick={() => handleTogglePause(job)}
-                              className="size-8 rounded-md"
+                            <div
+                              className="flex items-center gap-1.5 px-1"
+                              title={job.status === "Active" ? "Pause job" : "Resume job"}
                             >
                               {isToggling ? (
                                 <Spinner className="size-3.5" />
                               ) : (
-                                <HugeiconsIcon
-                                  icon={job.status === "Paused" ? PlayIcon : PauseIcon}
-                                  className="size-3.5 text-foreground"
+                                <Switch
+                                  checked={job.status === "Active"}
+                                  onCheckedChange={() => handleTogglePause(job)}
+                                  disabled={actionInProgress !== null}
                                 />
                               )}
-                            </Button>
+                            </div>
 
                             <Button
                               size="sm"

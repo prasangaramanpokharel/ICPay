@@ -1,9 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
+import { Switch } from "@/components/ui/switch"
 import {
   Dialog,
   DialogContent,
@@ -20,8 +22,6 @@ import {
   Folder01Icon,
   Edit01Icon,
   Delete02Icon,
-  PauseIcon,
-  PlayIcon,
 } from "@hugeicons/core-free-icons"
 import {
   createProject,
@@ -39,7 +39,6 @@ import type {
   RemoteProjectRecord,
 } from "@/services/cron/types"
 import { useAuth } from "@/components/auth/auth-provider"
-import { CronCreateForm } from "./cron-create-form"
 import { CronJobTable } from "./cron-job-table"
 import { CronApiKeysCard } from "./cron-api-keys-card"
 import { CronBuyPackModal } from "./cron-buy-pack-modal"
@@ -322,23 +321,22 @@ export function CronWorkspaceView() {
                 <HugeiconsIcon icon={Edit01Icon} className="size-3.5" />
                 Rename
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={hasActiveJobs ? handlePauseAllJobs : handleResumeAllJobs}
-                disabled={actionLoading || jobs.length === 0}
-                className="text-xs gap-1.5 text-muted-foreground"
-              >
+              <label className="flex items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1 text-xs cursor-pointer select-none">
                 {actionLoading ? (
                   <Spinner className="size-3.5" />
                 ) : (
-                  <HugeiconsIcon
-                    icon={hasActiveJobs ? PauseIcon : PlayIcon}
-                    className="size-3.5"
-                  />
+                  <span className="text-muted-foreground font-medium">
+                    {hasActiveJobs ? "Pause All" : "Resume All"}
+                  </span>
                 )}
-                {hasActiveJobs ? "Pause All" : "Resume All"}
-              </Button>
+                <Switch
+                  checked={hasActiveJobs}
+                  onCheckedChange={(checked) =>
+                    checked ? handleResumeAllJobs() : handlePauseAllJobs()
+                  }
+                  disabled={actionLoading || jobs.length === 0}
+                />
+              </label>
               <Button
                 variant="outline"
                 size="sm"
@@ -349,6 +347,21 @@ export function CronWorkspaceView() {
                 <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
                 Delete
               </Button>
+              <Link
+                href={
+                  selectedProjectId
+                    ? `/cron/create?projectId=${selectedProjectId.toString()}`
+                    : "/cron/create"
+                }
+                className={buttonVariants({
+                  variant: "default",
+                  size: "sm",
+                  className: "gap-1.5 text-xs h-8",
+                })}
+              >
+                <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
+                Create Job
+              </Link>
             </>
           )}
 
@@ -386,17 +399,10 @@ export function CronWorkspaceView() {
 
       {selectedProjectId && (
         <>
-          <CronCreateForm
-            projectId={selectedProjectId}
-            onJobCreated={() => {
-              refreshJobs()
-              refreshCredits()
-            }}
-          />
-
           <CronJobTable
             jobs={jobs}
             loading={loadingJobs}
+            projectId={selectedProjectId}
             onRefresh={() => {
               refreshJobs()
               refreshCredits()
