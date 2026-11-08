@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { AppPage } from "@/components/layout/dashboard/app-page"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
@@ -17,6 +18,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
+  Add01Icon,
   PlusSignIcon,
   ZapIcon,
   Folder01Icon,
@@ -41,7 +43,6 @@ import type {
 } from "@/services/cron/types"
 import { useAuth } from "@/components/auth/auth-provider"
 import { CronJobTable } from "./cron-job-table"
-import { CronApiDrawer } from "./cron-api-drawer"
 import { CronBuyPackModal } from "./cron-buy-pack-modal"
 
 export function CronWorkspaceView() {
@@ -64,7 +65,6 @@ export function CronWorkspaceView() {
   const [actionLoading, setActionLoading] = React.useState(false)
 
   const [buyModalOpen, setBuyModalOpen] = React.useState(false)
-  const [apiDrawerOpen, setApiDrawerOpen] = React.useState(false)
 
   const refreshJobs = React.useCallback(async () => {
     if (!selectedProjectId) return
@@ -245,171 +245,182 @@ export function CronWorkspaceView() {
   }
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto py-6 px-4">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            icCron Scheduler
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Decentralized on-chain automated jobs, recurring tasks, and webhooks
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          {credits && (
-            <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-1.5 text-xs">
-              <HugeiconsIcon icon={ZapIcon} className="size-3.5 text-primary" />
-              <span className="text-muted-foreground">Free runs:</span>
-              <span className="font-mono font-semibold text-foreground">
-                {credits.free_runs_remaining.toString()}/60
-              </span>
-              <span className="text-muted-foreground">· Paid:</span>
-              <span className="font-mono font-semibold text-foreground">
-                {credits.prepaid_credits.toLocaleString()}
-              </span>
-            </div>
-          )}
-
+    <AppPage
+      title="icCron Scheduler"
+      description="Decentralized on-chain automated jobs, recurring tasks, and webhooks"
+      actions={
+        <>
+          <div className="inline-flex items-center rounded-lg border border-border bg-muted/40 p-0.5 shadow-2xs">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 gap-1.5 px-3 text-xs font-medium text-foreground hover:bg-background hover:text-foreground"
+              nativeButton={false}
+              render={<Link href="/cron/api" />}
+            >
+              <HugeiconsIcon icon={Key01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+              <span>API</span>
+            </Button>
+            <div className="h-4 w-px bg-border/80" />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 gap-1.5 px-3 text-xs font-medium text-foreground hover:bg-background hover:text-foreground"
+              onClick={() => setBuyModalOpen(true)}
+            >
+              <HugeiconsIcon icon={ZapIcon} className="size-3.5 text-primary" strokeWidth={1.75} />
+              <span>Credits</span>
+            </Button>
+          </div>
           <Button
             size="sm"
-            onClick={() => setBuyModalOpen(true)}
-            className="gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90 text-xs h-9"
-          >
-            <HugeiconsIcon icon={ZapIcon} className="size-3.5" />
-            Buy Credits
-          </Button>
-        </div>
-      </div>
-
-      <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
-        <div className="flex flex-wrap items-center gap-2">
-          {loadingProjects ? (
-            <Spinner className="size-5 text-primary" />
-          ) : (
-            projects.map((proj) => {
-              const isSelected = selectedProjectId === proj.id
-              return (
-                <Button
-                  key={proj.id.toString()}
-                  variant={isSelected ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedProjectId(proj.id)}
-                  className={`text-xs gap-1.5 ${
-                    isSelected ? "bg-primary text-primary-foreground" : "text-muted-foreground"
-                  }`}
-                >
-                  <HugeiconsIcon icon={Folder01Icon} className="size-3.5" />
-                  {proj.name}
-                </Button>
-              )
-            })
-          )}
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2">
-          {currentProject && (
-            <>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setRenameProjectName(currentProject.name)
-                  setRenameProjectOpen(true)
-                }}
-                disabled={actionLoading}
-                className="text-xs gap-1.5"
-              >
-                <HugeiconsIcon icon={Edit01Icon} className="size-3.5" />
-                Rename
-              </Button>
-              <label className="flex items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1 text-xs cursor-pointer select-none">
-                {actionLoading ? (
-                  <Spinner className="size-3.5" />
-                ) : (
-                  <span className="text-muted-foreground font-medium">
-                    {hasActiveJobs ? "Pause All" : "Resume All"}
-                  </span>
-                )}
-                <Switch
-                  checked={hasActiveJobs}
-                  onCheckedChange={(checked) =>
-                    checked ? handleResumeAllJobs() : handlePauseAllJobs()
-                  }
-                  disabled={actionLoading || jobs.length === 0}
-                />
-              </label>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setApiDrawerOpen(true)}
-                className="text-xs gap-1.5"
-              >
-                <HugeiconsIcon icon={Key01Icon} className="size-3.5" />
-                API Keys
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleDeleteProject}
-                disabled={actionLoading || projects.length <= 1}
-                className="text-xs gap-1.5 text-destructive hover:bg-destructive/10"
-              >
-                <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
-                Delete
-              </Button>
+            nativeButton={false}
+            render={
               <Link
                 href={
                   selectedProjectId
                     ? `/cron/create?projectId=${selectedProjectId.toString()}`
                     : "/cron/create"
                 }
-                className={buttonVariants({
-                  variant: "default",
-                  size: "sm",
-                  className: "gap-1.5 text-xs h-8",
-                })}
-              >
-                <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
-                Create Job
-              </Link>
-            </>
-          )}
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCreateProjectOpen(true)}
-            className="text-xs gap-1.5"
+              />
+            }
+            className="gap-1.5"
           >
-            <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
-            New Project
+            <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={1.75} />
+            <span>Create Job</span>
           </Button>
-        </div>
-      </div>
-
-      {!loadingProjects && projects.length === 0 && (
-        <Card className="border border-border/80 bg-card p-12 text-center shadow-xs">
-          <div className="flex flex-col items-center justify-center gap-3">
-            <HugeiconsIcon icon={Folder01Icon} className="size-10 text-muted-foreground" />
-            <h3 className="text-base font-semibold text-foreground">No projects found</h3>
-            <p className="text-sm text-muted-foreground max-w-sm">
-              Create a project to organize and schedule your automated cron jobs, recurring HTTP webhooks, and canister tasks.
-            </p>
+        </>
+      }
+    >
+      <div className="flex flex-col gap-6">
+        {credits && (
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border/80 bg-card p-3 shadow-2xs">
+            <div className="flex items-center gap-2 text-xs">
+              <HugeiconsIcon icon={ZapIcon} className="size-4 text-primary" />
+              <span className="text-muted-foreground">Free runs available:</span>
+              <span className="font-mono font-semibold text-foreground">
+                {credits.free_runs_remaining.toString()}/60
+              </span>
+              <span className="text-muted-foreground">· Paid credits:</span>
+              <span className="font-mono font-semibold text-foreground">
+                {credits.prepaid_credits.toLocaleString()}
+              </span>
+            </div>
             <Button
+              variant="outline"
               size="sm"
-              onClick={() => setCreateProjectOpen(true)}
-              className="mt-2 gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90"
+              onClick={() => setBuyModalOpen(true)}
+              className="h-7 text-xs gap-1.5"
             >
-              <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
-              Create Your First Project
+              <HugeiconsIcon icon={ZapIcon} className="size-3 text-primary" />
+              Top Up Credits
             </Button>
           </div>
-        </Card>
-      )}
+        )}
 
-      {selectedProjectId && (
-        <>
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border pb-4">
+          <div className="flex flex-wrap items-center gap-2">
+            {loadingProjects ? (
+              <Spinner className="size-5 text-primary" />
+            ) : (
+              projects.map((proj) => {
+                const isSelected = selectedProjectId === proj.id
+                return (
+                  <Button
+                    key={proj.id.toString()}
+                    variant={isSelected ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedProjectId(proj.id)}
+                    className={`text-xs gap-1.5 ${
+                      isSelected ? "bg-primary text-primary-foreground" : "text-muted-foreground"
+                    }`}
+                  >
+                    <HugeiconsIcon icon={Folder01Icon} className="size-3.5" />
+                    {proj.name}
+                  </Button>
+                )
+              })
+            )}
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
+            {currentProject && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setRenameProjectName(currentProject.name)
+                    setRenameProjectOpen(true)
+                  }}
+                  disabled={actionLoading}
+                  className="text-xs gap-1.5"
+                >
+                  <HugeiconsIcon icon={Edit01Icon} className="size-3.5" />
+                  Rename
+                </Button>
+                <label className="flex items-center gap-2 rounded-md border border-border bg-card px-2.5 py-1 text-xs cursor-pointer select-none">
+                  {actionLoading ? (
+                    <Spinner className="size-3.5" />
+                  ) : (
+                    <span className="text-muted-foreground font-medium">
+                      {hasActiveJobs ? "Pause All" : "Resume All"}
+                    </span>
+                  )}
+                  <Switch
+                    checked={hasActiveJobs}
+                    onCheckedChange={(checked) =>
+                      checked ? handleResumeAllJobs() : handlePauseAllJobs()
+                    }
+                    disabled={actionLoading || jobs.length === 0}
+                  />
+                </label>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleDeleteProject}
+                  disabled={actionLoading || projects.length <= 1}
+                  className="text-xs gap-1.5 text-destructive hover:bg-destructive/10"
+                >
+                  <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                  Delete
+                </Button>
+              </>
+            )}
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCreateProjectOpen(true)}
+              className="text-xs gap-1.5"
+            >
+              <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
+              New Project
+            </Button>
+          </div>
+        </div>
+
+        {!loadingProjects && projects.length === 0 && (
+          <Card className="border border-border/80 bg-card p-12 text-center shadow-xs">
+            <div className="flex flex-col items-center justify-center gap-3">
+              <HugeiconsIcon icon={Folder01Icon} className="size-10 text-muted-foreground" />
+              <h3 className="text-base font-semibold text-foreground">No projects found</h3>
+              <p className="text-sm text-muted-foreground max-w-sm">
+                Create a project to organize and schedule your automated cron jobs, recurring HTTP webhooks, and canister tasks.
+              </p>
+              <Button
+                size="sm"
+                onClick={() => setCreateProjectOpen(true)}
+                className="mt-2 gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
+                Create Your First Project
+              </Button>
+            </div>
+          </Card>
+        )}
+
+        {selectedProjectId && (
           <CronJobTable
             jobs={jobs}
             loading={loadingJobs}
@@ -419,15 +430,8 @@ export function CronWorkspaceView() {
               refreshCredits()
             }}
           />
-
-          <CronApiDrawer
-            projectId={selectedProjectId}
-            projectName={currentProject?.name}
-            open={apiDrawerOpen}
-            onOpenChange={setApiDrawerOpen}
-          />
-        </>
-      )}
+        )}
+      </div>
 
       <Dialog open={createProjectOpen} onOpenChange={setCreateProjectOpen}>
         <DialogContent className="sm:max-w-md bg-card text-card-foreground border-border">
@@ -519,6 +523,6 @@ export function CronWorkspaceView() {
           refreshCredits()
         }}
       />
-    </div>
+    </AppPage>
   )
 }

@@ -18,7 +18,6 @@ import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  Sorting01Icon,
   PlayIcon,
   PlusSignIcon,
 } from "@hugeicons/core-free-icons"
@@ -39,31 +38,6 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
   const [selectedJob, setSelectedJob] = React.useState<RemoteJobSummary | null>(null)
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [actionInProgress, setActionInProgress] = React.useState<string | null>(null)
-  const [sortField, setSortField] = React.useState<"time" | "command">("time")
-  const [sortAsc, setSortAsc] = React.useState(true)
-
-  const handleToggleSort = (field: "time" | "command") => {
-    if (sortField === field) {
-      setSortAsc(!sortAsc)
-    } else {
-      setSortField(field)
-      setSortAsc(true)
-    }
-  }
-
-  const sortedJobs = React.useMemo(() => {
-    return [...jobs].sort((a, b) => {
-      if (sortField === "time") {
-        return sortAsc
-          ? a.cron_expression.localeCompare(b.cron_expression)
-          : b.cron_expression.localeCompare(a.cron_expression)
-      } else {
-        return sortAsc
-          ? a.target_preview.localeCompare(b.target_preview)
-          : b.target_preview.localeCompare(a.target_preview)
-      }
-    })
-  }, [jobs, sortField, sortAsc])
 
   const handleDelete = async (job: RemoteJobSummary) => {
     if (!confirm(`Are you sure you want to delete job "${job.label}"?`)) return
@@ -152,7 +126,7 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
             <div className="flex h-48 items-center justify-center">
               <Spinner className="size-6 text-primary" />
             </div>
-          ) : sortedJobs.length === 0 ? (
+          ) : jobs.length === 0 ? (
             <div className="flex flex-col items-center justify-center p-12 text-center">
               <span className="text-sm text-muted-foreground">
                 No cron jobs configured yet in this project.
@@ -174,23 +148,11 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
               <Table>
                 <TableHeader>
                   <TableRow className="border-border hover:bg-transparent">
-                    <TableHead
-                      className="cursor-pointer select-none text-muted-foreground font-semibold py-3.5 w-44"
-                      onClick={() => handleToggleSort("time")}
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <span>Time</span>
-                        <HugeiconsIcon icon={Sorting01Icon} className="size-4" />
-                      </div>
+                    <TableHead className="text-muted-foreground font-semibold py-3.5 w-44">
+                      Time
                     </TableHead>
-                    <TableHead
-                      className="cursor-pointer select-none text-muted-foreground font-semibold py-3.5"
-                      onClick={() => handleToggleSort("command")}
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <span>Command to Run</span>
-                        <HugeiconsIcon icon={Sorting01Icon} className="size-4" />
-                      </div>
+                    <TableHead className="text-muted-foreground font-semibold py-3.5">
+                      Command to Run
                     </TableHead>
                     <TableHead className="text-right text-muted-foreground font-semibold py-3.5 pr-6 w-72">
                       Actions
@@ -198,7 +160,7 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {sortedJobs.map((job) => {
+                  {jobs.map((job) => {
                     const isDeleting = actionInProgress === `delete-${job.id}`
                     const isToggling = actionInProgress === `pause-${job.id}`
                     const isRunning = actionInProgress === `run-${job.id}`

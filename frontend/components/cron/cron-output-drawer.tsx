@@ -2,12 +2,11 @@
 
 import * as React from "react"
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet"
+  Drawer,
+  DrawerContent,
+  DrawerTitle,
+  DrawerDescription,
+} from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
@@ -18,8 +17,10 @@ import {
   RefreshIcon,
   CheckmarkCircle02Icon,
   CancelCircleIcon,
+  Cancel01Icon,
 } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
+import { useIsMobile } from "@/hooks/use-mobile"
 import { getJobLogs, triggerJob } from "@/services/cron/client"
 import type { RemoteExecutionLog, RemoteJobSummary } from "@/services/cron/types"
 
@@ -30,6 +31,7 @@ interface CronOutputDrawerProps {
 }
 
 export function CronOutputDrawer({ job, open, onOpenChange }: CronOutputDrawerProps) {
+  const isMobile = useIsMobile()
   const { identity } = useAuth()
   const [logs, setLogs] = React.useState<RemoteExecutionLog[]>([])
   const [loading, setLoading] = React.useState(false)
@@ -90,51 +92,61 @@ export function CronOutputDrawer({ job, open, onOpenChange }: CronOutputDrawerPr
   if (!job) return null
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent
-        side="right"
-        className="w-full sm:max-w-xl md:max-w-2xl bg-card text-card-foreground border-l border-border flex flex-col p-6 overflow-y-auto"
-      >
-        <SheetHeader className="pb-4 border-b border-border">
-          <div className="flex items-center justify-between gap-4">
-            <div>
-              <SheetTitle className="text-lg font-semibold text-foreground">
-                Output & Execution History
-              </SheetTitle>
-              <SheetDescription className="font-mono text-xs text-muted-foreground mt-1">
-                Job #{job.id.toString()} · {job.label}
-              </SheetDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={fetchLogs}
-                disabled={loading}
-                className="gap-1.5"
-              >
-                <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
-                Refresh
-              </Button>
-              <Button
-                variant="default"
-                size="sm"
-                onClick={handleRunNow}
-                disabled={triggering}
-                className="gap-1.5 bg-primary text-primary-foreground"
-              >
-                {triggering ? (
-                  <Spinner className="size-3.5" />
-                ) : (
-                  <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
-                )}
-                Run Now
-              </Button>
-            </div>
+    <Drawer
+      open={open}
+      onOpenChange={onOpenChange}
+      showSwipeHandle={isMobile}
+      swipeDirection={isMobile ? "down" : "right"}
+    >
+      <DrawerContent className="max-h-[min(100dvh,720px)] sm:max-h-none sm:w-[480px] md:w-[560px] border-border/60 bg-card p-0 focus:outline-none flex flex-col">
+        <div className="flex shrink-0 items-center justify-between border-b border-border/60 px-5 py-3.5">
+          <div className="min-w-0 pr-2">
+            <DrawerTitle className="truncate text-base font-semibold text-foreground">
+              Output & Execution History
+            </DrawerTitle>
+            <DrawerDescription className="font-mono text-xs text-muted-foreground mt-0.5 truncate">
+              Job #{job.id.toString()} · {job.label}
+            </DrawerDescription>
           </div>
-        </SheetHeader>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={fetchLogs}
+              disabled={loading}
+              className="gap-1.5 h-8 text-xs"
+            >
+              <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
+              Refresh
+            </Button>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={handleRunNow}
+              disabled={triggering}
+              className="gap-1.5 bg-primary text-primary-foreground h-8 text-xs"
+            >
+              {triggering ? (
+                <Spinner className="size-3.5" />
+              ) : (
+                <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
+              )}
+              Run Now
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              className="size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
+              onClick={() => onOpenChange(false)}
+              aria-label="Close drawer"
+            >
+              <HugeiconsIcon icon={Cancel01Icon} className="size-4" strokeWidth={2} />
+            </Button>
+          </div>
+        </div>
 
-        <div className="py-4 flex flex-col gap-4">
+        <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
           <div className="rounded-lg border border-border bg-muted/40 p-4 flex flex-col gap-2">
             <div className="flex items-center justify-between text-xs">
               <span className="text-muted-foreground font-medium">Schedule:</span>
@@ -230,7 +242,7 @@ export function CronOutputDrawer({ job, open, onOpenChange }: CronOutputDrawerPr
                     )}
 
                     {log.response_snippet && (
-                      <pre className="rounded bg-muted/60 p-2 text-xs font-mono text-muted-foreground overflow-x-auto whitespace-pre-wrap break-all max-h-28">
+                      <pre className="rounded bg-muted/60 p-2 text-xs font-mono text-muted-foreground overflow-x-auto whitespace-pre-wrap break-all max-h-36">
                         {log.response_snippet}
                       </pre>
                     )}
@@ -240,7 +252,7 @@ export function CronOutputDrawer({ job, open, onOpenChange }: CronOutputDrawerPr
             </div>
           )}
         </div>
-      </SheetContent>
-    </Sheet>
+      </DrawerContent>
+    </Drawer>
   )
 }
