@@ -1,0 +1,161 @@
+type HttpMethod = variant {
+  GET;
+  POST;
+  HEAD;
+};
+
+type JobTarget = variant {
+  CanisterCall : record {
+    canister_id : principal;
+    method : text;
+    payload : blob;
+  };
+  HttpWebhook : record {
+    url : text;
+    method : HttpMethod;
+    headers : vec record { text; text };
+    body : opt blob;
+  };
+};
+
+type CompiledCron = record {
+  minutes : nat64;
+  hours : nat32;
+  days : nat32;
+  months : nat16;
+  weekdays : nat8;
+};
+
+type JobStatus = variant {
+  Active;
+  Paused;
+  Completed;
+  ExhaustedCredits;
+  DeadLetterQueue;
+  AutoPausedDormant;
+  TargetUnavailable;
+};
+
+type JobRecord = record {
+  id : nat64;
+  project_id : nat64;
+  owner : principal;
+  label : text;
+  target : JobTarget;
+  cron_expression : text;
+  compiled_cron : CompiledCron;
+  status : JobStatus;
+  max_retries : nat8;
+  consecutive_failures : nat8;
+  total_runs : nat64;
+  next_run_at : opt nat64;
+  last_run_at : opt nat64;
+  created_at : nat64;
+  updated_at : nat64;
+};
+
+type ProjectRecord = record {
+  id : nat64;
+  owner : principal;
+  name : text;
+  created_at : nat64;
+};
+
+type CreateJobArgs = record {
+  project_id : nat64;
+  label : text;
+  target : JobTarget;
+  cron_expression : text;
+  max_retries : opt nat8;
+};
+
+type JobSummary = record {
+  id : nat64;
+  project_id : nat64;
+  label : text;
+  cron_expression : text;
+  target_type : text;
+  target_preview : text;
+  status : text;
+  consecutive_failures : nat8;
+  total_runs : nat64;
+  next_run_at : opt nat64;
+  last_run_at : opt nat64;
+};
+
+type ExecutionLog = record {
+  log_id : nat64;
+  job_id : nat64;
+  started_at : nat64;
+  duration_ms : nat32;
+  success : bool;
+  status_code : opt nat16;
+  response_snippet : text;
+  error : opt text;
+};
+
+type ApiKeySummary = record {
+  key_hash : vec nat8;
+  project_id : nat64;
+  label : text;
+  revoked : bool;
+  created_at : nat64;
+};
+
+type CreditBalance = record {
+  free_runs_remaining : nat64;
+  prepaid_credits : nat64;
+  total_available : nat64;
+  total_used : nat64;
+};
+
+type PackQuote = record {
+  pack_tier : nat8;
+  credits : nat64;
+  usd_cents : nat32;
+  icp_e8s : nat64;
+  treasury_principal : text;
+};
+
+type HttpHeader = record {
+  name : text;
+  value : text;
+};
+
+type HttpResponse = record {
+  status : nat;
+  headers : vec HttpHeader;
+  body : blob;
+};
+
+type TransformArgs = record {
+  response : HttpResponse;
+  context : blob;
+};
+
+service : {
+  "create_project" : (text) -> (variant { Ok : ProjectRecord; Err : text });
+  "delete_project" : (nat64) -> (variant { Ok; Err : text });
+  "list_my_projects" : () -> (vec ProjectRecord) query;
+
+  "create_job" : (CreateJobArgs) -> (variant { Ok : JobRecord; Err : text });
+  "delete_job" : (nat64) -> (variant { Ok; Err : text });
+  "pause_job" : (nat64) -> (variant { Ok; Err : text });
+  "resume_job" : (nat64) -> (variant { Ok; Err : text });
+  "trigger_job" : (nat64) -> (variant { Ok; Err : text });
+  "list_jobs" : (opt nat64) -> (vec JobSummary) query;
+  "get_job" : (nat64) -> (variant { Ok : JobRecord; Err : text }) query;
+  "get_job_logs" : (nat64, opt nat64) -> (vec ExecutionLog) query;
+
+  "create_api_key" : (nat64, text) -> (variant { Ok : text; Err : text });
+  "revoke_api_key" : (vec nat8) -> (variant { Ok; Err : text });
+  "delete_api_key" : (vec nat8) -> (variant { Ok; Err : text });
+  "list_api_keys" : (nat64) -> (variant { Ok : vec ApiKeySummary; Err : text }) query;
+  "api_trigger_job" : (text, nat64) -> (variant { Ok; Err : text });
+
+  "get_my_credits" : () -> (CreditBalance) query;
+  "get_pack_quotes" : () -> (vec PackQuote);
+  "buy_pack" : (nat8, nat64) -> (variant { Ok : nat64; Err : text });
+
+  "transform_http_response" : (TransformArgs) -> (HttpResponse) query;
+}

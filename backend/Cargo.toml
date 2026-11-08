@@ -1,4 +1,4 @@
 [workspace]
-members = ["rust/trade", "rust/cnsmangment", "rust/academy"]
+members = ["rust/trade", "rust/cnsmangment", "rust/academy", "rust/iccron"]
 resolver = "2"
 

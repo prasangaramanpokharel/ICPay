@@ -39,6 +39,12 @@
       "crate": "icpay_academy",
       "type": "rust"
     },
+    "iccron": {
+      "candid": "rust/iccron/iccron.did",
+      "package": "iccron",
+      "crate": "iccron",
+      "type": "rust"
+    },
     "icp_blob_store": {
       "type": "motoko",
       "main": "blob_store/src/main.mo",
