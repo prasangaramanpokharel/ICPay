@@ -11,6 +11,7 @@ import type {
   RemoteJobSummary,
   RemotePackQuote,
   RemoteProjectRecord,
+  RemoteUpdateJobArgs,
 } from "./types"
 
 export const CRON_CANISTER_ID =
@@ -18,10 +19,17 @@ export const CRON_CANISTER_ID =
 
 export type CronService = {
   create_project: (name: string) => Promise<{ Ok: RemoteProjectRecord } | { Err: string }>
+  rename_project: (
+    projectId: bigint,
+    newName: string
+  ) => Promise<{ Ok: RemoteProjectRecord } | { Err: string }>
+  pause_project: (projectId: bigint) => Promise<{ Ok: bigint } | { Err: string }>
+  resume_project: (projectId: bigint) => Promise<{ Ok: bigint } | { Err: string }>
   delete_project: (projectId: bigint) => Promise<{ Ok: null } | { Err: string }>
   list_my_projects: () => Promise<RemoteProjectRecord[]>
 
   create_job: (args: RemoteCreateJobArgs) => Promise<{ Ok: RemoteJobRecord } | { Err: string }>
+  update_job: (args: RemoteUpdateJobArgs) => Promise<{ Ok: RemoteJobRecord } | { Err: string }>
   delete_job: (jobId: bigint) => Promise<{ Ok: null } | { Err: string }>
   pause_job: (jobId: bigint) => Promise<{ Ok: null } | { Err: string }>
   resume_job: (jobId: bigint) => Promise<{ Ok: null } | { Err: string }>

@@ -10,7 +10,7 @@ pub mod types;
 
 use types::{
     ApiKeySummary, CreateJobArgs, CreditBalance, ExecutionLog, JobRecord, JobStatus, JobSummary,
-    JobTarget, PackQuote, ProjectRecord,
+    JobTarget, PackQuote, ProjectRecord, UpdateJobArgs,
 };
 
 #[ic_cdk::init]
@@ -64,6 +64,78 @@ fn create_project(name: String) -> Result<ProjectRecord, String> {
 }
 
 #[ic_cdk::update]
+fn rename_project(project_id: u64, new_name: String) -> Result<ProjectRecord, String> {
+    let caller = ic_cdk::api::msg_caller();
+    if caller == Principal::anonymous() {
+        return Err("Anonymous callers cannot rename projects".to_string());
+    }
+    let trimmed = new_name.trim();
+    if trimmed.is_empty() {
+        return Err("Project name cannot be empty".to_string());
+    }
+    if trimmed.len() > 100 {
+        return Err("Project name cannot exceed 100 characters".to_string());
+    }
+    let mut project = storage::get_project(project_id).ok_or_else(|| "Project not found".to_string())?;
+    if project.owner != caller {
+        return Err("Unauthorized".to_string());
+    }
+    project.name = trimmed.to_string();
+    storage::insert_project(project.clone());
+    Ok(project)
+}
+
+#[ic_cdk::update]
+fn pause_project(project_id: u64) -> Result<u64, String> {
+    let caller = ic_cdk::api::msg_caller();
+    let project = storage::get_project(project_id).ok_or_else(|| "Project not found".to_string())?;
+    if project.owner != caller {
+        return Err("Unauthorized".to_string());
+    }
+    let jobs = storage::list_jobs_by_owner(caller, Some(project_id));
+    let now_sec = ic_cdk::api::time() / 1_000_000_000;
+    let mut count = 0u64;
+    for mut job in jobs {
+        if matches!(job.status, JobStatus::Active) {
+            if let Some(ts) = job.next_run_at {
+                storage::remove_from_schedule(ts, job.id);
+            }
+            job.status = JobStatus::Paused;
+            job.next_run_at = None;
+            job.updated_at = now_sec;
+            storage::update_job(job);
+            count += 1;
+        }
+    }
+    engine::arm_next_timer();
+    Ok(count)
+}
+
+#[ic_cdk::update]
+fn resume_project(project_id: u64) -> Result<u64, String> {
+    let caller = ic_cdk::api::msg_caller();
+    let project = storage::get_project(project_id).ok_or_else(|| "Project not found".to_string())?;
+    if project.owner != caller {
+        return Err("Unauthorized".to_string());
+    }
+    let jobs = storage::list_jobs_by_owner(caller, Some(project_id));
+    let now_sec = ic_cdk::api::time() / 1_000_000_000;
+    let mut count = 0u64;
+    for mut job in jobs {
+        if matches!(job.status, JobStatus::Paused | JobStatus::AutoPausedDormant) {
+            job.status = JobStatus::Active;
+            job.consecutive_failures = 0;
+            job.next_run_at = cron::next_run_timestamp(&job.compiled_cron, now_sec);
+            job.updated_at = now_sec;
+            storage::update_job(job);
+            count += 1;
+        }
+    }
+    engine::arm_next_timer();
+    Ok(count)
+}
+
+#[ic_cdk::update]
 fn delete_project(project_id: u64) -> Result<(), String> {
     let caller = ic_cdk::api::msg_caller();
     let project = storage::get_project(project_id).ok_or_else(|| "Project not found".to_string())?;
@@ -84,6 +156,7 @@ fn delete_project(project_id: u64) -> Result<(), String> {
     }
 
     storage::delete_project(project_id);
+    engine::arm_next_timer();
     Ok(())
 }
 
@@ -165,6 +238,77 @@ fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
     storage::insert_job(job.clone());
     engine::arm_next_timer();
 
+    Ok(job)
+}
+
+#[ic_cdk::update]
+fn update_job(args: UpdateJobArgs) -> Result<JobRecord, String> {
+    let caller = ic_cdk::api::msg_caller();
+    let mut job = storage::get_job(args.job_id).ok_or_else(|| "Job not found".to_string())?;
+    if job.owner != caller {
+        return Err("Unauthorized".to_string());
+    }
+
+    let now_sec = ic_cdk::api::time() / 1_000_000_000;
+    let mut schedule_changed = false;
+
+    if let Some(lbl) = args.label {
+        let trimmed = lbl.trim();
+        if trimmed.is_empty() {
+            return Err("Job label cannot be empty".to_string());
+        }
+        job.label = trimmed.to_string();
+    }
+
+    if let Some(target) = args.target {
+        match &target {
+            JobTarget::CanisterCall { canister_id, method, .. } => {
+                if *canister_id == Principal::anonymous() {
+                    return Err("Target canister ID cannot be anonymous".to_string());
+                }
+                if method.trim().is_empty() {
+                    return Err("Method name cannot be empty".to_string());
+                }
+            }
+            JobTarget::HttpWebhook { url, .. } => {
+                let u = url.trim();
+                if !u.starts_with("https://") && !u.starts_with("http://") {
+                    return Err("Webhook URL must begin with https:// or http://".to_string());
+                }
+                if u.len() > 2048 {
+                    return Err("Webhook URL exceeds 2048 characters".to_string());
+                }
+            }
+        }
+        job.target = target;
+    }
+
+    if let Some(cron_expr) = args.cron_expression {
+        let trimmed = cron_expr.trim();
+        let compiled = cron::parse_cron(trimmed)?;
+        job.cron_expression = trimmed.to_string();
+        job.compiled_cron = compiled;
+        schedule_changed = true;
+    }
+
+    if let Some(retries) = args.max_retries {
+        job.max_retries = retries;
+    }
+
+    if schedule_changed {
+        if let Some(old_ts) = job.next_run_at {
+            storage::remove_from_schedule(old_ts, job.id);
+        }
+        if matches!(job.status, JobStatus::Active) {
+            job.next_run_at = cron::next_run_timestamp(&job.compiled_cron, now_sec);
+        } else {
+            job.next_run_at = None;
+        }
+    }
+
+    job.updated_at = now_sec;
+    storage::update_job(job.clone());
+    engine::arm_next_timer();
     Ok(job)
 }
 

@@ -9,6 +9,7 @@ import type {
   RemoteJobSummary,
   RemotePackQuote,
   RemoteProjectRecord,
+  RemoteUpdateJobArgs,
 } from "./types"
 
 export async function listProjects(identity?: Identity): Promise<RemoteProjectRecord[]> {
@@ -22,6 +23,37 @@ export async function createProject(
 ): Promise<RemoteProjectRecord> {
   const actor = await createCronActor(identity)
   const res = await actor.create_project(name)
+  if ("Ok" in res) return res.Ok
+  throw new Error(res.Err)
+}
+
+export async function renameProject(
+  projectId: bigint,
+  newName: string,
+  identity?: Identity
+): Promise<RemoteProjectRecord> {
+  const actor = await createCronActor(identity)
+  const res = await actor.rename_project(projectId, newName)
+  if ("Ok" in res) return res.Ok
+  throw new Error(res.Err)
+}
+
+export async function pauseProject(
+  projectId: bigint,
+  identity?: Identity
+): Promise<bigint> {
+  const actor = await createCronActor(identity)
+  const res = await actor.pause_project(projectId)
+  if ("Ok" in res) return res.Ok
+  throw new Error(res.Err)
+}
+
+export async function resumeProject(
+  projectId: bigint,
+  identity?: Identity
+): Promise<bigint> {
+  const actor = await createCronActor(identity)
+  const res = await actor.resume_project(projectId)
   if ("Ok" in res) return res.Ok
   throw new Error(res.Err)
 }
@@ -60,6 +92,16 @@ export async function createJob(
 ): Promise<RemoteJobRecord> {
   const actor = await createCronActor(identity)
   const res = await actor.create_job(args)
+  if ("Ok" in res) return res.Ok
+  throw new Error(res.Err)
+}
+
+export async function updateJob(
+  args: RemoteUpdateJobArgs,
+  identity?: Identity
+): Promise<RemoteJobRecord> {
+  const actor = await createCronActor(identity)
+  const res = await actor.update_job(args)
   if ("Ok" in res) return res.Ok
   throw new Error(res.Err)
 }

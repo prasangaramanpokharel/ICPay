@@ -69,6 +69,14 @@ export interface RemoteCreateJobArgs {
   max_retries: [] | [number]
 }
 
+export interface RemoteUpdateJobArgs {
+  job_id: bigint
+  label: [] | [string]
+  target: [] | [RemoteJobTarget]
+  cron_expression: [] | [string]
+  max_retries: [] | [number]
+}
+
 export interface RemoteJobSummary {
   id: bigint
   project_id: bigint

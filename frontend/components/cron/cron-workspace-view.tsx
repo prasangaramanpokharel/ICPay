@@ -16,12 +16,20 @@ import {
   PlusSignIcon,
   ZapIcon,
   Folder01Icon,
+  Edit01Icon,
+  Delete02Icon,
+  PauseIcon,
+  PlayIcon,
 } from "@hugeicons/core-free-icons"
 import {
   createProject,
+  deleteProject,
   getMyCredits,
   listJobs,
   listProjects,
+  pauseProject,
+  renameProject,
+  resumeProject,
 } from "@/services/cron/client"
 import type {
   RemoteCreditBalance,
@@ -45,6 +53,11 @@ export function CronWorkspaceView() {
   const [createProjectOpen, setCreateProjectOpen] = React.useState(false)
   const [newProjectName, setNewProjectName] = React.useState("")
   const [creatingProject, setCreatingProject] = React.useState(false)
+
+  const [renameProjectOpen, setRenameProjectOpen] = React.useState(false)
+  const [renameProjectName, setRenameProjectName] = React.useState("")
+  const [renamingProject, setRenamingProject] = React.useState(false)
+  const [actionLoading, setActionLoading] = React.useState(false)
 
   const [buyModalOpen, setBuyModalOpen] = React.useState(false)
 
@@ -124,6 +137,8 @@ export function CronWorkspaceView() {
     }
   }, [selectedProjectId])
 
+  const currentProject = projects.find((p) => p.id === selectedProjectId)
+
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newProjectName.trim()) return
@@ -137,6 +152,64 @@ export function CronWorkspaceView() {
     } catch {
     } finally {
       setCreatingProject(false)
+    }
+  }
+
+  const handleRenameProject = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedProjectId || !renameProjectName.trim()) return
+    setRenamingProject(true)
+    try {
+      const updated = await renameProject(selectedProjectId, renameProjectName.trim())
+      setProjects((prev) =>
+        prev.map((p) => (p.id === updated.id ? { ...p, name: updated.name } : p))
+      )
+      setRenameProjectOpen(false)
+    } catch {
+    } finally {
+      setRenamingProject(false)
+    }
+  }
+
+  const handlePauseAllJobs = async () => {
+    if (!selectedProjectId) return
+    setActionLoading(true)
+    try {
+      await pauseProject(selectedProjectId)
+      await refreshJobs()
+    } catch {
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleResumeAllJobs = async () => {
+    if (!selectedProjectId) return
+    setActionLoading(true)
+    try {
+      await resumeProject(selectedProjectId)
+      await refreshJobs()
+    } catch {
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  const handleDeleteProject = async () => {
+    if (!selectedProjectId) return
+    setActionLoading(true)
+    try {
+      await deleteProject(selectedProjectId)
+      const remaining = projects.filter((p) => p.id !== selectedProjectId)
+      setProjects(remaining)
+      if (remaining.length > 0) {
+        setSelectedProjectId(remaining[0].id)
+      } else {
+        setSelectedProjectId(null)
+      }
+    } catch {
+    } finally {
+      setActionLoading(false)
     }
   }
 
@@ -203,15 +276,65 @@ export function CronWorkspaceView() {
           )}
         </div>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setCreateProjectOpen(true)}
-          className="text-xs gap-1.5"
-        >
-          <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
-          New Project
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          {currentProject && (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setRenameProjectName(currentProject.name)
+                  setRenameProjectOpen(true)
+                }}
+                disabled={actionLoading}
+                className="text-xs gap-1.5"
+              >
+                <HugeiconsIcon icon={Edit01Icon} className="size-3.5" />
+                Rename
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handlePauseAllJobs}
+                disabled={actionLoading}
+                className="text-xs gap-1.5 text-muted-foreground"
+              >
+                <HugeiconsIcon icon={PauseIcon} className="size-3.5" />
+                Pause All
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleResumeAllJobs}
+                disabled={actionLoading}
+                className="text-xs gap-1.5 text-muted-foreground"
+              >
+                <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
+                Resume All
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDeleteProject}
+                disabled={actionLoading || projects.length <= 1}
+                className="text-xs gap-1.5 text-destructive hover:bg-destructive/10"
+              >
+                <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                Delete
+              </Button>
+            </>
+          )}
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setCreateProjectOpen(true)}
+            className="text-xs gap-1.5"
+          >
+            <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
+            New Project
+          </Button>
+        </div>
       </div>
 
       {selectedProjectId && (
@@ -272,6 +395,47 @@ export function CronWorkspaceView() {
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 {creatingProject ? <Spinner className="size-3.5" /> : "Create Project"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={renameProjectOpen} onOpenChange={setRenameProjectOpen}>
+        <DialogContent className="sm:max-w-md bg-card text-card-foreground border-border">
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold text-foreground">
+              Rename Project
+            </DialogTitle>
+            <DialogDescription className="text-xs text-muted-foreground">
+              Update the display name of this project namespace.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleRenameProject} className="flex flex-col gap-4 py-2">
+            <Input
+              value={renameProjectName}
+              onChange={(e) => setRenameProjectName(e.target.value)}
+              placeholder="Project Name"
+              className="text-sm"
+              required
+            />
+            <div className="flex justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => setRenameProjectOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                size="sm"
+                disabled={renamingProject}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                {renamingProject ? <Spinner className="size-3.5" /> : "Save"}
               </Button>
             </div>
           </form>

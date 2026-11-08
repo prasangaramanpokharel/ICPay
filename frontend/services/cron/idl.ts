@@ -72,6 +72,14 @@ export const cronIdl: IDL.InterfaceFactory = ({ IDL }) => {
     max_retries: IDL.Opt(IDL.Nat8),
   })
 
+  const UpdateJobArgs = IDL.Record({
+    job_id: IDL.Nat64,
+    label: IDL.Opt(IDL.Text),
+    target: IDL.Opt(JobTarget),
+    cron_expression: IDL.Opt(IDL.Text),
+    max_retries: IDL.Opt(IDL.Nat8),
+  })
+
   const JobSummary = IDL.Record({
     id: IDL.Nat64,
     project_id: IDL.Nat64,
@@ -129,10 +137,14 @@ export const cronIdl: IDL.InterfaceFactory = ({ IDL }) => {
 
   return IDL.Service({
     create_project: IDL.Func([IDL.Text], [ResultProject], []),
+    rename_project: IDL.Func([IDL.Nat64, IDL.Text], [ResultProject], []),
+    pause_project: IDL.Func([IDL.Nat64], [ResultNat64], []),
+    resume_project: IDL.Func([IDL.Nat64], [ResultNat64], []),
     delete_project: IDL.Func([IDL.Nat64], [ResultUnit], []),
     list_my_projects: IDL.Func([], [IDL.Vec(ProjectRecord)], ["query"]),
 
     create_job: IDL.Func([CreateJobArgs], [ResultJob], []),
+    update_job: IDL.Func([UpdateJobArgs], [ResultJob], []),
     delete_job: IDL.Func([IDL.Nat64], [ResultUnit], []),
     pause_job: IDL.Func([IDL.Nat64], [ResultUnit], []),
     resume_job: IDL.Func([IDL.Nat64], [ResultUnit], []),

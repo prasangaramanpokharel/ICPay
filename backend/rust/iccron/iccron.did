@@ -69,6 +69,14 @@ type CreateJobArgs = record {
   max_retries : opt nat8;
 };
 
+type UpdateJobArgs = record {
+  job_id : nat64;
+  label : opt text;
+  target : opt JobTarget;
+  cron_expression : opt text;
+  max_retries : opt nat8;
+};
+
 type JobSummary = record {
   id : nat64;
   project_id : nat64;
@@ -135,10 +143,14 @@ type TransformArgs = record {
 
 service : {
   "create_project" : (text) -> (variant { Ok : ProjectRecord; Err : text });
+  "rename_project" : (nat64, text) -> (variant { Ok : ProjectRecord; Err : text });
+  "pause_project" : (nat64) -> (variant { Ok : nat64; Err : text });
+  "resume_project" : (nat64) -> (variant { Ok : nat64; Err : text });
   "delete_project" : (nat64) -> (variant { Ok; Err : text });
   "list_my_projects" : () -> (vec ProjectRecord) query;
 
   "create_job" : (CreateJobArgs) -> (variant { Ok : JobRecord; Err : text });
+  "update_job" : (UpdateJobArgs) -> (variant { Ok : JobRecord; Err : text });
   "delete_job" : (nat64) -> (variant { Ok; Err : text });
   "pause_job" : (nat64) -> (variant { Ok; Err : text });
   "resume_job" : (nat64) -> (variant { Ok; Err : text });

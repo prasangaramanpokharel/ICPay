@@ -323,6 +323,15 @@ pub struct CreateJobArgs {
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct UpdateJobArgs {
+    pub job_id: u64,
+    pub label: Option<String>,
+    pub target: Option<JobTarget>,
+    pub cron_expression: Option<String>,
+    pub max_retries: Option<u8>,
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct JobSummary {
     pub id: u64,
     pub project_id: u64,

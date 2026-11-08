@@ -157,6 +157,15 @@ pub fn update_job(job: JobRecord) {
     }
 }
 
+pub fn delete_job_logs(job_id: u64) {
+    EXECUTION_LOGS.with(|m| {
+        let mut map = m.borrow_mut();
+        for slot in 0u8..50 {
+            map.remove(&LogSlotKey::new(job_id, slot));
+        }
+    });
+}
+
 pub fn delete_job(id: u64) -> Option<JobRecord> {
     let job_opt = CRON_JOBS.with(|m| m.borrow_mut().remove(&id));
     if let Some(ref job) = job_opt {
@@ -168,6 +177,7 @@ pub fn delete_job(id: u64) -> Option<JobRecord> {
                 m.borrow_mut().remove(&ScheduleKey::new(ts, id));
             });
         }
+        delete_job_logs(id);
     }
     job_opt
 }
