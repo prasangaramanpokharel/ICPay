@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
+import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   PlayIcon,
@@ -69,10 +70,12 @@ export function CronOutputDrawer({ job, open, onOpenChange }: CronOutputDrawerPr
     setTriggering(true)
     try {
       await triggerJob(job.id)
+      toast.success(`Job "${job.label}" triggered successfully.`)
       setTimeout(() => {
         fetchLogs()
       }, 1500)
-    } catch {
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to trigger job.")
     } finally {
       setTriggering(false)
     }

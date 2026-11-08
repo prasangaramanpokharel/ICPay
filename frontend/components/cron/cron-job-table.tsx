@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
+import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Sorting01Icon,
@@ -59,13 +60,15 @@ export function CronJobTable({ jobs, loading, onRefresh }: CronJobTableProps) {
     })
   }, [jobs, sortField, sortAsc])
 
-  const handleDelete = async (jobId: bigint) => {
-    if (!confirm("Are you sure you want to delete this cron job?")) return
-    setActionInProgress(`delete-${jobId}`)
+  const handleDelete = async (job: RemoteJobSummary) => {
+    if (!confirm(`Are you sure you want to delete job "${job.label}"?`)) return
+    setActionInProgress(`delete-${job.id}`)
     try {
-      await deleteJob(jobId)
+      await deleteJob(job.id)
       onRefresh()
-    } catch {
+      toast.success(`Job "${job.label}" deleted successfully.`)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete job.")
     } finally {
       setActionInProgress(null)
     }
@@ -77,22 +80,27 @@ export function CronJobTable({ jobs, loading, onRefresh }: CronJobTableProps) {
     try {
       if (isPaused) {
         await resumeJob(job.id)
+        toast.success(`Job "${job.label}" resumed successfully.`)
       } else {
         await pauseJob(job.id)
+        toast.success(`Job "${job.label}" paused successfully.`)
       }
       onRefresh()
-    } catch {
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to update job status.")
     } finally {
       setActionInProgress(null)
     }
   }
 
-  const handleRunNow = async (jobId: bigint) => {
-    setActionInProgress(`run-${jobId}`)
+  const handleRunNow = async (job: RemoteJobSummary) => {
+    setActionInProgress(`run-${job.id}`)
     try {
-      await triggerJob(jobId)
+      await triggerJob(job.id)
       onRefresh()
-    } catch {
+      toast.success(`Job "${job.label}" triggered successfully.`)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to trigger job.")
     } finally {
       setActionInProgress(null)
     }
@@ -199,7 +207,7 @@ export function CronJobTable({ jobs, loading, onRefresh }: CronJobTableProps) {
                               size="icon"
                               title="Run Now"
                               disabled={isRunning}
-                              onClick={() => handleRunNow(job.id)}
+                              onClick={() => handleRunNow(job)}
                               className="size-8 rounded-md"
                             >
                               {isRunning ? (
@@ -239,7 +247,7 @@ export function CronJobTable({ jobs, loading, onRefresh }: CronJobTableProps) {
                               variant="outline"
                               size="sm"
                               disabled={isDeleting}
-                              onClick={() => handleDelete(job.id)}
+                              onClick={() => handleDelete(job)}
                               className="text-destructive hover:bg-destructive/10 hover:text-destructive border-border font-medium px-3.5 rounded-md text-xs h-8"
                             >
                               {isDeleting ? <Spinner className="size-3" /> : "Delete"}

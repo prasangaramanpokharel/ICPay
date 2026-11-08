@@ -13,6 +13,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Spinner } from "@/components/ui/spinner"
+import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Key01Icon, Copy01Icon, Delete02Icon, CancelCircleIcon } from "@hugeicons/core-free-icons"
 import { createApiKey, deleteApiKey, listApiKeys, revokeApiKey } from "@/services/cron/client"
@@ -65,7 +66,9 @@ export function CronApiKeysCard({ projectId }: CronApiKeysCardProps) {
       setKeyModalOpen(true)
       setNewKeyLabel("")
       refreshKeys()
-    } catch {
+      toast.success("API key generated successfully.")
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to generate API key.")
     } finally {
       setGenerating(false)
     }
@@ -76,7 +79,9 @@ export function CronApiKeysCard({ projectId }: CronApiKeysCardProps) {
     try {
       await revokeApiKey(keyHash)
       refreshKeys()
-    } catch {
+      toast.success("API key revoked successfully.")
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to revoke API key.")
     }
   }
 
@@ -85,7 +90,9 @@ export function CronApiKeysCard({ projectId }: CronApiKeysCardProps) {
     try {
       await deleteApiKey(keyHash)
       refreshKeys()
-    } catch {
+      toast.success("API key deleted successfully.")
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete API key.")
     }
   }
 

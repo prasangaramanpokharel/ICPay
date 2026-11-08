@@ -11,6 +11,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Spinner } from "@/components/ui/spinner"
+import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   PlusSignIcon,
@@ -149,7 +150,9 @@ export function CronWorkspaceView() {
       setSelectedProjectId(proj.id)
       setNewProjectName("")
       setCreateProjectOpen(false)
-    } catch {
+      toast.success(`Project "${proj.name}" created successfully.`)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to create project.")
     } finally {
       setCreatingProject(false)
     }
@@ -165,7 +168,9 @@ export function CronWorkspaceView() {
         prev.map((p) => (p.id === updated.id ? { ...p, name: updated.name } : p))
       )
       setRenameProjectOpen(false)
-    } catch {
+      toast.success(`Project renamed to "${updated.name}" successfully.`)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to rename project.")
     } finally {
       setRenamingProject(false)
     }
@@ -175,9 +180,11 @@ export function CronWorkspaceView() {
     if (!selectedProjectId) return
     setActionLoading(true)
     try {
-      await pauseProject(selectedProjectId)
+      const count = await pauseProject(selectedProjectId)
       await refreshJobs()
-    } catch {
+      toast.success(`Project "${currentProject?.name}" paused successfully (${count.toString()} jobs paused).`)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to pause project.")
     } finally {
       setActionLoading(false)
     }
@@ -187,9 +194,11 @@ export function CronWorkspaceView() {
     if (!selectedProjectId) return
     setActionLoading(true)
     try {
-      await resumeProject(selectedProjectId)
+      const count = await resumeProject(selectedProjectId)
       await refreshJobs()
-    } catch {
+      toast.success(`Project "${currentProject?.name}" resumed successfully (${count.toString()} jobs resumed).`)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to resume project.")
     } finally {
       setActionLoading(false)
     }
@@ -199,6 +208,7 @@ export function CronWorkspaceView() {
     if (!selectedProjectId) return
     setActionLoading(true)
     try {
+      const name = currentProject?.name ?? "Project"
       await deleteProject(selectedProjectId)
       const remaining = projects.filter((p) => p.id !== selectedProjectId)
       setProjects(remaining)
@@ -207,7 +217,9 @@ export function CronWorkspaceView() {
       } else {
         setSelectedProjectId(null)
       }
-    } catch {
+      toast.success(`Project "${name}" deleted successfully.`)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete project.")
     } finally {
       setActionLoading(false)
     }

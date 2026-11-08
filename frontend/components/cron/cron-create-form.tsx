@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Spinner } from "@/components/ui/spinner"
+import { toast } from "sonner"
 import { createJob } from "@/services/cron/client"
 import type { RemoteJobTarget } from "@/services/cron/types"
 import {
@@ -104,7 +105,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
         }
       }
 
-      await createJob({
+      const created = await createJob({
         project_id: projectId,
         label: label.trim() || "Cron Job",
         target,
@@ -113,11 +114,14 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
       })
 
       setSuccess(true)
+      toast.success(`Job "${created.label}" created successfully.`)
       if (onJobCreated) {
         onJobCreated()
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to create cron job")
+      const msg = err instanceof Error ? err.message : "Failed to create cron job"
+      setError(msg)
+      toast.error(msg)
     } finally {
       setLoading(false)
     }

@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
+import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ZapIcon, Coins01Icon } from "@hugeicons/core-free-icons"
 import { buyPack, getPackQuotes } from "@/services/cron/client"
@@ -79,15 +80,16 @@ export function CronBuyPackModal({
 
       const blockIndex = transferRes.ok.blockIndex
       const newBalance = await buyPack(quote.pack_tier, blockIndex)
-
-      setSuccessMsg(
-        `Success! Added ${quote.credits.toLocaleString()} credits. New prepaid balance: ${newBalance.toLocaleString()}`
-      )
+      const msg = `Added ${quote.credits.toLocaleString()} credits! New balance: ${newBalance.toLocaleString()}`
+      setSuccessMsg(msg)
+      toast.success(msg)
       if (onPurchased) {
         onPurchased()
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to process payment")
+      const msg = err instanceof Error ? err.message : "Failed to process payment"
+      setError(msg)
+      toast.error(msg)
     } finally {
       setPurchasingTier(null)
     }
