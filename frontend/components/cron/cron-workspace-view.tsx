@@ -134,6 +134,7 @@ export function CronWorkspaceView() {
   }, [selectedProjectId, identity])
 
   const currentProject = projects.find((p) => p.id === selectedProjectId)
+  const hasActiveJobs = jobs.some((j) => j.status === "Active")
 
   const handleCreateProject = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -188,6 +189,7 @@ export function CronWorkspaceView() {
     setActionLoading(true)
     try {
       const count = await pauseProject(selectedProjectId, identity)
+      setJobs((prev) => prev.map((j) => ({ ...j, status: "Paused" as const })))
       await refreshJobs()
       toast.success(`Project "${currentProject?.name}" paused successfully (${count.toString()} jobs paused).`)
     } catch (err) {
@@ -206,6 +208,7 @@ export function CronWorkspaceView() {
     setActionLoading(true)
     try {
       const count = await resumeProject(selectedProjectId, identity)
+      setJobs((prev) => prev.map((j) => ({ ...j, status: "Active" as const })))
       await refreshJobs()
       toast.success(`Project "${currentProject?.name}" resumed successfully (${count.toString()} jobs resumed).`)
     } catch (err) {
@@ -322,22 +325,19 @@ export function CronWorkspaceView() {
               <Button
                 variant="outline"
                 size="sm"
-                onClick={handlePauseAllJobs}
-                disabled={actionLoading}
+                onClick={hasActiveJobs ? handlePauseAllJobs : handleResumeAllJobs}
+                disabled={actionLoading || jobs.length === 0}
                 className="text-xs gap-1.5 text-muted-foreground"
               >
-                <HugeiconsIcon icon={PauseIcon} className="size-3.5" />
-                Pause All
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleResumeAllJobs}
-                disabled={actionLoading}
-                className="text-xs gap-1.5 text-muted-foreground"
-              >
-                <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
-                Resume All
+                {actionLoading ? (
+                  <Spinner className="size-3.5" />
+                ) : (
+                  <HugeiconsIcon
+                    icon={hasActiveJobs ? PauseIcon : PlayIcon}
+                    className="size-3.5"
+                  />
+                )}
+                {hasActiveJobs ? "Pause All" : "Resume All"}
               </Button>
               <Button
                 variant="outline"
