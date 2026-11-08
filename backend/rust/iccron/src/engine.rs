@@ -49,6 +49,22 @@ pub async fn run_cycle() {
     arm_next_timer();
 }
 
+fn extract_host(url: &str) -> Option<String> {
+    let after_scheme = if let Some(stripped) = url.strip_prefix("https://") {
+        stripped
+    } else if let Some(stripped) = url.strip_prefix("http://") {
+        stripped
+    } else {
+        url
+    };
+    let host_and_port = after_scheme.split('/').next()?.split('?').next()?;
+    if host_and_port.is_empty() {
+        None
+    } else {
+        Some(host_and_port.to_string())
+    }
+}
+
 pub async fn execute_single_job(mut job: JobRecord) {
     let now_nanos = ic_cdk::api::time();
     let now_sec = now_nanos / 1_000_000_000;
@@ -107,12 +123,35 @@ pub async fn execute_single_job(mut job: JobRecord) {
                 crate::types::HttpMethod::POST => IcHttpMethod::POST,
                 crate::types::HttpMethod::HEAD => IcHttpMethod::HEAD,
             };
-            let req_headers = headers.iter().map(|(k, v)| {
+            let mut req_headers: Vec<HttpHeader> = headers.iter().map(|(k, v)| {
                 HttpHeader {
                     name: k.clone(),
                     value: v.clone(),
                 }
             }).collect();
+
+            if !req_headers.iter().any(|h| h.name.eq_ignore_ascii_case("host")) {
+                if let Some(host) = extract_host(url) {
+                    req_headers.push(HttpHeader {
+                        name: "Host".to_string(),
+                        value: host,
+                    });
+                }
+            }
+
+            if !req_headers.iter().any(|h| h.name.eq_ignore_ascii_case("user-agent")) {
+                req_headers.push(HttpHeader {
+                    name: "User-Agent".to_string(),
+                    value: "Mozilla/5.0 (compatible; icCron/1.0; +https://icpay.app)".to_string(),
+                });
+            }
+
+            if !req_headers.iter().any(|h| h.name.eq_ignore_ascii_case("accept")) {
+                req_headers.push(HttpHeader {
+                    name: "Accept".to_string(),
+                    value: "*/*".to_string(),
+                });
+            }
 
             let request = HttpRequestArgs {
                 url: url.clone(),

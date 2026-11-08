@@ -97,11 +97,26 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
           cleanUrl = `https://${cleanUrl}`
         }
 
+        let host = ""
+        try {
+          host = new URL(cleanUrl).host
+        } catch {
+          host = ""
+        }
+
+        const headers: [string, string][] = [
+          ["User-Agent", "Mozilla/5.0 (compatible; icCron/1.0; +https://icpay.app)"],
+          ["Accept", "*/*"],
+        ]
+        if (host) {
+          headers.push(["Host", host])
+        }
+
         target = {
           HttpWebhook: {
             url: cleanUrl,
             method: { GET: null },
-            headers: [["User-Agent", "icCron/1.0"]],
+            headers,
             body: [],
           },
         }
