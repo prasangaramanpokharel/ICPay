@@ -22,6 +22,7 @@ import {
   Folder01Icon,
   Edit01Icon,
   Delete02Icon,
+  Key01Icon,
 } from "@hugeicons/core-free-icons"
 import {
   createProject,
@@ -40,7 +41,7 @@ import type {
 } from "@/services/cron/types"
 import { useAuth } from "@/components/auth/auth-provider"
 import { CronJobTable } from "./cron-job-table"
-import { CronApiKeysCard } from "./cron-api-keys-card"
+import { CronApiDrawer } from "./cron-api-drawer"
 import { CronBuyPackModal } from "./cron-buy-pack-modal"
 
 export function CronWorkspaceView() {
@@ -63,6 +64,7 @@ export function CronWorkspaceView() {
   const [actionLoading, setActionLoading] = React.useState(false)
 
   const [buyModalOpen, setBuyModalOpen] = React.useState(false)
+  const [apiDrawerOpen, setApiDrawerOpen] = React.useState(false)
 
   const refreshJobs = React.useCallback(async () => {
     if (!selectedProjectId) return
@@ -340,6 +342,15 @@ export function CronWorkspaceView() {
               <Button
                 variant="outline"
                 size="sm"
+                onClick={() => setApiDrawerOpen(true)}
+                className="text-xs gap-1.5"
+              >
+                <HugeiconsIcon icon={Key01Icon} className="size-3.5" />
+                API Keys
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={handleDeleteProject}
                 disabled={actionLoading || projects.length <= 1}
                 className="text-xs gap-1.5 text-destructive hover:bg-destructive/10"
@@ -409,7 +420,12 @@ export function CronWorkspaceView() {
             }}
           />
 
-          <CronApiKeysCard projectId={selectedProjectId} />
+          <CronApiDrawer
+            projectId={selectedProjectId}
+            projectName={currentProject?.name}
+            open={apiDrawerOpen}
+            onOpenChange={setApiDrawerOpen}
+          />
         </>
       )}
 
