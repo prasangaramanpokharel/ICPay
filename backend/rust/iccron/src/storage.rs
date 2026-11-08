@@ -196,7 +196,7 @@ pub fn list_jobs_by_owner(owner: Principal, project_id: Option<u64>) -> Vec<JobR
                 let key = e.key();
                 let slice = owner.as_slice();
                 let len = slice.len().min(29);
-                key.0[0] == len as u8 && &key.0[1..=len] == &slice[..len]
+                key.0[0] == len as u8 && &key.0[1..1 + len] == &slice[..len]
             })
             .filter_map(|e| get_job(e.value()))
             .filter(|job| {

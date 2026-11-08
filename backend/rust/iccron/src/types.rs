@@ -241,11 +241,11 @@ impl LogSlotKey {
 }
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Debug)]
-pub struct OwnerJobKey(pub [u8; 37]);
+pub struct OwnerJobKey(pub [u8; 38]);
 
 impl Storable for OwnerJobKey {
     const BOUND: Bound = Bound::Bounded {
-        max_size: 37,
+        max_size: 38,
         is_fixed_size: true,
     };
 
@@ -258,7 +258,7 @@ impl Storable for OwnerJobKey {
     }
 
     fn from_bytes(bytes: Cow<'_, [u8]>) -> Self {
-        let mut arr = [0u8; 37];
+        let mut arr = [0u8; 38];
         arr.copy_from_slice(bytes.as_ref());
         Self(arr)
     }
@@ -266,26 +266,17 @@ impl Storable for OwnerJobKey {
 
 impl OwnerJobKey {
     pub fn new(owner: Principal, job_id: u64) -> Self {
-        let mut buf = [0u8; 37];
+        let mut buf = [0u8; 38];
         let slice = owner.as_slice();
         let len = slice.len().min(29);
         buf[0] = len as u8;
-        buf[1..=len].copy_from_slice(&slice[..len]);
-        buf[29..37].copy_from_slice(&job_id.to_be_bytes());
+        buf[1..1 + len].copy_from_slice(&slice[..len]);
+        buf[30..38].copy_from_slice(&job_id.to_be_bytes());
         Self(buf)
     }
 
-    pub fn prefix(owner: Principal) -> [u8; 29] {
-        let mut buf = [0u8; 29];
-        let slice = owner.as_slice();
-        let len = slice.len().min(28);
-        buf[0] = len as u8;
-        buf[1..=len].copy_from_slice(&slice[..len]);
-        buf
-    }
-
     pub fn job_id(&self) -> u64 {
-        u64::from_be_bytes(self.0[29..37].try_into().unwrap())
+        u64::from_be_bytes(self.0[30..38].try_into().unwrap())
     }
 }
 
