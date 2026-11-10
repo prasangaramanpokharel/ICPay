@@ -3,8 +3,8 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
-import { buttonVariants } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Spinner } from "@/components/ui/spinner"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -18,6 +18,7 @@ function CronCreateContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const queryProjectId = searchParams.get("projectId")
+  const queryProjectName = searchParams.get("id") || searchParams.get("name")
 
   const { identity } = useAuth()
   const [projects, setProjects] = React.useState<RemoteProjectRecord[]>([])
@@ -37,6 +38,10 @@ function CronCreateContent() {
           if (queryProjectId) {
             const found = data.find((p) => p.id.toString() === queryProjectId)
             setSelectedProjectId(found ? found.id : data[0].id)
+          } else if (queryProjectName) {
+            const decoded = decodeURIComponent(queryProjectName).toLowerCase()
+            const found = data.find((p) => p.name.toLowerCase() === decoded)
+            setSelectedProjectId(found ? found.id : data[0].id)
           } else {
             setSelectedProjectId(data[0].id)
           }
@@ -52,22 +57,35 @@ function CronCreateContent() {
     return () => {
       active = false
     }
-  }, [identity, queryProjectId, selectedProjectId])
+  }, [identity, queryProjectId, queryProjectName, selectedProjectId])
+
+  const currentProject = React.useMemo(() => {
+    return projects.find((p) => p.id === selectedProjectId) ?? null
+  }, [projects, selectedProjectId])
+
+  const targetProjectName =
+    currentProject?.name ??
+    (queryProjectName ? decodeURIComponent(queryProjectName) : null)
+  const backHref = targetProjectName
+    ? `/cron?id=${encodeURIComponent(targetProjectName)}`
+    : "/cron"
+  const backLabel = targetProjectName
+    ? `Back to ${targetProjectName}`
+    : "Back to Projects"
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto py-6 px-4">
       <div className="flex items-center justify-between gap-4">
-        <Link
-          href="/cron"
-          className={buttonVariants({
-            variant: "ghost",
-            size: "sm",
-            className: "gap-1.5 text-xs text-muted-foreground hover:text-foreground -ml-2",
-          })}
+        <Button
+          variant="ghost"
+          size="sm"
+          nativeButton={false}
+          render={<Link href={backHref} />}
+          className="gap-1.5 text-xs text-muted-foreground hover:text-foreground -ml-2"
         >
           <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
-          Back to Cron Jobs
-        </Link>
+          <span>{backLabel}</span>
+        </Button>
 
         {projects.length > 1 && (
           <div className="flex items-center gap-2">
@@ -75,7 +93,16 @@ function CronCreateContent() {
             <span className="text-xs text-muted-foreground">Project:</span>
             <NativeSelect
               value={selectedProjectId?.toString() ?? ""}
-              onChange={(e) => setSelectedProjectId(BigInt(e.target.value))}
+              onChange={(e) => {
+                const nextId = BigInt(e.target.value)
+                setSelectedProjectId(nextId)
+                const nextProj = projects.find((p) => p.id === nextId)
+                if (nextProj) {
+                  router.replace(
+                    `/cron/create?id=${encodeURIComponent(nextProj.name)}&projectId=${nextProj.id.toString()}`
+                  )
+                }
+              }}
               className="text-xs h-8 bg-card border-border"
             >
               {projects.map((p) => (
@@ -93,30 +120,39 @@ function CronCreateContent() {
           <Spinner className="size-6 text-primary" />
         </div>
       ) : projects.length === 0 ? (
-        <Card className="border border-border/80 bg-card p-12 text-center shadow-xs">
-          <div className="flex flex-col items-center justify-center gap-3">
-            <HugeiconsIcon icon={Folder01Icon} className="size-10 text-muted-foreground" />
-            <h3 className="text-base font-semibold text-foreground">No projects found</h3>
-            <p className="text-sm text-muted-foreground max-w-sm">
+        <Empty className="rounded-2xl border border-dashed py-14">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <HugeiconsIcon icon={Folder01Icon} className="size-6 text-muted-foreground" />
+            </EmptyMedia>
+            <EmptyTitle>No projects found</EmptyTitle>
+            <EmptyDescription>
               Please create a project namespace first before scheduling cron jobs.
-            </p>
-            <Link
-              href="/cron"
-              className={buttonVariants({
-                variant: "default",
-                size: "sm",
-                className: "mt-2",
-              })}
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button
+              size="sm"
+              nativeButton={false}
+              render={<Link href="/cron" />}
+              className="gap-1.5"
             >
               Go to icCron Workspace
-            </Link>
-          </div>
-        </Card>
+            </Button>
+          </EmptyContent>
+        </Empty>
       ) : selectedProjectId ? (
         <CronCreateForm
           projectId={selectedProjectId}
           onJobCreated={() => {
-            router.push("/cron")
+            const destName =
+              currentProject?.name ??
+              (queryProjectName ? decodeURIComponent(queryProjectName) : null)
+            if (destName) {
+              router.push(`/cron?id=${encodeURIComponent(destName)}`)
+            } else {
+              router.push("/cron")
+            }
           }}
         />
       ) : null}

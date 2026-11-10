@@ -108,6 +108,7 @@ export interface RemoteApiKeySummary {
   label: string
   revoked: boolean
   created_at: bigint
+  raw_key?: string
 }
 
 export interface RemoteCreditBalance {
@@ -123,4 +124,24 @@ export interface RemotePackQuote {
   usd_cents: number
   icp_e8s: bigint
   treasury_principal: string
+}
+
+export interface RemoteCronAuditStats {
+  total_projects: bigint
+  total_jobs: bigint
+  active_jobs: bigint
+  paused_jobs: bigint
+  other_jobs: bigint
+  total_runs_executed: bigint
+  total_api_keys: bigint
+  active_api_keys: bigint
+  revoked_api_keys: bigint
+  rate_per_run_usd_micros: bigint
+  treasury_principal: string
+  total_users_with_credits: bigint
+  total_prepaid_credits_held: bigint
+  total_lifetime_credits_purchased: bigint
+  total_lifetime_credits_used: bigint
+  cycles_balance: bigint
+  memory_pages: bigint
 }

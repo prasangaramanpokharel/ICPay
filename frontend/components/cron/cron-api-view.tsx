@@ -7,25 +7,19 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Add01Icon,
   CancelCircleIcon,
-  CodeIcon,
   Copy01Icon,
   Delete02Icon,
   Key01Icon,
   Search01Icon,
   Tick02Icon,
+  ViewIcon,
+  ViewOffIcon,
 } from "@hugeicons/core-free-icons"
 import { AppPage } from "@/components/layout/dashboard/app-page"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import {
@@ -66,10 +60,11 @@ function hexFromBytes(bytes: Uint8Array | number[]): string {
     .join("")
 }
 
-function formatDate(timestampNs: bigint): string {
-  const ms = Number(timestampNs / 1_000_000n)
-  if (!ms || Number.isNaN(ms) || ms <= 0) return "—"
-  return new Date(ms).toLocaleDateString(undefined, {
+function formatDate(timestamp: bigint): string {
+  const n = Number(timestamp)
+  if (!n || Number.isNaN(n) || n <= 0) return "—"
+  const ms = timestamp < 1_000_000_000_000n ? n * 1000 : Number(timestamp / 1_000_000n)
+  return new Date(ms).toLocaleString(undefined, {
     dateStyle: "medium",
     timeStyle: "short",
   })
@@ -100,6 +95,17 @@ export function CronApiView() {
   const [resultModalOpen, setResultModalOpen] = React.useState(false)
   const [copiedSecret, setCopiedSecret] = React.useState(false)
   const [actionInProgress, setActionInProgress] = React.useState<string | null>(null)
+  const [visibleKeys, setVisibleKeys] = React.useState<Record<string, boolean>>({})
+  const [copiedHex, setCopiedHex] = React.useState<string | null>(null)
+
+  const handleCopyKey = async (keyText: string, hex: string) => {
+    await copyText(keyText)
+    setCopiedHex(hex)
+    toast.success("API key copied to clipboard")
+    setTimeout(() => {
+      setCopiedHex((cur) => (cur === hex ? null : cur))
+    }, 2000)
+  }
 
   const loadData = React.useCallback(async (callerIdentity: typeof identity) => {
     if (!callerIdentity) {
@@ -283,19 +289,7 @@ export function CronApiView() {
 
   return (
     <AppPage
-      title={
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/cron">icCron</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            <BreadcrumbItem>
-              <BreadcrumbPage>API Keys</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
-      }
+      title="API Keys"
       description="Manage programmatic trigger API keys and webhook endpoints for icCron."
       actions={
         <div className="flex items-center gap-2">
@@ -366,12 +360,12 @@ export function CronApiView() {
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/40 hover:bg-muted/40">
-                <TableHead className="w-[28%]">Label</TableHead>
-                <TableHead className="w-[20%]">Token Prefix</TableHead>
-                <TableHead className="w-[16%]">Project</TableHead>
-                <TableHead className="w-[12%]">Status</TableHead>
+                <TableHead className="w-[24%]">Label</TableHead>
+                <TableHead className="w-[26%]">API Key</TableHead>
+                <TableHead className="w-[14%]">Project</TableHead>
+                <TableHead className="w-[10%]">Status</TableHead>
                 <TableHead className="w-[12%]">Created</TableHead>
-                <TableHead className="w-[12%] text-right pr-6">Actions</TableHead>
+                <TableHead className="w-[14%] text-right pr-6">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -383,14 +377,18 @@ export function CronApiView() {
                 </TableRow>
               ) : filteredKeys.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-48 text-center">
-                    <div className="flex flex-col items-center justify-center gap-2 p-6">
-                      <HugeiconsIcon icon={Key01Icon} className="size-8 text-muted-foreground" />
-                      <p className="text-sm font-medium text-foreground">No API keys found</p>
-                      <p className="text-xs text-muted-foreground">
-                        Create an API key to trigger your cron jobs programmatically from GitHub Actions, Vercel, or cURL.
-                      </p>
-                    </div>
+                  <TableCell colSpan={6} className="p-0 text-center">
+                    <Empty className="py-12 border-0">
+                      <EmptyHeader>
+                        <EmptyMedia variant="icon">
+                          <HugeiconsIcon icon={Key01Icon} className="size-6 text-muted-foreground" />
+                        </EmptyMedia>
+                        <EmptyTitle>No API keys found</EmptyTitle>
+                        <EmptyDescription>
+                          Create an API key to trigger your cron jobs programmatically from GitHub Actions, Vercel, or cURL.
+                        </EmptyDescription>
+                      </EmptyHeader>
+                    </Empty>
                   </TableCell>
                 </TableRow>
               ) : (
@@ -409,9 +407,48 @@ export function CronApiView() {
                       </TableCell>
 
                       <TableCell className="font-mono text-xs text-muted-foreground">
-                        <Badge variant="outline" className="font-mono text-xs">
-                          icp_cron_{hex}...
-                        </Badge>
+                        <div className="flex items-center gap-1.5">
+                          <Badge variant="outline" className="font-mono text-xs select-all truncate max-w-44 sm:max-w-64">
+                            {key.raw_key
+                              ? visibleKeys[hex]
+                                ? key.raw_key
+                                : `${key.raw_key.slice(0, 12)}••••••••••••`
+                              : `icp_cron_${hex}...`}
+                          </Badge>
+                          {key.raw_key && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon-xs"
+                              className="size-6 text-muted-foreground hover:text-foreground shrink-0"
+                              onClick={() =>
+                                setVisibleKeys((prev) => ({
+                                  ...prev,
+                                  [hex]: !prev[hex],
+                                }))
+                              }
+                              aria-label={visibleKeys[hex] ? "Hide API key" : "Show API key"}
+                            >
+                              <HugeiconsIcon
+                                icon={visibleKeys[hex] ? ViewOffIcon : ViewIcon}
+                                className="size-3"
+                              />
+                            </Button>
+                          )}
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon-xs"
+                            className="size-6 text-muted-foreground hover:text-foreground shrink-0"
+                            onClick={() => void handleCopyKey(key.raw_key || `icp_cron_${hex}...`, hex)}
+                            aria-label="Copy API key"
+                          >
+                            <HugeiconsIcon
+                              icon={copiedHex === hex ? Tick02Icon : Copy01Icon}
+                              className="size-3"
+                            />
+                          </Button>
+                        </div>
                       </TableCell>
 
                       <TableCell className="text-xs text-foreground">
@@ -471,38 +508,6 @@ export function CronApiView() {
               )}
             </TableBody>
           </Table>
-        </CardContent>
-      </Card>
-
-      <Card className="border border-border bg-card">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={CodeIcon} className="size-4 text-primary" />
-            <CardTitle className="text-sm font-semibold text-foreground">
-              Programmatic Webhook Trigger Documentation
-            </CardTitle>
-          </div>
-          <CardDescription className="text-xs text-muted-foreground">
-            Call any cron job on-demand with your API key via cURL, HTTP webhook, or canister-to-canister inter-canister call.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <span className="text-xs font-semibold text-foreground">cURL HTTP Webhook Example</span>
-            <pre className="rounded-lg border border-border bg-muted/50 p-3 text-xs font-mono text-foreground overflow-x-auto">
-{`curl -X POST https://icpay.app/api/v1/cron/trigger \\
-  -H "Authorization: Bearer icp_cron_YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{"job_id": 1}'`}
-            </pre>
-          </div>
-
-          <div className="space-y-2">
-            <span className="text-xs font-semibold text-foreground">On-Chain Canister Call (dfx)</span>
-            <pre className="rounded-lg border border-border bg-muted/50 p-3 text-xs font-mono text-foreground overflow-x-auto">
-{`dfx canister call uzt4z-lp777-77774-qaabq-cai trigger_job_by_api_key '("icp_cron_YOUR_API_KEY", 1)'`}
-            </pre>
-          </div>
         </CardContent>
       </Card>
 

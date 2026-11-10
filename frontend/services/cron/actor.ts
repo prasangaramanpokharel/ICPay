@@ -5,6 +5,7 @@ import type {
   RemoteApiKeySummary,
   RemoteCreateJobArgs,
   RemoteCreditBalance,
+  RemoteCronAuditStats,
   RemoteExecutionLog,
   RemoteJobRecord,
   RemoteJobSummary,
@@ -48,6 +49,11 @@ export type CronService = {
   get_my_credits: () => Promise<RemoteCreditBalance>
   get_pack_quotes: () => Promise<RemotePackQuote[]>
   buy_pack: (tier: number, blockIndex: bigint) => Promise<{ Ok: bigint } | { Err: string }>
+  quote_credits: (credits: bigint) => Promise<RemotePackQuote>
+  buy_credits: (credits: bigint, blockIndex: bigint) => Promise<{ Ok: bigint } | { Err: string }>
+  set_rate_per_run: (usdMicros: bigint) => Promise<{ Ok: bigint } | { Err: string }>
+  get_rate_per_run: () => Promise<bigint>
+  get_audit_stats: () => Promise<RemoteCronAuditStats>
 }
 
 export async function createCronActor(

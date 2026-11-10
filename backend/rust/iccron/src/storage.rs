@@ -20,6 +20,7 @@ pub const MEM_EXECUTION_LOGS: MemoryId = MemoryId::new(4);
 pub const MEM_USER_CREDITS: MemoryId = MemoryId::new(5);
 pub const MEM_API_KEYS: MemoryId = MemoryId::new(6);
 pub const MEM_PROCESSED_BLOCKS: MemoryId = MemoryId::new(7);
+pub const MEM_CONFIG: MemoryId = MemoryId::new(8);
 
 thread_local! {
     static MEMORY_MANAGER: RefCell<MemoryManager<DefaultMemoryImpl>> =
@@ -63,6 +64,11 @@ thread_local! {
     static PROCESSED_BLOCKS: RefCell<StableBTreeMap<u64, ProcessedBlockRecord, Memory>> =
         RefCell::new(StableBTreeMap::init(
             MEMORY_MANAGER.with(|m| m.borrow().get(MEM_PROCESSED_BLOCKS))
+        ));
+
+    static CONFIG: RefCell<StableBTreeMap<u8, u64, Memory>> =
+        RefCell::new(StableBTreeMap::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(MEM_CONFIG))
         ));
 }
 
@@ -440,6 +446,107 @@ pub fn list_api_keys_by_project(project_id: u64) -> Vec<ApiKeyRecord> {
             .map(|e| e.value())
             .collect()
     })
+}
+
+// -----------------------------------------------------------------------------
+// Config & Audit
+// -----------------------------------------------------------------------------
+
+pub const KEY_RATE_PER_RUN_MICROS: u8 = 0;
+pub const DEFAULT_RATE_PER_RUN_MICROS: u64 = 500; // $0.0005 per run
+
+pub fn get_rate_per_run_usd_micros() -> u64 {
+    CONFIG.with(|m| {
+        m.borrow()
+            .get(&KEY_RATE_PER_RUN_MICROS)
+            .unwrap_or(DEFAULT_RATE_PER_RUN_MICROS)
+    })
+}
+
+pub fn set_rate_per_run_usd_micros(micros: u64) {
+    CONFIG.with(|m| {
+        m.borrow_mut().insert(KEY_RATE_PER_RUN_MICROS, micros);
+    });
+}
+
+pub fn get_audit_stats(
+    treasury_principal: &str,
+    cycles_balance: u128,
+    memory_pages: u64,
+) -> crate::types::CronAuditStats {
+    let total_projects = PROJECTS.with(|m| m.borrow().len());
+
+    let mut total_jobs = 0u64;
+    let mut active_jobs = 0u64;
+    let mut paused_jobs = 0u64;
+    let mut other_jobs = 0u64;
+    let mut total_runs_executed = 0u64;
+
+    CRON_JOBS.with(|m| {
+        let b = m.borrow();
+        total_jobs = b.len();
+        for entry in b.iter() {
+            let job = entry.value();
+            total_runs_executed = total_runs_executed.saturating_add(job.total_runs);
+            match job.status {
+                crate::types::JobStatus::Active => active_jobs += 1,
+                crate::types::JobStatus::Paused => paused_jobs += 1,
+                _ => other_jobs += 1,
+            }
+        }
+    });
+
+    let mut total_api_keys = 0u64;
+    let mut active_api_keys = 0u64;
+    let mut revoked_api_keys = 0u64;
+
+    API_KEYS.with(|m| {
+        let b = m.borrow();
+        total_api_keys = b.len();
+        for entry in b.iter() {
+            if entry.value().revoked {
+                revoked_api_keys += 1;
+            } else {
+                active_api_keys += 1;
+            }
+        }
+    });
+
+    let mut total_users_with_credits = 0u64;
+    let mut total_prepaid_credits_held = 0u64;
+    let mut total_lifetime_credits_purchased = 0u64;
+    let mut total_lifetime_credits_used = 0u64;
+
+    USER_CREDITS.with(|m| {
+        let b = m.borrow();
+        total_users_with_credits = b.len();
+        for entry in b.iter() {
+            let rec = entry.value();
+            total_prepaid_credits_held = total_prepaid_credits_held.saturating_add(rec.prepaid_credits);
+            total_lifetime_credits_purchased = total_lifetime_credits_purchased.saturating_add(rec.total_purchased);
+            total_lifetime_credits_used = total_lifetime_credits_used.saturating_add(rec.total_used);
+        }
+    });
+
+    crate::types::CronAuditStats {
+        total_projects,
+        total_jobs,
+        active_jobs,
+        paused_jobs,
+        other_jobs,
+        total_runs_executed,
+        total_api_keys,
+        active_api_keys,
+        revoked_api_keys,
+        rate_per_run_usd_micros: get_rate_per_run_usd_micros(),
+        treasury_principal: treasury_principal.to_string(),
+        total_users_with_credits,
+        total_prepaid_credits_held,
+        total_lifetime_credits_purchased,
+        total_lifetime_credits_used,
+        cycles_balance,
+        memory_pages,
+    }
 }
 
 #[cfg(test)]

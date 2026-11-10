@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Principal } from "@icp-sdk/core/principal"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -162,46 +163,43 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSave} className="flex flex-col gap-6">
-          <div className="flex flex-wrap items-center gap-6">
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
-              <input
-                type="radio"
-                name="jobType"
-                value="php"
-                checked={jobType === "php"}
-                onChange={() => {
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">Job Type</Label>
+            <ButtonGroup>
+              <Button
+                type="button"
+                variant={jobType === "php" ? "default" : "outline"}
+                size="sm"
+                onClick={() => {
                   setJobType("php")
                   setCommand("wget -O /dev/null https://commandosecurity.com.np/wp-cron.php/")
                 }}
-                className="size-4 accent-primary"
-              />
-              <span className="font-medium">PHP</span>
-            </label>
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
-              <input
-                type="radio"
-                name="jobType"
-                value="custom"
-                checked={jobType === "custom"}
-                onChange={() => setJobType("custom")}
-                className="size-4 accent-primary"
-              />
-              <span className="font-medium">Custom</span>
-            </label>
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-foreground">
-              <input
-                type="radio"
-                name="jobType"
-                value="canister"
-                checked={jobType === "canister"}
-                onChange={() => {
+                className="text-xs"
+              >
+                PHP Webhook
+              </Button>
+              <Button
+                type="button"
+                variant={jobType === "custom" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setJobType("custom")}
+                className="text-xs"
+              >
+                Custom Webhook
+              </Button>
+              <Button
+                type="button"
+                variant={jobType === "canister" ? "default" : "outline"}
+                size="sm"
+                onClick={() => {
                   setJobType("canister")
                   setCommand("ryjl3-tyaaa-aaaaa-aaaba-cai::get_account_identifier")
                 }}
-                className="size-4 accent-primary"
-              />
-              <span className="font-medium">Canister Call</span>
-            </label>
+                className="text-xs"
+              >
+                Canister Call
+              </Button>
+            </ButtonGroup>
           </div>
 
           <div className="flex flex-col gap-2">

@@ -111,3 +111,52 @@ export const WEEKDAY_OPTIONS: CronOption[] = [
   { value: "5", label: "Friday (5)" },
   { value: "6", label: "Saturday (6)" },
 ]
+
+export function formatHumanSchedule(expr: string): string {
+  const match = COMMON_PRESETS.find((p) => p.value === expr)
+  if (match && match.value) {
+    return match.label.replace(/\s*\(.*\)$/, "")
+  }
+  const parts = expr.trim().split(/\s+/)
+  if (parts.length === 5) {
+    const [min, hour, dom, mon, dow] = parts
+    if (min.startsWith("*/") && hour === "*" && dom === "*" && mon === "*" && dow === "*") {
+      return `Every ${min.slice(2)} minutes`
+    }
+    if (min === "0" && hour.startsWith("*/") && dom === "*" && mon === "*" && dow === "*") {
+      return `Every ${hour.slice(2)} hours`
+    }
+    if (min === "0" && hour !== "*" && dom === "*" && mon === "*" && dow === "*") {
+      const h = Number(hour)
+      if (!Number.isNaN(h)) {
+        const period = h >= 12 ? "PM" : "AM"
+        const displayHour = h % 12 === 0 ? 12 : h % 12
+        return `Daily at ${displayHour}:00 ${period}`
+      }
+    }
+  }
+  return "Recurring schedule"
+}
+
+export function formatRelativeTime(timestampNs: bigint | [] | [bigint] | undefined): string {
+  let ns: bigint | undefined
+  if (Array.isArray(timestampNs)) {
+    if (timestampNs.length === 0) return "Never"
+    ns = timestampNs[0]
+  } else {
+    ns = timestampNs
+  }
+  if (!ns) return "Never"
+  const ms = Number(ns / 1_000_000n)
+  if (!ms || Number.isNaN(ms) || ms <= 0) return "Never"
+  const now = Date.now()
+  const diffSec = Math.floor((now - ms) / 1000)
+  if (diffSec < 60) return "Just now"
+  const diffMin = Math.floor(diffSec / 60)
+  if (diffMin < 60) return `${diffMin}m ago`
+  const diffHour = Math.floor(diffMin / 60)
+  if (diffHour < 24) return `${diffHour}h ago`
+  const diffDay = Math.floor(diffHour / 24)
+  if (diffDay < 30) return `${diffDay}d ago`
+  return new Date(ms).toLocaleDateString()
+}

@@ -10,14 +10,15 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Card } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ZapIcon, Coins01Icon } from "@hugeicons/core-free-icons"
+import { ZapIcon, Coins01Icon, Clock01Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
-import { buyPack, getPackQuotes } from "@/services/cron/client"
+import { buyCredits, quoteCredits } from "@/services/cron/client"
 import { getWalletActor } from "@/services/wallet/actor"
 import type { RemoteCreditBalance, RemotePackQuote } from "@/services/cron/types"
 
@@ -28,6 +29,25 @@ interface CronBuyPackModalProps {
   onPurchased?: () => void
 }
 
+const PRESET_RUNS = [1000, 2500, 5000, 10000, 25000]
+
+function formatRunway(runs: number): string {
+  if (runs <= 0) return "—"
+  const hourlyDays = Math.floor(runs / 24)
+  if (hourlyDays >= 365) {
+    const years = (hourlyDays / 365).toFixed(1)
+    return `~${years} years of hourly runs`
+  }
+  if (hourlyDays >= 30) {
+    const months = (hourlyDays / 30).toFixed(1)
+    return `~${months} months of hourly runs`
+  }
+  if (hourlyDays >= 2) {
+    return `~${hourlyDays} days of hourly runs`
+  }
+  return `~${runs} hours of hourly runs`
+}
+
 export function CronBuyPackModal({
   open,
   onOpenChange,
@@ -35,32 +55,68 @@ export function CronBuyPackModal({
   onPurchased,
 }: CronBuyPackModalProps) {
   const { identity } = useAuth()
-  const [quotes, setQuotes] = React.useState<RemotePackQuote[]>([])
-  const [loadingQuotes, setLoadingQuotes] = React.useState(false)
-  const [purchasingTier, setPurchasingTier] = React.useState<number | null>(null)
+  const [runs, setRuns] = React.useState<number>(2500)
+  const [quote, setQuote] = React.useState<RemotePackQuote | null>(null)
+  const [loadingQuote, setLoadingQuote] = React.useState(false)
+  const [purchasing, setPurchasing] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const [successMsg, setSuccessMsg] = React.useState<string | null>(null)
 
   React.useEffect(() => {
     if (!open) return
+    if (runs < 100) {
+      return
+    }
     let active = true
-    getPackQuotes(identity ?? undefined)
-      .then((data) => {
-        if (active) setQuotes(data)
+    quoteCredits(BigInt(runs), identity ?? undefined)
+      .then((q) => {
+        if (active) {
+          setQuote(q)
+          setLoadingQuote(false)
+        }
       })
       .catch(() => {
-        if (active) setQuotes([])
-      })
-      .finally(() => {
-        if (active) setLoadingQuotes(false)
+        if (active) {
+          setQuote(null)
+          setLoadingQuote(false)
+        }
       })
     return () => {
       active = false
     }
-  }, [open, identity])
+  }, [open, runs, identity])
 
-  const handleBuy = async (quote: RemotePackQuote) => {
-    setPurchasingTier(quote.pack_tier)
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) {
+      setError(null)
+      setSuccessMsg(null)
+    }
+    onOpenChange(nextOpen)
+  }
+
+  const handleRunsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError(null)
+    setSuccessMsg(null)
+    const raw = parseInt(e.target.value.replace(/\D/g, ""), 10)
+    const val = Number.isNaN(raw) ? 0 : raw
+    setLoadingQuote(true)
+    setRuns(val)
+  }
+
+  const handlePresetClick = (preset: number) => {
+    setError(null)
+    setSuccessMsg(null)
+    setLoadingQuote(true)
+    setRuns(preset)
+  }
+
+  const handleBuy = async () => {
+    if (!quote || runs < 100) {
+      toast.error("Please enter a valid number of runs (min 100).")
+      return
+    }
+
+    setPurchasing(true)
     setError(null)
     setSuccessMsg(null)
 
@@ -73,7 +129,7 @@ export function CronBuyPackModal({
         ledgerId,
         treasuryPrincipal,
         quote.icp_e8s,
-        [`icCron Pack Tier ${quote.pack_tier}`]
+        [`icCron Top Up: ${runs} runs`]
       )
 
       if ("err" in transferRes) {
@@ -81,8 +137,12 @@ export function CronBuyPackModal({
       }
 
       const blockIndex = transferRes.ok.blockIndex
-      const newBalance = await buyPack(quote.pack_tier, blockIndex, identity ?? undefined)
-      const msg = `Added ${quote.credits.toLocaleString()} credits! New balance: ${newBalance.toLocaleString()}`
+      const newBalance = await buyCredits(
+        BigInt(runs),
+        blockIndex,
+        identity ?? undefined
+      )
+      const msg = `Successfully added ${runs.toLocaleString()} runs! New balance: ${newBalance.toLocaleString()} runs`
       setSuccessMsg(msg)
       toast.success(msg)
       if (onPurchased) {
@@ -93,20 +153,23 @@ export function CronBuyPackModal({
       setError(msg)
       toast.error(msg)
     } finally {
-      setPurchasingTier(null)
+      setPurchasing(false)
     }
   }
 
+  const dollarsFormatted = quote ? (quote.usd_cents / 100).toFixed(2) : (runs * 0.0005).toFixed(2)
+  const icpFormatted = quote ? (Number(quote.icp_e8s) / 100_000_000).toFixed(4) : "—"
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl bg-card text-card-foreground border-border">
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-lg bg-card text-card-foreground border-border">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-foreground flex items-center gap-2">
             <HugeiconsIcon icon={ZapIcon} className="size-5 text-primary" />
-            Buy Execution Credits
+            Top Up Execution Runs
           </DialogTitle>
           <DialogDescription className="text-muted-foreground text-sm">
-            Top up prepaid execution runs pegged to USD and settled via ICP.
+            Pay-as-you-go at $0.0005 per run. Billed in USD, settled on-chain via ICP.
           </DialogDescription>
         </DialogHeader>
 
@@ -115,86 +178,116 @@ export function CronBuyPackModal({
             <div className="rounded-lg border border-border bg-muted/40 p-3.5 flex items-center justify-between text-xs">
               <div>
                 <span className="text-muted-foreground">Free monthly allowance:</span>{" "}
-                <span className="font-semibold text-foreground font-mono">
+                <span className="font-semibold text-foreground tabular-nums">
                   {credits.free_runs_remaining.toString()} / 60 remaining
                 </span>
               </div>
               <div>
                 <span className="text-muted-foreground">Prepaid balance:</span>{" "}
-                <span className="font-semibold text-foreground font-mono">
-                  {credits.prepaid_credits.toLocaleString()}
+                <span className="font-semibold text-foreground tabular-nums">
+                  {credits.prepaid_credits.toLocaleString()} runs
                 </span>
               </div>
             </div>
           )}
 
-          {loadingQuotes ? (
-            <div className="flex h-40 items-center justify-center">
-              <Spinner className="size-6 text-primary" />
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+              <label htmlFor="runs-input" className="text-xs font-medium text-foreground">
+                Execution Runs
+              </label>
+              <span className="text-xs text-muted-foreground tabular-nums">
+                Rate: $0.0005 / run ($0.50 per 1k)
+              </span>
             </div>
-          ) : quotes.length === 0 ? (
-            <div className="p-6 text-center text-sm text-muted-foreground">
-              Unable to load pack quotes right now. Please try again.
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {quotes.map((q) => {
-                const isBuying = purchasingTier === q.pack_tier
-                const dollars = (q.usd_cents / 100).toFixed(2)
-                const icpFormatted = (Number(q.icp_e8s) / 100_000_000).toFixed(4)
 
+            <div className="relative">
+              <Input
+                id="runs-input"
+                type="text"
+                inputMode="numeric"
+                value={runs === 0 ? "" : runs.toLocaleString()}
+                onChange={handleRunsChange}
+                placeholder="2,500"
+                className="pr-16 font-semibold tabular-nums text-foreground bg-input border-border"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground pointer-events-none">
+                runs
+              </span>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-1.5 pt-1">
+              {PRESET_RUNS.map((preset) => {
+                const isSelected = runs === preset
                 return (
-                  <Card
-                    key={q.pack_tier}
-                    className="border border-border/80 bg-background text-foreground flex flex-col justify-between p-4"
+                  <Button
+                    key={preset}
+                    type="button"
+                    variant={isSelected ? "default" : "outline"}
+                    size="sm"
+                    className="h-7 text-xs px-2.5 tabular-nums"
+                    onClick={() => handlePresetClick(preset)}
                   >
-                    <div className="flex flex-col gap-1.5 pb-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                          Tier {q.pack_tier}
-                        </span>
-                        {q.pack_tier === 2 && (
-                          <Badge variant="secondary" className="text-[10px] py-0 px-1.5">
-                            Popular
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="text-2xl font-bold text-foreground">
-                        ${dollars}
-                      </div>
-                      <div className="text-xs font-semibold text-primary">
-                        {q.credits.toLocaleString()} Runs
-                      </div>
-                      <div className="text-[11px] text-muted-foreground font-mono flex items-center gap-1 pt-1">
-                        <HugeiconsIcon icon={Coins01Icon} className="size-3" />
-                        {icpFormatted} ICP
-                      </div>
-                    </div>
-
-                    <Button
-                      size="sm"
-                      disabled={isBuying}
-                      onClick={() => handleBuy(q)}
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90 mt-2 text-xs"
-                    >
-                      {isBuying ? <Spinner className="size-3.5" /> : "Purchase"}
-                    </Button>
-                  </Card>
+                    {preset.toLocaleString()}
+                  </Button>
                 )
               })}
             </div>
-          )}
+          </div>
+
+          <div className="rounded-lg border border-border bg-background p-4 flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <span className="text-xs text-muted-foreground">Total USD</span>
+                <span className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
+                  ${dollarsFormatted}
+                </span>
+              </div>
+
+              <div className="text-right flex flex-col items-end">
+                <span className="text-xs text-muted-foreground">Estimated ICP</span>
+                <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground tabular-nums">
+                  <HugeiconsIcon icon={Coins01Icon} className="size-4 text-primary" />
+                  {loadingQuote ? <Spinner className="size-3.5" /> : `${icpFormatted} ICP`}
+                </div>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between border-t border-border/60 pt-2.5 text-xs text-muted-foreground">
+              <div className="flex items-center gap-1.5">
+                <HugeiconsIcon icon={Clock01Icon} className="size-3.5 text-primary" />
+                <span>Estimated Runway:</span>
+              </div>
+              <Badge variant="secondary" className="font-normal text-[11px]">
+                {formatRunway(runs)}
+              </Badge>
+            </div>
+          </div>
+
+          <Button
+            size="default"
+            disabled={purchasing || runs < 100 || !quote}
+            onClick={handleBuy}
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-medium"
+          >
+            {purchasing ? (
+              <Spinner className="size-4 mr-2" />
+            ) : (
+              <HugeiconsIcon icon={ZapIcon} className="size-4 mr-2" />
+            )}
+            Top Up {runs > 0 ? runs.toLocaleString() : 0} Runs (${dollarsFormatted} • {icpFormatted} ICP)
+          </Button>
 
           {error && (
-            <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-xs text-destructive">
-              {error}
-            </div>
+            <Alert variant="destructive">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
 
           {successMsg && (
-            <div className="rounded-md border border-success/30 bg-success/10 p-3 text-xs text-success">
-              {successMsg}
-            </div>
+            <Alert className="border-success/30 bg-success/10 text-success">
+              <AlertDescription>{successMsg}</AlertDescription>
+            </Alert>
           )}
         </div>
       </DialogContent>

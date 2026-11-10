@@ -4,6 +4,7 @@ import type {
   RemoteApiKeySummary,
   RemoteCreateJobArgs,
   RemoteCreditBalance,
+  RemoteCronAuditStats,
   RemoteExecutionLog,
   RemoteJobRecord,
   RemoteJobSummary,
@@ -219,4 +220,47 @@ export async function buyPack(
   const res = await actor.buy_pack(tier, blockIndex)
   if ("Ok" in res) return res.Ok
   throw new Error(res.Err)
+}
+
+export async function quoteCredits(
+  credits: bigint,
+  identity?: Identity
+): Promise<RemotePackQuote> {
+  const actor = await createCronActor(identity)
+  return actor.quote_credits(credits)
+}
+
+export async function buyCredits(
+  credits: bigint,
+  blockIndex: bigint,
+  identity?: Identity
+): Promise<bigint> {
+  const actor = await createCronActor(identity)
+  const res = await actor.buy_credits(credits, blockIndex)
+  if ("Ok" in res) return res.Ok
+  throw new Error(res.Err)
+}
+
+export async function setRatePerRun(
+  usdMicros: bigint,
+  identity?: Identity
+): Promise<bigint> {
+  const actor = await createCronActor(identity)
+  const res = await actor.set_rate_per_run(usdMicros)
+  if ("Ok" in res) return res.Ok
+  throw new Error(res.Err)
+}
+
+export async function getRatePerRun(
+  identity?: Identity
+): Promise<bigint> {
+  const actor = await createCronActor(identity)
+  return actor.get_rate_per_run()
+}
+
+export async function getAuditStats(
+  identity?: Identity
+): Promise<RemoteCronAuditStats> {
+  const actor = await createCronActor(identity)
+  return actor.get_audit_stats()
 }

@@ -10,14 +10,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
+  Clock01Icon,
   PlayIcon,
   PlusSignIcon,
 } from "@hugeicons/core-free-icons"
@@ -107,19 +109,24 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
       <Card className="border border-border/80 bg-card text-card-foreground shadow-xs">
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <CardTitle className="text-xl font-semibold tracking-tight text-foreground">
-            List of Cron Jobs
+            Cron jobs
           </CardTitle>
-          <Link
-            href={projectId ? `/cron/create?projectId=${projectId.toString()}` : "/cron/create"}
-            className={buttonVariants({
-              variant: "default",
-              size: "sm",
-              className: "gap-1.5 text-xs h-8",
-            })}
-          >
-            <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
-            New Cron Job
-          </Link>
+          {jobs.length > 0 && (
+            <Button
+              variant="outline"
+              size="sm"
+              nativeButton={false}
+              render={
+                <Link
+                  href={projectId ? `/cron/create?projectId=${projectId.toString()}` : "/cron/create"}
+                />
+              }
+              className="gap-1.5 text-xs h-8"
+            >
+              <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
+              <span>New Cron Job</span>
+            </Button>
+          )}
         </CardHeader>
         <CardContent className="p-0">
           {loading ? (
@@ -127,22 +134,32 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
               <Spinner className="size-6 text-primary" />
             </div>
           ) : jobs.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-12 text-center">
-              <span className="text-sm text-muted-foreground">
-                No cron jobs configured yet in this project.
-              </span>
-              <Link
-                href={projectId ? `/cron/create?projectId=${projectId.toString()}` : "/cron/create"}
-                className={buttonVariants({
-                  variant: "default",
-                  size: "sm",
-                  className: "mt-4 gap-1.5 text-xs h-8",
-                })}
-              >
-                <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
-                Create Your First Cron Job
-              </Link>
-            </div>
+            <Empty className="py-16 border-0">
+              <EmptyHeader>
+                <EmptyMedia variant="icon" className="size-12 rounded-full bg-muted flex items-center justify-center">
+                  <HugeiconsIcon icon={Clock01Icon} className="size-6 text-muted-foreground" />
+                </EmptyMedia>
+                <EmptyTitle>No cron jobs yet</EmptyTitle>
+                <EmptyDescription className="max-w-sm">
+                  Schedule recurring tasks or webhooks that run automatically on-chain.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <Button
+                  size="sm"
+                  nativeButton={false}
+                  render={
+                    <Link
+                      href={projectId ? `/cron/create?projectId=${projectId.toString()}` : "/cron/create"}
+                    />
+                  }
+                  className="gap-1.5"
+                >
+                  <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
+                  <span>Create your first cron job</span>
+                </Button>
+              </EmptyContent>
+            </Empty>
           ) : (
             <div className="overflow-x-auto">
               <Table>

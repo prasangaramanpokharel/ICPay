@@ -124,6 +124,8 @@ pub struct ApiKeyRecord {
     pub revoked: bool,
     pub created_at: u64,
     pub revoked_at: Option<u64>,
+    #[serde(default)]
+    pub raw_key: String,
 }
 
 impl_storable_cbor!(ApiKeyRecord);
@@ -344,6 +346,7 @@ pub struct ApiKeySummary {
     pub label: String,
     pub revoked: bool,
     pub created_at: u64,
+    pub raw_key: String,
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -361,4 +364,25 @@ pub struct PackQuote {
     pub usd_cents: u32,
     pub icp_e8s: u64,
     pub treasury_principal: String,
+}
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct CronAuditStats {
+    pub total_projects: u64,
+    pub total_jobs: u64,
+    pub active_jobs: u64,
+    pub paused_jobs: u64,
+    pub other_jobs: u64,
+    pub total_runs_executed: u64,
+    pub total_api_keys: u64,
+    pub active_api_keys: u64,
+    pub revoked_api_keys: u64,
+    pub rate_per_run_usd_micros: u64,
+    pub treasury_principal: String,
+    pub total_users_with_credits: u64,
+    pub total_prepaid_credits_held: u64,
+    pub total_lifetime_credits_purchased: u64,
+    pub total_lifetime_credits_used: u64,
+    pub cycles_balance: u128,
+    pub memory_pages: u64,
 }

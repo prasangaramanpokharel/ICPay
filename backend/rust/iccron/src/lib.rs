@@ -9,7 +9,7 @@ pub mod storage;
 pub mod types;
 
 use types::{
-    ApiKeySummary, CreateJobArgs, CreditBalance, ExecutionLog, JobRecord, JobStatus, JobSummary,
+    ApiKeySummary, CreateJobArgs, CreditBalance, CronAuditStats, ExecutionLog, JobRecord, JobStatus, JobSummary,
     JobTarget, PackQuote, ProjectRecord, UpdateJobArgs,
 };
 
@@ -534,6 +534,22 @@ fn get_my_credits() -> CreditBalance {
 }
 
 #[ic_cdk::update]
+async fn quote_credits(credits: u64) -> PackQuote {
+    credits::quote_credits(credits).await
+}
+
+#[ic_cdk::update]
+async fn buy_credits(credits: u64, block_index: u64) -> Result<u64, String> {
+    let caller = ic_cdk::api::msg_caller();
+    if caller == Principal::anonymous() {
+        return Err("Anonymous callers cannot purchase credits".to_string());
+    }
+
+    let now_nanos = ic_cdk::api::time();
+    credits::buy_credits(caller, credits, block_index, now_nanos).await
+}
+
+#[ic_cdk::update]
 async fn get_pack_quotes() -> Vec<PackQuote> {
     credits::get_pack_quotes().await
 }
@@ -547,4 +563,36 @@ async fn buy_pack(tier: u8, block_index: u64) -> Result<u64, String> {
 
     let now_nanos = ic_cdk::api::time();
     credits::buy_pack(caller, tier, block_index, now_nanos).await
+}
+
+// -----------------------------------------------------------------------------
+// Admin & Audit
+// -----------------------------------------------------------------------------
+
+#[ic_cdk::update]
+fn set_rate_per_run(usd_micros: u64) -> Result<u64, String> {
+    let caller = ic_cdk::api::msg_caller();
+    let treasury = Principal::from_text(credits::TREASURY_PRINCIPAL_TEXT)
+        .unwrap_or(Principal::anonymous());
+    let is_admin = ic_cdk::api::is_controller(&caller) || caller == treasury;
+    if !is_admin {
+        return Err("Unauthorized: only canister controller or treasury can change the rate".to_string());
+    }
+    if usd_micros == 0 {
+        return Err("Rate cannot be zero".to_string());
+    }
+    storage::set_rate_per_run_usd_micros(usd_micros);
+    Ok(usd_micros)
+}
+
+#[ic_cdk::query]
+fn get_rate_per_run() -> u64 {
+    storage::get_rate_per_run_usd_micros()
+}
+
+#[ic_cdk::query]
+fn get_audit_stats() -> CronAuditStats {
+    let cycles = ic_cdk::api::canister_cycle_balance();
+    let pages = ic_cdk::stable::stable_size();
+    storage::get_audit_stats(credits::TREASURY_PRINCIPAL_TEXT, cycles, pages)
 }

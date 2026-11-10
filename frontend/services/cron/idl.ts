@@ -111,6 +111,7 @@ export const cronIdl: IDL.InterfaceFactory = ({ IDL }) => {
     label: IDL.Text,
     revoked: IDL.Bool,
     created_at: IDL.Nat64,
+    raw_key: IDL.Text,
   })
 
   const CreditBalance = IDL.Record({
@@ -126,6 +127,26 @@ export const cronIdl: IDL.InterfaceFactory = ({ IDL }) => {
     usd_cents: IDL.Nat32,
     icp_e8s: IDL.Nat64,
     treasury_principal: IDL.Text,
+  })
+
+  const CronAuditStats = IDL.Record({
+    total_projects: IDL.Nat64,
+    total_jobs: IDL.Nat64,
+    active_jobs: IDL.Nat64,
+    paused_jobs: IDL.Nat64,
+    other_jobs: IDL.Nat64,
+    total_runs_executed: IDL.Nat64,
+    total_api_keys: IDL.Nat64,
+    active_api_keys: IDL.Nat64,
+    revoked_api_keys: IDL.Nat64,
+    rate_per_run_usd_micros: IDL.Nat64,
+    treasury_principal: IDL.Text,
+    total_users_with_credits: IDL.Nat64,
+    total_prepaid_credits_held: IDL.Nat64,
+    total_lifetime_credits_purchased: IDL.Nat64,
+    total_lifetime_credits_used: IDL.Nat64,
+    cycles_balance: IDL.Nat,
+    memory_pages: IDL.Nat64,
   })
 
   const ResultProject = IDL.Variant({ Ok: ProjectRecord, Err: IDL.Text })
@@ -161,5 +182,10 @@ export const cronIdl: IDL.InterfaceFactory = ({ IDL }) => {
     get_my_credits: IDL.Func([], [CreditBalance], ["query"]),
     get_pack_quotes: IDL.Func([], [IDL.Vec(PackQuote)], []),
     buy_pack: IDL.Func([IDL.Nat8, IDL.Nat64], [ResultNat64], []),
+    quote_credits: IDL.Func([IDL.Nat64], [PackQuote], []),
+    buy_credits: IDL.Func([IDL.Nat64, IDL.Nat64], [ResultNat64], []),
+    set_rate_per_run: IDL.Func([IDL.Nat64], [ResultNat64], []),
+    get_rate_per_run: IDL.Func([], [IDL.Nat64], ["query"]),
+    get_audit_stats: IDL.Func([], [CronAuditStats], ["query"]),
   })
 }

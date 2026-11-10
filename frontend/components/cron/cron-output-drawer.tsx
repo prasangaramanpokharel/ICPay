@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -191,9 +192,13 @@ export function CronOutputDrawer({ job, open, onOpenChange }: CronOutputDrawerPr
               <Spinner className="size-6 text-primary" />
             </div>
           ) : logs.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-              No executions logged yet for this job. Click &quot;Run Now&quot; to test.
-            </div>
+            <Empty className="py-8 border border-dashed rounded-lg">
+              <EmptyHeader>
+                <EmptyTitle className="text-sm font-normal text-muted-foreground">
+                  No executions logged yet for this job. Click &quot;Run Now&quot; to test.
+                </EmptyTitle>
+              </EmptyHeader>
+            </Empty>
           ) : (
             <div className="flex flex-col gap-3">
               {logs.map((log) => {

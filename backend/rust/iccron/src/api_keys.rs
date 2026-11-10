@@ -43,6 +43,7 @@ pub fn generate_key(
         revoked: false,
         created_at: now_sec,
         revoked_at: None,
+        raw_key: raw_key.clone(),
     };
 
     storage::insert_api_key(record.clone());
@@ -87,6 +88,7 @@ pub fn list_keys(project_id: u64, owner: Principal) -> Result<Vec<ApiKeySummary>
             label: k.label,
             revoked: k.revoked,
             created_at: k.created_at,
+            raw_key: k.raw_key,
         })
         .collect();
     Ok(keys)
