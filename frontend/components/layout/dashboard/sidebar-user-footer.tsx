@@ -2,8 +2,6 @@
 
 import { useMemo } from "react"
 import { useRouter } from "next/navigation"
-import { createAvatar } from "@dicebear/core"
-import { adventurer } from "@dicebear/collection"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   CloudIcon,
@@ -36,6 +34,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useDashboard } from "@/hooks/wallet/useWalletData"
+import { avatarUriFor } from "@/lib/profile/avatar"
 
 export type NavUserProps = {
   user?: {
@@ -58,7 +57,7 @@ export function NavUser({ user }: NavUserProps) {
   const subtitle = user?.email || (principal ? `${principal.slice(0, 8)}…${principal.slice(-4)}` : "Verified Principal")
 
   const generatedAvatar = useMemo(
-    () => (principal ? createAvatar(adventurer, { seed: principal }).toDataUri() : ""),
+    () => (principal ? avatarUriFor(principal) : ""),
     [principal],
   )
   const avatarSrc = user?.avatar || generatedAvatar

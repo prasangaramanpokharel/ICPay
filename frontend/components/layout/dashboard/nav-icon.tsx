@@ -12,6 +12,6 @@ export function NavIcon({
   strokeWidth?: number
 }) {
   return (
-    <HugeiconsIcon icon={icon} className={cn("size-4.5 shrink-0", className)} strokeWidth={strokeWidth} />
+    <HugeiconsIcon icon={icon} className={cn("size-3.5 shrink-0", className)} strokeWidth={strokeWidth} />
   )
 }

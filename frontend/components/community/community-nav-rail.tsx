@@ -4,8 +4,6 @@ import { useMemo } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { createAvatar } from "@dicebear/core"
-import { adventurer } from "@dicebear/collection"
 import { useAuth } from "@/components/auth/auth-provider"
 import { CommunityIcon } from "@/components/community/community-icon"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -17,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { avatarUriFor } from "@/lib/profile/avatar"
 import { cn } from "@/lib/ui/utils"
 
 export function CommunityNavRail() {
@@ -27,7 +26,7 @@ export function CommunityNavRail() {
   const { identity } = useAuth()
   const principal = identity?.getPrincipal().toText() ?? ""
   const avatarUri = useMemo(
-    () => (principal ? createAvatar(adventurer, { seed: principal }).toDataUri() : ""),
+    () => (principal ? avatarUriFor(principal) : ""),
     [principal]
   )
 

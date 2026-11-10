@@ -2,8 +2,6 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
-import { createAvatar } from "@dicebear/core"
-import { adventurer } from "@dicebear/collection"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { LinkSquare02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -12,6 +10,7 @@ import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet/utils"
 import { ReceiptPreview } from "@/components/wallet/receipt-preview"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 import { playSuccessChime } from "@/lib/ui/successChime"
+import { avatarUriFor } from "@/lib/profile/avatar"
 import { cn } from "@/lib/ui/utils"
 
 type SendSuccessProps = {
@@ -52,7 +51,7 @@ export function SendSuccess({
   }, [])
 
   const avatarUri = useMemo(
-    () => createAvatar(adventurer, { seed: recipient }).toDataUri(),
+    () => avatarUriFor(recipient),
     [recipient]
   )
 

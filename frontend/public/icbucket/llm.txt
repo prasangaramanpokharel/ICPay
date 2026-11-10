@@ -1,0 +1,153 @@
+# icBucket (ICPay Cloud Storage) — LLM & Agent Knowledge Base
+
+> Decentralized, on-chain S3-compatible object storage running natively on the Internet Computer Protocol (ICP) with zero egress bandwidth fees and global Edge CDN acceleration.
+
+- **Storage Hub**: https://icpay.app/icbucket
+- **Documentation**: https://icpay.app/bucket/docs
+- **Policy & SLA**: https://icpay.app/icbucket/policy.md
+- **Gateway Endpoint**: `https://cloud.icpay.app`
+- **Global Edge CDN**: `https://cdn.icpay.app`
+- **Support**: contact@icpay.cloud
+
+---
+
+## 1. System Architecture & Canister Map
+
+icBucket partitions operations across three specialized on-chain canisters and a global caching edge:
+
+1. **Control Plane Canister** (`icp_wallet_backend` — `6vbhm-nqaaa-aaaan-q6muq-cai`):
+   - Handles user authentication via Internet Identity (WebAuthn biometric passkeys).
+   - Manages bucket provisioning, capacity allocations, lease extensions, and scoped API key issuance (`icp_cloud_*`).
+2. **Data Plane Canister** (`icp_blob_store` — `fly6t-piaaa-aaaan-q6oga-cai`):
+   - High-throughput Rust storage canister utilizing `ic-stable-structures`.
+   - Stores raw binary object chunks in consensus-verified 64-bit persistent stable memory.
+   - Up to 400 GB per canister shard with automated horizontal sharding triggers at 300 GB (75% mark).
+3. **Notifier Plane Canister** (`icpay_notifier` — `2hvuh-xiaaa-aaaan-q6uua-cai`):
+   - Autonomous daily lifecycle sweeps powered by native IC system timers.
+   - Dispatches transactional email receipts on bucket creation and sends warnings when leases near expiration or enter grace periods.
+   - Outcalls use deterministic idempotency keys and body stripping for 100% replica consensus.
+4. **Global Edge CDN** (`https://cdn.icpay.app`):
+   - Globally distributed Cloudflare edge caching network providing sub-50ms TTFB for public bucket assets.
+   - Completely free outbound data transfer: **$0.00 / GB egress bandwidth fees**.
+
+---
+
+## 2. Drop-In AWS S3 SDK Parity
+
+icBucket provides drop-in API compatibility with existing AWS S3 libraries. Applications switch storage endpoints by changing just 3 lines of configuration:
+
+### Configuration Parameters
+- **Endpoint URL**: `https://cloud.icpay.app`
+- **Region**: `auto` (or `us-east-1`)
+- **Credentials**:
+  - `accessKeyId`: Generated Scoped API Key (e.g. `icp_cloud_key_...`)
+  - `secretAccessKey`: Scoped API Secret Token (e.g. `icp_cloud_sec_...`)
+- **Force Path Style**: `true`
+
+### TypeScript / Node.js (`@aws-sdk/client-s3`)
+```typescript
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+
+const s3 = new S3Client({
+  endpoint: "https://cloud.icpay.app",
+  region: "auto",
+  forcePathStyle: true,
+  credentials: {
+    accessKeyId: process.env.ICBUCKET_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.ICBUCKET_SECRET_KEY!,
+  },
+});
+
+// Upload a file to an on-chain bucket
+await s3.send(new PutObjectCommand({
+  Bucket: "my-production-bucket",
+  Key: "assets/logo.png",
+  Body: fileBuffer,
+  ContentType: "image/png",
+}));
+```
+
+### Python (`boto3`)
+```python
+import boto3
+
+s3 = boto3.client(
+    "s3",
+    endpoint_url="https://cloud.icpay.app",
+    region_name="auto",
+    aws_access_key_id="icp_cloud_key_...",
+    aws_secret_access_key="icp_cloud_sec_...",
+)
+
+# Upload file
+s3.upload_file("local-image.jpg", "my-production-bucket", "images/local-image.jpg")
+```
+
+### MinIO CLI (`mc`)
+```bash
+# Add icBucket host alias
+mc alias set icbucket https://cloud.icpay.app YOUR_ACCESS_KEY YOUR_SECRET_KEY
+
+# Copy directory to on-chain bucket
+mc cp -r ./dist/ icbucket/my-production-bucket/web/
+```
+
+---
+
+## 3. Public Edge CDN URL Structure
+
+Files uploaded to public buckets are accessible globally without authentication:
+
+```text
+https://cdn.icpay.app/cloud/{bucketName}/{filePath}
+```
+
+**Examples:**
+- `https://cdn.icpay.app/cloud/site-assets/hero.webp`
+- `https://cdn.icpay.app/cloud/dapp-media/video.mp4`
+
+All assets routed through `cdn.icpay.app` benefit from zero egress fees, edge caching, automated SSL, and anti-DDoS protection.
+
+---
+
+## 4. Lifecycle Policy & Grace Periods
+
+icBucket guarantees business continuity through a transparent 3-phase lease lifecycle:
+
+1. **Active Phase**: Full read and write capabilities. CDN delivery fully active.
+2. **Expiring Soon Alert**: Autonomous warning sent when 3 or fewer days remain on lease.
+3. **7-Day Grace Period (Days 1–7)**:
+   - Uploads are paused.
+   - **Public CDN stays live**: Websites, apps, and dApp frontends do not experience 404/403 downtime.
+4. **14-Day Frozen Period (Days 8–21)**:
+   - Public CDN delivery is temporarily suspended.
+   - Bucket owner can log in and renew at any time to restore full access without loss of files.
+5. **Tombstoned (After Day 21)**: Unclaimed storage is permanently reclaimed.
+
+---
+
+## 5. Pricing Tiers (Predictable Flat Rate)
+
+| Plan | Storage Capacity | Monthly (ICP) | Annual (ICP, 2 Months Free) |
+|---|---|---|---|
+| **Starter** | 5 GB | ~0.20 ICP / mo | ~2.00 ICP / yr |
+| **Developer** | 25 GB | ~0.90 ICP / mo | ~9.00 ICP / yr |
+| **Team** | 50 GB | ~1.65 ICP / mo | ~16.50 ICP / yr |
+| **Pro** | 100 GB | ~3.00 ICP / mo | ~30.00 ICP / yr |
+| **Business** | 250 GB | ~7.00 ICP / mo | ~70.00 ICP / yr |
+| **Enterprise** | 500 GB | ~13.00 ICP / mo | ~130.00 ICP / yr |
+
+- **Egress Fees**: $0.00 / GB
+- **Request Fees**: $0.00 / million requests
+- **Payment Method**: Native ICP via Internet Identity custodial balance or direct transfer.
+
+---
+
+## 6. Official Resources & Contact
+
+- **Main Dashboard**: https://icpay.app
+- **icBucket Portal**: https://icpay.app/icbucket
+- **API Documentation**: https://icpay.app/bucket/docs
+- **Transparency Policy**: https://icpay.app/icbucket/policy.md
+- **GitLab Open SDK**: https://gitlab.com/prasangapokharel/icbucket
+- **Technical Contact**: contact@icpay.cloud

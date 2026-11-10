@@ -1,0 +1,66 @@
+---
+title: "DFX Canister SDK Learning Hub"
+description: "Master the DFINITY Canister SDK (dfx) — complete interactive tutorials, CLI command reference, Candid parameter guides, and token economics."
+group: "DFX CLI Guide"
+order: 0
+eyebrow: "Documentation & Tutorials"
+---
+
+# DFX Canister SDK Learning Hub
+
+Welcome to the **DFX Learning Hub**. This series provides structured guides and practical command references to help developers build, test, and operate production smart contracts on the Internet Computer.
+
+---
+
+## Learning Path
+
+```
+  1. Introduction       ──>  2. Installation      ──>  3. Command Reference
+  (Architecture & Concepts)  (macOS / Linux / WSL)    (dfx --help Cheat Sheet)
+            │                         │                           │
+            ▼                         ▼                           ▼
+  4. Canister Guide     ──>  5. Identity Guide    ──>  6. Ledger & Cycles
+  (Calls, Candid, Wasm)      (Keys, Principals)       (Conversion & Runway)
+```
+
+---
+
+## Guides in this Module
+
+### 1. [Introduction to DFX](./introduction.mdx)
+Learn what `dfx` does, how the reverse-gas model works, how Candid IDL serializes types, and understand the difference between local replica testing and mainnet execution.
+
+### 2. [Installation & Setup](./installation.mdx)
+Complete step-by-step setup instructions for macOS (Intel & Apple Silicon), Linux (Ubuntu, Debian, Fedora, Arch), and Windows (WSL2). Includes `dfxvm` version manager commands and shell autocompletions.
+
+### 3. [DFX Help & Command Reference (`dfx --help`)](./dfx-help.mdx)
+The master CLI cheat sheet. Covers all global options (`--network`, `--identity`, `--verbose`) and essential commands across project scaffolding, compilation, deployment, and diagnostics.
+
+### 4. [Canister Management Deep Dive](./canister.mdx)
+Detailed guide on `dfx canister` commands: Candid text parameter formatting (records, variants, vectors, options), query vs update calls, memory limits, snapshots, live logs, and controller permissions.
+
+### 5. [Identity & Security Guide](./identity.mdx)
+Cryptographic key management in `dfx`: creating identities, checking principals, generating account IDs, multi-user role testing, and secure air-gapped signing.
+
+### 6. [Ledger & Cycles Management](./ledger-cycles.mdx)
+Token economics on the Internet Computer: checking ICP and Cycles balances, minting cycles via the Cycles Minting Canister (CMC), topping up canisters, and calculating cycle runway burn rates.
+
+---
+
+## Quick Command Search
+
+| If you want to... | Run this command |
+|---|---|
+| Start local development | `dfx start --background --clean` |
+| Create a new canister project | `dfx new <name>` |
+| Deploy to local replica | `dfx deploy` |
+| Deploy to Mainnet | `dfx deploy --network ic` |
+| Inspect cycles, memory & controllers | `dfx canister --network ic status <canister>` |
+| Call a query method | `dfx canister call <canister> <method> '(<args>)' --query` |
+| Call an update method | `dfx canister call <canister> <method> '(<args>)'` |
+| Check your principal ID | `dfx identity get-principal` |
+| Check liquid ICP balance | `dfx ledger balance --network ic` |
+| Check Cycles Ledger balance | `dfx cycles balance --network ic` |
+| Convert ICP to Cycles | `dfx cycles convert --network ic --amount 1.0` |
+| Top up a canister with cycles | `dfx cycles top-up --network ic <cycles> <canister_id>` |
+| Force-quit stuck local processes | `dfx killall` |

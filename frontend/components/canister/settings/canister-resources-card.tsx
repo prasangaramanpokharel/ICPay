@@ -189,6 +189,12 @@ export function CanisterResourcesCard({
             </Field>
           </FieldGroup>
 
+          {!isController && (
+            <div className="rounded-xl border border-border/40 bg-muted/20 p-3 text-xs text-muted-foreground">
+              Read-only view · Only authorized controllers can modify resource quotas and limits.
+            </div>
+          )}
+
           {isController && (
             <div className="flex justify-end pt-2">
               <Button type="submit" disabled={saving} size="sm">

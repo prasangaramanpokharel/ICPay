@@ -13,6 +13,7 @@ import { NavMenuItemContent } from "@/components/public/nav-menu-item"
 import { PublicNavAuth } from "@/components/public/public-nav-auth"
 import { PublicNavMobile } from "@/components/public/public-nav-mobile"
 import { ThemeToggle } from "@/components/public/theme-toggle"
+import { MotionHighlight, MotionHighlightItem } from "@/components/ui/motion-highlight"
 import { usePublicSiteLinks } from "@/hooks/i18n/use-public-site-links"
 import {
   NavigationMenu,
@@ -67,26 +68,28 @@ function NavDropdown({
   columns?: 1 | 2
 }) {
   return (
-    <NavigationMenuItem>
-      <NavigationMenuTrigger
-        suppressHydrationWarning
-        className="bg-transparent px-3 font-normal text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground data-open:bg-transparent data-popup-open:bg-transparent"
-      >
-        <span suppressHydrationWarning>{label}</span>
-      </NavigationMenuTrigger>
-      <NavigationMenuContent>
-        <ul
-          className={cn(
-            "gap-0.5 p-1",
-            columns === 1 ? "w-[22rem]" : "grid w-[32rem] grid-cols-2 lg:w-[36rem]"
-          )}
+    <MotionHighlightItem asChild value={label}>
+      <NavigationMenuItem>
+        <NavigationMenuTrigger
+          suppressHydrationWarning
+          className="bg-transparent px-3 font-normal text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground data-open:bg-transparent data-popup-open:bg-transparent"
         >
-          {items.map((item) => (
-            <NavMenuListItem key={item.href} item={item} />
-          ))}
-        </ul>
-      </NavigationMenuContent>
-    </NavigationMenuItem>
+          <span suppressHydrationWarning>{label}</span>
+        </NavigationMenuTrigger>
+        <NavigationMenuContent>
+          <ul
+            className={cn(
+              "gap-0.5 p-1",
+              columns === 1 ? "w-[22rem]" : "grid w-[32rem] grid-cols-2 lg:w-[36rem]"
+            )}
+          >
+            {items.map((item) => (
+              <NavMenuListItem key={item.href} item={item} />
+            ))}
+          </ul>
+        </NavigationMenuContent>
+      </NavigationMenuItem>
+    </MotionHighlightItem>
   )
 }
 
@@ -133,32 +136,41 @@ export function PublicNav() {
           </Link>
 
           <NavigationMenu suppressHydrationWarning className="hidden max-w-none lg:flex" align="start">
-            <NavigationMenuList className="flex-wrap justify-start gap-0.5">
-              {primaryLinks.map((link) => {
-                const active = isActive(pathname, link.href)
-                return (
-                  <NavigationMenuItem key={link.href}>
-                    <NavigationMenuLink
-                      className={cn(
-                        navigationMenuTriggerStyle(),
-                        "bg-transparent px-3 font-normal shadow-none hover:bg-transparent hover:text-foreground",
-                        active ? "text-foreground" : "text-muted-foreground"
-                      )}
-                      render={
-                        <Link href={link.href} suppressHydrationWarning>
-                          <span suppressHydrationWarning>{link.label}</span>
-                        </Link>
-                      }
-                    />
-                  </NavigationMenuItem>
-                )
-              })}
+            <MotionHighlight
+              hover
+              value={null}
+              className="flex items-center"
+              highlightClassName="rounded-xl bg-muted/80"
+            >
+              <NavigationMenuList className="flex-wrap justify-start gap-0.5">
+                {primaryLinks.map((link) => {
+                  const active = isActive(pathname, link.href)
+                  return (
+                    <MotionHighlightItem asChild key={link.href} value={link.href}>
+                      <NavigationMenuItem>
+                        <NavigationMenuLink
+                          className={cn(
+                            navigationMenuTriggerStyle(),
+                            "bg-transparent px-3 font-normal shadow-none hover:bg-transparent hover:text-foreground",
+                            active ? "text-foreground" : "text-muted-foreground"
+                          )}
+                          render={
+                            <Link href={link.href} suppressHydrationWarning>
+                              <span suppressHydrationWarning>{link.label}</span>
+                            </Link>
+                          }
+                        />
+                      </NavigationMenuItem>
+                    </MotionHighlightItem>
+                  )
+                })}
 
-              <NavDropdown label={sectionLabels.products} items={productMenu} />
-              <NavDropdown label={sectionLabels.resources} items={resourceMenu} columns={2} />
-              <NavDropdown label={sectionLabels.canisters} items={canisterMenu} />
-              <NavDropdown label={sectionLabels.more} items={legalMenu} columns={2} />
-            </NavigationMenuList>
+                <NavDropdown label={sectionLabels.products} items={productMenu} />
+                <NavDropdown label={sectionLabels.resources} items={resourceMenu} columns={2} />
+                <NavDropdown label={sectionLabels.canisters} items={canisterMenu} />
+                <NavDropdown label={sectionLabels.more} items={legalMenu} columns={2} />
+              </NavigationMenuList>
+            </MotionHighlight>
           </NavigationMenu>
         </div>
 

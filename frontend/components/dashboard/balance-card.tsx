@@ -1,11 +1,15 @@
 "use client"
 
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
+import { toast } from "sonner"
+import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { EyeIcon, ViewOffIcon } from "@hugeicons/core-free-icons"
 import { PremiumBadge } from "@/components/verified/premium-badge"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
+import { copyText } from "@/lib/wallet/utils"
 import { cn } from "@/lib/ui/utils"
 import type { IcpPrice } from "@/lib/market/icpPrice"
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
@@ -32,6 +36,7 @@ export function BalanceCard({
   username,
 }: BalanceCardProps) {
   const t = useTranslations("dashboard")
+  const [copied, setCopied] = useState(false)
 
   const usdValue = useMemo(() => {
     if (!price) return null
@@ -40,28 +45,38 @@ export function BalanceCard({
 
   const fiat = useFiatValue(usdValue)
 
-  return (
-    <div className="relative overflow-hidden rounded-3xl bg-card dark:bg-background p-5 text-foreground select-none sm:p-6">
-      <div className="relative z-10 flex min-w-0 items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-2.5">
-          <EmvChip />
+  const handleCopyUsername = async () => {
+    if (!username) return
+    await copyText(username)
+    setCopied(true)
+    toast.success("Username copied to clipboard")
+    setTimeout(() => setCopied(false), 2000)
+  }
 
+  return (
+    <Card className="relative overflow-hidden rounded-3xl border-border/70 bg-card p-5 text-card-foreground select-none sm:p-6 gap-0">
+      <div className="flex min-w-0 items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-2.5">
           {username ? (
-            <span className="flex min-w-0 items-center gap-1 font-mono text-sm font-semibold tracking-tight text-foreground">
-              <span className="truncate">@{username}</span>
+            <button
+              type="button"
+              onClick={() => void handleCopyUsername()}
+              title="Click to copy username"
+              className="group inline-flex min-w-0 items-center gap-1.5 rounded-full px-2 py-0.5 -ml-2 font-mono text-sm font-semibold tracking-tight text-foreground hover:bg-muted active:scale-98 transition-all cursor-pointer"
+            >
+              <span className="truncate">{username}</span>
               <PremiumBadge name={username} className="size-3.5" />
-            </span>
+              <CopyIconIndicator copied={copied} iconClassName="size-3 text-muted-foreground group-hover:text-foreground" />
+            </button>
           ) : (
             <span className="font-mono text-xs font-medium tracking-tight text-muted-foreground">
               ICPay Wallet
             </span>
           )}
         </div>
-
-       
       </div>
 
-      <div className="relative z-10 mt-6 flex items-baseline justify-between gap-2">
+      <div className="mt-6 flex items-baseline justify-between gap-2">
         <Button
           variant="ghost"
           onClick={() => void onRefreshPrice()}
@@ -89,12 +104,12 @@ export function BalanceCard({
         </Button>
       </div>
 
-      <div className="relative z-10 mt-4 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border/60">
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border/60">
         <button
           type="button"
           onClick={() => void onRefreshPrice()}
           title="Click to refresh balance & price"
-          className="inline-flex items-center rounded-full  hover:bg-muted px-3 py-1 text-xs font-medium tabular-nums text-foreground transition-all cursor-pointer border border-border/40"
+          className="inline-flex items-center rounded-full bg-muted/60 hover:bg-muted px-3 py-1 text-xs font-medium tabular-nums text-foreground transition-all cursor-pointer border border-border/40"
         >
           {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
         </button>
@@ -115,8 +130,8 @@ export function BalanceCard({
               className={cn(
                 "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold tabular-nums",
                 price.change24h > 0
-                  ? "text-success"
-                  : "text-destructive"
+                  ? "text-success bg-success/10"
+                  : "text-destructive bg-destructive/10"
               )}
             >
               {price.change24h > 0 ? "+" : ""}
@@ -125,7 +140,7 @@ export function BalanceCard({
           )}
         </div>
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -141,20 +156,5 @@ function FormattedBalance({ value }: { value: string }) {
       <span className="text-foreground">{whole}</span>
       <span className="text-[0.6em] font-medium text-muted-foreground">{decimals}</span>
     </>
-  )
-}
-
-function EmvChip() {
-  return (
-    <span
-      aria-hidden="true"
-      className="relative flex h-5 w-7 shrink-0 items-center justify-center rounded-sm bg-gradient-to-br from-amber-200 via-amber-300 to-amber-400 p-0.5 shadow-xs border border-amber-500/40"
-    >
-      <span className="relative size-full rounded-[2px] border border-amber-700/30">
-        <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-amber-700/30" />
-        <span className="absolute inset-y-0 left-1/3 w-px bg-amber-700/30" />
-        <span className="absolute inset-y-0 right-1/3 w-px bg-amber-700/30" />
-      </span>
-    </span>
   )
 }

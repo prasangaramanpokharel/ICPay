@@ -1,23 +1,23 @@
 "use client"
 
-import type { ReactNode } from "react"
+import { useSyncExternalStore, type ReactNode } from "react"
 import { usePathname } from "next/navigation"
 import { AppHeader } from "@/components/layout/app-header"
 import { BottomNav, bottomNavSpacerClass } from "@/components/layout/bottom-nav"
 import { AppDashboardShell } from "@/components/layout/dashboard/app-dashboard-shell"
+import { subscribeNavigation } from "@/lib/routing/rewrittenRoute"
 import { cn } from "@/lib/ui/utils"
 
-function isChannelsRoute(pathname: string): boolean {
-  return pathname === "/channels" || pathname.startsWith("/channels/")
-}
-
-function isChannelChatRoute(pathname: string): boolean {
-  if (typeof window !== "undefined" && pathname === "/channels") {
+function getBrowserChannelChat(pathname: string): boolean {
+  if (typeof window === "undefined") return false
+  if (pathname === "/channels") {
     try {
       const params = new URLSearchParams(window.location.search)
       const id = params.get("id") || params.get("slug")
-      return Boolean(id && id !== "new" && id !== "join")
-    } catch {}
+      return Boolean(id && id !== "slug" && id !== "new" && id !== "join")
+    } catch {
+      return false
+    }
   }
   if (!pathname.startsWith("/channels/")) return false
   return pathname !== "/channels/new" && !pathname.startsWith("/channels/join")
@@ -25,8 +25,12 @@ function isChannelChatRoute(pathname: string): boolean {
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname()
-  const channels = isChannelsRoute(pathname)
-  const channelChat = isChannelChatRoute(pathname)
+  const channels = pathname === "/channels" || pathname.startsWith("/channels/")
+  const channelChat = useSyncExternalStore(
+    subscribeNavigation,
+    () => getBrowserChannelChat(pathname),
+    () => false,
+  )
 
   return (
     <AppDashboardShell>

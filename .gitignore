@@ -26,8 +26,8 @@ frontend/.agents/skills/vercel-react-best-practices
 !/docs/command/**
 !/docs/demo/
 !/docs/demo/**
-!/docs/icacademy/
-!/docs/icacademy/**
+!/docs/learn/
+!/docs/learn/**
 !/docs/icFrame/
 !/docs/icFrame/**
 !/docs/icpay/
@@ -46,6 +46,8 @@ frontend/.agents/skills/vercel-react-best-practices
 !/docs/problem&solution/**
 !/docs/indexToken/
 !/docs/indexToken/**
+!/docs/chatgpt/
+!/docs/chatgpt/**
 !/docs/workflow.md
 
 # docs/bucket/ stays local (PDF exports, not committed)
@@ -60,6 +62,16 @@ backend/docs/docs/
 backend/.agents/skills/MotokoDocs/
 backend/.agents/skills/motok/Dfinity-docs.md
 backend/.agents/SKILLS.md
+
+# Academy module
+docs/icacademy/
+backend/rust/academy/
+ci/academy/
+frontend/app/(public)/academy/
+frontend/app/(admin)/acadamey/
+frontend/components/products/icacademy/
+frontend/public/images/pages/icacademy/
+frontend/services/academy/
 
 # Environment files and credentials
 **/.env*
@@ -86,6 +98,7 @@ frontend/build/
 frontend/coverage/
 frontend/*.tsbuildinfo
 frontend/next-env.d.ts
+/public/
 
 # Backend dependencies and local canister output
 backend/.dfx/

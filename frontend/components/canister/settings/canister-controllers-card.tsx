@@ -27,6 +27,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { CopyButton } from "@/components/ui/copy-button"
 import { useAuth } from "@/components/auth/auth-provider"
 import {
   Principal,
@@ -133,6 +134,12 @@ export function CanisterControllersCard({
                           You
                         </Badge>
                       )}
+                      <CopyButton
+                        value={ctrl}
+                        aria-label="Copy controller principal"
+                        className="size-5 p-0 text-muted-foreground hover:bg-transparent hover:text-foreground cursor-pointer shrink-0"
+                        iconClassName="size-3"
+                      />
                     </div>
                   </div>
                   {canRemove && (
@@ -152,6 +159,12 @@ export function CanisterControllersCard({
               )
             })}
           </div>
+
+          {!isController && (
+            <div className="rounded-xl border border-border/40 bg-muted/20 p-3 text-xs text-muted-foreground">
+              Read-only view · Only authorized controllers can add or remove controllers.
+            </div>
+          )}
 
           {isController && (
             <form onSubmit={handleAdd} className="flex flex-col gap-2.5 pt-2">

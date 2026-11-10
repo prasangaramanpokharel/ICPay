@@ -21,6 +21,7 @@ export const OWNED_CANISTERS = [
   { name: "icpay_notifier", label: "notifier" },
   { name: "icpay_academy", label: "academy" },
   { name: "icpay_index", label: "index" },
+  { name: "iccron", label: "cron" },
 ] as const
 export type OwnedCanisterName = (typeof OWNED_CANISTERS)[number]["name"]
 
@@ -28,7 +29,7 @@ export function canisterIds(): Record<string, { ic?: string }> {
   return JSON.parse(readFileSync(resolve(BACKEND, "canister_ids.json"), "utf8"))
 }
 
-/** Resolve dfx canister name from shorthand: backend | frontend | blob | blob store | cns | notifier | academy | index */
+/** Resolve dfx canister name from shorthand: backend | frontend | blob | blob store | cns | notifier | academy | index | cron */
 export function resolveOwnedCanister(target?: string): OwnedCanisterName | undefined {
   if (!target) return undefined
   const key = target.toLowerCase().replace(/_/g, " ").trim()
@@ -42,7 +43,9 @@ export function resolveOwnedCanister(target?: string): OwnedCanisterName | undef
       (key === "cnsmangment" && c.name === "cnsmangment") ||
       (key === "notifier" && c.name === "icpay_notifier") ||
       (key === "academy" && c.name === "icpay_academy") ||
-      (key === "index" && c.name === "icpay_index"),
+      (key === "index" && c.name === "icpay_index") ||
+      (key === "cron" && c.name === "iccron") ||
+      (key === "iccron" && c.name === "iccron"),
   )
   return hit?.name
 }
@@ -95,11 +98,9 @@ function resolveDfxMocPath(): string {
   process.exit(1)
 }
 
-// Ensure cargo/rustup bin is available on PATH
+// Ensure cargo/rustup bin is at the front of PATH
 const cargoBin = resolve(process.env.HOME ?? "", ".cargo/bin")
-const pathWithCargo = process.env.PATH?.includes(cargoBin)
-  ? process.env.PATH
-  : `${cargoBin}:${process.env.PATH ?? ""}`
+const pathWithCargo = `${cargoBin}:${process.env.PATH ?? ""}`
 
 function resolveSdkRoot(): string | undefined {
   if (process.platform !== "darwin") return undefined

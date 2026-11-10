@@ -20,8 +20,8 @@ import { SIDEBAR_FOOTER } from "@/lib/navigation/app-sidebar-nav"
 
 export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="offcanvas" {...props}>
-      <SidebarHeader className="border-b border-sidebar-border/60">
+    <Sidebar collapsible="offcanvas" {...props} className="">
+      <SidebarHeader className="">
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton
@@ -40,7 +40,7 @@ export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
                   className="size-8 object-cover"
                 />
               </span>
-              <span className="text-sm font-semibold">ICPay</span>
+              <span className="text-lg font-semibold text-primary">icPay</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

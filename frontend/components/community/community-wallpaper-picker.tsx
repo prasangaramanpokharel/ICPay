@@ -33,19 +33,22 @@ export function CommunityWallpaperPicker({ slug }: { slug: string }) {
                   : "border-border/50 opacity-90 hover:opacity-100 hover:ring-1 hover:ring-border/60"
               )}
             >
-              <Image
-                src={url}
-                alt=""
-                fill
-                unoptimized
-                className="object-cover object-center"
-                draggable={false}
-              />
-              {isDefault ? (
-                <span className="absolute inset-x-0 bottom-0 bg-background/80 py-0.5 text-center text-[9px] font-medium text-muted-foreground">
-                  {t("themeDefault")}
-                </span>
-              ) : null}
+              {url ? (
+                <Image
+                  src={url}
+                  alt=""
+                  fill
+                  unoptimized
+                  className="object-cover object-center"
+                  draggable={false}
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-muted/40 p-1 text-center">
+                  <span className="text-[10px] font-medium text-muted-foreground">
+                    {t("themeDefault")}
+                  </span>
+                </div>
+              )}
             </Button>
           )
         })}

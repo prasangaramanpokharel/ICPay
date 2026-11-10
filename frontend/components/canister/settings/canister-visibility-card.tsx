@@ -98,6 +98,12 @@ export function CanisterVisibilityCard({
           )}
         </div>
 
+        {!isController && (
+          <div className="rounded-xl border border-border/40 bg-muted/20 p-3 text-xs text-muted-foreground">
+            Read-only view · Only authorized controllers can change log visibility.
+          </div>
+        )}
+
         {isController && (
           <div className="flex justify-end pt-1">
             <Button type="button" size="sm" disabled={saving} onClick={handleSave}>

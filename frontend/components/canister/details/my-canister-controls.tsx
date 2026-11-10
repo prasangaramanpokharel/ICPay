@@ -6,15 +6,19 @@ import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   ArrowUp02Icon,
-  MoreVerticalIcon,
+  Camera01Icon,
+  ConnectIcon,
+  Link01Icon,
+  MoreHorizontalIcon,
   PlayIcon,
+  RefreshIcon,
   SentIcon,
+  Settings02Icon,
   StopIcon,
   UserAdd01Icon,
 } from "@hugeicons/core-free-icons"
 import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
-import { ButtonGroup } from "@/components/ui/button-group"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -49,10 +53,14 @@ export function MyCanisterControls({
   canisterId,
   status,
   onRefresh,
+  onConnect,
+  onSelectTab,
 }: {
   canisterId: string
   status: CanisterStatusState
   onRefresh: () => void
+  onConnect?: () => void
+  onSelectTab?: (tab: "overview" | "settings" | "snapshots") => void
 }) {
   const t = useTranslations("myCanisters")
   const { identity } = useAuth()
@@ -89,63 +97,80 @@ export function MyCanisterControls({
 
   return (
     <>
-      <ButtonGroup className="rounded-lg shadow-2xs">
+      <div className="flex items-center gap-2">
         <Button
-          type="button"
           variant="outline"
-          size="sm"
-          onClick={() => setTopupOpen(true)}
-          className="h-7.5 gap-1.5 px-2.5 text-xs font-medium border-border/50 bg-muted/30 text-foreground hover:bg-muted/60 hover:text-foreground cursor-pointer"
+          size="icon-sm"
+          className="size-8 cursor-pointer"
+          nativeButton={false}
+          render={
+            <a
+              href={`https://dashboard.internetcomputer.org/canister/${canisterId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="View on IC Dashboard"
+            />
+          }
         >
-          <HugeiconsIcon icon={ArrowUp02Icon} className="size-3.5 text-primary" strokeWidth={1.75} />
-          <span>Top up</span>
+          <HugeiconsIcon icon={Link01Icon} className="size-4 text-muted-foreground" />
         </Button>
 
-        {canControl && (
+        {canControl ? (
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={() => setAddControllerOpen(true)}
-            className="h-7.5 gap-1.5 px-2.5 text-xs font-medium border-border/50 bg-muted/30 text-foreground hover:bg-muted/60 hover:text-foreground cursor-pointer"
+            className="h-8 gap-1.5 px-3 text-xs font-medium cursor-pointer"
           >
             <HugeiconsIcon icon={UserAdd01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
             <span>Add controller</span>
           </Button>
-        )}
+        ) : onConnect ? (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onConnect}
+            className="h-8 gap-1.5 px-3 text-xs font-medium cursor-pointer"
+          >
+            <HugeiconsIcon icon={ConnectIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+            <span>Connect</span>
+          </Button>
+        ) : null}
+
+        <Button
+          type="button"
+          size="sm"
+          onClick={() => setTopupOpen(true)}
+          className="h-8 gap-1.5 px-3.5 text-xs font-medium cursor-pointer"
+        >
+          <HugeiconsIcon icon={ArrowUp02Icon} className="size-3.5" strokeWidth={2} />
+          <span>Top up</span>
+        </Button>
 
         <DropdownMenu>
           <DropdownMenuTrigger
             render={
               <Button
                 type="button"
-                size="icon-xs"
+                size="icon-sm"
                 variant="outline"
-                className="size-7.5 border-border/50 bg-muted/30 text-muted-foreground hover:bg-muted/60 hover:text-foreground cursor-pointer transition-colors"
-                aria-label="Canister actions"
+                className="size-8 cursor-pointer"
+                aria-label="More actions"
               />
             }
           >
             {busy != null ? (
               <Spinner className="size-3.5" />
             ) : (
-              <HugeiconsIcon icon={MoreVerticalIcon} className="size-3.5" />
+              <HugeiconsIcon icon={MoreHorizontalIcon} className="size-4 text-muted-foreground" />
             )}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
             <DropdownMenuGroup>
-              <DropdownMenuItem
-                onClick={() => setTopupOpen(true)}
-                className="cursor-pointer gap-2"
-              >
-                <HugeiconsIcon icon={ArrowUp02Icon} className="size-4 text-primary" />
-                <span>Top up cycles</span>
-              </DropdownMenuItem>
-
               {canControl && (
                 <>
-                  <DropdownMenuSeparator />
-
                   {running ? (
                     <DropdownMenuItem
                       onClick={() => setStopOpen(true)}
@@ -174,16 +199,6 @@ export function MyCanisterControls({
                     </DropdownMenuItem>
                   )}
 
-                  <DropdownMenuSeparator />
-
-                  <DropdownMenuItem
-                    onClick={() => setAddControllerOpen(true)}
-                    className="cursor-pointer gap-2"
-                  >
-                    <HugeiconsIcon icon={UserAdd01Icon} className="size-4 text-muted-foreground" />
-                    <span>{t("addController")}</span>
-                  </DropdownMenuItem>
-
                   <DropdownMenuItem
                     onClick={() => setTransferOpen(true)}
                     className="cursor-pointer gap-2"
@@ -191,12 +206,58 @@ export function MyCanisterControls({
                     <HugeiconsIcon icon={SentIcon} className="size-4 text-muted-foreground" />
                     <span>{t("transfer")}</span>
                   </DropdownMenuItem>
+
+                  <DropdownMenuSeparator />
                 </>
               )}
+
+              {onSelectTab && (
+                <>
+                  <DropdownMenuItem
+                    onClick={() => onSelectTab("settings")}
+                    className="cursor-pointer gap-2"
+                  >
+                    <HugeiconsIcon icon={Settings02Icon} className="size-4 text-muted-foreground" />
+                    <span>Settings</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => onSelectTab("snapshots")}
+                    className="cursor-pointer gap-2"
+                  >
+                    <HugeiconsIcon icon={Camera01Icon} className="size-4 text-muted-foreground" />
+                    <span>Snapshots</span>
+                  </DropdownMenuItem>
+                </>
+              )}
+
+              <DropdownMenuItem
+                onClick={onRefresh}
+                className="cursor-pointer gap-2"
+              >
+                <HugeiconsIcon icon={RefreshIcon} className="size-4 text-muted-foreground" />
+                <span>Reload status</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator />
+
+              <DropdownMenuItem
+                nativeButton={false}
+                render={
+                  <a
+                    href={`https://dashboard.internetcomputer.org/canister/${canisterId}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="cursor-pointer gap-2"
+                  />
+                }
+              >
+                <HugeiconsIcon icon={Link01Icon} className="size-4 text-muted-foreground" />
+                <span>View on IC Dashboard</span>
+              </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-      </ButtonGroup>
+      </div>
 
       <AlertDialog open={stopOpen} onOpenChange={setStopOpen}>
         <AlertDialogContent>
@@ -205,7 +266,7 @@ export function MyCanisterControls({
             <AlertDialogDescription>{t("stopConfirmBody")}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <ButtonGroup>
+            <div className="flex items-center justify-end gap-2">
               <AlertDialogCancel>{t("topUpCancel")}</AlertDialogCancel>
               <AlertDialogAction
                 variant="destructive"
@@ -215,7 +276,7 @@ export function MyCanisterControls({
                 {busy === "stop" && <Spinner data-icon="inline-start" />}
                 <span>{busy === "stop" ? t("stopping") : t("stop")}</span>
               </AlertDialogAction>
-            </ButtonGroup>
+            </div>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

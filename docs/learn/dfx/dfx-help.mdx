@@ -1,0 +1,344 @@
+---
+title: "DFX Help & Command Reference"
+description: "Comprehensive command-line guide for the DFINITY Canister SDK (dfx) — global flags, subcommands, syntax cheatsheet, and practical terminal examples."
+group: "DFX CLI Guide"
+order: 3
+eyebrow: "Command Reference"
+---
+
+# DFX Command Reference (`dfx --help`)
+
+The **`dfx`** CLI provides an extensive toolset for managing every stage of Internet Computer canister development. This reference details all primary commands, global flags, and common usage patterns.
+
+```bash
+# View all available commands
+dfx --help
+
+# View help for a specific subcommand
+dfx canister --help
+dfx identity --help
+dfx deploy --help
+```
+
+---
+
+## Quick Reference Cheat Sheet
+
+| Command | Action | Example |
+|---|---|---|
+| `dfx start` | Start local replica | `dfx start --background --clean` |
+| `dfx stop` | Stop local replica | `dfx stop` |
+| `dfx new` | Create a new project | `dfx new my_app` |
+| `dfx build` | Compile WebAssembly | `dfx build --all` |
+| `dfx deploy` | Build and deploy | `dfx deploy --network ic` |
+| `dfx canister call` | Invoke canister method | `dfx canister call backend greet '("Alice")'` |
+| `dfx canister status` | Inspect cycles, memory, state | `dfx canister status backend` |
+| `dfx identity whoami` | Show active identity | `dfx identity whoami` |
+| `dfx identity get-principal` | Show active principal ID | `dfx identity get-principal` |
+| `dfx ledger balance` | Check ICP balance | `dfx ledger balance --network ic` |
+| `dfx cycles balance` | Check cycles balance | `dfx cycles balance --network ic` |
+| `dfx ping` | Ping local or IC network | `dfx ping ic` |
+| `dfx killall` | Force-kill stuck processes | `dfx killall` |
+
+---
+
+## Global CLI Options
+
+These options can be passed to almost all `dfx` commands:
+
+| Flag | Shorthand | Description | Default |
+|---|---|---|---|
+| `--network <NAME>` | | Target network: `local`, `ic`, `playground`, or custom URL | `local` |
+| `--ic` | | Shorthand for `--network ic` (mainnet) | |
+| `--playground` | | Shorthand for `--network playground` | |
+| `--identity <NAME>` | | Run command as a specific identity without switching permanently | Current identity |
+| `--verbose` | `-v`, `-vv` | Verbose debug output (prints raw HTTP outcalls and RPCs) | Off |
+| `--quiet` | `-q`, `-qq` | Suppress non-essential informational messages | Off |
+| `--log <MODE>` | | Logging output mode: `stderr`, `tee`, or `file` | `stderr` |
+| `--logfile <PATH>` | | Destination file path when logging to file | |
+
+---
+
+## 1. Project Lifecycle Commands
+
+### `dfx new`
+Generates a new project directory pre-configured with Motoko or Rust templates, `dfx.json`, and frontend scaffolding.
+
+```bash
+# Create a standard project
+dfx new hello_world
+
+# Create with no frontend (backend only)
+dfx new my_backend --no-frontend
+
+# Create using Motoko or Rust
+dfx new my_rust_app --type rust
+```
+
+### `dfx start`
+Starts the local Internet Computer replica and web server.
+
+```bash
+# Run in background with a fresh state (cleans old data)
+dfx start --background --clean
+
+# Run with a custom host port
+dfx start --host 127.0.0.1:8000
+```
+
+### `dfx stop`
+Gracefully stops the running local replica.
+
+```bash
+dfx stop
+```
+
+### `dfx build`
+Compiles source code into `.wasm` binaries and generates Candid interface definitions (`.did`).
+
+```bash
+# Build all canisters defined in dfx.json
+dfx build
+
+# Build a single canister
+dfx build backend
+```
+
+### `dfx deploy`
+Combines `canister create`, `build`, and `install` into a single operation.
+
+```bash
+# Deploy locally
+dfx deploy
+
+# Deploy to mainnet
+dfx deploy --network ic
+
+# Deploy with Candid initialization arguments
+dfx deploy backend --argument '(record { admin = principal "2vxsx-fae"; fee = 10_000 : nat })'
+
+# Upgrade without re-creating canister IDs
+dfx deploy backend --mode upgrade
+```
+
+> [!WARNING]
+> Never pass `--mode reinstall` on production canisters holding user funds or state! Reinstall completely erases all canister linear memory and stable memory.
+
+### `dfx generate`
+Generates TypeScript/JavaScript actor declarations and Candid interface bindings for frontend integration.
+
+```bash
+dfx generate
+# Declarations are output to src/declarations/<canister_name>/
+```
+
+---
+
+## 2. Canister Management (`dfx canister`)
+
+### `dfx canister status`
+Returns runtime metadata: canister status (`Running`, `Stopping`, or `Stopped`), controllers, module hash, memory size, and cycles reserve.
+
+```bash
+dfx canister status backend
+dfx canister --network ic status 6vbhm-nqaaa-aaaan-q6muq-cai
+```
+
+**Example Output:**
+```
+Canister status: Running
+Controllers: 2vxsx-fae ...
+Module hash: 0x3d7890bfa802f08e5c3e06fa99e2956cfef31109dc088a821e25eec91370b322
+Memory allocation: 0
+Compute allocation: 0
+Freezing threshold: 2_592_000
+Memory Size: 2_194_205_696 Bytes
+Balance: 12_450_892_100_000 Cycles
+```
+
+### `dfx canister call`
+Invokes a public method on a deployed canister using Candid text serialization.
+
+```bash
+# Query call (Read-only, executes in <100ms)
+dfx canister call backend getBalance '(principal "2vxsx-fae")' --query
+
+# Update call (State-modifying, reaches consensus in ~1.5s)
+dfx canister call backend transfer '(record { to = principal "aaaaa-aa"; amount = 100 : nat })'
+
+# Call against Mainnet
+dfx canister --network ic call backend getVersion --query
+```
+
+### `dfx canister info`
+Prints the compiled Wasm module hash and controller list without consuming query cycles.
+
+```bash
+dfx canister --network ic info 6vbhm-nqaaa-aaaan-q6muq-cai
+```
+
+### `dfx canister update-settings`
+Modifies canister controllers, compute allocations, memory limits, or freezing threshold.
+
+```bash
+# Add a new controller (e.g. your hardware key or multi-sig)
+dfx canister --network ic update-settings backend --add-controller 2vxsx-fae
+
+# Remove an existing controller
+dfx canister --network ic update-settings backend --remove-controller 2vxsx-fae
+
+# Set freezing threshold (in seconds)
+dfx canister --network ic update-settings backend --freezing-threshold 2592000
+```
+
+### `dfx canister deposit-cycles`
+Transfers cycles from your active cycles ledger or wallet into a specified canister.
+
+```bash
+dfx canister --network ic deposit-cycles 1000000000000 backend
+```
+
+### `dfx canister logs`
+Retrieves live or retained canister logs emitted by Motoko `Debug.print` or Rust log macros.
+
+```bash
+dfx canister --network ic logs backend
+```
+
+---
+
+## 3. Identity & Security (`dfx identity`)
+
+### `dfx identity whoami`
+Displays the name of the currently active identity.
+
+```bash
+dfx identity whoami
+# Output: default
+```
+
+### `dfx identity get-principal`
+Displays the active identity's public textual principal.
+
+```bash
+dfx identity get-principal
+# Output: w3dso-p2iik-2rzkx-45jkm-4s2k...
+```
+
+### `dfx identity new`
+Generates a new cryptographic keypair.
+
+```bash
+# Create standard identity (prompts for passphrase encryption)
+dfx identity new developer
+
+# Create an unencrypted identity (for local scripting)
+dfx identity new test_user --disable-encryption
+```
+
+### `dfx identity use`
+Switches the active identity context.
+
+```bash
+dfx identity use developer
+```
+
+### `dfx identity export` & `import`
+Exports or restores a PEM private key or BIP-39 seed phrase:
+
+```bash
+# Export unencrypted private key (keep secret!)
+dfx identity export developer > developer.pem
+
+# Import from a private key file
+dfx identity import imported_dev developer.pem
+```
+
+---
+
+## 4. Ledger & Cycles (`dfx ledger` & `dfx cycles`)
+
+### `dfx ledger balance`
+Prints your account's liquid ICP balance.
+
+```bash
+dfx ledger balance --network ic
+# Output: 4.82500000 ICP
+```
+
+### `dfx ledger account-id`
+Calculates the 32-byte hexadecimal Account Identifier for your active principal.
+
+```bash
+dfx ledger account-id
+# Output: 5f98a760b263914a82c4488ad7ff6e542efc...
+```
+
+### `dfx ledger transfer`
+Transfers ICP tokens to another account identifier or principal.
+
+```bash
+dfx ledger transfer --network ic --amount 1.5 --memo 0 5f98a760b263914a82c4488ad7ff6e542efc...
+```
+
+### `dfx cycles balance`
+Checks the cycle balance inside your identity's Cycles Ledger account.
+
+```bash
+dfx cycles balance --network ic
+# Output: 18.420 TC (Trillion Cycles)
+```
+
+### `dfx cycles convert`
+Converts liquid ICP into Cycles via the Cycles Minting Canister (CMC).
+
+```bash
+dfx cycles convert --network ic --amount 2.0
+```
+
+### `dfx cycles top-up`
+Sends cycles directly to any canister ID.
+
+```bash
+dfx cycles top-up --network ic 2000000000000 6vbhm-nqaaa-aaaan-q6muq-cai
+```
+
+---
+
+## 5. Diagnostic & Utility Commands
+
+### `dfx ping`
+Pings the target network replica to verify availability, root key, and replica version:
+
+```bash
+# Ping local replica
+dfx ping
+
+# Ping IC Mainnet
+dfx ping ic
+```
+
+**Example Mainnet Response:**
+```json
+{
+  "ic_api_version": "0.18.0",
+  "impl_version": "1.0.0",
+  "root_key": [48, 129, 130, 48, ...],
+  "replica_health_status": "healthy"
+}
+```
+
+### `dfx killall`
+Terminates any background replica, PocketIC, or dfx child processes that may have become unresponsive.
+
+```bash
+dfx killall
+```
+
+---
+
+## Next Steps
+
+- [Canister Deep Dive](./canister.mdx) — Method calls, Candid types, snapshots, and upgrades.
+- [Identity Deep Dive](./identity.mdx) — Managing keys, principals, and access control lists.
+- [Ledger & Cycles Deep Dive](./ledger-cycles.mdx) — Conversion rates, cycles ledger, and runway optimization.

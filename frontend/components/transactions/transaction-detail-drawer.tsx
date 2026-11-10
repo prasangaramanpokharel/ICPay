@@ -3,8 +3,6 @@
 import { useMemo, type ReactNode } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { createAvatar } from "@dicebear/core"
-import { adventurer } from "@dicebear/collection"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Cancel01Icon,
@@ -23,6 +21,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { TokenFiatHint } from "@/components/token/token-fiat-hint"
 import { PremiumBadge } from "@/components/verified/premium-badge"
+import { avatarUriFor } from "@/lib/profile/avatar"
 import { useLedgerSymbol, useTransactionDetail } from "@/hooks/wallet/useWalletData"
 import { useIsMobile } from "@/hooks/use-mobile"
 import type { TransactionPublic } from "@/services/types"
@@ -132,7 +131,7 @@ function TransactionDrawerBody({ tx }: { tx: TransactionPublic }) {
   const handle = counterparty.startsWith("@") ? counterparty.slice(1) : null
 
   const avatarUri = useMemo(
-    () => createAvatar(adventurer, { seed: counterparty }).toDataUri(),
+    () => avatarUriFor(counterparty),
     [counterparty]
   )
 

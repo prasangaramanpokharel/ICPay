@@ -5,6 +5,7 @@ import useSWR from "swr"
 import { useSavedCanisters } from "@/hooks/canister/useSavedCanisters"
 import { rememberCanister } from "@/lib/canister/savedCanisters"
 import {
+  fetchCanisterIndexMeta,
   fetchControlledCanisters,
   type ControlledCanister,
 } from "@/services/canister/controlledCanisters"
@@ -28,11 +29,47 @@ export function useMineCanisters(principal: string | null | undefined) {
     for (const item of data.items) rememberCanister(key, item.canisterId)
   }, [key, data])
 
+  const missingSavedIds = useMemo(() => {
+    const controlledSet = new Set((data?.items ?? []).map((i) => i.canisterId))
+    return saved.filter((id) => !controlledSet.has(id))
+  }, [data, saved])
+
+  const { data: extraMeta } = useSWR(
+    missingSavedIds.length > 0
+      ? (["saved-canister-meta", missingSavedIds.sort().join(",")] as const)
+      : null,
+    async ([, joined]) => {
+      const ids = joined.split(",").filter(Boolean)
+      const pairs = await Promise.all(
+        ids.map(async (id) => {
+          try {
+            const meta = await fetchCanisterIndexMeta(id)
+            return [id, meta] as const
+          } catch {
+            return [id, null] as const
+          }
+        })
+      )
+      return Object.fromEntries(pairs) as Record<string, ControlledCanister | null>
+    },
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 120_000,
+    }
+  )
+
   const metaById = useMemo(() => {
     const map = new Map<string, ControlledCanister>()
     for (const item of data?.items ?? []) map.set(item.canisterId, item)
+    if (extraMeta) {
+      for (const [id, meta] of Object.entries(extraMeta)) {
+        if (meta && !map.has(id)) {
+          map.set(id, meta)
+        }
+      }
+    }
     return map
-  }, [data])
+  }, [data, extraMeta])
 
   const ids = useMemo(() => {
     const seen = new Set<string>()
