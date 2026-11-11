@@ -15,17 +15,17 @@ fn credit_from_wallet(
     let caller = ic_cdk::api::msg_caller();
     gate::assert_wallet_caller(caller)?;
 
-    let amount_u64: u64 = amount
+    let amount_u128: u128 = amount
         .0
         .try_into()
         .map_err(|_| "amount too large".to_string())?;
 
-    if amount_u64 == 0 {
+    if amount_u128 == 0 {
         return Err("amount must be > 0".into());
     }
 
     let _ = block_index;
-    balances::credit(user, &token, amount_u64);
+    balances::credit(user, &token, amount_u128);
     Ok(())
 }
 
@@ -40,16 +40,16 @@ async fn debit_to_wallet(
     gate::assert_wallet_caller(caller)?;
 
     let _ = user;
-    let amount_u64: u64 = amount
+    let amount_u128: u128 = amount
         .0
         .try_into()
         .map_err(|_| "amount too large".to_string())?;
 
-    balances::debit(user, &token, amount_u64)?;
+    balances::debit(user, &token, amount_u128)?;
 
     let ledger = Principal::from_text(&token).map_err(|e| e.to_string())?;
     let fee = crate::ledger::icrc::transfer_fee(ledger).await?;
-    let block = crate::ledger::icrc::transfer(ledger, to, amount_u64, Some(fee)).await?;
+    let block = crate::ledger::icrc::transfer(ledger, to, amount_u128, Some(fee)).await?;
 
     Ok(Nat::from(block))
 }

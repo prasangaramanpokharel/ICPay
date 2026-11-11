@@ -20,7 +20,7 @@ Explore the full list of HTTP endpoints and actor methods supported by ICBucket.
 
 ```http
 GET /cloud/{bucketName}/{filePath}
-Host: cdn.icpay.app
+Host: cloud.icpay.app
 ```
 
 Returns the binary file body with original `Content-Type` and HTTP caching headers.
@@ -29,7 +29,7 @@ Returns the binary file body with original `Content-Type` and HTTP caching heade
 
 ```http
 PUT /api/v1/bucket/{bucketName}/files/{filePath}
-Host: cdn.icpay.app
+Host: cloud.icpay.app
 Authorization: Bearer <API_KEY>
 Content-Type: <MIME_TYPE>
 
@@ -48,7 +48,7 @@ Payload limit: 2MB. For larger files, use chunked session endpoints below.
 
 ```http
 GET /api/v1/bucket/{bucketName}/files?prefix=assets/&page=1&pageSize=10
-Host: cdn.icpay.app
+Host: cloud.icpay.app
 Authorization: Bearer <API_KEY>
 ```
 

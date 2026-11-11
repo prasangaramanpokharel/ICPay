@@ -4,7 +4,6 @@ import { useMemo, useState } from "react"
 import Link from "next/link"
 import useSWR from "swr"
 import { useTranslations } from "next-intl"
-import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   ArrowDown01Icon,

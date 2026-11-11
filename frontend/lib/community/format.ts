@@ -52,6 +52,23 @@ export function formatMessageExact(ns: bigint): string {
   })
 }
 
+export function formatMessageDateHeader(ns: bigint): string {
+  const d = messageDate(ns)
+  const now = new Date()
+  const sameYear = d.getFullYear() === now.getFullYear()
+  const sameDay = sameYear && d.getMonth() === now.getMonth() && d.getDate() === now.getDate()
+  if (sameDay) return "Today"
+  const yesterday = new Date(now)
+  yesterday.setDate(now.getDate() - 1)
+  const isYesterday = sameYear && d.getMonth() === yesterday.getMonth() && d.getDate() === yesterday.getDate()
+  if (isYesterday) return "Yesterday"
+  return d.toLocaleDateString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: sameYear ? undefined : "numeric",
+  })
+}
+
 export function messageSearchPreview(text: string, max = 72): string {
   const plain = text
     .replace(/\*\*/g, "")

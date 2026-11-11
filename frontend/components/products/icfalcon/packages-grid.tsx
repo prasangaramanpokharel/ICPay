@@ -15,7 +15,6 @@ import {
   CheckmarkCircle02Icon,
   Layers01Icon,
   FlashIcon,
-  LinkSquare02Icon,
   GridViewIcon,
   ListViewIcon,
   ArrowRight01Icon,

@@ -180,10 +180,15 @@ export function TradeChartPanel({
     const initialHeight = containerRef.current.clientHeight || 340
     const initialWidth = containerRef.current.clientWidth || 600
 
+    const comp = getComputedStyle(containerRef.current)
+    const upCol = comp.getPropertyValue("--success").trim() || "rgba(34, 197, 94, 1)"
+    const downCol = comp.getPropertyValue("--destructive").trim() || "rgba(239, 68, 68, 1)"
+    const textCol = comp.getPropertyValue("--muted-foreground").trim() || "rgba(148, 163, 184, 0.8)"
+
     const chart = createChart(containerRef.current, {
       layout: {
         background: { type: ColorType.Solid, color: "transparent" },
-        textColor: "#94a3b8",
+        textColor: textCol,
         fontSize: 11,
         fontFamily: "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
       },
@@ -227,18 +232,18 @@ export function TradeChartPanel({
     })
 
     const candleSeries = chart.addSeries(CandlestickSeries, {
-      upColor: "#22c55e",
-      downColor: "#ef4444",
-      borderUpColor: "#22c55e",
-      borderDownColor: "#ef4444",
-      wickUpColor: "#22c55e",
-      wickDownColor: "#ef4444",
+      upColor: upCol,
+      downColor: downCol,
+      borderUpColor: upCol,
+      borderDownColor: downCol,
+      wickUpColor: upCol,
+      wickDownColor: downCol,
     })
 
     const areaSeries = chart.addSeries(AreaSeries, {
       topColor: "rgba(34, 197, 94, 0.35)",
       bottomColor: "rgba(34, 197, 94, 0.01)",
-      lineColor: "#22c55e",
+      lineColor: upCol,
       lineWidth: 2,
     })
 
@@ -442,7 +447,11 @@ export function TradeChartPanel({
         ? `Buy Limit (${formattedUnits} ${snapshot.base.symbol})`
         : `Sell Limit (${formattedUnits} ${snapshot.base.symbol})`
 
-      const lineColor = isBuy ? "#10b981" : "#f43f5e"
+      const comp = containerRef.current ? getComputedStyle(containerRef.current) : null
+      const upCol = comp?.getPropertyValue("--success").trim() || "rgba(34, 197, 94, 1)"
+      const downCol = comp?.getPropertyValue("--destructive").trim() || "rgba(239, 68, 68, 1)"
+      const cardCol = comp?.getPropertyValue("--card-foreground").trim() || "rgba(255, 255, 255, 1)"
+      const lineColor = isBuy ? upCol : downCol
 
       try {
         const line = activeSeries.createPriceLine({
@@ -454,7 +463,7 @@ export function TradeChartPanel({
           axisLabelVisible: true,
           title: orderTitle,
           axisLabelColor: lineColor,
-          axisLabelTextColor: "#ffffff",
+          axisLabelTextColor: cardCol,
         })
         newLines.push({ line, series: activeSeries })
       } catch {}
@@ -463,7 +472,11 @@ export function TradeChartPanel({
     if (pinnedDiff && Number.isFinite(pinnedDiff.cursorPrice) && pinnedDiff.cursorPrice > 0) {
       const isAbove = pinnedDiff.isAbove
       const pinnedTitle = isAbove ? "Limit Sell" : "Limit Buy"
-      const pinnedColor = isAbove ? "#f43f5e" : "#10b981"
+      const comp = containerRef.current ? getComputedStyle(containerRef.current) : null
+      const upCol = comp?.getPropertyValue("--success").trim() || "rgba(34, 197, 94, 1)"
+      const downCol = comp?.getPropertyValue("--destructive").trim() || "rgba(239, 68, 68, 1)"
+      const cardCol = comp?.getPropertyValue("--card-foreground").trim() || "rgba(255, 255, 255, 1)"
+      const pinnedColor = isAbove ? downCol : upCol
 
       try {
         const line = activeSeries.createPriceLine({
@@ -475,7 +488,7 @@ export function TradeChartPanel({
           axisLabelVisible: true,
           title: pinnedTitle,
           axisLabelColor: pinnedColor,
-          axisLabelTextColor: "#ffffff",
+          axisLabelTextColor: cardCol,
         })
         newLines.push({ line, series: activeSeries })
       } catch {}

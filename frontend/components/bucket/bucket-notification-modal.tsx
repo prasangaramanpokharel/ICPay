@@ -135,7 +135,6 @@ export function BucketNotificationModal({
         </DialogHeader>
 
         <div className="space-y-4 py-1 text-sm">
-          {/* Status banner */}
           {isLoading ? (
             <div className="flex items-center justify-center py-6 text-xs text-muted-foreground">
               Loading notification status...
@@ -166,7 +165,6 @@ export function BucketNotificationModal({
             </div>
           )}
 
-          {/* Form */}
           <form onSubmit={handleSave} className="space-y-3">
             <div className="space-y-1.5">
               <label htmlFor="bucket-notif-email" className="text-xs font-medium text-foreground">
@@ -189,7 +187,6 @@ export function BucketNotificationModal({
               </div>
             </div>
 
-            {/* Lifecycle Stages Card */}
             <div className="rounded-lg border border-border/40 bg-muted/10 p-3 text-[11px] space-y-2">
               <div className="font-medium text-foreground/90 flex items-center gap-1.5">
                 <HugeiconsIcon icon={Clock01Icon} className="size-3.5 text-muted-foreground" />

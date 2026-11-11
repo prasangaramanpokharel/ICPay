@@ -15,9 +15,6 @@ import {
 import { USERNAME_FREE_MIN_LENGTH } from "@/lib/profile/username"
 import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
 
-// A username is required rather than suggested: without one, nobody can send
-// this account ICP by name. So there is no dismiss path -- no close button, no
-// outside click, no escape key.
 export function UsernamePrompt({ username }: { username?: string }) {
   const t = useTranslations("username")
   if (username) return null

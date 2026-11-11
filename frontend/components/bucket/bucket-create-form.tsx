@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -174,7 +175,6 @@ export function BucketCreateForm({
           </RadioGroup>
         </div>
 
-        {/* Billing Period Selector */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label className="text-xs font-medium">Billing Cycle</Label>
@@ -185,41 +185,42 @@ export function BucketCreateForm({
             </span>
           </div>
           <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-border/80 bg-muted/40 p-1">
-            <button
+            <Button
               type="button"
+              variant={billingPeriod === "monthly" ? "secondary" : "ghost"}
               onClick={() => setBillingPeriod("monthly")}
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 rounded-lg py-2 px-3 text-xs font-medium transition-all",
+                "h-auto flex-col gap-0.5 rounded-lg py-2 px-3 text-xs font-medium transition-all",
                 billingPeriod === "monthly"
-                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-border"
+                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-border hover:bg-background"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               <span>Monthly</span>
               <span className="text-[10px] font-normal text-muted-foreground">30-day cycle</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant={billingPeriod === "yearly" ? "secondary" : "ghost"}
               onClick={() => setBillingPeriod("yearly")}
               className={cn(
-                "relative flex flex-col items-center justify-center gap-0.5 rounded-lg py-2 px-3 text-xs font-medium transition-all",
+                "relative h-auto flex-col gap-0.5 rounded-lg py-2 px-3 text-xs font-medium transition-all",
                 billingPeriod === "yearly"
-                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-primary/40"
+                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-primary/40 hover:bg-background"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               <span className="flex items-center gap-1.5">
                 <span>Annual</span>
-                <span className="rounded-full bg-success/15 px-1.5 py-0.5 text-[9px] font-bold text-success">
+                <Badge variant="outline" className="border-transparent bg-success/15 px-1.5 py-0 text-[9px] font-bold text-success">
                   2 MO FREE
-                </span>
+                </Badge>
               </span>
               <span className="text-[10px] font-normal text-muted-foreground">365-day cycle</span>
-            </button>
+            </Button>
           </div>
         </div>
 
-        {/* Expiry Alert Email (Optional) */}
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <Label htmlFor="bucket-alert-email" className="text-xs font-medium">
@@ -253,13 +254,12 @@ export function BucketCreateForm({
           )}
         </div>
 
-        {/* Pricing Card with ShineBorder */}
         <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-b from-primary/10 via-background to-background p-4 shadow-sm">
           <ShineBorder
             className="rounded-2xl z-0"
             borderWidth={1.5}
             duration={10}
-            shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+            shineColor={["var(--primary)", "var(--accent)", "var(--primary)"]}
           />
           <div className="relative z-10 space-y-2.5">
             <div className="flex items-center justify-between">

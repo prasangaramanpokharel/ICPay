@@ -52,6 +52,8 @@ export function SiteAnalytics() {
               <img
                 src={`https://mc.yandex.ru/watch/${YANDEX_METRIKA_ID}`}
                 style={{ position: "absolute", left: "-9999px" }}
+                width={1}
+                height={1}
                 alt=""
               />
             </div>

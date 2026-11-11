@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { usePathname } from "next/navigation"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { CheckmarkCircle02Icon, Copy01Icon } from "@hugeicons/core-free-icons"
+import { CheckmarkCircle02Icon, Copy01Icon, Share08Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { BLOG_POSTS } from "@/services/blog/blog"
 
@@ -59,22 +59,8 @@ export function BlogSocialShare({
 
   return (
     <div className="flex items-center gap-2">
-      {/* Curved Share Icon */}
       <span className="flex items-center justify-center text-muted-foreground/80" title="Share">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="size-4 text-muted-foreground"
-        >
-          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-          <polyline points="16 6 12 2 8 6" />
-          <line x1="12" y1="2" x2="12" y2="15" />
-        </svg>
+        <HugeiconsIcon icon={Share08Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
       </span>
 
       {/* Facebook Button */}
@@ -127,7 +113,7 @@ export function BlogSocialShare({
         className="size-8 rounded-full border-border/70 bg-background/80 text-muted-foreground hover:border-primary/50 hover:bg-primary/10 hover:text-primary hover:scale-105 shadow-2xs"
       >
         {copied ? (
-          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-green-500" />
+          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-success" />
         ) : (
           <HugeiconsIcon icon={Copy01Icon} className="size-3.5" />
         )}

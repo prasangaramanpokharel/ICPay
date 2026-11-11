@@ -7,7 +7,6 @@ import {
   LandingFeatures,
   LandingHero,
   LandingHowItWorks,
-  // LandingHowToPay,
   LandingProducts,
   LandingTrust,
   LandingTransparency,
@@ -43,7 +42,6 @@ export default function LandingPage() {
       <LandingFeatures />
       <LandingProducts />
       <LandingHowItWorks />
-      {/* <LandingHowToPay /> */}
       <LandingTrust />
       <LandingTransparency />
       <LandingDownloads />

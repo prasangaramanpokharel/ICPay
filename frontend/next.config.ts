@@ -21,6 +21,7 @@ export default (phase: string): NextConfig => {
     turbopack: {
       root: frontendRoot,
     },
+    devIndicators: false,
     output: isStatic ? "export" : undefined,
     images: { unoptimized: true },
     ...(isStatic

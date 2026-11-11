@@ -45,7 +45,6 @@ export function ConnectControllerDialog({
   const [copiedCmd, setCopiedCmd] = useState(false)
   const [copiedPrincipal, setCopiedPrincipal] = useState(false)
 
-  // Synchronize targetId when dialog opens or initialCanisterId changes without cascading effect renders
   const [prevOpen, setPrevOpen] = useState(open)
   const [prevInitial, setPrevInitial] = useState(initialCanisterId)
 
@@ -117,7 +116,6 @@ export function ConnectControllerDialog({
         </DialogHeader>
 
         <div className="flex flex-col gap-4 min-w-0 max-w-full">
-          {/* Target Canister Field */}
           <Field className="gap-2 min-w-0 max-w-full">
             <FieldLabel htmlFor="connect-canister-id" className="text-xs font-medium">
               Choose or enter Canister ID
@@ -131,17 +129,18 @@ export function ConnectControllerDialog({
                 className="font-mono text-xs pr-8 w-full min-w-0"
               />
               {targetId && (
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon-xs"
                   onClick={() => setTargetId("")}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+                  className="absolute right-1.5 top-1/2 -translate-y-1/2 size-6 text-muted-foreground hover:text-foreground cursor-pointer"
                 >
                   <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
-                </button>
+                </Button>
               )}
             </div>
 
-            {/* Quick Pick Chips */}
             {canisters.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5 pt-1 min-w-0 max-w-full">
                 <span className="text-[11px] text-muted-foreground">Quick select:</span>
@@ -149,26 +148,27 @@ export function ConnectControllerDialog({
                   const isSelected = targetId === c.id
                   const label = c.name ? `${c.name} (${c.id.slice(0, 5)}…)` : c.id
                   return (
-                    <button
+                    <Button
                       key={c.id}
                       type="button"
+                      variant="outline"
+                      size="xs"
                       onClick={() => setTargetId(c.id)}
                       className={cn(
-                        "inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] transition-colors cursor-pointer bg-transparent",
+                        "h-6 rounded-md px-2 text-[11px] cursor-pointer",
                         isSelected
                           ? "border-foreground/50 text-foreground font-medium"
                           : "border-border/60 text-muted-foreground hover:border-foreground/30 hover:text-foreground"
                       )}
                     >
                       {label}
-                    </button>
+                    </Button>
                   )
                 })}
               </div>
             )}
           </Field>
 
-          {/* Generated dfx Command */}
           <div className="flex flex-col gap-1.5 min-w-0 max-w-full">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-foreground">Generated Command</span>
@@ -185,13 +185,13 @@ export function ConnectControllerDialog({
               </Button>
             </div>
 
-            <div className="relative rounded-lg border border-border/60 bg-zinc-950 p-3 text-zinc-100 dark:border-zinc-800 dark:bg-black/50 min-w-0 max-w-full overflow-hidden">
-              <pre className="w-full min-w-0 max-w-full overflow-x-auto whitespace-pre-wrap break-all font-mono text-xs leading-relaxed text-zinc-200">
+            <div className="relative rounded-lg border border-border/60 bg-muted/40 p-3 text-foreground min-w-0 max-w-full overflow-hidden">
+              <pre className="w-full min-w-0 max-w-full overflow-x-auto whitespace-pre-wrap break-all font-mono text-xs leading-relaxed text-foreground">
                 <code>{generatedCommand}</code>
               </pre>
             </div>
             {!isReady ? (
-              <p className="text-[11px] text-amber-500 font-medium">
+              <p className="text-[11px] text-warning font-medium">
                 Choose a canister from the list above or enter a canister ID to complete the command.
               </p>
             ) : (
@@ -201,7 +201,6 @@ export function ConnectControllerDialog({
             )}
           </div>
 
-          {/* Your Internet Identity Info */}
           <div className="flex items-center justify-between rounded-lg border border-border/60 bg-muted/20 px-3 py-2 text-xs min-w-0 max-w-full gap-2">
             <div className="min-w-0 flex-1">
               <span className="text-[11px] text-muted-foreground block">Your Internet Identity Principal:</span>

@@ -141,6 +141,7 @@ module {
       };
       case (#Ok(remote)) {
         recordSwapFills(service, user.id, tokenIn, tokenOut, remote);
+        ignore await withdrawFromTradeUnchecked(service, caller, tokenOut, remote.amount_out);
         #ok(toSwapResult(remote));
       };
     };

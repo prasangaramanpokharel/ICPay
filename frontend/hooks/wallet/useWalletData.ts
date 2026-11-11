@@ -22,7 +22,7 @@ import { getTransactions, getTransactionDetail } from "@/services/transactions/t
 import { resolveUsername, searchUsers } from "@/services/profile/profile"
 import { listBookmarks } from "@/services/bookmark/bookmark"
 import { USERNAME_MIN_LENGTH } from "@/lib/profile/username"
-import { checkUsername } from "@/services/buy/buy"
+import { checkUsername, getUsernameTreasury } from "@/services/buy/buy"
 import { compareBySuggestion } from "@/lib/verified/premiumTick"
 import { fetchAccountStats, type AccountStats } from "@/services/account/account"
 import {
@@ -397,6 +397,15 @@ export function useUsernameAvailability(name: string) {
   )
 
   return { available: data ?? null, isLoading: trimmed !== "" && isLoading }
+}
+
+export function useUsernameTreasury() {
+  const { identity } = useAuth()
+  const { data } = useSWRImmutable(
+    identity ? (["username-treasury"] as const) : null,
+    () => getUsernameTreasury(identity)
+  )
+  return data ?? null
 }
 
 export function useUserSearch(search: string, limit = 10) {

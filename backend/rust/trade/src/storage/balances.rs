@@ -33,12 +33,12 @@ impl Storable for BalanceKey {
 }
 
 thread_local! {
-    static BALANCES: RefCell<StableBTreeMap<BalanceKey, u64, Memory>> = RefCell::new(
+    static BALANCES: RefCell<StableBTreeMap<BalanceKey, u128, Memory>> = RefCell::new(
         StableBTreeMap::init(MEMORY_MANAGER.with(|m| m.borrow().get(BALANCES_MEM_ID)))
     );
 }
 
-pub fn get(user: Principal, token: &str) -> u64 {
+pub fn get(user: Principal, token: &str) -> u128 {
     let key = BalanceKey {
         user,
         token: token.to_string(),
@@ -46,7 +46,7 @@ pub fn get(user: Principal, token: &str) -> u64 {
     BALANCES.with(|m| m.borrow().get(&key).unwrap_or(0))
 }
 
-pub fn credit(user: Principal, token: &str, amount: u64) {
+pub fn credit(user: Principal, token: &str, amount: u128) {
     let key = BalanceKey {
         user,
         token: token.to_string(),
@@ -58,7 +58,7 @@ pub fn credit(user: Principal, token: &str, amount: u64) {
     });
 }
 
-pub fn debit(user: Principal, token: &str, amount: u64) -> Result<(), String> {
+pub fn debit(user: Principal, token: &str, amount: u128) -> Result<(), String> {
     let key = BalanceKey {
         user,
         token: token.to_string(),

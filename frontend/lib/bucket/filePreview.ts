@@ -1,6 +1,109 @@
 import { resolvePublicFileUrl, toRawCanisterUrl } from "@/lib/bucket/cdn"
 import { downloadFileBlob } from "@/services/bucket/bucket"
+import type { FilePublic } from "@/services/bucket/types"
 import type { Identity } from "@icp-sdk/core/agent"
+
+const TEXT_EXTENSIONS = new Set([
+  "txt",
+  "md",
+  "mdx",
+  "rst",
+  "tex",
+  "json",
+  "jsonl",
+  "ndjson",
+  "csv",
+  "tsv",
+  "xml",
+  "yaml",
+  "yml",
+  "toml",
+  "ini",
+  "cfg",
+  "conf",
+  "lock",
+  "log",
+  "mo",
+  "did",
+  "rs",
+  "ts",
+  "tsx",
+  "js",
+  "jsx",
+  "mjs",
+  "cjs",
+  "py",
+  "go",
+  "sol",
+  "java",
+  "kt",
+  "swift",
+  "cs",
+  "dart",
+  "cpp",
+  "c",
+  "h",
+  "hpp",
+  "rb",
+  "php",
+  "sql",
+  "graphql",
+  "gql",
+  "proto",
+  "prisma",
+  "css",
+  "scss",
+  "less",
+  "map",
+  "gltf",
+])
+
+export const MAX_TEXT_PREVIEW_BYTES = 512 * 1024
+
+export function isPreviewableImage(contentType: string): boolean {
+  return contentType.startsWith("image/")
+}
+
+export function isPreviewableVideo(contentType: string): boolean {
+  return contentType.startsWith("video/")
+}
+
+export function isPreviewableAudio(contentType: string): boolean {
+  return contentType.startsWith("audio/")
+}
+
+export function isPreviewablePdf(contentType: string, path: string): boolean {
+  return contentType === "application/pdf" || path.toLowerCase().endsWith(".pdf")
+}
+
+export function isPreviewableText(contentType: string, path: string, size: bigint): boolean {
+  if (size > BigInt(MAX_TEXT_PREVIEW_BYTES)) return false
+  const ct = contentType.toLowerCase()
+  if (
+    ct.startsWith("text/") ||
+    ct === "application/json" ||
+    ct === "application/ld+json" ||
+    ct === "application/xml" ||
+    ct === "application/javascript" ||
+    ct === "application/typescript" ||
+    ct === "application/x-yaml" ||
+    ct === "application/toml"
+  ) {
+    return true
+  }
+  const ext = path.split(".").pop()?.toLowerCase() ?? ""
+  return TEXT_EXTENSIONS.has(ext)
+}
+
+export function isAnyPreviewable(file: FilePublic): boolean {
+  return (
+    isPreviewableImage(file.contentType) ||
+    isPreviewableVideo(file.contentType) ||
+    isPreviewableAudio(file.contentType) ||
+    isPreviewablePdf(file.contentType, file.path) ||
+    isPreviewableText(file.contentType, file.path, file.size)
+  )
+}
 
 export function normalizePublicFileUrl(url: string): string {
   return resolvePublicFileUrl(url, "raw")

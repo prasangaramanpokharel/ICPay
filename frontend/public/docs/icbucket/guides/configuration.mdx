@@ -27,8 +27,8 @@ const bucket = new ICBucket({
   bucketId: process.env.ICBUCKET_ID!,
   apiKey: process.env.ICBUCKET_API_KEY!,
   
-  // Custom Edge CDN domain (defaults to https://cdn.icpay.app)
-  cdnBase: "https://cdn.icpay.app",
+  // Custom Edge CDN domain (defaults to https://cloud.icpay.app)
+  cdnBase: "https://cloud.icpay.app",
 
   // Chunk upload configuration
   chunkSizeBytes: 2 * 1024 * 1024, // 2MB default per boundary node guidelines
@@ -50,7 +50,7 @@ ICBUCKET_ID=my-storage-bucket
 ICBUCKET_API_KEY=icp_live_sec_100234
 
 # Optional overrides
-ICBUCKET_CDN_BASE=https://cdn.icpay.app
+ICBUCKET_CDN_BASE=https://cloud.icpay.app
 ICBUCKET_CANISTER_ID=6vbhm-nqaaa-aaaan-q6muq-cai
 ```
 

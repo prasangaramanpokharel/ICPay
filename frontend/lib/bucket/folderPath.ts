@@ -73,23 +73,34 @@ export function listFolderEntries<T extends { path: string }>(
   return [...folderItems, ...items]
 }
 
-export function folderTotals<T extends { path: string; size: bigint }>(
+export function folderTotals<
+  T extends {
+    path: string
+    size: bigint
+    createdAt?: bigint
+    updatedAt?: bigint | [] | [bigint]
+  },
+>(
   files: T[],
   prefix: string,
   folderName: string,
-): { bytes: bigint; count: number } {
+): { bytes: bigint; count: number; latestModified: bigint } {
   const nested = nestedPrefix(prefix, folderName)
   const folderKey = nested.slice(0, -1)
   let bytes = 0n
   let count = 0
+  let latestModified = 0n
   for (const file of files) {
     const path = stripLeadingSlash(file.path)
     if (path === folderKey || path.startsWith(nested)) {
       bytes += file.size
       count += 1
+      const rawUpdated = Array.isArray(file.updatedAt) ? file.updatedAt[0] : file.updatedAt
+      const ts = rawUpdated && rawUpdated > 0n ? rawUpdated : (file.createdAt ?? 0n)
+      if (ts > latestModified) latestModified = ts
     }
   }
-  return { bytes, count }
+  return { bytes, count, latestModified }
 }
 
 export function pathsUnderFolder<T extends { path: string }>(

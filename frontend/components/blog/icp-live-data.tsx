@@ -29,7 +29,7 @@ function StatCard({ label, value, sub }: { label: string; value: string; sub?: s
 function Change({ pct }: { pct: number }) {
   const pos = pct >= 0
   return (
-    <span className={pos ? "text-green-600 dark:text-green-400" : "text-destructive"}>
+    <span className={pos ? "text-success" : "text-destructive"}>
       {pos ? "+" : ""}
       {pct.toFixed(2)}%
     </span>

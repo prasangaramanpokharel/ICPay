@@ -52,7 +52,7 @@ module {
     "Your ICPay Cloud Storage bucket <strong>" # bucketName # "</strong> has <strong>" # daysStr # " day(s)</strong> remaining on its current storage lease." #
     "</p>" #
     "<p style=\"margin:0 0 18px 0;font-size:15px;line-height:25px;color:#111827;\">" #
-    "To ensure uninterrupted public CDN delivery (<a href=\"https://cdn.icpay.app\" target=\"_blank\" style=\"color:#ad1470;text-decoration:none;font-weight:500;\">cdn.icpay.app</a>) and avoid your bucket entering the read-only grace period, please renew your storage plan." #
+    "To ensure uninterrupted public CDN delivery (<a href=\"https://cloud.icpay.app\" target=\"_blank\" style=\"color:#ad1470;text-decoration:none;font-weight:500;\">cloud.icpay.app</a>) and avoid your bucket entering the read-only grace period, please renew your storage plan." #
     "</p>" #
     "<table role=\"presentation\" width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"margin:20px 0 24px 0;background-color:#fafafa;border:1px solid #f1f5f9;border-radius:8px;overflow:hidden;\">" #
     "<tr><td style=\"padding:12px 16px;border-bottom:1px solid #f1f5f9;font-size:14px;color:#64748b;\">Bucket Name</td>" #
@@ -147,7 +147,7 @@ module {
     "The storage lease for bucket <strong>" # bucketName # "</strong> has expired and has entered the <strong>7-day read-only grace period</strong>." #
     "</p>" #
     "<p style=\"margin:0 0 18px 0;font-size:15px;line-height:25px;color:#111827;\">" #
-    "Public CDN delivery (<a href=\"https://cdn.icpay.app\" target=\"_blank\" style=\"color:#ad1470;text-decoration:none;font-weight:500;\">cdn.icpay.app</a>) remains active so your live client applications and media links continue working, but new file uploads and modifications are temporarily suspended." #
+    "Public CDN delivery (<a href=\"https://cloud.icpay.app\" target=\"_blank\" style=\"color:#ad1470;text-decoration:none;font-weight:500;\">cloud.icpay.app</a>) remains active so your live client applications and media links continue working, but new file uploads and modifications are temporarily suspended." #
     "</p>" #
     "<table role=\"presentation\" width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"margin:20px 0 24px 0;background-color:#fafafa;border:1px solid #f1f5f9;border-radius:8px;overflow:hidden;\">" #
     "<tr><td style=\"padding:12px 16px;border-bottom:1px solid #f1f5f9;font-size:14px;color:#64748b;\">Bucket Name</td>" #
@@ -263,7 +263,7 @@ module {
     "</a></td></tr></table>" #
     "<p style=\"margin:0 0 14px 0;font-size:14px;line-height:23px;color:#111827;\"><strong>Drop-In AWS S3 SDK Support:</strong></p>" #
     "<p style=\"margin:0 0 22px 0;font-size:14px;line-height:23px;color:#4b5563;\">" #
-    "Point your existing <code style=\"background-color:#f1f5f9;color:#0f172a;padding:2px 6px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;\">@aws-sdk/client-s3</code>, <code style=\"background-color:#f1f5f9;color:#0f172a;padding:2px 6px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;\">MinIO</code>, or <code style=\"background-color:#f1f5f9;color:#0f172a;padding:2px 6px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;\">boto3</code> client to <code style=\"background-color:#f1f5f9;color:#0f172a;padding:2px 6px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;\">https://cloud.icpay.app</code>. All assets cached globally at <a href=\"https://cdn.icpay.app\" target=\"_blank\" style=\"color:#ad1470;text-decoration:none;font-weight:500;\">cdn.icpay.app</a> incur $0.00 in egress bandwidth penalties." #
+    "Point your existing <code style=\"background-color:#f1f5f9;color:#0f172a;padding:2px 6px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;\">@aws-sdk/client-s3</code>, <code style=\"background-color:#f1f5f9;color:#0f172a;padding:2px 6px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;\">MinIO</code>, or <code style=\"background-color:#f1f5f9;color:#0f172a;padding:2px 6px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;\">boto3</code> client to <code style=\"background-color:#f1f5f9;color:#0f172a;padding:2px 6px;border-radius:4px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-size:13px;\">https://cloud.icpay.app</code>. All assets cached globally at <a href=\"https://cloud.icpay.app\" target=\"_blank\" style=\"color:#ad1470;text-decoration:none;font-weight:500;\">cloud.icpay.app</a> incur $0.00 in egress bandwidth penalties." #
     "</p>" #
     "<table role=\"presentation\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\" style=\"margin-top:20px;\">" #
     "<tr><td style=\"font-size:15px;line-height:24px;color:#111827;\">" #

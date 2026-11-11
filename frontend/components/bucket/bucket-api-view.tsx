@@ -17,6 +17,7 @@ import {
   InformationCircleIcon,
   Key01Icon,
   MoreHorizontalIcon,
+  Plug01Icon,
   Search01Icon,
   Tick02Icon,
 } from "@hugeicons/core-free-icons"
@@ -79,6 +80,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { PremiumGateDialog } from "@/components/shared/premium-gate"
+import { BucketApiKeyConnectModal } from "@/components/bucket/bucket-api-key-connect-modal"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useBucketList, BUCKET_QUERY } from "@/hooks/bucket/useBucket"
 import { useOwnProfile } from "@/hooks/wallet/useWalletData"
@@ -524,10 +526,12 @@ export function BucketApiView() {
                       <TableCell className="py-3">
                         <div className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
                           <span className="truncate">{key.keyHint}</span>
-                          <button
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon-xs"
                             onClick={() => void handleCopyHint(key)}
-                            className="inline-flex size-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+                            className="size-5 p-0 text-muted-foreground hover:bg-muted hover:text-foreground"
                             aria-label="Copy key token prefix"
                             title={copiedKeyHintId === key.id ? tc("copied") : tc("copy")}
                           >
@@ -535,7 +539,7 @@ export function BucketApiView() {
                               icon={copiedKeyHintId === key.id ? Tick02Icon : Copy01Icon}
                               className="size-3.5"
                             />
-                          </button>
+                          </Button>
                         </div>
                       </TableCell>
 
@@ -578,7 +582,7 @@ export function BucketApiView() {
                               onClick={() => setCodeSnippetKey(key)}
                               className="gap-2 text-xs cursor-pointer"
                             >
-                              <HugeiconsIcon icon={CodeIcon} className="size-3.5 text-muted-foreground" />
+                              <HugeiconsIcon icon={Plug01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
                               <span>Quick connect</span>
                             </DropdownMenuItem>
 
@@ -751,25 +755,29 @@ export function BucketApiView() {
                 className="w-full bg-transparent font-mono text-xs text-foreground outline-none"
               />
               <div className="flex shrink-0 items-center gap-1">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon-xs"
                   onClick={() => setShowCreatedSecret((v) => !v)}
-                  className="inline-flex size-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer transition-colors"
+                  className="size-6 p-0 text-muted-foreground hover:bg-muted hover:text-foreground"
                   aria-label={showCreatedSecret ? "Hide secret" : "Reveal secret"}
                   title={showCreatedSecret ? "Hide secret" : "Reveal secret"}
                 >
                   <HugeiconsIcon icon={showCreatedSecret ? EyeOffIcon : EyeIcon} className="size-3.5" />
-                </button>
+                </Button>
 
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon-xs"
                   onClick={() => void handleCopySecret()}
-                  className="inline-flex size-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer transition-colors"
+                  className="size-6 p-0 text-muted-foreground hover:bg-muted hover:text-foreground"
                   aria-label="Copy secret"
                   title={copiedCreatedSecret ? tc("copied") : tc("copy")}
                 >
                   <HugeiconsIcon icon={copiedCreatedSecret ? Tick02Icon : Copy01Icon} className="size-3.5" />
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -818,75 +826,13 @@ export function BucketApiView() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <Dialog
+      <BucketApiKeyConnectModal
+        apiKey={codeSnippetKey}
         open={codeSnippetKey != null}
         onOpenChange={(v) => {
           if (!v) setCodeSnippetKey(null)
         }}
-      >
-        <DialogContent className="max-w-lg gap-4" showCloseButton>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-base">
-              <HugeiconsIcon icon={CodeIcon} className="size-4 text-muted-foreground" />
-              <span>Connect with {codeSnippetKey?.name}</span>
-            </DialogTitle>
-            <DialogDescription className="text-xs">
-              Install the official client SDK and initialize with your API key.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-3">
-            <div className="rounded-lg border border-border bg-muted/30 p-2.5 font-mono text-xs">
-              <div className="flex items-center justify-between text-muted-foreground">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  Install SDK
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    void copyText("npm i icpay-bucket")
-                    toast.success("Command copied")
-                  }}
-                  className="inline-flex items-center gap-1 text-[11px] hover:text-foreground cursor-pointer"
-                >
-                  <HugeiconsIcon icon={Copy01Icon} className="size-3" />
-                  <span>Copy</span>
-                </button>
-              </div>
-              <p className="mt-1 text-foreground select-all">npm i icpay-bucket</p>
-            </div>
-
-            <div className="rounded-lg border border-border bg-muted/30 p-3 font-mono text-xs overflow-x-auto">
-              <pre className="text-foreground text-[11px] leading-relaxed">
-{`import { BucketClient } from "icpay-bucket";
-
-const client = new BucketClient({
-  apiKey: process.env.IC_API_KEY, // Use your secret token
-});
-
-// Upload to ${codeSnippetKey?.bucketName || codeSnippetKey?.bucketId}
-const result = await client.uploadFile({
-  bucketId: "${codeSnippetKey?.bucketId}",
-  path: "/uploads/data.json",
-  data: new TextEncoder().encode(JSON.stringify({ active: true })),
-  contentType: "application/json",
-});`}
-              </pre>
-            </div>
-          </div>
-
-          <DialogFooter className="sm:justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setCodeSnippetKey(null)}
-            >
-              Done
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      />
 
       <PremiumGateDialog
         open={premiumGateOpen}

@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -61,37 +62,39 @@ export function BucketRenewDrawer({
         </DrawerHeader>
         <div className="space-y-3 px-4 pb-2 text-sm">
           <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-border/80 bg-muted/40 p-1">
-            <button
+            <Button
               type="button"
+              variant={period === "monthly" ? "secondary" : "ghost"}
               onClick={() => setPeriod("monthly")}
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 px-3 text-xs font-medium transition-all",
+                "h-auto flex-col gap-0.5 rounded-lg py-1.5 px-3 text-xs font-medium transition-all",
                 period === "monthly"
-                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-border"
+                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-border hover:bg-background"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               <span>+30 Days</span>
               <span className="text-[10px] font-normal text-muted-foreground">Monthly cycle</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant={period === "yearly" ? "secondary" : "ghost"}
               onClick={() => setPeriod("yearly")}
               className={cn(
-                "relative flex flex-col items-center justify-center gap-0.5 rounded-lg py-1.5 px-3 text-xs font-medium transition-all",
+                "relative h-auto flex-col gap-0.5 rounded-lg py-1.5 px-3 text-xs font-medium transition-all",
                 period === "yearly"
-                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-primary/40"
+                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-primary/40 hover:bg-background"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               <span className="flex items-center gap-1.5">
                 <span>+365 Days</span>
-                <span className="rounded-full bg-success/15 px-1.5 py-0.5 text-[9px] font-bold text-success">
+                <Badge variant="outline" className="border-transparent bg-success/15 px-1.5 py-0 text-[9px] font-bold text-success">
                   2 MO FREE
-                </span>
+                </Badge>
               </span>
               <span className="text-[10px] font-normal text-muted-foreground">Annual renewal</span>
-            </button>
+            </Button>
           </div>
 
           {isLoading || !quote ? (

@@ -35,10 +35,34 @@ export type TradeExecErrorKind =
   | "auth"
   | "timeout"
   | "canister_method"
+  | "rate_limit"
+  | "allowance"
+  | "busy"
   | "unknown"
 
 export function classifyTradeExecError(err: unknown): TradeExecErrorKind {
   const msg = (err instanceof Error ? err.message : String(err ?? "")).toLowerCase()
+  if (
+    msg.includes("rate limit") ||
+    msg.includes("too many requests") ||
+    msg.includes("throttled")
+  ) {
+    return "rate_limit"
+  }
+  if (
+    msg.includes("allowance") ||
+    msg.includes("icrc2_approve") ||
+    msg.includes("bad allowance") ||
+    msg.includes("insufficientallowance")
+  ) {
+    return "allowance"
+  }
+  if (
+    msg.includes("user busy") ||
+    msg.includes("trade lock")
+  ) {
+    return "busy"
+  }
   if (
     msg.includes("insufficient") &&
     (msg.includes("balance") || msg.includes("trade") || msg.includes("trading") || msg.includes("funds") || msg.includes("fee"))
@@ -93,6 +117,27 @@ export function formatTradeErrorMessage(err: unknown): string {
   const rawMsg = (err instanceof Error ? err.message : String(err)).trim()
   const lower = rawMsg.toLowerCase()
 
+  if (
+    lower.includes("rate limit") ||
+    lower.includes("too many requests") ||
+    lower.includes("throttled")
+  ) {
+    const waitMatch = rawMsg.match(/wait\s+(\d+)s/i)
+    if (waitMatch && waitMatch[1]) {
+      return `Rate limit reached. Please wait ${waitMatch[1]}s before submitting another trade.`
+    }
+    return "Rate limit reached. Please wait a few seconds before submitting another trade."
+  }
+  if (
+    lower.includes("allowance") ||
+    lower.includes("icrc2_approve") ||
+    lower.includes("insufficientallowance")
+  ) {
+    return "ICRC-2 token allowance failed. Ensure token allowance is approved."
+  }
+  if (lower.includes("user busy") || lower.includes("trade lock")) {
+    return "A previous trade is still confirming on-chain. Please wait a moment."
+  }
   if (isInsufficientBalanceError(err)) {
     return "Insufficient trading balance. Deposit funds into your trading balance to place this order."
   }
@@ -152,3 +197,16 @@ export function formatTradeErrorMessage(err: unknown): string {
 export function shouldRetryTradeQuote(err: unknown): boolean {
   return classifyTradeQuoteError(err) === "unknown"
 }
+
+export function extractRateLimitWaitSeconds(err: unknown): number | null {
+  const rawMsg = (err instanceof Error ? err.message : String(err ?? "")).trim()
+  const match = rawMsg.match(/wait\s+(\d+)s/i)
+  if (match && match[1]) {
+    const secs = Number.parseInt(match[1], 10)
+    if (!Number.isNaN(secs) && secs > 0 && secs <= 60) {
+      return secs
+    }
+  }
+  return null
+}
+

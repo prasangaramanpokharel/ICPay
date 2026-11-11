@@ -43,6 +43,7 @@ module {
   public func corsHeaders(contentType: Text) : [HttpTypes.HeaderField] {
     [
       ("Content-Type", contentType),
+      ("X-Content-Type-Options", "nosniff"),
       ("Access-Control-Allow-Origin", "*"),
       ("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS"),
       ("Cache-Control", "public, max-age=3600"),

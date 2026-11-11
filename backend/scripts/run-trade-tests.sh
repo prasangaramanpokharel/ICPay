@@ -9,6 +9,10 @@ if ! command -v cargo >/dev/null 2>&1; then
   exit 1
 fi
 
+if [[ "$(uname -s)" == "Darwin" ]] && [[ -d "/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk" ]]; then
+  export SDKROOT="/Library/Developer/CommandLineTools/SDKs/MacOSX15.4.sdk"
+fi
+
 echo "============================================"
 echo "  ICPay Trade (Rust) Test Suite"
 echo "============================================"

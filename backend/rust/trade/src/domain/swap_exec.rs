@@ -22,27 +22,27 @@ pub async fn execute_swap_for(
         Err(e) => return ApiResult::err(e),
     };
 
-    let amount_in_u64: u64 = match amount_in.0.try_into() {
+    let amount_in_u128: u128 = match amount_in.0.try_into() {
         Ok(v) => v,
         Err(_) => return ApiResult::err("amount_in too large"),
     };
-    let min_out_u64: u64 = match amount_out_min.0.try_into() {
+    let min_out_u128: u128 = match amount_out_min.0.try_into() {
         Ok(v) => v,
         Err(_) => return ApiResult::err("amount_out_min too large"),
     };
 
-    if amount_in_u64 == 0 {
+    if amount_in_u128 == 0 {
         return ApiResult::err("amount_in must be > 0");
     }
-    if min_out_u64 == 0 {
+    if min_out_u128 == 0 {
         return ApiResult::err("amount_out_min must be > 0");
     }
     if token_in == token_out {
         return ApiResult::err("token_in and token_out must differ");
     }
 
-    let svc = service_fee(amount_in_u64);
-    if balances::get(user, &token_in) < amount_in_u64 {
+    let svc = service_fee(amount_in_u128);
+    if balances::get(user, &token_in) < amount_in_u128 {
         return ApiResult::err("insufficient trading balance — deposit first");
     }
 
@@ -64,7 +64,7 @@ pub async fn execute_swap_for(
         Err(e) => return ApiResult::err(e),
     };
 
-    let swap_amount = amount_after_service_fee(amount_in_u64).saturating_sub(fee_in);
+    let swap_amount = amount_after_service_fee(amount_in_u128).saturating_sub(fee_in);
     if swap_amount == 0 {
         return ApiResult::err("amount_in too small after service and ledger fees");
     }
@@ -74,7 +74,7 @@ pub async fn execute_swap_for(
         Err(e) => return ApiResult::err(e),
     };
 
-    if let Err(e) = balances::debit(user, &token_in, amount_in_u64) {
+    if let Err(e) = balances::debit(user, &token_in, amount_in_u128) {
         return ApiResult::err(e);
     }
 
@@ -82,7 +82,7 @@ pub async fn execute_swap_for(
     let approve_block = match approve_spender(token_in_id, pool.pool_id, allowance, fee_in).await {
         Ok(block) => block,
         Err(e) => {
-            balances::credit(user, &token_in, amount_in_u64);
+            balances::credit(user, &token_in, amount_in_u128);
             return ApiResult::err(e);
         }
     };
@@ -93,7 +93,7 @@ pub async fn execute_swap_for(
             token_in_fee: Nat::from(fee_in),
             amount_in: swap_amount.to_string(),
             zero_for_one: pool.zero_for_one,
-            amount_out_minimum: min_out_u64.to_string(),
+            amount_out_minimum: min_out_u128.to_string(),
             token_out_fee: Nat::from(fee_out),
         },
     )
@@ -101,21 +101,21 @@ pub async fn execute_swap_for(
     {
         Ok(v) => v,
         Err(e) => {
-            balances::credit(user, &token_in, amount_in_u64);
+            balances::credit(user, &token_in, amount_in_u128);
             return ApiResult::err(e);
         }
     };
 
-    if gross_out < min_out_u64 {
-        balances::credit(user, &token_in, amount_in_u64);
+    if gross_out < min_out_u128 {
+        balances::credit(user, &token_in, amount_in_u128);
         return ApiResult::err(format!(
-            "slippage exceeded: got {gross_out}, minimum {min_out_u64}"
+            "slippage exceeded: got {gross_out}, minimum {min_out_u128}"
         ));
     }
 
     let net_out = net_out(gross_out, fee_out);
     if net_out == 0 {
-        balances::credit(user, &token_in, amount_in_u64);
+        balances::credit(user, &token_in, amount_in_u128);
         return ApiResult::err("amount_out too small after ledger fees");
     }
 
@@ -130,7 +130,7 @@ pub async fn execute_swap_for(
             timestamp_ns: tx_ns,
             token_in: token_in.clone(),
             token_out: token_out.clone(),
-            amount_in: amount_in_u64,
+            amount_in: amount_in_u128,
             amount_out: net_out,
             service_fee: svc,
             tx_id: tx_id.clone(),
@@ -139,7 +139,7 @@ pub async fn execute_swap_for(
 
     ApiResult::ok(SwapResult {
         block_index: approve_block,
-        amount_in: Nat::from(amount_in_u64),
+        amount_in: Nat::from(amount_in_u128),
         amount_out: Nat::from(net_out),
         service_fee: Nat::from(svc),
         tx_id,

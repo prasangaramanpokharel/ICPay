@@ -2,20 +2,29 @@
 
 import { useLayoutEffect, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
-import { CommunityIcon } from "@/components/community/community-icon"
-import { Button } from "@/components/ui/button"
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuGroup,
-  ContextMenuItem,
-  ContextMenuSeparator,
-  ContextMenuShortcut,
-  ContextMenuSub,
-  ContextMenuSubContent,
-  ContextMenuSubTrigger,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu"
+  CodeIcon,
+  Link01Icon,
+  QuoteUpIcon,
+  SentIcon,
+  SmileIcon,
+  TextBoldIcon,
+  TextItalicIcon,
+  ViewOffIcon,
+} from "@hugeicons/core-free-icons"
+import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import {
   applyTextEdit,
   clearFormatting,
@@ -26,6 +35,8 @@ import {
 } from "@/lib/community/composeFormat"
 import { cn } from "@/lib/ui/utils"
 
+const EMOJI_PALETTE = ["❤️", "🔥", "🎉", "🚀", "👍", "👏", "💡", "💎", "📈", "📢", "⚠️", "✅"] as const
+
 export function CommunityComposer({
   onPost,
 }: {
@@ -34,8 +45,9 @@ export function CommunityComposer({
   const t = useTranslations("community")
   const [text, setText] = useState("")
   const [error, setError] = useState<string | null>(null)
+  const [submitting, setSubmitting] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
-  const canSend = !!text.trim()
+  const canSend = !submitting && !!text.trim()
 
   useLayoutEffect(() => {
     const el = textareaRef.current
@@ -50,6 +62,7 @@ export function CommunityComposer({
     if (!el) return
     applyTextEdit(el, edit)
     setText(el.value)
+    el.focus()
   }
 
   const withSelection = (fn: (value: string, start: number, end: number) => ReturnType<typeof wrapMarkers>) => {
@@ -58,43 +71,32 @@ export function CommunityComposer({
     applyEdit(fn(el.value, el.selectionStart, el.selectionEnd))
   }
 
-  const submit = () => {
-    const trimmed = text.trim()
-    if (!trimmed) return
-    setText("")
-    setError(null)
-    void onPost(trimmed).then((err) => {
-      if (err) {
-        setError(err)
-        setText(trimmed)
-      }
-    })
+  const insertEmoji = (emoji: string) => {
+    const el = textareaRef.current
+    if (!el) {
+      setText((prev) => prev + emoji)
+      return
+    }
+    const { selectionStart, selectionEnd, value } = el
+    const next = `${value.slice(0, selectionStart)}${emoji}${value.slice(selectionEnd)}`
+    const pos = selectionStart + emoji.length
+    applyEdit({ value: next, selectionStart: pos, selectionEnd: pos })
   }
 
-  const runClipboard = async (action: "cut" | "copy" | "paste") => {
-    const el = textareaRef.current
-    if (!el) return
-    el.focus()
-    const { selectionStart, selectionEnd, value } = el
-    const selected = value.slice(selectionStart, selectionEnd)
-
-    if (action === "copy" && selected) {
-      await navigator.clipboard.writeText(selected)
-      return
-    }
-
-    if (action === "cut" && selected) {
-      await navigator.clipboard.writeText(selected)
-      const next = `${value.slice(0, selectionStart)}${value.slice(selectionEnd)}`
-      applyEdit({ value: next, selectionStart, selectionEnd: selectionStart })
-      return
-    }
-
-    if (action === "paste") {
-      const clip = await navigator.clipboard.readText()
-      const next = `${value.slice(0, selectionStart)}${clip}${value.slice(selectionEnd)}`
-      const end = selectionStart + clip.length
-      applyEdit({ value: next, selectionStart: end, selectionEnd: end })
+  const submit = async () => {
+    const trimmed = text.trim()
+    if (!trimmed || submitting) return
+    setSubmitting(true)
+    setError(null)
+    try {
+      const err = await onPost(trimmed)
+      if (err) {
+        setError(err)
+      } else {
+        setText("")
+      }
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -103,7 +105,7 @@ export function CommunityComposer({
     if (!mod) {
       if (e.key === "Enter" && !e.shiftKey) {
         e.preventDefault()
-        submit()
+        void submit()
       }
       return
     }
@@ -155,141 +157,198 @@ export function CommunityComposer({
     }
   }
 
+  const remaining = 2000 - text.length
+
   return (
-    <div className="shrink-0 border-t border-border/30 bg-background/35 rounded-4xl m-2 px-3 py-2.5 pb-[max(0.5rem,env(safe-area-inset-bottom))] backdrop-blur-xl">
-      <div className="flex items-end gap-2">
-        <ContextMenu>
-          <ContextMenuTrigger
-            render={
-              <textarea
-                ref={textareaRef}
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder={t("postPlaceholder")}
-                maxLength={2000}
-                rows={1}
-                className={cn(
-                  "min-h-[42px] max-h-[min(45vh,360px)] min-w-0 flex-1 resize-none overflow-y-auto rounded-2xl border border-border/40 bg-background/45 px-4 py-2.5 text-sm outline-none backdrop-blur-sm",
-                  "placeholder:text-muted-foreground focus-visible:border-border/60 focus-visible:ring-2 focus-visible:ring-ring/20"
-                )}
-              />
-            }
-          />
-          <ContextMenuContent className="w-56">
-            <ContextMenuGroup>
-              <ContextMenuItem disabled onClick={() => document.execCommand("undo")}>
-                {t("undo")}
-                <ContextMenuShortcut>Ctrl+Z</ContextMenuShortcut>
-              </ContextMenuItem>
-              <ContextMenuItem disabled onClick={() => document.execCommand("redo")}>
-                {t("redo")}
-                <ContextMenuShortcut>Ctrl+Shift+Z</ContextMenuShortcut>
-              </ContextMenuItem>
-            </ContextMenuGroup>
-            <ContextMenuSeparator />
-            <ContextMenuGroup>
-              <ContextMenuItem onClick={() => void runClipboard("cut")}>
-                {t("cut")}
-                <ContextMenuShortcut>Ctrl+X</ContextMenuShortcut>
-              </ContextMenuItem>
-              <ContextMenuItem onClick={() => void runClipboard("copy")}>
-                {t("copy")}
-                <ContextMenuShortcut>Ctrl+C</ContextMenuShortcut>
-              </ContextMenuItem>
-              <ContextMenuItem onClick={() => void runClipboard("paste")}>
-                {t("paste")}
-                <ContextMenuShortcut>Ctrl+V</ContextMenuShortcut>
-              </ContextMenuItem>
-              <ContextMenuItem
-                onClick={() => {
-                  const el = textareaRef.current
-                  if (!el || el.selectionStart === el.selectionEnd) return
-                  const next = `${el.value.slice(0, el.selectionStart)}${el.value.slice(el.selectionEnd)}`
-                  applyEdit({
-                    value: next,
-                    selectionStart: el.selectionStart,
-                    selectionEnd: el.selectionStart,
-                  })
-                }}
-              >
-                {t("deleteSelection")}
-              </ContextMenuItem>
-            </ContextMenuGroup>
-            <ContextMenuSeparator />
-            <ContextMenuSub>
-              <ContextMenuSubTrigger>{t("formatMenu")}</ContextMenuSubTrigger>
-              <ContextMenuSubContent className="w-52">
-                <ContextMenuItem onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "*", "*"))}>
-                  {t("formatBold")}
-                  <ContextMenuShortcut>Ctrl+B</ContextMenuShortcut>
-                </ContextMenuItem>
-                <ContextMenuItem onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "_", "_"))}>
-                  {t("formatItalic")}
-                  <ContextMenuShortcut>Ctrl+I</ContextMenuShortcut>
-                </ContextMenuItem>
-                <ContextMenuItem onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "__", "__"))}>
-                  {t("formatUnderline")}
-                  <ContextMenuShortcut>Ctrl+U</ContextMenuShortcut>
-                </ContextMenuItem>
-                <ContextMenuItem onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "~", "~"))}>
-                  {t("formatStrike")}
-                  <ContextMenuShortcut>Ctrl+Shift+X</ContextMenuShortcut>
-                </ContextMenuItem>
-                <ContextMenuItem onClick={() => withSelection(prefixQuoteLines)}>
-                  {t("formatQuote")}
-                  <ContextMenuShortcut>Ctrl+Shift+&gt;</ContextMenuShortcut>
-                </ContextMenuItem>
-                <ContextMenuItem onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "`", "`"))}>
-                  {t("formatMono")}
-                  <ContextMenuShortcut>Ctrl+Shift+M</ContextMenuShortcut>
-                </ContextMenuItem>
-                <ContextMenuItem onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "||", "||"))}>
-                  {t("formatSpoiler")}
-                  <ContextMenuShortcut>Ctrl+Shift+P</ContextMenuShortcut>
-                </ContextMenuItem>
-                <ContextMenuSeparator />
-                <ContextMenuItem onClick={() => withSelection(insertLink)}>
-                  {t("formatLink")}
-                  <ContextMenuShortcut>Ctrl+K</ContextMenuShortcut>
-                </ContextMenuItem>
-                <ContextMenuItem onClick={() => withSelection(insertDateStamp)}>
-                  {t("formatDate")}
-                  <ContextMenuShortcut>Ctrl+Shift+D</ContextMenuShortcut>
-                </ContextMenuItem>
-                <ContextMenuSeparator />
-                <ContextMenuItem onClick={() => withSelection(clearFormatting)}>
-                  {t("formatClear")}
-                  <ContextMenuShortcut>Ctrl+Shift+N</ContextMenuShortcut>
-                </ContextMenuItem>
-              </ContextMenuSubContent>
-            </ContextMenuSub>
-            <ContextMenuItem
-              onClick={() => {
-                textareaRef.current?.select()
-              }}
+    <div className="shrink-0 m-2 rounded-3xl border border-border/60 bg-card/85 p-2 shadow-lg backdrop-blur-xl transition-all">
+      <div className="flex items-center justify-between border-b border-border/40 pb-1.5 px-2 mb-1.5">
+        <div className="flex items-center gap-0.5">
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "*", "*"))}
+                  className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
+                >
+                  <HugeiconsIcon icon={TextBoldIcon} className="size-3.5" />
+                </Button>
+              }
+            />
+            <TooltipContent side="top">{t("formatBold")}</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "_", "_"))}
+                  className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
+                >
+                  <HugeiconsIcon icon={TextItalicIcon} className="size-3.5" />
+                </Button>
+              }
+            />
+            <TooltipContent side="top">{t("formatItalic")}</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => withSelection(insertLink)}
+                  className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
+                >
+                  <HugeiconsIcon icon={Link01Icon} className="size-3.5" />
+                </Button>
+              }
+            />
+            <TooltipContent side="top">{t("formatLink")}</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => withSelection(prefixQuoteLines)}
+                  className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
+                >
+                  <HugeiconsIcon icon={QuoteUpIcon} className="size-3.5" />
+                </Button>
+              }
+            />
+            <TooltipContent side="top">{t("formatQuote")}</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "`", "`"))}
+                  className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
+                >
+                  <HugeiconsIcon icon={CodeIcon} className="size-3.5" />
+                </Button>
+              }
+            />
+            <TooltipContent side="top">{t("formatMono")}</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "||", "||"))}
+                  className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
+                >
+                  <HugeiconsIcon icon={ViewOffIcon} className="size-3.5" />
+                </Button>
+              }
+            />
+            <TooltipContent side="top">{t("formatSpoiler")}</TooltipContent>
+          </Tooltip>
+
+          <Popover>
+            <PopoverTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  className="size-7 rounded-lg text-muted-foreground hover:text-foreground ml-1"
+                >
+                  <HugeiconsIcon icon={SmileIcon} className="size-3.5" />
+                </Button>
+              }
+            />
+            <PopoverContent
+              side="top"
+              align="start"
+              className="w-auto p-1.5 grid grid-cols-6 gap-1 rounded-2xl border-border/80 bg-popover/95 shadow-xl backdrop-blur-md"
             >
-              {t("selectAll")}
-              <ContextMenuShortcut>Ctrl+A</ContextMenuShortcut>
-            </ContextMenuItem>
-          </ContextMenuContent>
-        </ContextMenu>
+              {EMOJI_PALETTE.map((emoji) => (
+                <Button
+                  key={emoji}
+                  type="button"
+                  variant="ghost"
+                  size="icon-xs"
+                  onClick={() => insertEmoji(emoji)}
+                  className="size-7 text-sm rounded-lg hover:scale-125 transition-transform"
+                >
+                  <span>{emoji}</span>
+                </Button>
+              ))}
+            </PopoverContent>
+          </Popover>
+        </div>
+
+        {text.length > 0 && (
+          <span
+            className={cn(
+              "text-[10px] font-mono",
+              remaining < 100
+                ? "text-destructive font-semibold"
+                : remaining < 300
+                  ? "text-warning"
+                  : "text-muted-foreground"
+            )}
+          >
+            {text.length} / 2000
+          </span>
+        )}
+      </div>
+
+      <div className="flex items-end gap-2 px-1">
+        <textarea
+          ref={textareaRef}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={t("postPlaceholder")}
+          maxLength={2000}
+          rows={1}
+          className={cn(
+            "min-h-[40px] max-h-[min(45vh,360px)] min-w-0 flex-1 resize-none overflow-y-auto bg-transparent px-2.5 py-2 text-sm outline-none",
+            "placeholder:text-muted-foreground focus-visible:outline-none"
+          )}
+        />
         <Button
           type="button"
-          variant="ghost"
-          size="icon"
-          disabled={!canSend}
+          size="icon-sm"
+          disabled={!canSend || submitting}
           className={cn(
-            "size-11 shrink-0 rounded-full bg-transparent hover:bg-background/40",
-            !canSend && "opacity-40"
+            "size-9 shrink-0 rounded-full transition-all active:scale-95",
+            !canSend || submitting ? "opacity-40" : "shadow-md"
           )}
           aria-label={t("sendAria")}
-          onClick={submit}
+          onClick={() => void submit()}
         >
-          <CommunityIcon name="send" size={26} className={canSend ? "opacity-100" : "opacity-70"} />
+          {submitting ? (
+            <Spinner className="size-4" />
+          ) : (
+            <HugeiconsIcon icon={SentIcon} className="size-4" strokeWidth={2} />
+          )}
         </Button>
       </div>
-      {error && <p className="mt-1.5 px-1 text-xs text-destructive">{error}</p>}
+
+      {error && <p className="mt-1 px-2 text-xs text-destructive">{error}</p>}
     </div>
   )
 }

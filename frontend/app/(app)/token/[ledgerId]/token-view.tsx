@@ -11,7 +11,7 @@ export function TokenView() {
 
   useEffect(() => {
     if (ledgerId) {
-      router.replace(`/wallet?token=${ledgerId}`)
+      router.replace(`/token?id=${encodeURIComponent(ledgerId)}`)
     } else {
       router.replace("/wallet")
     }

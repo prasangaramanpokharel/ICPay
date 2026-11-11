@@ -5,6 +5,8 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import type { IcpPrice } from "@/lib/market/icpPrice"
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
@@ -64,16 +66,17 @@ export function HomeOverviewCard({
           </Button>
         </div>
         {username ? (
-          <button
-            type="button"
+          <Button
+            variant="ghost"
+            size="xs"
             onClick={() => void handleCopyUsername()}
             title="Click to copy username"
-            className="group inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 -ml-2 font-mono text-sm font-semibold tracking-tight text-muted-foreground hover:text-foreground hover:bg-muted active:scale-98 transition-all cursor-pointer w-fit"
+            className="group -ml-2 h-7 w-fit gap-1.5 font-mono text-sm font-semibold tracking-tight text-muted-foreground hover:text-foreground"
           >
             <span className="truncate">{username}</span>
             <PremiumBadge name={username} className="size-3.5" />
             <CopyIconIndicator copied={copied} iconClassName="size-3 text-muted-foreground group-hover:text-foreground" />
-          </button>
+          </Button>
         ) : null}
       </CardHeader>
       <CardContent className="px-6 py-5 space-y-4">
@@ -88,14 +91,15 @@ export function HomeOverviewCard({
             <span className="ml-2 text-lg font-medium text-muted-foreground">ICP</span>
           </Button>
           <div className="mt-1.5 flex items-center justify-between gap-2">
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="xs"
               onClick={() => void onRefreshPrice()}
               title="Click to refresh balance & price"
-              className="text-base font-medium tabular-nums text-foreground/80 hover:text-foreground cursor-pointer transition active:scale-95 text-left border-0 bg-transparent p-0"
+              className="h-auto p-0 text-base font-medium tabular-nums text-foreground/80 hover:bg-transparent hover:text-foreground"
             >
               {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
-            </button>
+            </Button>
             <div className="flex items-center gap-2">
               {!hidden && price && (
                 <span className="text-sm font-medium tabular-nums text-muted-foreground">
@@ -108,27 +112,28 @@ export function HomeOverviewCard({
                 </span>
               )}
               {!hidden && price && price.change24h !== 0 && (
-                <span
+                <Badge
+                  variant={price.change24h > 0 ? "default" : "destructive"}
                   className={cn(
-                    "text-sm font-semibold tabular-nums",
-                    price.change24h > 0 ? "text-success" : "text-destructive"
+                    "tabular-nums text-xs",
+                    price.change24h > 0 && "bg-success/15 text-success border-transparent hover:bg-success/20"
                   )}
                 >
                   {price.change24h > 0 ? "+" : ""}
                   {price.change24h.toFixed(2)}%
-                </span>
+                </Badge>
               )}
             </div>
           </div>
         </div>
-        <div className="flex gap-2">
+        <ButtonGroup>
           <Button nativeButton={false} render={<Link href="/deposit" />}>
             {tCommon("receive")}
           </Button>
           <Button variant="outline" nativeButton={false} render={<Link href="/transfer" />}>
             {tCommon("send")}
           </Button>
-        </div>
+        </ButtonGroup>
       </CardContent>
     </Card>
   )

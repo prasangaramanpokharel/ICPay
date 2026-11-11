@@ -1,12 +1,12 @@
 #[cfg(test)]
 pub struct QuoteBreakdown {
-    pub service_fee: u64,
-    pub amount_after_fee: u64,
-    pub swap_fee: u64,
-    pub net_out: u64,
+    pub service_fee: u128,
+    pub amount_after_fee: u128,
+    pub swap_fee: u128,
+    pub net_out: u128,
 }
 
-pub fn net_out(gross_out: u64, out_ledger_fee: u64) -> u64 {
+pub fn net_out(gross_out: u128, out_ledger_fee: u128) -> u128 {
     let out_fees = out_ledger_fee.saturating_mul(2);
     if gross_out > out_fees {
         gross_out - out_fees
@@ -16,7 +16,7 @@ pub fn net_out(gross_out: u64, out_ledger_fee: u64) -> u64 {
 }
 
 #[cfg(test)]
-pub fn breakdown(amount_in: u64, gross_out: u64, pool_fee_tier: u32, out_ledger_fee: u64) -> QuoteBreakdown {
+pub fn breakdown(amount_in: u128, gross_out: u128, pool_fee_tier: u32, out_ledger_fee: u128) -> QuoteBreakdown {
     use crate::domain::fees::{amount_after_service_fee, pool_fee_amount, service_fee};
 
     let fee = service_fee(amount_in);

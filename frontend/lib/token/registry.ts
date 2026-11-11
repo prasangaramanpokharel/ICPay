@@ -1,6 +1,7 @@
 "use client"
 
 import useSWR from "swr"
+import { resolveTokenDisplayName } from "@/lib/wallet/utils"
 
 const REGISTRY_URL = "https://icrc-api.internetcomputer.org/api/v2/ledgers?limit=100"
 
@@ -33,7 +34,7 @@ function toRow(r: RegistryRow): TokenMarket | null {
   return {
     ledgerId,
     symbol,
-    name: md?.icrc1_name || symbol,
+    name: resolveTokenDisplayName(symbol, md?.icrc1_name ?? undefined),
     decimals: Number.isFinite(decimals) ? decimals : 8,
     fee: md?.icrc1_fee ? BigInt(md.icrc1_fee) : 0n,
     logo: logo?.startsWith("https://") || logo?.startsWith("data:") ? logo : undefined,

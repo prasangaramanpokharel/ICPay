@@ -3,13 +3,13 @@ use crate::domain::quote::breakdown;
 
 #[test]
 fn full_quote_pipeline_matches_fee_rules() {
-    let amount_in = 100_000_000_u64;
+    let amount_in = 100_000_000_u128;
     let pool_tier = 3000_u32;
-    let ledger_fee = 10_000_u64;
+    let ledger_fee = 10_000_u128;
 
     let svc = service_fee(amount_in);
     let swap_fee = pool_fee_amount(amount_in - svc, pool_tier);
-    let gross_out = 45_000_000_u64;
+    let gross_out = 45_000_000_u128;
 
     let q = breakdown(amount_in, gross_out, pool_tier, ledger_fee);
     let min_out = default_min_out(q.net_out);

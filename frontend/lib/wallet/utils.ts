@@ -87,6 +87,34 @@ export function toPlainTokenAmount(amount: bigint, decimals: number): string {
   return fraction ? `${whole}.${fraction}` : `${whole}`
 }
 
+const KNOWN_TOKEN_NAMES: Record<string, string> = {
+  ICP: "Internet Computer",
+  ICPAY: "ICPay",
+  CKBTC: "Chain-Key Bitcoin",
+  CKETH: "Chain-Key Ethereum",
+  CKUSDC: "Chain-Key USD Coin",
+  CKUSDT: "Chain-Key Tether USD",
+  CKEURC: "Chain-Key Euro Coin",
+  CKSOL: "Chain-Key Solana",
+  CKSEPETH: "Chain-Key Sepolia ETH",
+  CKLINK: "Chain-Key Chainlink",
+  CKPEPE: "Chain-Key Pepe",
+  CKSHIB: "Chain-Key Shiba Inu",
+  CKUNI: "Chain-Key Uniswap",
+  CKWSTETH: "Chain-Key Wrapped stETH",
+  CKXAUT: "Chain-Key Tether Gold",
+}
+
+export function resolveTokenDisplayName(symbol: string, name?: string): string {
+  const cleanSymbol = symbol.trim()
+  const cleanName = (name ?? "").trim()
+  const known = KNOWN_TOKEN_NAMES[cleanSymbol.toUpperCase()]
+  if (!cleanName || cleanName.toLowerCase() === cleanSymbol.toLowerCase()) {
+    return known ?? "ICRC-1 Token"
+  }
+  return cleanName
+}
+
 export function shortPrincipal(text: string): string {
   return text.length > 12 ? `${text.slice(0, 6)}…${text.slice(-4)}` : text
 }

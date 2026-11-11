@@ -37,7 +37,25 @@ export function getFileCategory(contentType = "", path = ""): FileCategory {
   if (
     type.startsWith("video/") ||
     type.startsWith("audio/") ||
-    ["mp4", "webm", "mov", "avi", "mkv", "mp3", "wav", "ogg", "flac", "m4a", "aac"].includes(ext)
+    [
+      "mp4",
+      "webm",
+      "mov",
+      "m4v",
+      "ogv",
+      "avi",
+      "mkv",
+      "3gp",
+      "mpeg",
+      "mpg",
+      "mp3",
+      "wav",
+      "ogg",
+      "flac",
+      "m4a",
+      "aac",
+      "opus",
+    ].includes(ext)
   ) {
     return "media"
   }
@@ -49,7 +67,28 @@ export function getFileCategory(contentType = "", path = ""): FileCategory {
     type.includes("document") ||
     type.includes("sheet") ||
     type.includes("presentation") ||
-    ["pdf", "doc", "docx", "xls", "xlsx", "csv", "ppt", "pptx", "txt", "md", "rtf", "odt", "ods"].includes(ext)
+    type.includes("epub") ||
+    [
+      "pdf",
+      "doc",
+      "docx",
+      "xls",
+      "xlsx",
+      "csv",
+      "tsv",
+      "ppt",
+      "pptx",
+      "txt",
+      "md",
+      "mdx",
+      "rst",
+      "tex",
+      "rtf",
+      "odt",
+      "ods",
+      "odp",
+      "epub",
+    ].includes(ext)
   ) {
     return "documents"
   }
@@ -59,7 +98,9 @@ export function getFileCategory(contentType = "", path = ""): FileCategory {
     type.includes("tar") ||
     type.includes("compressed") ||
     type.includes("archive") ||
-    ["zip", "tar", "gz", "bz2", "7z", "rar"].includes(ext)
+    type.includes("gzip") ||
+    type.includes("zstd") ||
+    ["zip", "tar", "gz", "tgz", "bz2", "xz", "zst", "7z", "rar"].includes(ext)
   ) {
     return "archives"
   }
@@ -71,7 +112,54 @@ export function getFileCategory(contentType = "", path = ""): FileCategory {
     type.includes("typescript") ||
     type.includes("yaml") ||
     type.includes("toml") ||
-    ["json", "xml", "yaml", "yml", "toml", "js", "ts", "jsx", "tsx", "py", "rs", "go", "sh", "sql", "css", "html"].includes(ext)
+    type.includes("wasm") ||
+    [
+      "json",
+      "jsonl",
+      "ndjson",
+      "xml",
+      "yaml",
+      "yml",
+      "toml",
+      "ini",
+      "cfg",
+      "conf",
+      "lock",
+      "log",
+      "mo",
+      "did",
+      "rs",
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "mjs",
+      "cjs",
+      "py",
+      "go",
+      "sol",
+      "java",
+      "kt",
+      "swift",
+      "cs",
+      "dart",
+      "cpp",
+      "c",
+      "h",
+      "hpp",
+      "rb",
+      "php",
+      "sql",
+      "graphql",
+      "gql",
+      "proto",
+      "prisma",
+      "css",
+      "scss",
+      "less",
+      "wasm",
+      "map",
+    ].includes(ext)
   ) {
     return "code"
   }
@@ -107,6 +195,7 @@ function iconForExtension(ext: string) {
     case "ods":
       return Xls01Icon
     case "csv":
+    case "tsv":
       return Csv01Icon
     case "ppt":
     case "pptx":
@@ -114,29 +203,64 @@ function iconForExtension(ext: string) {
       return Ppt01Icon
     case "txt":
     case "md":
+    case "mdx":
+    case "rst":
+    case "tex":
+    case "log":
       return Txt01Icon
     case "json":
+    case "jsonl":
+    case "ndjson":
     case "xml":
     case "yaml":
     case "yml":
     case "toml":
+    case "ini":
+    case "cfg":
+    case "conf":
+    case "lock":
+    case "map":
       return Xml01Icon
-    case "js":
-    case "ts":
-    case "jsx":
-    case "tsx":
-    case "py":
+    case "mo":
+    case "did":
     case "rs":
+    case "ts":
+    case "tsx":
+    case "js":
+    case "jsx":
+    case "mjs":
+    case "cjs":
+    case "py":
     case "go":
+    case "sol":
+    case "java":
+    case "kt":
+    case "swift":
+    case "cs":
+    case "dart":
+    case "cpp":
+    case "c":
+    case "h":
+    case "hpp":
+    case "rb":
+    case "php":
     case "sql":
-    case "sh":
-    case "html":
+    case "graphql":
+    case "gql":
+    case "proto":
+    case "prisma":
     case "css":
+    case "scss":
+    case "less":
+    case "wasm":
       return CodeIcon
     case "zip":
     case "tar":
     case "gz":
+    case "tgz":
     case "bz2":
+    case "xz":
+    case "zst":
     case "7z":
     case "rar":
       return Zip01Icon
@@ -146,17 +270,24 @@ function iconForExtension(ext: string) {
     case "flac":
     case "m4a":
     case "aac":
+    case "opus":
       return MusicNote01Icon
     case "mp4":
     case "webm":
     case "mov":
+    case "m4v":
+    case "ogv":
     case "avi":
     case "mkv":
+    case "3gp":
+    case "mpeg":
+    case "mpg":
       return Video01Icon
     case "ttf":
     case "otf":
     case "woff":
     case "woff2":
+    case "eot":
       return TextFontIcon
     default:
       return File01Icon

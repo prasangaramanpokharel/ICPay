@@ -100,11 +100,33 @@ export function BucketFilesPanel({
   const [deleting, setDeleting] = useState(false)
   const [query, setQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
-  const [sort, setSort] = useState<FileSortKey>("name")
+  const [sort, setSortState] = useState<FileSortKey>(() => {
+    if (typeof window === "undefined") return "name"
+    const saved = window.localStorage.getItem("icpay:bucket:sort-key")
+    return saved === "name" || saved === "size" || saved === "type" ? saved : "name"
+  })
   const [category, setCategory] = useState<FileCategory>("all")
-  const [viewMode, setViewMode] = useState<"list" | "grid">("list")
+  const [viewMode, setViewModeState] = useState<"list" | "grid">(() => {
+    if (typeof window === "undefined") return "list"
+    const saved = window.localStorage.getItem("icpay:bucket:view-mode")
+    return saved === "list" || saved === "grid" ? saved : "list"
+  })
   const [refreshing, setRefreshing] = useState(false)
   const searching = debouncedQuery.length > 0
+
+  const setSort = useCallback((next: FileSortKey) => {
+    setSortState(next)
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("icpay:bucket:sort-key", next)
+    }
+  }, [])
+
+  const setViewMode = useCallback((next: "list" | "grid") => {
+    setViewModeState(next)
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("icpay:bucket:view-mode", next)
+    }
+  }, [])
 
   const browse = useBucketFiles(searching ? null : bucketId, prefix, page)
   const search = useBucketSearch(searching ? bucketId : null, debouncedQuery, page)
@@ -118,6 +140,10 @@ export function BucketFilesPanel({
   if (prevFilter.prefix !== prefix || prevFilter.debouncedQuery !== debouncedQuery) {
     setPrevFilter({ prefix, debouncedQuery })
     setPage(0)
+  }
+
+  if (page > 0 && totalPages > 0 && page >= totalPages) {
+    setPage(totalPages - 1)
   }
 
   const [prevSelectedDep, setPrevSelectedDep] = useState({ prefix, page, debouncedQuery })
@@ -152,7 +178,46 @@ export function BucketFilesPanel({
     [allFiles, entries, files, prefix, sort]
   )
   const entryKeys = useMemo(() => visible.map(entryKey), [visible])
-  const allSelected = entryKeys.length > 0 && entryKeys.every((k) => selected.has(k))
+  const entryKeySet = useMemo(() => new Set(entryKeys), [entryKeys])
+  const activeSelected = useMemo(() => {
+    if (selected.size === 0) return selected
+    const next = new Set<string>()
+    for (const key of selected) {
+      if (entryKeySet.has(key)) next.add(key)
+    }
+    return next
+  }, [entryKeySet, selected])
+  const allSelected = entryKeys.length > 0 && entryKeys.every((k) => activeSelected.has(k))
+
+  const pruneSelection = useCallback(
+    (keysToRemove: Iterable<string>, folderPrefixesToRemove: string[] = []) => {
+      const removeSet = new Set(keysToRemove)
+      const normPrefixes = folderPrefixesToRemove.map((p) =>
+        stripLeadingSlash(p).replace(/\/?$/, "/")
+      )
+      setSelected((prev) => {
+        if (prev.size === 0) return prev
+        let changed = false
+        const next = new Set<string>()
+        for (const k of prev) {
+          if (removeSet.has(k)) {
+            changed = true
+            continue
+          }
+          if (k.startsWith("file:")) {
+            const stripped = stripLeadingSlash(k.slice(5))
+            if (normPrefixes.some((pref) => stripped.startsWith(pref))) {
+              changed = true
+              continue
+            }
+          }
+          next.add(k)
+        }
+        return changed ? next : prev
+      })
+    },
+    []
+  )
 
   const removeFileFromCache = async (path: string) => {
     const stripped = stripLeadingSlash(path)
@@ -206,6 +271,11 @@ export function BucketFilesPanel({
   }
 
   const handleDelete = async (path: string) => {
+    const stripped = stripLeadingSlash(path)
+    pruneSelection([`file:${path}`, `file:/${stripped}`, `file:${stripped}`])
+    if (previewFile && stripLeadingSlash(previewFile.path) === stripped) {
+      setPreviewFile(null)
+    }
     await removeFileFromCache(path)
     const err = await onDelete(path)
     if (err) {
@@ -224,13 +294,28 @@ export function BucketFilesPanel({
     const folderPath = joinObjectPath(prefix, `${folderName}/`)
     const filesForPaths = allFiles.length > 0 ? allFiles : files
     const childPaths = pathsUnderFolder(filesForPaths, prefix, folderName)
+    pruneSelection([`folder:${folderName}`], [folderPath])
+    if (
+      previewFile &&
+      stripLeadingSlash(previewFile.path).startsWith(
+        stripLeadingSlash(folderPath).replace(/\/?$/, "/")
+      )
+    ) {
+      setPreviewFile(null)
+    }
     await removePathsFromCache(childPaths, [folderPath])
     let err: string | null = null
     if (childPaths.length > 0) {
       err = await onDeletePaths(childPaths)
     }
     if (!err) {
-      err = await onDeleteFolders([folderPath])
+      const folderErr = await onDeleteFolders([folderPath])
+      if (folderErr) {
+        const lower = folderErr.toLowerCase()
+        if (!lower.includes("not found") && !lower.includes("does not exist")) {
+          err = folderErr
+        }
+      }
     }
     if (err) {
       toast.error(err)
@@ -258,6 +343,15 @@ export function BucketFilesPanel({
     if (operations.length === 0) return
 
     const movedPathsSet = new Set(operations.map((op) => stripLeadingSlash(op.source)))
+    pruneSelection(
+      operations.flatMap((op) => {
+        const s = stripLeadingSlash(op.source)
+        return [`file:${op.source}`, `file:/${s}`, `file:${s}`]
+      })
+    )
+    if (previewFile && movedPathsSet.has(stripLeadingSlash(previewFile.path))) {
+      setPreviewFile(null)
+    }
 
     await refreshFiles(
       (current: FileListPage | undefined) => {
@@ -315,7 +409,7 @@ export function BucketFilesPanel({
     const paths: string[] = []
     const folderPaths: string[] = []
     const filesForPaths = allFiles.length > 0 ? allFiles : files
-    for (const key of selected) {
+    for (const key of activeSelected) {
       if (key.startsWith("file:")) {
         paths.push(key.slice(5))
         continue
@@ -329,21 +423,43 @@ export function BucketFilesPanel({
 
   const confirmBulkDelete = async () => {
     const { paths, folderPaths } = resolveSelectedPaths()
-    const selectedCount = selected.size
+    const selectedCount = activeSelected.size
     const singleName =
       paths.length === 1 && folderPaths.length === 0
         ? paths[0].split("/").pop() ?? paths[0]
-        : folderPaths.length === 1 && paths.length === 0
+        : folderPaths.length === 1
           ? folderPaths[0].replace(/\/$/, "").split("/").pop() ?? folderPaths[0]
           : null
     setDeleting(true)
-    const prevSelected = new Set(selected)
+    const prevSelected = new Set(activeSelected)
+    if (previewFile) {
+      const previewStripped = stripLeadingSlash(previewFile.path)
+      const deletedPathSet = new Set(paths.map(stripLeadingSlash))
+      const deletedFolderPrefixes = folderPaths.map((f) =>
+        stripLeadingSlash(f).replace(/\/?$/, "/")
+      )
+      if (
+        deletedPathSet.has(previewStripped) ||
+        deletedFolderPrefixes.some((pref) => previewStripped.startsWith(pref))
+      ) {
+        setPreviewFile(null)
+      }
+    }
     await removePathsFromCache(paths, folderPaths)
     setSelected(new Set())
 
     try {
       const fileErr = paths.length > 0 ? await onDeletePaths(paths) : null
-      const folderErr = !fileErr && folderPaths.length > 0 ? await onDeleteFolders(folderPaths) : null
+      let folderErr: string | null = null
+      if (!fileErr && folderPaths.length > 0) {
+        const rawFolderErr = await onDeleteFolders(folderPaths)
+        if (rawFolderErr) {
+          const lower = rawFolderErr.toLowerCase()
+          if (!lower.includes("not found") && !lower.includes("does not exist")) {
+            folderErr = rawFolderErr
+          }
+        }
+      }
       const err = fileErr ?? folderErr
       if (err) {
         setSelected(prevSelected)
@@ -389,9 +505,9 @@ export function BucketFilesPanel({
   }, [entryKeys])
 
   const requestDelete = useCallback(() => {
-    if (selected.size === 0) return
-    setDeleteTarget({ type: "bulk", count: selected.size })
-  }, [selected.size])
+    if (activeSelected.size === 0) return
+    setDeleteTarget({ type: "bulk", count: activeSelected.size })
+  }, [activeSelected.size])
 
   const navigatingFolderRef = useRef<string | null>(null)
   const navigationTimestampRef = useRef<number>(0)
@@ -430,12 +546,26 @@ export function BucketFilesPanel({
     }
   }
 
+  const handleQuickLook = useCallback(() => {
+    if (activeSelected.size !== 1) return
+    const [onlyKey] = Array.from(activeSelected)
+    if (!onlyKey.startsWith("file:")) return
+    const targetPath = onlyKey.slice(5)
+    const found = files.find((f) => f.path === targetPath)
+    if (!found) return
+    setPreviewFile((prev) => (prev?.id === found.id ? null : found))
+  }, [activeSelected, files])
+
   useBucketExplorerHotkeys({
     enabled: true,
     canWrite,
-    selectedCount: selected.size,
+    selectedCount: activeSelected.size,
     confirmOpen: deleteTarget !== null,
+    previewOpen: previewFile !== null,
     onSelectAll: selectAll,
+    onClearSelection: () => setSelected(new Set()),
+    onClosePreview: () => setPreviewFile(null),
+    onQuickLook: handleQuickLook,
     onRequestDelete: requestDelete,
     onCreateFolder,
     onConfirmDelete: () => {
@@ -462,13 +592,13 @@ export function BucketFilesPanel({
 
       {canWrite ? (
         <BucketSelectBar
-          count={selected.size}
+          count={activeSelected.size}
           canWrite={canWrite}
           deleting={deleting}
           onClear={() => setSelected(new Set())}
           onDelete={() => {
-            if (selected.size > 0) {
-              setDeleteTarget({ type: "bulk", count: selected.size })
+            if (activeSelected.size > 0) {
+              setDeleteTarget({ type: "bulk", count: activeSelected.size })
             }
           }}
         />
@@ -495,7 +625,7 @@ export function BucketFilesPanel({
             </EmptyDescription>
           </EmptyHeader>
           {!searching && canWrite ? (
-            <EmptyContent className="flex flex-row items-center justify-center gap-2 pt-2">
+            <EmptyContent className="flex flex-wrap flex-row items-center justify-center gap-2 pt-2">
               <Button
                 type="button"
                 size="sm"
@@ -504,6 +634,16 @@ export function BucketFilesPanel({
               >
                 <HugeiconsIcon icon={Upload01Icon} className="size-4" strokeWidth={1.75} />
                 <span>{t("upload")}</span>
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => document.getElementById("bucket-upload-folder-input")?.click()}
+                className="gap-1.5"
+              >
+                <HugeiconsIcon icon={Folder02Icon} className="size-4" strokeWidth={1.75} />
+                <span>Upload folder</span>
               </Button>
               <Button
                 type="button"
@@ -527,7 +667,7 @@ export function BucketFilesPanel({
           allFilesLoading={allFilesLoading}
           prefix={prefix}
           visible={visible}
-          selected={selected}
+          selected={activeSelected}
           previewId={previewFile?.id}
           canWrite={canWrite}
           onToggleKey={toggleKey}
@@ -551,7 +691,7 @@ export function BucketFilesPanel({
           allFilesLoading={allFilesLoading}
           prefix={prefix}
           visible={visible}
-          selected={selected}
+          selected={activeSelected}
           previewId={previewFile?.id}
           canWrite={canWrite}
           allSelected={allSelected}

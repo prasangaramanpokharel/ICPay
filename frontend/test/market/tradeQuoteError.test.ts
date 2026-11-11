@@ -4,6 +4,7 @@ import {
   formatTradeErrorMessage,
   isInsufficientBalanceError,
   classifyTradeExecError,
+  extractRateLimitWaitSeconds,
 } from "../../lib/market/tradeQuoteError"
 
 describe("trade error formatting and classification", () => {
@@ -21,6 +22,40 @@ Check that the method being called is exported by the target canister.
       "Trading canister method unavailable. Please refresh and try again."
     )
     assert.equal(classifyTradeExecError(rawRejection), "canister_method")
+  })
+
+  it("identifies rate limit errors and extracts wait seconds", () => {
+    const rateLimitErr = "rate limit exceeded: too many requests. please wait 4s before retrying"
+    assert.equal(classifyTradeExecError(rateLimitErr), "rate_limit")
+    assert.equal(extractRateLimitWaitSeconds(rateLimitErr), 4)
+    assert.equal(
+      formatTradeErrorMessage(rateLimitErr),
+      "Rate limit reached. Please wait 4s before submitting another trade."
+    )
+
+    const genericRateLimit = "rate limit exceeded"
+    assert.equal(classifyTradeExecError(genericRateLimit), "rate_limit")
+    assert.equal(extractRateLimitWaitSeconds(genericRateLimit), null)
+    assert.equal(
+      formatTradeErrorMessage(genericRateLimit),
+      "Rate limit reached. Please wait a few seconds before submitting another trade."
+    )
+  })
+
+  it("identifies allowance and user busy errors", () => {
+    const allowanceErr = "icrc2_approve call failed: InsufficientAllowance"
+    assert.equal(classifyTradeExecError(allowanceErr), "allowance")
+    assert.equal(
+      formatTradeErrorMessage(allowanceErr),
+      "ICRC-2 token allowance failed. Ensure token allowance is approved."
+    )
+
+    const busyErr = "user busy: trade lock held"
+    assert.equal(classifyTradeExecError(busyErr), "busy")
+    assert.equal(
+      formatTradeErrorMessage(busyErr),
+      "A previous trade is still confirming on-chain. Please wait a moment."
+    )
   })
 
   it("identifies insufficient trading balance errors correctly", () => {

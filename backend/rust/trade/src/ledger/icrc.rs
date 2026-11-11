@@ -10,8 +10,8 @@ use crate::config::ICP_FEE_E8S;
 pub async fn transfer(
     ledger: Principal,
     to: Account,
-    amount: u64,
-    fee: Option<u64>,
+    amount: u128,
+    fee: Option<u128>,
 ) -> Result<u64, String> {
     let transfer_arg = TransferArg {
         from_subaccount: None,
@@ -42,7 +42,7 @@ pub async fn transfer(
 }
 
 /// Query current ICRC-1 transfer fee (use before setting fee explicitly).
-pub async fn transfer_fee(ledger: Principal) -> Result<u64, String> {
+pub async fn transfer_fee(ledger: Principal) -> Result<u128, String> {
     let (fee,): (Nat,) = Call::bounded_wait(ledger, "icrc1_fee")
         .with_arg(())
         .await
@@ -58,9 +58,11 @@ pub async fn transfer_fee(ledger: Principal) -> Result<u64, String> {
 pub async fn approve_spender(
     ledger: Principal,
     spender: Principal,
-    amount: u64,
-    fee: u64,
+    amount: u128,
+    fee: u128,
 ) -> Result<u64, String> {
+    let now = ic_cdk::api::time();
+    let expires_at = now.saturating_add(60_000_000_000);
     let args = ApproveArgs {
         from_subaccount: None,
         spender: Account {
@@ -69,10 +71,10 @@ pub async fn approve_spender(
         },
         amount: Nat::from(amount),
         expected_allowance: None,
-        expires_at: None,
+        expires_at: Some(expires_at),
         fee: Some(Nat::from(fee)),
         memo: None,
-        created_at_time: Some(ic_cdk::api::time()),
+        created_at_time: Some(now),
     };
 
     let (result,): (Result<Nat, ApproveError>,) = Call::bounded_wait(ledger, "icrc2_approve")

@@ -1,51 +1,49 @@
 use crate::config::{MAKER_FEE_BPS, MIN_SERVICE_FEE, TAKER_FEE_BPS};
 
 /// Taker fee (0.15% = 15 bps) on amount_in (floor 1 base unit).
-pub fn taker_fee(amount_in: u64) -> u64 {
+pub fn taker_fee(amount_in: u128) -> u128 {
     let raw = amount_in.saturating_mul(TAKER_FEE_BPS) / 10_000;
     raw.max(MIN_SERVICE_FEE)
 }
 
 /// Maker fee (0.05% = 5 bps) on amount_in (floor 1 base unit).
-#[allow(dead_code)]
-pub fn maker_fee(amount_in: u64) -> u64 {
+pub fn maker_fee(amount_in: u128) -> u128 {
     let raw = amount_in.saturating_mul(MAKER_FEE_BPS) / 10_000;
     raw.max(MIN_SERVICE_FEE)
 }
 
 /// Default service fee on amount_in (taker fee).
-pub fn service_fee(amount_in: u64) -> u64 {
+pub fn service_fee(amount_in: u128) -> u128 {
     taker_fee(amount_in)
 }
 
-pub fn amount_after_service_fee(amount_in: u64) -> u64 {
+pub fn amount_after_service_fee(amount_in: u128) -> u128 {
     amount_in.saturating_sub(service_fee(amount_in))
 }
 
-#[allow(dead_code)]
-pub fn amount_after_maker_fee(amount_in: u64) -> u64 {
+pub fn amount_after_maker_fee(amount_in: u128) -> u128 {
     amount_in.saturating_sub(maker_fee(amount_in))
 }
 
 /// ICRC-2 allowance ICPSwap needs before depositFromAndSwap (amount + ledger fee).
-pub fn icrc2_allowance_amount(swap_amount: u64, token_in_fee: u64) -> u64 {
+pub fn icrc2_allowance_amount(swap_amount: u128, token_in_fee: u128) -> u128 {
     swap_amount.saturating_add(token_in_fee)
 }
 
 /// Pool fee from ICPSwap tier (fee is per million, e.g. 3000 = 0.3%).
 #[cfg(test)]
-pub fn pool_fee_amount(amount_in: u64, fee_tier: u32) -> u64 {
-    amount_in.saturating_mul(fee_tier as u64) / 1_000_000
+pub fn pool_fee_amount(amount_in: u128, fee_tier: u32) -> u128 {
+    amount_in.saturating_mul(fee_tier as u128) / 1_000_000
 }
 
-pub fn min_amount_out(amount_out: u64, slippage_bps: u64) -> u64 {
+pub fn min_amount_out(amount_out: u128, slippage_bps: u64) -> u128 {
     if amount_out == 0 {
         return 0;
     }
-    amount_out.saturating_mul(10_000 - slippage_bps) / 10_000
+    amount_out.saturating_mul(10_000 - slippage_bps as u128) / 10_000
 }
 
-pub fn default_min_out(amount_out: u64) -> u64 {
+pub fn default_min_out(amount_out: u128) -> u128 {
     min_amount_out(amount_out, crate::config::DEFAULT_SLIPPAGE_BPS)
 }
 

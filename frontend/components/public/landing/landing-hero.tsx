@@ -54,7 +54,6 @@ export function LandingHero() {
           </Link>
         </div>
 
-        {/* Big Video Modal (Auto-shows on landing with smooth rise animation) */}
         <Dialog
           open={videoOpen}
           onOpenChange={(open) => {
@@ -74,19 +73,19 @@ export function LandingHero() {
               Watch the video overview for Canister Management tools on ICPay.
             </DialogDescription>
 
-            <div className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-white/15 bg-black/95 shadow-2xl backdrop-blur-xl animate-in fade-in-0 slide-in-from-bottom-16 zoom-in-95 duration-500 ease-out">
-              {/* Close Button */}
-              <button
+            <div className="relative w-full overflow-hidden rounded-2xl sm:rounded-3xl border border-border/60 bg-card/95 shadow-2xl backdrop-blur-xl animate-in fade-in-0 slide-in-from-bottom-16 zoom-in-95 duration-500 ease-out">
+              <Button
                 type="button"
+                variant="secondary"
+                size="icon"
                 onClick={handleCloseVideo}
-                className="absolute top-4 right-4 z-30 flex size-10 items-center justify-center rounded-full bg-black/70 text-white/90 backdrop-blur-md transition-all hover:bg-black hover:text-white hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 cursor-pointer shadow-lg"
+                className="absolute top-4 right-4 z-30 size-10 rounded-full bg-background/80 text-foreground backdrop-blur-md transition-all hover:bg-background hover:scale-105 cursor-pointer shadow-lg"
                 aria-label="Close video"
               >
                 <HugeiconsIcon icon={Cancel01Icon} className="size-5" />
-              </button>
+              </Button>
 
-              {/* Video Player */}
-              <div className="relative aspect-video w-full bg-black">
+              <div className="relative aspect-video w-full bg-background">
                 {videoOpen && (
                   <video
                     src={VIDEO_URL}
@@ -136,12 +135,12 @@ export function LandingHero() {
             )}
             <Button
               size="lg"
-              variant="ghost"
+              variant="outline"
               type="button"
               onClick={() => setVideoOpen(true)}
-              className="h-11 rounded-full px-4 text-muted-foreground hover:text-foreground cursor-pointer gap-2"
+              className="h-11 rounded-full border-border/70 bg-card/60 px-5 text-foreground hover:bg-card cursor-pointer gap-2.5"
             >
-              <span className="flex size-6 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <span className="flex size-6 items-center justify-center rounded-full bg-primary/15 text-primary">
                 <HugeiconsIcon icon={PlayIcon} className="size-3" />
               </span>
               <span>Watch overview</span>

@@ -19,19 +19,21 @@ export {
   BUCKET_MAX_FILE_BYTES as MAX_FILE_BYTES,
 } from "@/lib/bucket/uploadChunk"
 
+import {
+  FILE_ACCEPT,
+  guessFileMime,
+  fileTypeChip,
+  normalizeUploadFile,
+  isAllowedUpload as isAllowedByExtension,
+} from "@/lib/bucket/allowedFiles"
+import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/uploadChunk"
+
 export {
   FILE_ACCEPT,
   guessFileMime,
   fileTypeChip,
   normalizeUploadFile,
-} from "@/lib/bucket/allowedFiles"
-
-import {
-  guessFileMime,
-  isAllowedUpload as isAllowedByExtension,
-  fileTypeChip,
-} from "@/lib/bucket/allowedFiles"
-import { BUCKET_MAX_FILE_BYTES } from "@/lib/bucket/uploadChunk"
+}
 
 export const guessImageMime = guessFileMime
 
@@ -52,6 +54,12 @@ export function mapBucketError(
   err: string,
   t: (key: BucketErrorKey) => string
 ): string {
+  if (err.includes("max 25 MB for video")) {
+    return "Video too large — max 25 MB"
+  }
+  if (err.includes("max 10 MB")) {
+    return t("invalidFile")
+  }
   if (
     err.includes("too large") ||
     err.includes("2097152") ||
@@ -192,3 +200,14 @@ export function optionalText(value: [] | [string]): string | null {
 }
 
 export const imageTypeChip = fileTypeChip
+
+export function middleTruncateFileName(name: string, maxLength = 34): string {
+  if (name.length <= maxLength) return name
+  const dotIdx = name.lastIndexOf(".")
+  const hasExt = dotIdx > 0 && name.length - dotIdx <= 10
+  const tail = hasExt
+    ? name.slice(Math.max(1, dotIdx - 6))
+    : name.slice(-10)
+  const headLen = Math.max(6, maxLength - tail.length - 1)
+  return `${name.slice(0, headLen)}…${tail}`
+}

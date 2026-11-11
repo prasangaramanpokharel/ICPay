@@ -2,6 +2,8 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 
@@ -31,9 +33,10 @@ export function LandingCta() {
                 size="lg"
                 nativeButton={false}
                 render={<Link href="/login" />}
-                className="h-11 rounded-full px-7"
+                className="h-11 gap-2 rounded-full px-7"
               >
-                {t("signIn")}
+                <span>{t("signIn")}</span>
+                <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" strokeWidth={2} />
               </Button>
               <Button
                 size="lg"

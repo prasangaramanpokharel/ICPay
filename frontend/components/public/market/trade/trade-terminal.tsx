@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react"
 import { useParams, usePathname, useRouter, useSearchParams } from "next/navigation"
+import { useTranslations } from "next-intl"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   ResizableHandle,
   ResizablePanel,
@@ -53,28 +56,65 @@ function TradeStackedLayout({
   onOpenWalletTrade: () => void
   pinnedIds?: Iterable<string>
 }) {
+  const t = useTranslations("marketTrade")
+  const tNav = useTranslations("nav")
+  const [mobileTab, setMobileTab] = useState<"chart" | "trade" | "markets" | "history">("chart")
+
   return (
-    <div className="flex flex-col gap-2 p-2 pb-8">
-      <TradeMarketWatchlist
-        rows={rows}
-        activeBaseId={activeBase}
-        activeLogoUrl={snapshot?.base.logoUrl}
-        onSelect={onSelect}
-        onAddCustomToken={onAddCustomToken}
-        loading={listLoading}
-        pinnedIds={pinnedIds}
-      />
-      <TradeChartWorkspace snapshot={snapshot} loading={pairLoading} />
-      <TradeSwapHistory snapshot={snapshot} />
-      <TradeOrderPanel
-        snapshot={snapshot}
-        loading={pairLoading}
-        rows={rows}
-        activeBaseId={activeBase}
-        listLoading={listLoading}
-        onSelectPair={onSelect}
-        onOpenWalletTrade={onOpenWalletTrade}
-      />
+    <div className="flex flex-col gap-2 p-2 pb-16">
+      <Tabs value={mobileTab} onValueChange={(v) => setMobileTab(v as "chart" | "trade" | "markets" | "history")} className="w-full">
+        <TabsList className="grid w-full grid-cols-4 h-9 p-1">
+          <TabsTrigger value="chart" className="text-xs">{t("tabChart")}</TabsTrigger>
+          <TabsTrigger value="trade" className="text-xs">{t("buy")} / {t("sell")}</TabsTrigger>
+          <TabsTrigger value="markets" className="text-xs">{t("markets")}</TabsTrigger>
+          <TabsTrigger value="history" className="text-xs">{tNav("history")}</TabsTrigger>
+        </TabsList>
+        <TabsContent value="chart" className="mt-2 space-y-2">
+          <TradeChartWorkspace snapshot={snapshot} loading={pairLoading} />
+          <div className="grid grid-cols-2 gap-2 pt-1">
+            <Button
+              className="w-full bg-success hover:bg-success/90 text-success-foreground font-semibold"
+              onClick={() => setMobileTab("trade")}
+            >
+              {t("buy")} {snapshot?.base.symbol}
+            </Button>
+            <Button
+              className="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground font-semibold"
+              onClick={() => setMobileTab("trade")}
+            >
+              {t("sell")} {snapshot?.base.symbol}
+            </Button>
+          </div>
+        </TabsContent>
+        <TabsContent value="trade" className="mt-2">
+          <TradeOrderPanel
+            snapshot={snapshot}
+            loading={pairLoading}
+            rows={rows}
+            activeBaseId={activeBase}
+            listLoading={listLoading}
+            onSelectPair={onSelect}
+            onOpenWalletTrade={onOpenWalletTrade}
+          />
+        </TabsContent>
+        <TabsContent value="markets" className="mt-2">
+          <TradeMarketWatchlist
+            rows={rows}
+            activeBaseId={activeBase}
+            activeLogoUrl={snapshot?.base.logoUrl}
+            onSelect={(id) => {
+              onSelect(id)
+              setMobileTab("chart")
+            }}
+            onAddCustomToken={onAddCustomToken}
+            loading={listLoading}
+            pinnedIds={pinnedIds}
+          />
+        </TabsContent>
+        <TabsContent value="history" className="mt-2">
+          <TradeSwapHistory snapshot={snapshot} />
+        </TabsContent>
+      </Tabs>
     </div>
   )
 }

@@ -36,12 +36,13 @@ export function DashboardActions() {
     <>
       <div className="grid grid-cols-4 gap-2 md:hidden">
         {actions.map((item) => (
-          <Link
+          <Button
             key={item.href}
-            href={item.href}
-            prefetch
+            variant="ghost"
+            nativeButton={false}
+            render={<Link href={item.href} prefetch />}
             aria-label={t(item.labelKey)}
-            className="flex flex-col items-center gap-1.5 transition-transform active:scale-95"
+            className="h-auto flex-col gap-1.5 p-1 rounded-2xl transition-transform active:scale-95 hover:bg-transparent"
           >
             <span className="flex size-11 items-center justify-center rounded-full bg-muted text-foreground">
               <HugeiconsIcon icon={item.icon} className="size-5 text-primary" strokeWidth={1.75} />
@@ -49,7 +50,7 @@ export function DashboardActions() {
             <span className="text-[11px] font-medium lowercase text-foreground">
               {t(item.labelKey)}
             </span>
-          </Link>
+          </Button>
         ))}
       </div>
 

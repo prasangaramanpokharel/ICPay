@@ -1,6 +1,7 @@
 "use client"
 
 import { useTranslations } from "next-intl"
+import { Card } from "@/components/ui/card"
 import type { AnalyticsSummary } from "@/services/types"
 import { formatAmount } from "@/lib/wallet/utils"
 
@@ -28,10 +29,10 @@ export function AnalyticsSummaryGrid({ summary }: AnalyticsSummaryGridProps) {
   return (
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
       {items.map((item) => (
-        <div key={item.label} className="rounded-xl border bg-muted/30 px-3 py-2.5">
+        <Card key={item.label} className="rounded-xl border bg-muted/30 px-3 py-2.5 gap-0">
           <p className="text-[11px] text-muted-foreground">{item.label}</p>
           <p className="pt-0.5 text-sm font-semibold tabular-nums tracking-tight">{item.value}</p>
-        </div>
+        </Card>
       ))}
     </div>
   )

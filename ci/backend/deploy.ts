@@ -1,4 +1,5 @@
-import { BACKEND, CANISTER, confirm, dfx, moduleHash, run, step } from "../lib.ts"
+import { BACKEND, CANISTER, confirm, dfx, moduleHash, network, run, step } from "../lib.ts"
+import { spawnSync } from "node:child_process"
 
 // Upgrade, never reinstall: reinstall wipes every user, balance record and
 // transaction. There is deliberately no flag for it here -- if it is ever truly
@@ -6,6 +7,24 @@ import { BACKEND, CANISTER, confirm, dfx, moduleHash, run, step } from "../lib.t
 
 step("TESTS")
 run("bash", ["scripts/run-tests.sh"], BACKEND)
+
+if (network() === "local") {
+  step("LOCAL ENVIRONMENT CHECK")
+  const ping = spawnSync("dfx", ["ping", "local"], { cwd: BACKEND, encoding: "utf8" })
+  if (ping.status !== 0) {
+    console.error("\nError: Local dfx replica is not running.")
+    console.error("Start it in another terminal with:")
+    console.error("  cd backend && dfx start --clean\n")
+    process.exit(1)
+  }
+  step("CANISTER INIT (LOCAL)")
+  try {
+    dfx(["deps", "pull"])
+  } catch {}
+  try {
+    dfx(["canister", "create", CANISTER])
+  } catch {}
+}
 
 step("BUILD")
 dfx(["build", CANISTER])

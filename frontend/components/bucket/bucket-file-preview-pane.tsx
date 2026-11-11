@@ -8,8 +8,6 @@ import {
   Copy01Icon,
   Delete02Icon,
   Download01Icon,
-  FlashIcon,
-  Globe02Icon,
   LinkSquare02Icon,
   Tick02Icon,
 } from "@hugeicons/core-free-icons"
@@ -161,23 +159,24 @@ export function BucketFilePreviewPane({
         <div className="mx-4 mb-2 rounded-xl border border-border/70 bg-card/60 p-2.5 backdrop-blur-xs">
           <div className="flex items-center justify-between text-xs mb-1">
             <span className="flex items-center gap-1.5 font-medium text-foreground">
-              <span className="size-1.5 rounded-full bg-success" />
               <span>CDN Link</span>
               <span className="rounded bg-success/15 px-1 py-0.2 text-[9px] font-medium text-success">
                 Fast & Cached
               </span>
             </span>
-            <button
+            <Button
               type="button"
-              onClick={() => handleCopy(cdnUrl, "cdn")}
-              className="inline-flex items-center gap-1 font-mono text-[10px] text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+              variant="ghost"
+              size="xs"
+              onClick={() => void handleCopy(cdnUrl, "cdn")}
+              className="h-5 gap-1 px-1.5 font-mono text-[10px] text-muted-foreground hover:text-foreground cursor-pointer"
             >
               <HugeiconsIcon
                 icon={copiedMode === "cdn" ? Tick02Icon : Copy01Icon}
-                className="size-3 text-success"
+                className="size-3 text-muted-foreground"
               />
               <span>{copiedMode === "cdn" ? "Copied" : "Copy"}</span>
-            </button>
+            </Button>
           </div>
           <p className="font-mono text-[10.5px] text-muted-foreground truncate select-all">{cdnUrl}</p>
         </div>
@@ -244,17 +243,16 @@ export function BucketFilePreviewPane({
                 >
                   <DropdownMenuItem
                     onClick={() => handleCopy(cdnUrl, "cdn")}
-                    className="flex items-start gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-accent/80 transition-colors"
+                    className="flex flex-col items-start p-2 rounded-xl cursor-pointer hover:bg-accent/80 transition-colors"
                   >
-                    <HugeiconsIcon icon={FlashIcon} className="size-4 shrink-0 mt-0.5 text-success" strokeWidth={1.75} />
-                    <div className="flex flex-col min-w-0 flex-1">
+                    <div className="flex flex-col min-w-0 w-full">
                       <div className="flex items-center gap-1.5">
                         <span className="font-semibold text-xs text-foreground">Copy CDN Link</span>
                         <span className="rounded bg-success/15 px-1 py-0.2 text-[9px] font-medium text-success">
                           Recommended
                         </span>
                       </div>
-                      <span className="text-[10px] text-muted-foreground">Fast edge cache · cdn.icpay.app</span>
+                      <span className="text-[10px] text-muted-foreground">Fast edge cache · cloud.icpay.app</span>
                       <span className="mt-1 font-mono text-[10px] text-foreground/80 truncate">{cdnUrl}</span>
                     </div>
                   </DropdownMenuItem>
@@ -263,10 +261,9 @@ export function BucketFilePreviewPane({
 
                   <DropdownMenuItem
                     onClick={() => handleCopy(rawUrl, "raw")}
-                    className="flex items-start gap-2.5 p-2 rounded-xl cursor-pointer hover:bg-accent/80 transition-colors"
+                    className="flex flex-col items-start p-2 rounded-xl cursor-pointer hover:bg-accent/80 transition-colors"
                   >
-                    <HugeiconsIcon icon={Globe02Icon} className="size-4 shrink-0 mt-0.5 text-primary" strokeWidth={1.75} />
-                    <div className="flex flex-col min-w-0 flex-1">
+                    <div className="flex flex-col min-w-0 w-full">
                       <div className="flex items-center gap-1.5">
                         <span className="font-semibold text-xs text-foreground">Copy Raw Canister Link</span>
                         <span className="rounded bg-muted px-1 py-0.2 text-[9px] font-medium text-muted-foreground">

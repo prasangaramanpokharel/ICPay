@@ -60,33 +60,37 @@ export function BucketPricingView() {
     >
       <div className="flex items-center justify-center">
         <div className="inline-flex rounded-xl border border-border/80 bg-muted/40 p-1">
-          <button
+          <Button
             type="button"
+            variant={billingPeriod === "monthly" ? "secondary" : "ghost"}
+            size="sm"
             onClick={() => setBillingPeriod("monthly")}
             className={cn(
-              "flex items-center gap-2 rounded-lg py-1.5 px-4 text-xs font-medium transition-all",
+              "h-8 gap-2 rounded-lg px-4 text-xs font-medium transition-all",
               billingPeriod === "monthly"
-                ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-border"
+                ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-border hover:bg-background"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
             <span>Monthly (30 days)</span>
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant={billingPeriod === "yearly" ? "secondary" : "ghost"}
+            size="sm"
             onClick={() => setBillingPeriod("yearly")}
             className={cn(
-              "flex items-center gap-2 rounded-lg py-1.5 px-4 text-xs font-medium transition-all",
+              "h-8 gap-2 rounded-lg px-4 text-xs font-medium transition-all",
               billingPeriod === "yearly"
-                ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-primary/40"
+                ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-primary/40 hover:bg-background"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
             <span>Annual (365 days)</span>
-            <span className="rounded-full bg-success/15 px-1.5 py-0.5 text-[9px] font-bold text-success">
+            <Badge variant="outline" className="border-transparent bg-success/15 px-1.5 py-0 text-[9px] font-bold text-success">
               2 MO FREE
-            </span>
-          </button>
+            </Badge>
+          </Button>
         </div>
       </div>
 

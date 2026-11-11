@@ -3,7 +3,7 @@ use ic_cdk::update;
 
 use crate::domain::swap_exec::execute_swap_for;
 use crate::types::ApiResult;
-use crate::wallet::gate;
+use crate::wallet::{gate, rate_limit};
 
 #[update]
 async fn execute_swap(
@@ -14,6 +14,10 @@ async fn execute_swap(
 ) -> ApiResult<crate::types::SwapResult> {
     let caller = ic_cdk::api::msg_caller();
     if let Err(e) = gate::reject_anonymous(caller) {
+        return ApiResult::err(e);
+    }
+    let now = crate::config::current_time_ns();
+    if let Err(e) = rate_limit::check_rate_limit(caller, rate_limit::RATE_SWAP, now) {
         return ApiResult::err(e);
     }
     execute_swap_for(caller, token_in, token_out, amount_in, amount_out_min).await

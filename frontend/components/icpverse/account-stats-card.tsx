@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Principal } from "@icp-sdk/core/principal"
 import { useTranslations } from "next-intl"
+import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { formatAmount, copyText, E8S } from "@/lib/wallet/utils"
@@ -15,17 +16,14 @@ export function AccountStatsCard({ principal }: { principal: string }) {
   const t = useTranslations("accountStats")
   const { stats, isLoading } = useAccountStats(principal)
   const { price } = useIcpPrice()
-  // Hooks run before the early returns below, which is why the USD figure is
-  // computed from a possibly-absent stats rather than after the guard.
   const usd = price && stats ? (Number(stats.balance) / Number(E8S)) * price.usd : null
-  // Quoted in the currency chosen in settings, not always dollars.
   const fiat = useFiatValue(usd)
 
   if (isLoading) return <Skeleton className="h-44 w-full rounded-2xl" />
   if (!stats) return null
 
   return (
-    <div className="w-full space-y-px overflow-hidden rounded-2xl bg-border font-mono text-xs">
+    <Card className="w-full gap-0 overflow-hidden font-mono text-xs border border-border p-0">
       <div className="grid grid-cols-2 gap-px bg-border">
         <Cell label={t("balance")} value={`${formatAmount(stats.balance)} ICP`} strong />
         <Cell label={t("transactions")} value={stats.txCount === 0 ? "—" : String(stats.txCount)} strong />
@@ -47,7 +45,7 @@ export function AccountStatsCard({ principal }: { principal: string }) {
           <Row label={t("lastBlock")} value={stats.lastBlock.toString()} />
         )}
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -98,9 +96,6 @@ function CopyRow({ label, value }: { label: string; value: string }) {
   )
 }
 
-// A principal's byte length tags what it is: 29 bytes ends in 0x02 for a
-// self-authenticating identity backed by a key pair, and canister ids are short
-// opaque ones. Returned as a catalog key, looked up under accountStats.kinds.
 function principalKind(text: string): "selfAuthenticating" | "anonymous" | "canister" | "opaque" {
   const n = principalBytes(text)
   if (n === 29) return "selfAuthenticating"

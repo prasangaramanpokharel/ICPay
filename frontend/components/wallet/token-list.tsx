@@ -4,12 +4,15 @@ import { useMemo, useState, useSyncExternalStore } from "react"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Add01Icon, Search01Icon } from "@hugeicons/core-free-icons"
+import { motion } from "motion/react"
+import { MotionList, MotionListItem } from "@/components/ui/motion-list"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import { formatTokenAmount } from "@/lib/wallet/utils"
+import { formatTokenAmount, resolveTokenDisplayName } from "@/lib/wallet/utils"
 import { type TokenHolding, type TokenMetadata } from "@/services/tokens"
 import { TokenLogo } from "@/components/token/token-logo"
 import { AddTokenDrawer } from "@/components/wallet/add-token-drawer"
@@ -93,47 +96,57 @@ export function TokenList({
   const toolbar = (
     <div className="space-y-3 border-b border-border/60 pb-4">
       <div className="flex items-center justify-between gap-2">
-        <p className="text-sm font-medium">{t("tokens")}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-semibold text-foreground">{t("tokens")}</p>
+          {holdings.length > 0 ? (
+            <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground tabular-nums">
+              {filtered.length}
+            </span>
+          ) : null}
+        </div>
         {onAddCustom ? (
           <Button
             type="button"
             variant="outline"
-            size="icon-sm"
-            className="size-8 rounded-full cursor-pointer"
+            size="sm"
+            className="h-8 gap-1.5 rounded-full px-3 text-xs font-medium cursor-pointer"
             aria-label={t("addToken")}
             onClick={() => setAddOpen(true)}
           >
-            <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={2} />
+            <HugeiconsIcon icon={Add01Icon} className="size-3.5" strokeWidth={2} />
+            <span>{t("addToken")}</span>
           </Button>
         ) : null}
       </div>
 
-      <div className="relative">
-        <HugeiconsIcon
-          icon={Search01Icon}
-          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
-          strokeWidth={1.75}
-        />
-        <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={t("searchTokens")}
-          className="h-9 pl-9"
-          aria-label={t("searchTokens")}
-        />
-      </div>
+      <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative flex-1">
+          <HugeiconsIcon
+            icon={Search01Icon}
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+            strokeWidth={1.75}
+          />
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={t("searchTokens")}
+            className="h-9 pl-9"
+            aria-label={t("searchTokens")}
+          />
+        </div>
 
-      <div className="flex items-center gap-2">
-        <Checkbox
-          id="hide-zero-balances"
-          checked={hideZero}
-          onCheckedChange={(checked) => {
-            writeHideZeroBalances(checked === true)
-          }}
-        />
-        <Label htmlFor="hide-zero-balances" className="text-sm font-normal text-muted-foreground cursor-pointer">
-          {t("hideZeroBalances")}
-        </Label>
+        <div className="flex shrink-0 items-center gap-2">
+          <Checkbox
+            id="hide-zero-balances"
+            checked={hideZero}
+            onCheckedChange={(checked) => {
+              writeHideZeroBalances(checked === true)
+            }}
+          />
+          <Label htmlFor="hide-zero-balances" className="text-xs font-normal text-muted-foreground cursor-pointer">
+            {t("hideZeroBalances")}
+          </Label>
+        </div>
       </div>
     </div>
   )
@@ -162,7 +175,11 @@ export function TokenList({
     return (
       <div className="rounded-2xl border border-border/60 bg-card p-4">
         {toolbar}
-        <p className="py-8 text-center text-sm text-muted-foreground">{t("noTokens")}</p>
+        <Empty className="py-8">
+          <EmptyHeader>
+            <EmptyTitle>{t("noTokens")}</EmptyTitle>
+          </EmptyHeader>
+        </Empty>
         {onAddCustom ? (
           <AddTokenDrawer
             open={addOpen}
@@ -180,22 +197,27 @@ export function TokenList({
       {toolbar}
 
       {pageItems.length === 0 ? (
-        <p className="py-8 text-center text-sm text-muted-foreground">{t("noTokensFound")}</p>
+        <Empty className="py-8">
+          <EmptyHeader>
+            <EmptyTitle>{t("noTokensFound")}</EmptyTitle>
+          </EmptyHeader>
+        </Empty>
       ) : (
-        <div className="mt-2 divide-y divide-border/60">
+        <MotionList key={`token-page-${safePage}-${hideZero}`} className="mt-2 divide-y divide-border/60">
           {pageItems.map((token) => (
-            <TokenRow
-              key={token.ledgerId}
-              token={token}
-              onClick={() => setSelectedLedgerId(token.ledgerId)}
-              outside={
-                (outside?.get(token.ledgerId) ?? 0n) > token.fee
-                  ? outside!.get(token.ledgerId)!
-                  : undefined
-              }
-            />
+            <MotionListItem key={token.ledgerId}>
+              <TokenRow
+                token={token}
+                onClick={() => setSelectedLedgerId(token.ledgerId)}
+                outside={
+                  (outside?.get(token.ledgerId) ?? 0n) > token.fee
+                    ? outside!.get(token.ledgerId)!
+                    : undefined
+                }
+              />
+            </MotionListItem>
           ))}
-        </div>
+        </MotionList>
       )}
 
       {filtered.length > PAGE_SIZE ? (
@@ -223,7 +245,6 @@ export function TokenList({
         />
       ) : null}
 
-      {/* On-chain compatible Token Detail Drawer */}
       <TokenDetailDrawer
         token={selectedToken}
         open={!!selectedToken}
@@ -245,10 +266,12 @@ function TokenRow({
   onClick: () => void
 }) {
   const t = useTranslations("wallet")
+  const displayName = resolveTokenDisplayName(token.symbol, token.name)
 
   return (
-    <button
+    <motion.button
       type="button"
+      whileTap={{ scale: 0.99 }}
       onClick={onClick}
       className={cn(
         "w-full flex items-center gap-3 rounded-xl px-2 py-3 transition-colors cursor-pointer text-left select-none",
@@ -259,12 +282,13 @@ function TokenRow({
 
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-foreground">{token.symbol}</p>
-        <p className="truncate text-xs text-muted-foreground">{token.name}</p>
+        <p className="truncate text-xs text-muted-foreground">{displayName}</p>
       </div>
 
       <div className="shrink-0 text-right">
         <p className="text-sm font-semibold tabular-nums text-foreground">
-          {formatTokenAmount(token.balance, token.decimals)}
+          {formatTokenAmount(token.balance, token.decimals)}{" "}
+          <span className="text-xs font-normal text-muted-foreground">{token.symbol}</span>
         </p>
         {outside !== undefined ? (
           <p className="mt-0.5 text-[11px] font-medium text-primary tabular-nums">
@@ -274,6 +298,6 @@ function TokenRow({
           </p>
         ) : null}
       </div>
-    </button>
+    </motion.button>
   )
 }

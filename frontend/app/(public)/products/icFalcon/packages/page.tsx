@@ -1,75 +1,27 @@
-"use client"
-
-import { useState, useEffect } from "react"
+import type { Metadata } from "next"
 import { PackagesHero } from "@/components/products/icfalcon/packages-hero"
-import { PackagesGrid } from "@/components/products/icfalcon/packages-grid"
-import { fetchFalconPackages, type FalconPackage } from "@/services/products/falcon/packages"
-import { Skeleton } from "@/components/ui/skeleton"
+import { PackagesBrowser } from "@/components/products/icfalcon/packages-browser"
+
+export const metadata: Metadata = {
+  title: "Falcon Packages — Motoko Registry & Ecosystem Libraries",
+  description:
+    "Browse curated Motoko packages, cryptographic libraries, data structures, and Internet Computer canisters compatible with the ICFalcon framework and Mops.",
+  keywords: [
+    "ICFalcon packages",
+    "Motoko packages",
+    "Mops registry",
+    "Internet Computer libraries",
+    "Motoko canisters",
+    "falcon add",
+  ],
+  alternates: { canonical: "/products/icFalcon/packages" },
+}
 
 export default function PackagesPage() {
-  const [packages, setPackages] = useState<FalconPackage[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    let cancelled = false
-    fetchFalconPackages()
-      .then((data) => {
-        if (!cancelled) setPackages(data)
-      })
-      .catch(() => {
-        // Fallback already guaranteed by fetchFalconPackages
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
-      })
-    return () => {
-      cancelled = true
-    }
-  }, [])
-
   return (
     <div className="min-h-screen bg-background">
       <PackagesHero />
-
-      <div className="container mx-auto px-4 py-12">
-        <div className="mx-auto max-w-6xl">
-          {loading ? (
-            <div className="space-y-6">
-              {/* Skeleton controls */}
-              <div className="space-y-4 rounded-2xl border border-border/60 bg-card/60 p-6">
-                <Skeleton className="h-10 w-full rounded-xl" />
-                <div className="flex flex-wrap gap-2">
-                  {Array.from({ length: 7 }).map((_, i) => (
-                    <Skeleton key={i} className="h-8 w-24 rounded-full" />
-                  ))}
-                </div>
-              </div>
-
-              {/* Skeleton cards */}
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex flex-col justify-between rounded-2xl border border-border/60 bg-card/60 p-5 space-y-4"
-                  >
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Skeleton className="h-5 w-24 rounded-md" />
-                        <Skeleton className="h-4 w-12 rounded-md" />
-                      </div>
-                      <Skeleton className="h-4 w-full rounded-md" />
-                      <Skeleton className="h-4 w-3/4 rounded-md" />
-                    </div>
-                    <Skeleton className="h-10 w-full rounded-xl" />
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            <PackagesGrid packages={packages} />
-          )}
-        </div>
-      </div>
+      <PackagesBrowser />
     </div>
   )
 }

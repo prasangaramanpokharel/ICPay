@@ -43,12 +43,12 @@
       "destination": "/token/token/deposit"
     },
     {
-      "source": "/token/:ledgerId",
-      "destination": "/token/token"
+      "source": "/token/:id((?!create$)[^/]+)",
+      "destination": "/token?id=:id"
     },
     {
       "source": "/launch/:id",
-      "destination": "/launch/id"
+      "destination": "/token?id=:id"
     },
     {
       "source": "/bucket/docs",

@@ -10,7 +10,7 @@ export function CommunityChannelPremiumLabel({
   return (
     <span
       className={cn(
-        "inline-flex shrink-0 items-center rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800 dark:text-amber-300",
+        "inline-flex shrink-0 items-center rounded-full bg-warning/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-warning",
         className
       )}
     >

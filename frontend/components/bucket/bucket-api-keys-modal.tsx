@@ -180,15 +180,17 @@ export function BucketApiKeysModal({
                       </div>
                       <div className="mt-0.5 flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
                         <span className="truncate">{key.keyHint}</span>
-                        <button
+                        <Button
                           type="button"
+                          variant="ghost"
+                          size="icon-xs"
                           onClick={() => void handleCopyHint(key)}
-                          className="inline-flex size-3.5 items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                          className="size-4 p-0 text-muted-foreground hover:text-foreground"
                           aria-label="Copy key prefix"
                           title={copiedHintId === key.id ? "Copied!" : "Copy key prefix"}
                         >
                           <CopyIconIndicator copied={copiedHintId === key.id} iconClassName="size-3" />
-                        </button>
+                        </Button>
                       </div>
                       <div className="mt-1 flex flex-wrap items-center gap-1">
                         {key.permissions.read ? (

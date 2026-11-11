@@ -40,9 +40,9 @@ pub struct StoredTrade {
     pub timestamp_ns: u64,
     pub token_in: String,
     pub token_out: String,
-    pub amount_in: u64,
-    pub amount_out: u64,
-    pub service_fee: u64,
+    pub amount_in: u128,
+    pub amount_out: u128,
+    pub service_fee: u128,
     pub tx_id: String,
 }
 

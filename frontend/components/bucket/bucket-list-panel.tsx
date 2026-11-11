@@ -10,6 +10,8 @@ import { AppPage } from "@/components/layout/dashboard/app-page"
 import { BucketCard } from "@/components/bucket/bucket-card"
 import { BucketCreateForm } from "@/components/bucket/bucket-create-form"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Card, CardContent } from "@/components/ui/card"
 import { ShineBorder } from "@/components/ui/shine-border"
 import {
@@ -94,39 +96,37 @@ export function BucketListPanel() {
       description={t("subtitle")}
       actions={
         <>
-          <div className="inline-flex items-center rounded-lg border border-border bg-muted/40 p-0.5 shadow-2xs">
+          <ButtonGroup>
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className="h-8 gap-1.5 px-3 text-xs font-medium text-foreground hover:bg-background hover:text-foreground"
+              className="gap-1.5 text-xs font-medium"
               nativeButton={false}
               render={<Link href="/bucket/api" />}
             >
               <HugeiconsIcon icon={Key01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
               <span>API</span>
             </Button>
-            <div className="h-4 w-px bg-border/80" />
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className="h-8 gap-1.5 px-3 text-xs font-medium text-foreground hover:bg-background hover:text-foreground"
+              className="gap-1.5 text-xs font-medium"
               nativeButton={false}
               render={<Link href="/bucket/docs" />}
             >
               <HugeiconsIcon icon={Book02Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
               <span>Docs</span>
             </Button>
-            <div className="h-4 w-px bg-border/80" />
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className="h-8 gap-1.5 px-3 text-xs font-medium text-foreground hover:bg-background hover:text-foreground"
+              className="gap-1.5 text-xs font-medium"
               onClick={() => setGuideOpen(true)}
             >
               <HugeiconsIcon icon={PlayIcon} className="size-3.5 text-primary fill-primary/20" strokeWidth={1.75} />
               <span>{t("docs")}</span>
             </Button>
-          </div>
+          </ButtonGroup>
           <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1.5">
             <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={1.75} />
             {t("createCta")}
@@ -149,20 +149,19 @@ export function BucketListPanel() {
             spellCheck={false}
           />
         </div>
-        <div className="flex gap-1 rounded-lg bg-muted p-1">
+        <ButtonGroup>
           {(["all", "active", "expired"] as const).map((tab) => (
             <Button
               key={tab}
               type="button"
               size="sm"
-              variant={filter === tab ? "secondary" : "ghost"}
-              className="rounded-md"
+              variant={filter === tab ? "secondary" : "outline"}
               onClick={() => setFilter(tab)}
             >
               {tab === "all" ? tGov("filter.all") : tab === "active" ? t("active") : t("expired")}
             </Button>
           ))}
-        </div>
+        </ButtonGroup>
         <Button variant="outline" size="sm" nativeButton={false} render={<Link href="/bucket/pricing" />}>
           {t("pricingLink")}
         </Button>
@@ -177,19 +176,21 @@ export function BucketListPanel() {
           </CardContent>
         </Card>
       ) : filtered.length === 0 ? (
-        <Card className="border-dashed">
-          <CardContent className="flex flex-col items-center gap-3 py-16 text-center">
-            <span className="flex size-12 items-center justify-center rounded-xl bg-muted">
+        <Empty className="rounded-2xl border border-dashed py-14">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
               <HugeiconsIcon icon={CloudIcon} className="size-6 text-muted-foreground" strokeWidth={1.75} />
-            </span>
-            <p className="text-sm font-medium">{t("empty")}</p>
-            <p className="text-sm text-muted-foreground">{t("emptyHint")}</p>
-            <Button onClick={() => setCreateOpen(true)}>
+            </EmptyMedia>
+            <EmptyTitle>{t("empty")}</EmptyTitle>
+            <EmptyDescription>{t("emptyHint")}</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button onClick={() => setCreateOpen(true)} className="gap-1.5">
               <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={1.75} />
               {t("createCta")}
             </Button>
-          </CardContent>
-        </Card>
+          </EmptyContent>
+        </Empty>
       ) : (
         <Card className="overflow-hidden py-0">
           <Table>
@@ -218,7 +219,7 @@ export function BucketListPanel() {
             className="z-0 pointer-events-none"
             borderWidth={1.5}
             duration={12}
-            shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+            shineColor={["var(--primary)", "var(--accent)", "var(--primary)"]}
           />
           <div className="relative z-10 flex flex-col gap-5">
             <DialogHeader>
@@ -241,7 +242,7 @@ export function BucketListPanel() {
               Step-by-step video guide to launching on-chain S3-compatible cloud storage on the Internet Computer.
             </DialogDescription>
           </DialogHeader>
-          <div className="relative aspect-video w-full bg-black">
+          <div className="relative aspect-video w-full bg-muted">
             <video
               src="https://res.cloudinary.com/dn2ycbmrc/video/upload/v1791783562/howtocreaticBucket_bxifwv.mp4"
               controls

@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import Link, { useLinkStatus } from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import {
@@ -103,8 +103,6 @@ function NavRow({
   active: boolean
   onWarm: () => void
 }) {
-  const t = useTranslations()
-
   return (
     <MotionHighlightItem asChild value={item.href}>
       <SidebarMenuItem>
@@ -119,25 +117,47 @@ function NavRow({
           onMouseEnter={onWarm}
           onFocus={onWarm}
         >
-          <NavIcon
-            icon={item.icon}
-            className={
-              active
-                ? "text-primary"
-                : "text-muted-foreground transition-colors group-hover/menu-button:text-foreground"
-            }
-          />
-          <span className="min-w-0 flex-1 truncate">{label}</span>
-          {item.badgeKey ? (
-            <Badge
-              variant={item.badgeVariant ?? "secondary"}
-              className="ml-auto h-5 px-1.5 text-[10px] font-semibold tracking-wider uppercase"
-            >
-              {t(item.badgeKey as never)}
-            </Badge>
-          ) : null}
+          <NavRowContent item={item} label={label} active={active} />
         </SidebarMenuButton>
       </SidebarMenuItem>
     </MotionHighlightItem>
+  )
+}
+
+function NavRowContent({
+  item,
+  label,
+  active,
+}: {
+  item: SidebarNavItem
+  label: string
+  active: boolean
+}) {
+  const t = useTranslations()
+  const { pending } = useLinkStatus()
+
+  return (
+    <>
+      <NavIcon
+        icon={item.icon}
+        className={cn(
+          active
+            ? "text-primary"
+            : "text-muted-foreground transition-colors group-hover/menu-button:text-foreground",
+          pending && "opacity-70"
+        )}
+      />
+      <span className={cn("min-w-0 flex-1 truncate transition-opacity", pending && "opacity-70")}>
+        {label}
+      </span>
+      {item.badgeKey ? (
+        <Badge
+          variant={item.badgeVariant ?? "secondary"}
+          className="ml-auto h-5 px-1.5 text-[10px] font-semibold tracking-wider uppercase"
+        >
+          {t(item.badgeKey as never)}
+        </Badge>
+      ) : null}
+    </>
   )
 }

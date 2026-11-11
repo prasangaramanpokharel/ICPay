@@ -18,7 +18,7 @@ Diagnose and resolve the most common issues encountered when integrating with IC
 **Cause**: Cross-Origin Resource Sharing (CORS) blocks direct browser fetch calls to external git repositories or unproxied gateways.
 
 **Solution**:
-- Ensure all client requests route through same-origin API routes (e.g. `/api/...`) or the official Edge CDN `https://cdn.icpay.app/cloud/` which emits explicit permissive CORS headers:
+- Ensure all client requests route through same-origin API routes (e.g. `/api/...`) or the official Edge CDN `https://cloud.icpay.app/cloud/` which emits explicit permissive CORS headers:
 ```http
 Access-Control-Allow-Origin: *
 Access-Control-Allow-Methods: GET, HEAD, OPTIONS
