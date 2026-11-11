@@ -105,7 +105,9 @@
       "governance": "ガバナンス",
       "bucketBadge": "50% off",
       "canisters": "Canisters",
-      "canisterTopup": "Top up"
+      "canisterTopup": "Top up",
+      "cron": "icCron",
+      "cronBadge": "新着"
     },
     "preferencesDescription": "言語、通貨、表示とサウンド"
   },

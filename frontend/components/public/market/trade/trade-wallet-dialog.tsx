@@ -5,8 +5,8 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import useSWR from "swr"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowDataTransferHorizontalIcon } from "@hugeicons/core-free-icons"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Exchange01Icon } from "@hugeicons/core-free-icons"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -16,17 +16,22 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { SuccessTick } from "@/components/ui/success-tick"
-import { Field, FieldDescription, FieldGroup } from "@/components/ui/field"
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Spinner } from "@/components/ui/spinner"
+import { SuccessTick } from "@/components/ui/success-tick"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useApplyInternalTransfer, tradeBalanceKey } from "@/hooks/trade/useTrade"
 import { useTokenHolding } from "@/hooks/wallet/useWalletData"
 import { maxTradeInput } from "@/lib/trade/fees"
 import { tradePairPath } from "@/lib/market/pairSlug"
 import { playSuccessChime } from "@/lib/ui/successChime"
-import { cn } from "@/lib/ui/utils"
 import { formatTokenAmount, parseTokenAmount, toPlainTokenAmount } from "@/lib/wallet/utils"
 import { depositForTrade, getTradingBalance, withdrawFromTrade } from "@/services/trade/trade"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
@@ -119,22 +124,26 @@ export function TradeWalletDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-sm" showCloseButton={!done}>
+      <DialogContent className="sm:max-w-md" showCloseButton={!done}>
         {done && token ? (
           <div className="flex flex-col items-center gap-4 py-2 text-center">
             <SuccessTick size="sm" />
-            <div className="space-y-1.5">
-              <p className="text-lg font-semibold tracking-tight">{t("transferSuccess")}</p>
-              <p className="text-sm text-muted-foreground">
+            <DialogHeader className="items-center text-center">
+              <DialogTitle className="text-lg font-semibold tracking-tight">
+                {t("transferSuccess")}
+              </DialogTitle>
+              <DialogDescription>
                 {formatTokenAmount(doneAmount, token.decimals)} {token.symbol}
                 {" · "}
                 {toWallet ? t("tradingAccount") : t("mainWallet")} →{" "}
                 {toWallet ? t("mainWallet") : t("tradingAccount")}
-              </p>
-            </div>
-            <Button variant="outline" size="sm" onClick={() => handleOpenChange(false)}>
-              {tc("done")}
-            </Button>
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="w-full sm:justify-center">
+              <Button variant="outline" size="sm" onClick={() => handleOpenChange(false)}>
+                {tc("done")}
+              </Button>
+            </DialogFooter>
           </div>
         ) : (
           <>
@@ -143,59 +152,72 @@ export function TradeWalletDialog({
               <DialogDescription>{t("transferHint")}</DialogDescription>
             </DialogHeader>
             <FieldGroup className="gap-4">
-              <div className="flex items-stretch gap-2">
-                <AccountBox label={t("from")} value={toWallet ? t("tradingAccount") : t("mainWallet")} />
+              <div className="flex items-center gap-2">
+                <AccountCard
+                  label={t("from")}
+                  value={toWallet ? t("tradingAccount") : t("mainWallet")}
+                />
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="outline"
                   size="icon-sm"
-                  className="mt-4 shrink-0"
+                  className="size-8 shrink-0 rounded-full border-border/80 bg-background shadow-xs hover:bg-muted"
                   onClick={() => {
                     setToWallet((v) => !v)
                     setAmountText("")
                     setError(null)
                   }}
+                  aria-label="Switch transfer direction"
                 >
                   <HugeiconsIcon
-                    icon={ArrowDataTransferHorizontalIcon}
-                    className="size-4 rotate-90"
+                    icon={Exchange01Icon}
+                    className="size-4 text-muted-foreground"
                     strokeWidth={2}
                   />
                 </Button>
-                <AccountBox label={t("to")} value={toWallet ? t("mainWallet") : t("tradingAccount")} />
+                <AccountCard
+                  label={t("to")}
+                  value={toWallet ? t("mainWallet") : t("tradingAccount")}
+                />
               </div>
-              <div className="flex gap-1.5">
-                {tokens.map((tok) => (
-                  <button
-                    key={tok.ledgerId}
-                    type="button"
-                    className={cn(
-                      "h-8 rounded-full px-3 text-xs font-medium",
-                      tok.ledgerId === token?.ledgerId
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground"
-                    )}
-                    onClick={() => {
-                      setPickedLedger(tok.ledgerId)
-                      setAmountText("")
-                      setError(null)
-                    }}
-                  >
-                    {tok.symbol}
-                  </button>
-                ))}
+
+              <div className="flex items-center gap-1.5">
+                {tokens.map((tok) => {
+                  const isSelected = tok.ledgerId === token?.ledgerId
+                  return (
+                    <Button
+                      key={tok.ledgerId}
+                      type="button"
+                      size="sm"
+                      variant={isSelected ? "default" : "secondary"}
+                      className="rounded-full px-3 text-xs"
+                      onClick={() => {
+                        setPickedLedger(tok.ledgerId)
+                        setAmountText("")
+                        setError(null)
+                      }}
+                    >
+                      {tok.symbol}
+                    </Button>
+                  )
+                })}
               </div>
-              <Field>
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="transfer-amount">{t("amountLabel")}</Label>
-                  <button
+
+              <Field className="gap-2">
+                <div className="flex min-h-6 items-center justify-between gap-2">
+                  <FieldLabel htmlFor="transfer-amount">{t("amountLabel")}</FieldLabel>
+                  <Button
                     type="button"
-                    className="text-xs font-medium text-primary"
+                    variant="link"
+                    size="xs"
+                    className="h-auto p-0 text-xs font-semibold text-primary hover:no-underline"
                     disabled={maxAmount <= 0n || !token}
-                    onClick={() => token && setAmountText(toPlainTokenAmount(maxAmount, token.decimals))}
+                    onClick={() =>
+                      token && setAmountText(toPlainTokenAmount(maxAmount, token.decimals))
+                    }
                   >
                     {tc("max")}
-                  </button>
+                  </Button>
                 </div>
                 <Input
                   id="transfer-amount"
@@ -209,24 +231,29 @@ export function TradeWalletDialog({
                 />
                 <FieldDescription>
                   {t("balance")}{" "}
-                  {token ? `${formatTokenAmount(available, token.decimals)} ${token.symbol}` : "—"}
+                  <span className="font-medium text-foreground">
+                    {token ? `${formatTokenAmount(available, token.decimals)} ${token.symbol}` : "—"}
+                  </span>
                 </FieldDescription>
+                {error ? <FieldError>{error}</FieldError> : null}
               </Field>
-              {error ? <p className="text-sm text-destructive">{error}</p> : null}
             </FieldGroup>
             <DialogFooter>
-              <DialogClose render={<Button variant="outline">{tc("cancel")}</Button>} />
+              <DialogClose render={<Button variant="outline" />}>
+                {tc("cancel")}
+              </DialogClose>
               {isAuthenticated ? (
                 <Button
                   disabled={busy || !token || amount == null || amount <= 0n || amount > maxAmount}
                   onClick={() => void submit()}
                 >
-                  {busy ? "…" : t("transfer")}
+                  {busy ? <Spinner data-icon="inline-start" /> : null}
+                  <span>{t("transfer")}</span>
                 </Button>
               ) : (
-                <Link href={loginHref} className={cn(buttonVariants(), "w-full sm:w-auto")}>
+                <Button render={<Link href={loginHref} />} className="w-full sm:w-auto">
                   {t("signIn")}
-                </Link>
+                </Button>
               )}
             </DialogFooter>
           </>
@@ -236,11 +263,13 @@ export function TradeWalletDialog({
   )
 }
 
-function AccountBox({ label, value }: { label: string; value: string }) {
+function AccountCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="min-w-0 flex-1 rounded-2xl border border-border/60 bg-muted/30 px-3 py-2">
-      <p className="text-[10px] tracking-wide text-muted-foreground uppercase">{label}</p>
-      <p className="truncate text-sm font-medium">{value}</p>
+    <div className="min-w-0 flex-1 rounded-2xl border border-border/70 bg-muted/30 px-3.5 py-2.5">
+      <span className="block text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+        {label}
+      </span>
+      <p className="truncate text-sm font-medium text-foreground">{value}</p>
     </div>
   )
 }

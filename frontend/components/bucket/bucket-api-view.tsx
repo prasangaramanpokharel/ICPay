@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -624,7 +625,7 @@ export function BucketApiView() {
         <DialogContent className="max-w-md gap-4" showCloseButton>
           <DialogHeader>
             <DialogTitle>Create API key</DialogTitle>
-            <DialogDescription className="text-xs">
+            <DialogDescription>
               Generate a secret token for automated S3 uploads, backup scripts, and CLI access.
             </DialogDescription>
           </DialogHeader>
@@ -737,7 +738,7 @@ export function BucketApiView() {
       >
         <DialogContent className="max-w-md gap-4" showCloseButton>
           <DialogHeader className="gap-1">
-            <DialogTitle className="text-base font-semibold">View API Key</DialogTitle>
+            <DialogTitle>View API Key</DialogTitle>
           </DialogHeader>
 
           <div className="flex items-center gap-2 rounded-lg border border-info/30 bg-info/10 p-3 text-xs text-info">
@@ -745,42 +746,36 @@ export function BucketApiView() {
             <span>You can only see this key once. Store it safely.</span>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-foreground">API Key</label>
-            <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2">
-              <input
+          <Field>
+            <FieldLabel htmlFor="created-secret">API Key</FieldLabel>
+            <InputGroup>
+              <InputGroupInput
+                id="created-secret"
                 type={showCreatedSecret ? "text" : "password"}
                 readOnly
                 value={createdResult?.secret || ""}
-                className="w-full bg-transparent font-mono text-xs text-foreground outline-none"
+                className="font-mono text-xs"
               />
-              <div className="flex shrink-0 items-center gap-1">
-                <Button
-                  type="button"
-                  variant="ghost"
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton
                   size="icon-xs"
                   onClick={() => setShowCreatedSecret((v) => !v)}
-                  className="size-6 p-0 text-muted-foreground hover:bg-muted hover:text-foreground"
                   aria-label={showCreatedSecret ? "Hide secret" : "Reveal secret"}
                   title={showCreatedSecret ? "Hide secret" : "Reveal secret"}
                 >
                   <HugeiconsIcon icon={showCreatedSecret ? EyeOffIcon : EyeIcon} className="size-3.5" />
-                </Button>
-
-                <Button
-                  type="button"
-                  variant="ghost"
+                </InputGroupButton>
+                <InputGroupButton
                   size="icon-xs"
                   onClick={() => void handleCopySecret()}
-                  className="size-6 p-0 text-muted-foreground hover:bg-muted hover:text-foreground"
                   aria-label="Copy secret"
                   title={copiedCreatedSecret ? tc("copied") : tc("copy")}
                 >
                   <HugeiconsIcon icon={copiedCreatedSecret ? Tick02Icon : Copy01Icon} className="size-3.5" />
-                </Button>
-              </div>
-            </div>
-          </div>
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
 
           <div className="mt-2 flex items-center justify-start">
             <Button
@@ -806,7 +801,7 @@ export function BucketApiView() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete API key?</AlertDialogTitle>
-            <AlertDialogDescription className="text-xs leading-relaxed">
+            <AlertDialogDescription>
               This will permanently revoke the API key{" "}
               <span className="font-semibold text-foreground">{keyToRevoke?.name}</span>. Any applications, scripts,
               or automated backups using this token prefix ({keyToRevoke?.keyHint}) will immediately lose access.

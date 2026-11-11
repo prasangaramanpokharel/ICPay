@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { CodeBlock } from "@/components/ui/code-block"
 import type { RemoteProjectRecord } from "@/services/cron/types"
+import { formatProjectId } from "./cron-types"
 
 interface CronConnectModalProps {
   project: RemoteProjectRecord | null
@@ -29,13 +30,13 @@ export function CronConnectModal({
   open,
   onOpenChange,
 }: CronConnectModalProps) {
-  const projectId = project ? project.id.toString() : "1"
+  const projectId = formatProjectId(project?.id)
   const projectName = project ? project.name : "my-project"
 
   const curlCode = `curl -X POST ${API_ENDPOINT} \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
-  -d '{"project_id": ${projectId}, "job_id": 1}'`
+  -d '{"project_id": "${projectId}", "job_id": 1}'`
 
   const nodeCode = `const res = await fetch("${API_ENDPOINT}", {
   method: "POST",
@@ -44,7 +45,7 @@ export function CronConnectModal({
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    project_id: ${projectId},
+    project_id: "${projectId}",
     job_id: 1,
   }),
 });
@@ -68,17 +69,17 @@ ICCRON_API_KEY="icp_cron_YOUR_KEY"`
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-[calc(100vw-2rem)] sm:max-w-xl overflow-hidden p-6 bg-card text-card-foreground border-border min-w-0">
+      <DialogContent className="w-full max-w-[calc(100vw-2rem)] sm:max-w-xl overflow-hidden p-6 min-w-0">
         <DialogHeader className="gap-1 min-w-0 w-full">
           <div className="flex items-center gap-2">
-            <DialogTitle className="text-lg font-semibold text-foreground">
+            <DialogTitle>
               Connect to {projectName}
             </DialogTitle>
             <Badge variant="secondary" className="text-[11px] font-mono">
               ID: {projectId}
             </Badge>
           </div>
-          <DialogDescription className="text-xs text-muted-foreground">
+          <DialogDescription>
             Trigger jobs on-demand via HTTP webhooks, serverless handlers, or on-chain calls.
           </DialogDescription>
         </DialogHeader>

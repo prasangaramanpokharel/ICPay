@@ -105,7 +105,9 @@
       "governance": "Gobernanza",
       "bucketBadge": "50% off",
       "canisters": "Canisters",
-      "canisterTopup": "Top up"
+      "canisterTopup": "Top up",
+      "cron": "icCron",
+      "cronBadge": "Nuevo"
     },
     "preferencesDescription": "Idioma, moneda, apariencia y sonido"
   },

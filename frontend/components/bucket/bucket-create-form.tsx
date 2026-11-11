@@ -116,7 +116,7 @@ export function BucketCreateForm({
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="flex min-h-6 items-center justify-between gap-2">
             <Label className="text-xs font-medium">{t("capacity")}</Label>
             <span className="text-[11px] text-muted-foreground">
               Dedicated EOP Canister
@@ -176,7 +176,7 @@ export function BucketCreateForm({
         </div>
 
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
+          <div className="flex min-h-6 items-center justify-between gap-2">
             <Label className="text-xs font-medium">Billing Cycle</Label>
             <span className="text-[11px] font-medium text-success">
               {billingPeriod === "yearly"
@@ -222,7 +222,7 @@ export function BucketCreateForm({
         </div>
 
         <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
+          <div className="flex min-h-6 items-center justify-between gap-2">
             <Label htmlFor="bucket-alert-email" className="text-xs font-medium">
               Expiry Alert Email <span className="text-muted-foreground font-normal">(Optional)</span>
             </Label>

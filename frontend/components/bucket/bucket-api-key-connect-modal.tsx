@@ -109,11 +109,11 @@ curl -H "Authorization: Bearer ${keySecretHint}" \\
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] w-full max-w-[calc(100vw-2rem)] sm:max-w-2xl overflow-y-auto overflow-x-hidden p-5 sm:p-6 min-w-0">
         <DialogHeader className="gap-2 min-w-0 w-full">
-          <DialogTitle className="flex items-center gap-2 text-lg">
+          <DialogTitle className="flex items-center gap-2">
             <HugeiconsIcon icon={Plug01Icon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
             <span className="truncate">Connect with {apiKey?.name ?? "API Key"}</span>
           </DialogTitle>
-          <DialogDescription className="text-xs">
+          <DialogDescription>
             Minimal, production-ready code snippets and credentials to integrate this API key into
             your application or backend services.
           </DialogDescription>

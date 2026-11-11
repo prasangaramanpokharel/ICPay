@@ -20,10 +20,10 @@ export function TradeChartWorkspace({
     <Card size="sm" className="m-1 flex h-full min-h-[300px] flex-col gap-0 overflow-hidden py-0">
       <Tabs defaultValue="chart" className="flex h-full min-h-0 flex-col gap-0">
         <TabsList variant="line" className="w-full shrink-0 justify-start border-b px-4">
-          <TabsTrigger value="chart">{t("tabChart")}</TabsTrigger>
-          <TabsTrigger value="info">{t("tabInfo")}</TabsTrigger>
-          <TabsTrigger value="data">{t("tabData")}</TabsTrigger>
-          <TabsTrigger value="analysis">{t("tabAnalysis")}</TabsTrigger>
+          <TabsTrigger value="chart" className="flex-none px-3">{t("tabChart")}</TabsTrigger>
+          <TabsTrigger value="info" className="flex-none px-3">{t("tabInfo")}</TabsTrigger>
+          <TabsTrigger value="data" className="flex-none px-3">{t("tabData")}</TabsTrigger>
+          <TabsTrigger value="analysis" className="flex-none px-3">{t("tabAnalysis")}</TabsTrigger>
         </TabsList>
         <TabsContent value="chart" className="mt-0 min-h-0 flex-1 overflow-hidden">
           <TradeChartPanel snapshot={snapshot} loading={loading} bare />

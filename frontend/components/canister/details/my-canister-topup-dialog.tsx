@@ -155,11 +155,11 @@ export function MyCanisterTopupDialog({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="gap-1.5">
-            <DialogTitle className="flex items-center gap-2 text-lg font-semibold">
+            <DialogTitle className="flex items-center gap-2">
               <HugeiconsIcon icon={FuelStationIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
               <span>{t("topUpTitle")}</span>
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
+            <DialogDescription>
               {t("topUpHint")}
             </DialogDescription>
           </DialogHeader>

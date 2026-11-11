@@ -2,7 +2,6 @@
 
 import { useSyncExternalStore, type ReactNode } from "react"
 import { usePathname } from "next/navigation"
-import { AppHeader } from "@/components/layout/app-header"
 import { BottomNav, bottomNavSpacerClass } from "@/components/layout/bottom-nav"
 import { AppDashboardShell } from "@/components/layout/dashboard/app-dashboard-shell"
 import { subscribeNavigation } from "@/lib/routing/rewrittenRoute"
@@ -33,10 +32,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   )
 
   return (
-    <AppDashboardShell>
-      <div className={cn("md:hidden", channelChat && "hidden")}>
-        <AppHeader />
-      </div>
+    <AppDashboardShell hidePublicNavMobile={channelChat}>
       <div
         className={cn(
           "mx-auto flex w-full flex-1 flex-col max-w-md md:max-w-none",

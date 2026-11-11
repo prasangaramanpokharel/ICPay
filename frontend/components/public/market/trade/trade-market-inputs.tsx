@@ -3,7 +3,6 @@
 import { useTranslations } from "next-intl"
 import { Input } from "@/components/ui/input"
 import { formatUsd } from "@/lib/market/format"
-import { TokenAvatar } from "./token-avatar"
 import { TradePercentageSlider } from "./trade-percentage-slider"
 import { TradeOrderQuote } from "./trade-order-quote"
 import type { TradeQuoteResult } from "@/services/trade/types"
@@ -60,12 +59,6 @@ export function TradeMarketInputs({
             onChange={(e) => onMarketAmountChange(e.target.value)}
           />
           <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1.5 text-xs font-semibold text-foreground">
-            <TokenAvatar
-              symbol={paySymbol}
-              ledgerId={tokenIn?.ledgerId}
-              logoUrl={tokenIn?.logoUrl}
-              className="size-4"
-            />
             <span>{paySymbol}</span>
           </span>
         </div>
@@ -95,10 +88,6 @@ export function TradeMarketInputs({
           receiveSymbol={receiveSymbol}
           payDecimals={tokenIn.decimals}
           outDecimals={tokenOut.decimals}
-          payLedgerId={tokenIn.ledgerId}
-          payLogoUrl={tokenIn.logoUrl}
-          receiveLedgerId={tokenOut.ledgerId}
-          receiveLogoUrl={tokenOut.logoUrl}
         />
       ) : null}
     </div>

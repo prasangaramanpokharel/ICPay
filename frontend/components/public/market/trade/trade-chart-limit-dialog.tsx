@@ -263,17 +263,17 @@ function TradeChartLimitDialogContent({
   }
 
   return (
-    <AlertDialogContent className="sm:max-w-md gap-4 p-5 bg-card/98 backdrop-blur-xl border border-border shadow-2xl">
+    <AlertDialogContent className="sm:max-w-md gap-4 p-5">
       <AlertDialogHeader className="gap-1 text-left">
         <div className="flex items-center justify-between w-full">
-          <AlertDialogTitle className="flex items-center gap-2 text-base font-bold">
+          <AlertDialogTitle className="flex items-center gap-2">
             <span>{t("placeLimitOrder")}</span>
             <Badge variant="outline" className="font-mono text-[11px] px-2 py-0 border-border/80">
               {baseSymbol} / {quoteSymbol}
             </Badge>
           </AlertDialogTitle>
         </div>
-        <AlertDialogDescription className="text-xs text-muted-foreground">
+        <AlertDialogDescription>
           Execute an automated limit order when {baseSymbol} reaches your target price on the chart.
         </AlertDialogDescription>
       </AlertDialogHeader>

@@ -131,11 +131,11 @@ export function BucketApiKeysModal({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-md gap-3 sm:max-w-lg" showCloseButton>
           <DialogHeader className="gap-1">
-            <DialogTitle className="flex items-center gap-2 text-base">
+            <DialogTitle className="flex items-center gap-2">
               <HugeiconsIcon icon={Key01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
               {t("apiKeysTitle")}
             </DialogTitle>
-            <DialogDescription className="text-xs leading-relaxed">
+            <DialogDescription>
               {t("apiKeysHint")}
             </DialogDescription>
           </DialogHeader>
@@ -292,7 +292,7 @@ export function BucketApiKeysModal({
         <DialogContent className="max-w-sm gap-4" showCloseButton>
           <DialogHeader>
             <DialogTitle>{t("apiKeyCreate")}</DialogTitle>
-            <DialogDescription className="text-xs">{t("apiKeyCreateHint")}</DialogDescription>
+            <DialogDescription>{t("apiKeyCreateHint")}</DialogDescription>
           </DialogHeader>
           <form
             onSubmit={(e) => {
@@ -379,7 +379,7 @@ export function BucketApiKeysModal({
         <DialogContent className="max-w-sm gap-4" showCloseButton>
           <DialogHeader>
             <DialogTitle>{t("apiKeyCreatedTitle")}</DialogTitle>
-            <DialogDescription className="text-xs">{t("apiKeyCreatedBody")}</DialogDescription>
+            <DialogDescription>{t("apiKeyCreatedBody")}</DialogDescription>
           </DialogHeader>
           <Card size="sm">
             <CardContent className="flex min-w-0 items-center gap-1.5 py-2 pl-3 pr-1.5">

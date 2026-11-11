@@ -131,7 +131,7 @@ export function PublicNav() {
               loading="eager"
             />
             <span className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
-              ICPay
+              ic<span className="text-primary">Pay</span>
             </span>
           </Link>
 

@@ -13,6 +13,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { listProjects } from "@/services/cron/client"
 import type { RemoteProjectRecord } from "@/services/cron/types"
 import { CronCreateForm } from "./cron-create-form"
+import { formatProjectId, parseProjectId } from "./cron-types"
 
 function CronCreateContent() {
   const router = useRouter()
@@ -22,9 +23,14 @@ function CronCreateContent() {
 
   const { identity } = useAuth()
   const [projects, setProjects] = React.useState<RemoteProjectRecord[]>([])
-  const [selectedProjectId, setSelectedProjectId] = React.useState<bigint | null>(
-    queryProjectId ? BigInt(queryProjectId) : null
-  )
+  const [selectedProjectId, setSelectedProjectId] = React.useState<bigint | null>(() => {
+    if (!queryProjectId) return null
+    try {
+      return parseProjectId(queryProjectId)
+    } catch {
+      return null
+    }
+  })
   const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
@@ -36,7 +42,13 @@ function CronCreateContent() {
         setProjects(data)
         if (selectedProjectId === null && data.length > 0) {
           if (queryProjectId) {
-            const found = data.find((p) => p.id.toString() === queryProjectId)
+            const parsed = parseProjectId(queryProjectId)
+            const found = data.find(
+              (p) =>
+                p.id === parsed ||
+                p.id.toString() === queryProjectId ||
+                formatProjectId(p.id) === queryProjectId
+            )
             setSelectedProjectId(found ? found.id : data[0].id)
           } else if (queryProjectName) {
             const decoded = decodeURIComponent(queryProjectName).toLowerCase()
@@ -99,7 +111,7 @@ function CronCreateContent() {
                 const nextProj = projects.find((p) => p.id === nextId)
                 if (nextProj) {
                   router.replace(
-                    `/cron/create?id=${encodeURIComponent(nextProj.name)}&projectId=${nextProj.id.toString()}`
+                    `/cron/create?id=${encodeURIComponent(nextProj.name)}&projectId=${formatProjectId(nextProj.id)}`
                   )
                 }
               }}
@@ -107,7 +119,7 @@ function CronCreateContent() {
             >
               {projects.map((p) => (
                 <NativeSelectOption key={p.id.toString()} value={p.id.toString()}>
-                  {p.name}
+                  {p.name} ({formatProjectId(p.id)})
                 </NativeSelectOption>
               ))}
             </NativeSelect>

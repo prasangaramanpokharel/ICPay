@@ -216,10 +216,10 @@ export function TransferForm({
   return (
     <FieldGroup className="gap-5">
       <Field className="gap-2">
-        <div className="flex items-center justify-between">
-          <FieldLabel htmlFor="to">{t("rowTo")}</FieldLabel>
+        <div className="flex min-h-6 items-center justify-between gap-2">
+          <FieldLabel htmlFor="to" className="shrink-0">{t("rowTo")}</FieldLabel>
           {to.trim() && mode !== "username" ? (
-            <Badge variant="secondary" className="font-mono text-[10px] tracking-wider uppercase">
+            <Badge variant="secondary" className="shrink-0 font-mono text-[10px] tracking-wider uppercase">
               {mode === "principal" ? t("tabPrincipal") : t("tabAccount")}
             </Badge>
           ) : null}
@@ -268,25 +268,23 @@ export function TransferForm({
         ) : null}
       </Field>
 
-      <div>
-        <AmountInput
-          id="amount"
-          label={tc("amount")}
-          value={amount}
-          onChange={(v) => {
-            setAmount(v)
-            setError(null)
-          }}
-          balance={balance}
-          maxE8s={sendable}
-          size="default"
-        />
-        {sendable !== undefined ? (
-          <FieldDescription className="mt-1.5 text-xs text-muted-foreground">
-            {t("maxSendable", { amount: formatAmount(sendable), fee: formatAmount(ICP_FEE) })}
-          </FieldDescription>
-        ) : null}
-      </div>
+      <AmountInput
+        id="amount"
+        label={tc("amount")}
+        value={amount}
+        onChange={(v) => {
+          setAmount(v)
+          setError(null)
+        }}
+        balance={balance}
+        maxE8s={sendable}
+        size="default"
+        description={
+          sendable !== undefined
+            ? t("maxSendable", { amount: formatAmount(sendable), fee: formatAmount(ICP_FEE) })
+            : undefined
+        }
+      />
 
       <QrScanner open={scanOpen} onOpenChange={setScanOpen} onScan={applyScan} />
       <BookmarkDrawer
@@ -301,14 +299,13 @@ export function TransferForm({
       />
 
       <Field className="gap-2">
-        <div className="flex items-baseline justify-between">
-          <FieldLabel htmlFor="memo">{t("memoLabel")}</FieldLabel>
+        <div className="flex min-h-6 items-center justify-between gap-2">
+          <FieldLabel htmlFor="memo" className="shrink-0">{t("memoLabel")}</FieldLabel>
           <span
-            className={
-              memoTooLong
-                ? "text-xs font-medium tabular-nums text-destructive"
-                : "text-xs tabular-nums text-muted-foreground"
-            }
+            className={cn(
+              "shrink-0 text-xs tabular-nums",
+              memoTooLong ? "font-medium text-destructive" : "text-muted-foreground"
+            )}
           >
             {memoByteLength(memo.trim())}/{MEMO_MAX_BYTES}
           </span>

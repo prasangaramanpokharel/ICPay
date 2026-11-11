@@ -223,7 +223,7 @@ function TradeTerminalInner() {
   }, [snapshot])
 
   return (
-    <div className="flex h-[calc(100svh-3.5rem)] min-h-[32rem] flex-col overflow-hidden bg-background pb-2">
+    <div className="flex h-full min-h-[32rem] flex-col overflow-hidden bg-background pb-3">
       {snapshot ? (
         <TradeSeoHead
           symbol={snapshot.base.symbol}
@@ -247,7 +247,7 @@ function TradeTerminalInner() {
         >
           <ResizablePanel
             id="terminal-markets"
-            defaultSize="17%"
+            defaultSize="19%"
             minSize="14%"
             maxSize="26%"
             className="h-full overflow-hidden p-2"
@@ -267,7 +267,7 @@ function TradeTerminalInner() {
 
           <ResizablePanel
             id="terminal-center"
-            defaultSize="58%"
+            defaultSize="56%"
             minSize="38%"
             className="h-full overflow-hidden p-2"
           >

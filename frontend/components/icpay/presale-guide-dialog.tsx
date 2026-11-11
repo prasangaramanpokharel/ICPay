@@ -82,7 +82,7 @@ export function PresaleGuideDialog({
             </span>
             <div>
               <DialogHeader className="text-left">
-                <DialogTitle className="text-lg text-primary-foreground">{t("heroTitle")}</DialogTitle>
+                <DialogTitle className="text-primary-foreground">{t("heroTitle")}</DialogTitle>
                 <DialogDescription className="text-primary-foreground/80">
                   {t("heroSubtitle")}
                 </DialogDescription>

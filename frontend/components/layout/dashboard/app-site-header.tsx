@@ -17,9 +17,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
-import { LanguageSwitch } from "@/components/i18n/language-switch"
-import { HeaderUserMenu } from "@/components/layout/dashboard/header-user-menu"
-import { ThemeToggle } from "@/components/public/theme-toggle"
 import { resolveAppPageTitle } from "@/lib/navigation/app-sidebar-nav"
 import { cn } from "@/lib/ui/utils"
 
@@ -136,7 +133,7 @@ export function AppSiteHeader() {
         <React.Suspense fallback={<h1 className="flex-1 truncate text-sm font-normal">icPay</h1>}>
           <HeaderTitleOrBreadcrumb pathname={pathname} />
         </React.Suspense>
-        <div className="flex shrink-0 items-center rounded-full border border-border/70 bg-muted/40 p-0.5">
+        <div className="flex shrink-0 items-center">
           <Link
             href="/username"
             className={cn(
@@ -151,12 +148,6 @@ export function AppSiteHeader() {
               strokeWidth={1.75}
             />
           </Link>
-          <Separator orientation="vertical" className="mx-0.5 h-5 data-vertical:self-auto" />
-          <LanguageSwitch variant="globe" />
-          <Separator orientation="vertical" className="mx-0.5 h-5 data-vertical:self-auto" />
-          <ThemeToggle />
-          <Separator orientation="vertical" className="mx-0.5 h-5 data-vertical:self-auto" />
-          <HeaderUserMenu />
         </div>
       </div>
     </header>

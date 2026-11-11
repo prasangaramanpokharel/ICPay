@@ -129,7 +129,7 @@ export function AcademyAdminGate({ children, className }: AcademyAdminGateProps)
               </Field>
 
               <Field>
-                <div className="flex items-center justify-between">
+                <div className="flex min-h-6 items-center justify-between gap-2">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   <button
                     type="button"

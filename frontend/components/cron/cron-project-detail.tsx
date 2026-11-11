@@ -88,7 +88,7 @@ import type {
   RemoteJobSummary,
   RemoteProjectRecord,
 } from "@/services/cron/types"
-import { formatHumanSchedule, formatRelativeTime } from "./cron-types"
+import { formatHumanSchedule, formatProjectId, formatRelativeTime, parseProjectId } from "./cron-types"
 import { CronOutputDrawer } from "./cron-output-drawer"
 import { CronConnectModal } from "./cron-connect-modal"
 
@@ -132,10 +132,13 @@ export function CronProjectDetail({
       const projs = await listProjects(identity)
       setAllProjects(projs)
       const decodedParam = decodeURIComponent(projectNameOrId).trim().toLowerCase()
+      const parsedParamId = parseProjectId(projectNameOrId)
       const found = projs.find(
         (p) =>
           p.name.toLowerCase() === decodedParam ||
-          p.id.toString() === projectNameOrId
+          p.id.toString() === projectNameOrId ||
+          formatProjectId(p.id).toLowerCase() === decodedParam ||
+          (parsedParamId > 0n && p.id === parsedParamId)
       )
 
       if (found) {
@@ -166,10 +169,13 @@ export function CronProjectDetail({
         if (!active) return
         setAllProjects(projs)
         const decodedParam = decodeURIComponent(projectNameOrId).trim().toLowerCase()
+        const parsedParamId = parseProjectId(projectNameOrId)
         const found = projs.find(
           (p) =>
             p.name.toLowerCase() === decodedParam ||
-            p.id.toString() === projectNameOrId
+            p.id.toString() === projectNameOrId ||
+            formatProjectId(p.id).toLowerCase() === decodedParam ||
+            (parsedParamId > 0n && p.id === parsedParamId)
         )
 
         if (found) {
@@ -316,7 +322,7 @@ export function CronProjectDetail({
 
   if (loading) {
     return (
-      <AppPage className="mx-auto max-w-6xl w-full space-y-6">
+      <AppPage className="w-full space-y-6">
         <Skeleton className="h-8 w-48 rounded-md" />
         <Card className="rounded-lg border border-border/80 p-4">
           <CardContent className="space-y-3 p-0">
@@ -331,7 +337,7 @@ export function CronProjectDetail({
 
   if (!project) {
     return (
-      <AppPage className="mx-auto max-w-6xl w-full space-y-6">
+      <AppPage className="w-full space-y-6">
         <Empty className="rounded-2xl border border-dashed py-14">
           <EmptyHeader>
             <EmptyMedia variant="icon">
@@ -367,7 +373,7 @@ export function CronProjectDetail({
 
   return (
     <AppPage
-      className="mx-auto max-w-6xl w-full space-y-6"
+      className="w-full space-y-6"
       title={
         <div className="flex items-center gap-3">
           <span className="text-2xl font-bold tracking-tight text-foreground">{project.name}</span>
@@ -376,6 +382,9 @@ export function CronProjectDetail({
             className="text-xs px-2 py-0.5 font-medium"
           >
             {jobs.length === 0 ? "Empty" : hasActiveJobs ? "Active" : "Paused"}
+          </Badge>
+          <Badge variant="secondary" className="text-[11px] font-mono">
+            ID: {formatProjectId(project.id)}
           </Badge>
         </div>
       }
@@ -445,7 +454,7 @@ export function CronProjectDetail({
           <Button
             size="sm"
             nativeButton={false}
-            render={<Link href={`/cron/create?id=${encodeURIComponent(project.name)}&projectId=${project.id.toString()}`} />}
+            render={<Link href={`/cron/create?id=${encodeURIComponent(project.name)}&projectId=${formatProjectId(project.id)}`} />}
             className="gap-1.5"
           >
             <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={1.75} />
@@ -683,12 +692,12 @@ export function CronProjectDetail({
       </div>
 
       <Dialog open={renameOpen} onOpenChange={setRenameOpen}>
-        <DialogContent className="sm:max-w-md bg-card text-card-foreground border-border">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold text-foreground">
+            <DialogTitle>
               Rename Project
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
+            <DialogDescription>
               Update the display name of this project namespace.
             </DialogDescription>
           </DialogHeader>

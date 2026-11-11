@@ -105,7 +105,9 @@
       "buyPremium": "Buy Premium",
       "bucketBadge": "50% off",
       "canisters": "Canisters",
-      "canisterTopup": "Top up"
+      "canisterTopup": "Top up",
+      "cron": "icCron",
+      "cronBadge": "Mới"
     },
     "preferencesDescription": "Ngôn ngữ, tiền tệ, giao diện và âm thanh"
   },

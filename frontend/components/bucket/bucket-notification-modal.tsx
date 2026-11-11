@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -125,11 +126,11 @@ export function BucketNotificationModal({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-md gap-4 sm:max-w-lg">
         <DialogHeader className="gap-1.5">
-          <DialogTitle className="flex items-center gap-2 text-lg">
+          <DialogTitle className="flex items-center gap-2">
             <HugeiconsIcon icon={BellIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
             <span>Expiry Alerts</span>
           </DialogTitle>
-          <DialogDescription className="text-xs">
+          <DialogDescription>
             Email notifications for <span className="font-semibold text-foreground">{displayName}</span>
           </DialogDescription>
         </DialogHeader>
@@ -167,9 +168,9 @@ export function BucketNotificationModal({
 
           <form onSubmit={handleSave} className="space-y-3">
             <div className="space-y-1.5">
-              <label htmlFor="bucket-notif-email" className="text-xs font-medium text-foreground">
+              <Label htmlFor="bucket-notif-email">
                 Email Address
-              </label>
+              </Label>
               <div className="relative">
                 <Input
                   id="bucket-notif-email"

@@ -102,7 +102,7 @@ export function TradeSubmitButton({
       variant="default"
       size="lg"
       className={cn(
-        "w-full font-semibold shadow-xs transition-all active:scale-[0.99]",
+        "w-full font-semibold shadow-xs transition-all active:scale-[0.99] disabled:bg-muted disabled:text-muted-foreground disabled:opacity-100 disabled:shadow-none",
         isBuy
           ? "bg-success hover:bg-success/90 text-success-foreground"
           : "bg-destructive hover:bg-destructive/90 text-destructive-foreground"
@@ -114,7 +114,10 @@ export function TradeSubmitButton({
         <span>{`Wait (${rateLimitCooldown}s)`}</span>
       ) : orderType === "limit" ? (
         status === "placing_limit" ? (
-          t("placingOrder")
+          <>
+            <Spinner data-icon="inline-start" />
+            <span>{t("placingOrder")}</span>
+          </>
         ) : (
           t("placeLimitOrder")
         )

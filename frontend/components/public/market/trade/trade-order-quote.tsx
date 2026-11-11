@@ -10,7 +10,6 @@ import { Spinner } from "@/components/ui/spinner"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { DEFAULT_SLIPPAGE_BPS } from "@/lib/trade/fees"
 import type { TradeQuoteResult } from "@/services/trade/types"
-import { TokenAvatar } from "./token-avatar"
 
 export function TradeOrderQuote({
   quote,
@@ -19,10 +18,6 @@ export function TradeOrderQuote({
   receiveSymbol,
   payDecimals,
   outDecimals,
-  payLedgerId,
-  payLogoUrl,
-  receiveLedgerId,
-  receiveLogoUrl,
 }: {
   quote: TradeQuoteResult | undefined
   quoting: boolean
@@ -30,10 +25,6 @@ export function TradeOrderQuote({
   receiveSymbol: string
   payDecimals: number
   outDecimals: number
-  payLedgerId?: string
-  payLogoUrl?: string | null
-  receiveLedgerId?: string
-  receiveLogoUrl?: string | null
 }) {
   const t = useTranslations("marketTrade")
   const slippagePct = (Number(DEFAULT_SLIPPAGE_BPS) / 100).toFixed(0)
@@ -48,14 +39,8 @@ export function TradeOrderQuote({
           ) : quote ? (
             <>
               <span>{formatTokenAmount(quote.amountOut, outDecimals)}</span>
-              <span className="inline-flex items-center gap-1 text-xs font-semibold text-foreground">
-                <TokenAvatar
-                  symbol={receiveSymbol}
-                  ledgerId={receiveLedgerId}
-                  logoUrl={receiveLogoUrl}
-                  className="size-3.5"
-                />
-                <span>{receiveSymbol}</span>
+              <span className="text-xs font-semibold text-foreground">
+                {receiveSymbol}
               </span>
             </>
           ) : (
@@ -80,12 +65,6 @@ export function TradeOrderQuote({
               <span className="text-muted-foreground">{t("poolFee")}</span>
               <span className="inline-flex items-center gap-1 tabular-nums font-medium text-foreground">
                 <span>{formatTokenAmount(quote.swapFee, payDecimals)}</span>
-                <TokenAvatar
-                  symbol={paySymbol}
-                  ledgerId={payLedgerId}
-                  logoUrl={payLogoUrl}
-                  className="size-3"
-                />
                 <span>{paySymbol}</span>
               </span>
             </div>

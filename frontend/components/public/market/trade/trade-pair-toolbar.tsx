@@ -95,43 +95,45 @@ export function TradePairToolbar({
         detail={usd.sub}
         large
         valueClass={changeClass(stats?.priceChange24h)}
-        tooltip="Current spot market price in USD"
       />
       {snapshot.priceInIcp !== null && (
         <Metric
           label={t("priceIcp")}
           value={icp.main}
           detail={icp.sub}
-          tooltip="Current price denominated in ICP"
         />
       )}
       <Metric
         label={t("change24h")}
         value={formatPct(stats?.priceChange24h)}
         valueClass={changeClass(stats?.priceChange24h)}
-        tooltip="24-hour price change percentage"
       />
       {range && (
         <>
           <Metric
             label={t("rangeHigh")}
             value={priceLayers(range.high).main}
-            tooltip="Highest traded price in the last 24 hours"
           />
           <Metric
             label={t("rangeLow")}
             value={priceLayers(range.low).main}
-            tooltip="Lowest traded price in the last 24 hours"
           />
         </>
       )}
-      <Metric label={t("volume24h")} value={formatUsd(stats?.volume24hUsd)} tooltip="Total trading volume in USD over the last 24 hours" />
-      {snapshot.fdv && <Metric label={t("fdv")} value={formatUsd(snapshot.fdv)} tooltip="Fully Diluted Valuation - market cap if max supply was in circulation" />}
+      <Metric label={t("volume24h")} value={formatUsd(stats?.volume24hUsd)} />
+      {snapshot.fdv && (
+        <Metric
+          label={t("fdv")}
+          value={formatUsd(snapshot.fdv)}
+          tooltip="Fully Diluted Valuation - market cap if max supply was in circulation"
+        />
+      )}
       {snapshot.holders !== undefined && (
         <Metric
           label={t("holders")}
           value={snapshot.holders.toLocaleString()}
           detail={snapshot.holdersChange24h !== undefined ? formatPct((snapshot.holdersChange24h / (snapshot.holders || 1)) * 100) : undefined}
+          detailClass={changeClass(snapshot.holdersChange24h)}
           tooltip="Number of unique wallet addresses holding this token"
         />
       )}
@@ -145,6 +147,7 @@ function Metric({
   detail,
   large,
   valueClass,
+  detailClass,
   tooltip,
 }: {
   label: string
@@ -152,6 +155,7 @@ function Metric({
   detail?: string
   large?: boolean
   valueClass?: string
+  detailClass?: string
   tooltip?: string
 }) {
   return (
@@ -170,7 +174,7 @@ function Metric({
         {value}
       </p>
       {detail && detail !== value && (
-        <p className="text-[10px] tabular-nums text-muted-foreground">{detail}</p>
+        <p className={cn("text-[10px] tabular-nums", detailClass ?? "text-muted-foreground")}>{detail}</p>
       )}
     </div>
   )

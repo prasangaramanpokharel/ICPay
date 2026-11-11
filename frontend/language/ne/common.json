@@ -105,7 +105,9 @@
       "buyPremium": "Buy Premium",
       "bucketBadge": "50% off",
       "canisters": "Canisters",
-      "canisterTopup": "Top up"
+      "canisterTopup": "Top up",
+      "cron": "icCron",
+      "cronBadge": "नयाँ"
     },
     "preferencesDescription": "भाषा, मुद्रा, फोर र ध्वनि"
   },

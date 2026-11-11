@@ -57,7 +57,7 @@ export default async function MarketTradePairPage({ params, searchParams }: Page
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       ) : null}
-      <div className="h-[calc(100svh-3.5rem)] overflow-hidden">
+      <div className="h-[calc(100svh-3.5rem)] overflow-hidden md:h-[calc(100svh-4rem)]">
         <Suspense fallback={<TerminalFallback />}>
           <TradeTerminal />
         </Suspense>

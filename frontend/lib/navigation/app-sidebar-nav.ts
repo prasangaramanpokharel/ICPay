@@ -15,6 +15,11 @@ import {
 } from "@hugeicons/core-free-icons"
 import { APP_NAV_ITEMS, isAppNavActive } from "@/lib/navigation/app-nav-items"
 
+export type SidebarNavSubItem = {
+  href: string
+  label: string
+}
+
 export type SidebarNavItem = {
   href: string
   labelKey: string
@@ -22,6 +27,7 @@ export type SidebarNavItem = {
   badgeKey?: string
   badgeVariant?: "default" | "secondary" | "outline"
   badgeType?: "gradient" | "text"
+  subItems?: SidebarNavSubItem[]
 }
 
 export type SidebarNavSection = {
@@ -54,7 +60,18 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
   {
     sectionKey: "services",
     items: [
-      { href: "/bucket", labelKey: "settings.items.bucket", icon: CloudIcon, badgeKey: "settings.items.bucketBadge", badgeVariant: "secondary" },
+      {
+        href: "/bucket",
+        labelKey: "settings.items.bucket",
+        icon: CloudIcon,
+        badgeKey: "settings.items.bucketBadge",
+        badgeVariant: "secondary",
+        subItems: [
+          { href: "/bucket", label: "Overview" },
+          { href: "/bucket/api", label: "API Keys" },
+          { href: "/bucket/docs", label: "Documentation" },
+        ],
+      },
       {
         href: "/canister",
         labelKey: "settings.items.canisters",
@@ -66,6 +83,10 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
         icon: TimeScheduleIcon,
         badgeKey: "settings.items.cronBadge",
         badgeVariant: "secondary",
+        subItems: [
+          { href: "/cron", label: "Overview" },
+          { href: "/cron/api", label: "API Keys" },
+        ],
       },
     ],
   },
@@ -95,6 +116,14 @@ const ALL_ITEMS: SidebarNavItem[] = [
 
 export function isSidebarItemActive(pathname: string, href: string): boolean {
   if (href === "/home") return pathname === "/home"
+  if (href === "/cron") {
+    return (
+      pathname === "/cron" ||
+      pathname.startsWith("/cron/") ||
+      pathname === "/iccron" ||
+      pathname.startsWith("/iccron/")
+    )
+  }
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 

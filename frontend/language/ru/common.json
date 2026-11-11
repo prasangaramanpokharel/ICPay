@@ -105,7 +105,9 @@
       "governance": "Управление",
       "bucketBadge": "50% off",
       "canisters": "Canisters",
-      "canisterTopup": "Top up"
+      "canisterTopup": "Top up",
+      "cron": "icCron",
+      "cronBadge": "Новое"
     },
     "preferencesDescription": "Язык, валюта, оформление и звук"
   },

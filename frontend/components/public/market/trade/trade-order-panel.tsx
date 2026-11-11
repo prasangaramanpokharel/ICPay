@@ -319,7 +319,7 @@ export function TradeOrderPanel({
           className="opacity-30 dark:opacity-40"
         />
         <div className="relative z-10 flex min-h-0 flex-col">
-          <div className="p-3 pb-2">
+          <div className="p-2 pb-1.5">
             <ToggleGroup
               value={[side]}
               onValueChange={(val) => {
@@ -373,8 +373,6 @@ export function TradeOrderPanel({
                 convertedPriceSubtext={limitForm.convertedPriceSubtext}
                 quoteSymbol={quoteSymbol}
                 baseSymbol={baseSymbol}
-                baseToken={baseToken}
-                quoteToken={quoteToken}
                 limitBaseAmountText={limitForm.limitBaseAmountText}
                 onBaseAmountChange={limitForm.handleBaseAmountChange}
                 limitTotalText={limitForm.limitTotalText}

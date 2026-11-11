@@ -223,8 +223,8 @@ export function BucketListPanel() {
           />
           <div className="relative z-10 flex flex-col gap-5">
             <DialogHeader>
-              <DialogTitle className="text-xl font-bold tracking-tight">{t("formTitle")}</DialogTitle>
-              <DialogDescription className="text-sm text-muted-foreground">{t("formSubtitle")}</DialogDescription>
+              <DialogTitle>{t("formTitle")}</DialogTitle>
+              <DialogDescription>{t("formSubtitle")}</DialogDescription>
             </DialogHeader>
             <BucketCreateForm onCreate={handleCreate} />
           </div>
@@ -232,13 +232,13 @@ export function BucketListPanel() {
       </Dialog>
 
       <Dialog open={guideOpen} onOpenChange={setGuideOpen}>
-        <DialogContent className="max-w-2xl sm:max-w-3xl overflow-hidden p-0 border-border bg-background shadow-2xl">
+        <DialogContent className="max-w-2xl sm:max-w-3xl overflow-hidden p-0">
           <DialogHeader className="p-4 pb-3 border-b border-border/60">
-            <DialogTitle className="text-base font-semibold flex items-center gap-2">
+            <DialogTitle className="flex items-center gap-2">
               <HugeiconsIcon icon={PlayIcon} className="size-4 text-primary fill-primary/20" strokeWidth={1.75} />
               How to create an icBucket
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
+            <DialogDescription>
               Step-by-step video guide to launching on-chain S3-compatible cloud storage on the Internet Computer.
             </DialogDescription>
           </DialogHeader>

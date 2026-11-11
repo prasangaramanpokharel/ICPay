@@ -17,6 +17,7 @@ import {
 } from "@hugeicons/core-free-icons"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
@@ -48,6 +49,7 @@ import {
   revokeApiKey,
 } from "@/services/cron/client"
 import type { RemoteApiKeySummary, RemoteProjectRecord } from "@/services/cron/types"
+import { formatProjectId, parseProjectId } from "./cron-types"
 
 interface EnrichedApiKey extends RemoteApiKeySummary {
   projectName: string
@@ -225,7 +227,7 @@ export function CronApiView() {
 
     setCreatingKey(true)
     try {
-      const projId = BigInt(targetProjectId)
+      const projId = parseProjectId(targetProjectId)
       const rawKey = await createApiKey(projId, newKeyLabel.trim(), identity)
       setGeneratedResult(rawKey)
       setCopiedSecret(false)
@@ -337,7 +339,7 @@ export function CronApiView() {
               <NativeSelectOption value="all">All projects</NativeSelectOption>
               {projects.map((p) => (
                 <NativeSelectOption key={p.id.toString()} value={p.id.toString()}>
-                  {p.name}
+                  {p.name} ({formatProjectId(p.id)})
                 </NativeSelectOption>
               ))}
             </NativeSelect>
@@ -452,7 +454,10 @@ export function CronApiView() {
                       </TableCell>
 
                       <TableCell className="text-xs text-foreground">
-                        {key.projectName}
+                        <div className="flex flex-col">
+                          <span className="font-medium text-foreground">{key.projectName}</span>
+                          <span className="font-mono text-[10px] text-muted-foreground">{formatProjectId(key.project_id)}</span>
+                        </div>
                       </TableCell>
 
                       <TableCell>
@@ -512,12 +517,12 @@ export function CronApiView() {
       </Card>
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="sm:max-w-md bg-card text-card-foreground border-border">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold text-foreground">
+            <DialogTitle>
               Create an API Key
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
+            <DialogDescription>
               Generate an authentication key to trigger cron jobs programmatically.
             </DialogDescription>
           </DialogHeader>
@@ -525,7 +530,7 @@ export function CronApiView() {
           <form onSubmit={handleCreateSubmit} className="flex flex-col gap-4 py-2">
             {projects.length > 0 && (
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-foreground">Target Project</label>
+                <Label>Target Project</Label>
                 <NativeSelect
                   value={targetProjectId}
                   onChange={(e) => setTargetProjectId(e.target.value)}
@@ -534,7 +539,7 @@ export function CronApiView() {
                 >
                   {projects.map((p) => (
                     <NativeSelectOption key={p.id.toString()} value={p.id.toString()}>
-                      {p.name}
+                      {p.name} ({formatProjectId(p.id)})
                     </NativeSelectOption>
                   ))}
                 </NativeSelect>
@@ -542,7 +547,7 @@ export function CronApiView() {
             )}
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-foreground">Key Label</label>
+              <Label>Key Label</Label>
               <Input
                 value={newKeyLabel}
                 onChange={(e) => setNewKeyLabel(e.target.value)}
@@ -575,12 +580,12 @@ export function CronApiView() {
       </Dialog>
 
       <Dialog open={resultModalOpen} onOpenChange={setResultModalOpen}>
-        <DialogContent className="sm:max-w-md bg-card text-card-foreground border-border">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold text-foreground">
+            <DialogTitle>
               API Key Generated
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
+            <DialogDescription>
               Copy this key immediately. For security, it will never be displayed again.
             </DialogDescription>
           </DialogHeader>

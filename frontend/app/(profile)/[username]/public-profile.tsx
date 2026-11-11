@@ -6,6 +6,7 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Principal } from "@icp-sdk/core/principal"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
 import { Spinner } from "@/components/ui/spinner"
 import { Switch } from "@/components/ui/switch"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -155,12 +156,12 @@ export function PublicProfile() {
               </span>
             </Button>
 
-            <label className="mt-3 flex w-full items-center justify-between gap-3 px-1">
+            <Label className="mt-3 flex w-full items-center justify-between gap-3 px-1">
               <span className="text-xs text-muted-foreground">
                 {legacy ? t("formatLegacy") : t("formatIcrc")}
               </span>
               <Switch checked={legacy} onCheckedChange={setLegacy} />
-            </label>
+            </Label>
           </>
         )}
 

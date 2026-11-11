@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
 import useSWR from "swr"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -230,11 +231,17 @@ export function SendTokenDrawer({
           </div>
         ) : (
         <FieldGroup className="gap-4 px-4">
-          {/* Recipient leads, the same order the transfer page uses: who is
-              being paid is the first decision, and a wrong handle wastes the fee
-              whatever the amount is. */}
           <Field className="gap-2">
-            <FieldLabel htmlFor="send-username">{t("recipient")}</FieldLabel>
+            <div className="flex min-h-6 items-center justify-between gap-2">
+              <FieldLabel htmlFor="send-username" className="shrink-0">
+                {tt("rowTo")}
+              </FieldLabel>
+              {username.trim() && mode !== "username" ? (
+                <Badge variant="secondary" className="shrink-0 font-mono text-[10px] tracking-wider uppercase">
+                  {mode === "principal" ? tt("tabPrincipal") : tt("tabAccount")}
+                </Badge>
+              ) : null}
+            </div>
             <div className="relative">
               <Input
                 id="send-username"
@@ -276,14 +283,14 @@ export function SendTokenDrawer({
           />
 
           <Field className="gap-2">
-            <div className="flex items-baseline justify-between gap-3">
-              <FieldLabel htmlFor="send-amount">{tc("amount")}</FieldLabel>
-              <span className="text-xs text-muted-foreground">
+            <div className="flex min-h-6 items-center justify-between gap-2">
+              <FieldLabel htmlFor="send-amount" className="shrink-0">{tc("amount")}</FieldLabel>
+              <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
                 {tc("balance")}{" "}
-                <span className="font-medium tabular-nums text-foreground">
+                <span className="font-semibold text-foreground">
                   {full(token.balance)}
                 </span>
-              </span>
+              </Badge>
             </div>
             <div className="relative">
               <Input
@@ -335,11 +342,11 @@ export function SendTokenDrawer({
           </Field>
 
           <Field className="gap-2">
-            <div className="flex items-baseline justify-between">
-              <FieldLabel htmlFor="send-memo">{t("memoLabel")}</FieldLabel>
+            <div className="flex min-h-6 items-center justify-between gap-2">
+              <FieldLabel htmlFor="send-memo" className="shrink-0">{t("memoLabel")}</FieldLabel>
               <span
                 className={cn(
-                  "text-xs tabular-nums",
+                  "shrink-0 text-xs tabular-nums",
                   memoTooLong ? "font-medium text-destructive" : "text-muted-foreground"
                 )}
               >

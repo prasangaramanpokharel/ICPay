@@ -105,7 +105,9 @@
       "governance": "거버넌스",
       "bucketBadge": "50% off",
       "canisters": "Canisters",
-      "canisterTopup": "Top up"
+      "canisterTopup": "Top up",
+      "cron": "icCron",
+      "cronBadge": "신규"
     },
     "preferencesDescription": "언어, 통화, 화면 및 소리"
   },

@@ -166,14 +166,14 @@ export function LinkCanisterDialog({
       <DialogContent className="sm:max-w-lg max-w-[calc(100vw-2rem)] w-full min-w-0 overflow-hidden p-6">
         <DialogHeader className="space-y-1">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-base font-semibold text-foreground">
+            <DialogTitle>
               Link canister
             </DialogTitle>
             <span className="text-xs text-muted-foreground">
               Step {activeStep + 1} of {STEPS.length}
             </span>
           </div>
-          <DialogDescription className="text-xs text-muted-foreground">
+          <DialogDescription>
             {activeStep === 0 &&
               "Attach an existing canister you created (dfx, NNS, or third-party) to manage or monitor on ICPay."}
             {activeStep === 1 &&
@@ -205,9 +205,11 @@ export function LinkCanisterDialog({
               const isCompleted = index < activeStep
               const isVerifyingThis = isVerifying && index === 1
               return (
-                <button
+                <Button
                   key={step.title}
                   type="button"
+                  variant="ghost"
+                  size="xs"
                   disabled={index > activeStep || activeStep === 2 || isVerifying}
                   onClick={() => {
                     if (index < activeStep && activeStep !== 2) {
@@ -216,12 +218,12 @@ export function LinkCanisterDialog({
                   }}
                   aria-current={isActive ? "step" : undefined}
                   className={cn(
-                    "flex flex-1 items-center justify-center gap-1.5 py-1 text-center text-xs font-medium transition-colors duration-200 focus-visible:outline-none",
+                    "flex-1 hover:bg-transparent",
                     isActive
-                      ? "text-foreground font-semibold"
+                      ? "font-semibold text-foreground"
                       : isCompleted
-                        ? "text-muted-foreground hover:text-foreground cursor-pointer"
-                        : "text-muted-foreground/40 cursor-not-allowed"
+                        ? "text-muted-foreground hover:text-foreground"
+                        : "text-muted-foreground/40"
                   )}
                 >
                   {isVerifyingThis ? (
@@ -232,7 +234,7 @@ export function LinkCanisterDialog({
                   ) : (
                     <span>{step.title}</span>
                   )}
-                </button>
+                </Button>
               )
             })}
           </div>
@@ -359,13 +361,15 @@ export function LinkCanisterDialog({
                       <span>Verifying</span>
                     </Badge>
                   ) : (
-                    <button
+                    <Button
                       type="button"
+                      variant="link"
+                      size="xs"
                       onClick={() => setActiveStep(0)}
-                      className="text-xs text-primary hover:underline cursor-pointer shrink-0"
+                      className="h-auto shrink-0 p-0"
                     >
                       Change
-                    </button>
+                    </Button>
                   )}
                 </div>
 
@@ -419,14 +423,16 @@ export function LinkCanisterDialog({
                   </div>
 
                   <div className="text-center pt-1">
-                    <button
+                    <Button
                       type="button"
+                      variant="link"
+                      size="xs"
                       onClick={handleSkipVerify}
                       disabled={isVerifying}
-                      className="text-[11px] text-muted-foreground hover:text-foreground underline underline-offset-2 cursor-pointer transition-colors"
+                      className="h-auto p-0 text-muted-foreground hover:text-foreground"
                     >
                       Not a controller yet? Skip &amp; link anyway for cycles monitoring
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </motion.div>

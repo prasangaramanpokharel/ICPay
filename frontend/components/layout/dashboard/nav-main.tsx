@@ -10,6 +10,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar"
 import { NavIcon } from "@/components/layout/dashboard/nav-icon"
 import { Badge } from "@/components/ui/badge"
@@ -103,24 +106,61 @@ function NavRow({
   active: boolean
   onWarm: () => void
 }) {
+  const pathname = usePathname()
+  const hasSubItems = Boolean(item.subItems && item.subItems.length > 0)
+  const isSubActive = Boolean(
+    item.subItems?.some(
+      (sub) =>
+        pathname === sub.href ||
+        (sub.href !== item.href && pathname.startsWith(sub.href)),
+    ),
+  )
+  const isParentActive = active || isSubActive
+
   return (
-    <MotionHighlightItem asChild value={item.href}>
-      <SidebarMenuItem>
+    <SidebarMenuItem>
+      <MotionHighlightItem asChild value={item.href}>
         <SidebarMenuButton
           tooltip={label}
-          isActive={active}
+          isActive={isParentActive}
           className={cn(
             itemClass,
-            "hover:bg-transparent data-open:hover:bg-transparent data-active:hover:bg-muted"
+            "hover:bg-transparent data-open:hover:bg-transparent data-active:hover:bg-muted",
           )}
           render={<Link href={item.href} />}
           onMouseEnter={onWarm}
           onFocus={onWarm}
         >
-          <NavRowContent item={item} label={label} active={active} />
+          <NavRowContent item={item} label={label} active={isParentActive} />
         </SidebarMenuButton>
-      </SidebarMenuItem>
-    </MotionHighlightItem>
+      </MotionHighlightItem>
+
+      {hasSubItems && isParentActive ? (
+        <SidebarMenuSub className="my-1">
+          {item.subItems?.map((sub) => {
+            const isCurrent =
+              sub.href === item.href
+                ? pathname === sub.href
+                : pathname === sub.href || pathname.startsWith(`${sub.href}/`)
+            return (
+              <SidebarMenuSubItem key={sub.href}>
+                <SidebarMenuSubButton
+                  size="sm"
+                  isActive={isCurrent}
+                  className={cn(
+                    "h-7 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground",
+                    isCurrent && "font-semibold text-foreground data-active:bg-muted/80",
+                  )}
+                  render={<Link href={sub.href} />}
+                >
+                  <span className="truncate">{sub.label}</span>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            )
+          })}
+        </SidebarMenuSub>
+      ) : null}
+    </SidebarMenuItem>
   )
 }
 
