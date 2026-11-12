@@ -67,7 +67,7 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
         badgeKey: "settings.items.bucketBadge",
         badgeVariant: "secondary",
         subItems: [
-          { href: "/bucket", labelKey: "services.sections.overview" },
+          { href: "/bucket", labelKey: "settings.sections.overview" },
           { href: "/bucket/api", labelKey: "cron.apiKeys" },
           { href: "/bucket/docs", labelKey: "bucket.docs" },
         ],
@@ -84,7 +84,7 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
         badgeKey: "settings.items.cronBadge",
         badgeVariant: "secondary",
         subItems: [
-          { href: "/cron", labelKey: "services.sections.overview" },
+          { href: "/cron", labelKey: "settings.sections.overview" },
           { href: "/cron/api", labelKey: "cron.apiKeys" },
         ],
       },
