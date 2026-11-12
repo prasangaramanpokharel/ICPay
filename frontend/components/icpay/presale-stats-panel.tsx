@@ -44,26 +44,23 @@ export function PresaleStatsPanel({
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-medium tabular-nums">
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <span className="font-bold text-foreground">
+        <div className="flex items-baseline justify-between text-xs">
+          <div className="flex items-center gap-1.5 text-zinc-400">
+            <span className="font-bold text-zinc-100">
               {formatTokenAmount(sale.icpaySold, ICP_DECIMALS, 0)}
             </span>
-            <span>/</span>
+            <span className="text-zinc-600">/</span>
             <span>{formatTokenAmount(sale.inventoryCap, ICP_DECIMALS, 0)}</span>
-            <span className="font-medium text-foreground">{symbol}</span>
+            <span className="font-medium text-zinc-300">{symbol}</span>
           </div>
-          <Badge
-            variant="outline"
-            className="border-primary/25 bg-primary/10 px-2.5 py-0.5 font-mono text-[11px] font-bold text-primary tabular-nums shadow-xs"
-          >
+          <span className="font-mono text-xs font-bold text-amber-400 tabular-nums">
             {percentLabel}%
-          </Badge>
+          </span>
         </div>
 
-        <div className="relative h-3 w-full overflow-hidden rounded-full bg-muted/60 p-0.5 ring-1 ring-border/40">
+        <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-zinc-800/80 p-0.5">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-primary/80 via-primary to-primary shadow-xs transition-all duration-700 ease-out"
+            className="h-full rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 shadow-[0_0_12px_rgba(245,158,11,0.4)] transition-all duration-700 ease-out"
             style={{ width: `${percent}%` }}
           />
         </div>
@@ -72,11 +69,11 @@ export function PresaleStatsPanel({
       <div className="grid grid-cols-3 gap-2.5">
         <HoverCard>
           <HoverCardTrigger className="cursor-pointer block text-left">
-            <div className="group rounded-2xl border border-border/70 bg-muted/20 p-3.5 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-muted/40 hover:shadow-xs">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground group-hover:text-primary transition-colors">
+            <div className="group rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-3 text-center transition-all duration-200 hover:border-amber-500/30 hover:bg-zinc-800/60">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 transition-colors group-hover:text-amber-400">
                 Raised
               </span>
-              <span className="mt-1 block truncate text-xs font-bold tabular-nums text-foreground sm:text-sm">
+              <span className="mt-1 block truncate text-xs font-bold tabular-nums text-zinc-100 sm:text-sm">
                 {formatAmount(sale.icpRaised)} ICP
               </span>
             </div>
@@ -93,11 +90,11 @@ export function PresaleStatsPanel({
 
         <HoverCard>
           <HoverCardTrigger className="cursor-pointer block text-left">
-            <div className="group rounded-2xl border border-border/70 bg-muted/20 p-3.5 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-muted/40 hover:shadow-xs">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground group-hover:text-primary transition-colors">
+            <div className="group rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-3 text-center transition-all duration-200 hover:border-amber-500/30 hover:bg-zinc-800/60">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 transition-colors group-hover:text-amber-400">
                 Remaining
               </span>
-              <span className="mt-1 block truncate text-xs font-bold tabular-nums text-foreground sm:text-sm">
+              <span className="mt-1 block truncate text-xs font-bold tabular-nums text-zinc-100 sm:text-sm">
                 {formatTokenAmount(sale.inventoryRemaining, ICP_DECIMALS, 0)}
               </span>
             </div>
@@ -117,11 +114,11 @@ export function PresaleStatsPanel({
 
         <HoverCard>
           <HoverCardTrigger className="cursor-pointer block text-left">
-            <div className="group rounded-2xl border border-border/70 bg-muted/20 p-3.5 text-center transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:bg-muted/40 hover:shadow-xs">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground group-hover:text-primary transition-colors">
+            <div className="group rounded-xl border border-zinc-800/80 bg-zinc-900/60 p-3 text-center transition-all duration-200 hover:border-amber-500/30 hover:bg-zinc-800/60">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 transition-colors group-hover:text-amber-400">
                 Target Cap
               </span>
-              <span className="mt-1 block truncate text-xs font-bold tabular-nums text-foreground sm:text-sm">
+              <span className="mt-1 block truncate text-xs font-bold tabular-nums text-zinc-100 sm:text-sm">
                 500 ICP
               </span>
             </div>
@@ -138,7 +135,7 @@ export function PresaleStatsPanel({
       {!sale.active && (
         <Badge
           variant="outline"
-          className="w-full justify-center border-warning/40 bg-warning/10 py-1.5 text-xs font-medium text-warning"
+          className="w-full justify-center border-amber-500/30 bg-amber-500/10 py-1.5 text-xs font-medium text-amber-400"
         >
           {inactiveLabel}
         </Badge>
