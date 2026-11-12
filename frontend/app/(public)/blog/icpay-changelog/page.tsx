@@ -208,7 +208,7 @@ export default function IcpayChangelogPage() {
             src="/images/pages/iccron/architecture-diagram.svg"
             alt="icCron Architecture Diagram"
             width={900}
-            height={400}
+            height={480}
             className="h-auto w-full max-w-3xl object-contain dark:invert-0"
           />
         </div>
