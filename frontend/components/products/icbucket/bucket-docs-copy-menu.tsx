@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, ArrowUpDownIcon } from "@hugeicons/core-free-icons"
+import { Copy01Icon } from "@hugeicons/core-free-icons"
 import {
   Markdown,
   Openai,
@@ -124,11 +124,9 @@ export function BucketDocsCopyMenu({ markdown, title = "ICBucket Documentation" 
       >
         <CopyIconIndicator copied={copied} iconClassName="size-3.5" />
         <span>{copied ? "Copied" : "Copy"}</span>
-        <HugeiconsIcon icon={ArrowUpDownIcon} className="size-3 text-muted-foreground ml-0.5 opacity-60" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-72 p-1.5 rounded-2xl border-border/60 bg-popover/95 backdrop-blur-md shadow-2xl">
-        {/* Core Markdown options */}
         <DropdownMenuItem
           onClick={handleCopyPage}
           className="flex items-start gap-3 p-2 rounded-xl cursor-pointer hover:bg-accent/80 transition-colors"
@@ -153,7 +151,6 @@ export function BucketDocsCopyMenu({ markdown, title = "ICBucket Documentation" 
 
         <DropdownMenuSeparator className="my-1 border-border/40" />
 
-        {/* AI Chat assistants */}
         <DropdownMenuItem
           onClick={handleOpenChatGPT}
           className="flex items-start gap-3 p-2 rounded-xl cursor-pointer hover:bg-accent/80 transition-colors"
@@ -178,7 +175,6 @@ export function BucketDocsCopyMenu({ markdown, title = "ICBucket Documentation" 
 
         <DropdownMenuSeparator className="my-1 border-border/40" />
 
-        {/* MCP & Tooling Connectors */}
         <DropdownMenuItem
           onClick={handleConnectMCP}
           className="flex items-start gap-3 p-2 rounded-xl cursor-pointer hover:bg-accent/80 transition-colors"
