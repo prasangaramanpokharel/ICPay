@@ -88,7 +88,7 @@ const faqJsonLd = {
       name: "Can I use icpay-bucket as an alternative to Cloudinary or AWS S3 upload APIs?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Yes. icpay-bucket provides identical functionality: you pass an API key and a file buffer or stream. You receive a persistent CDN URL (https://cdn.icpay.app/...) with zero outbound bandwidth egress taxes and predictable 30-day ICP plans.",
+        text: "Yes. icpay-bucket provides identical functionality: you pass an API key and a file buffer or stream. You receive a persistent CDN URL (https://cloud.icpay.app/...) with zero outbound bandwidth egress taxes and predictable 30-day ICP plans.",
       },
     },
     {
@@ -268,7 +268,7 @@ export async function POST(req: Request) {
   return Response.json({
     success: true,
     path: result.ok.path,
-    url: publicUrl, // https://cdn.icpay.app/production-uploads/documents/...
+    url: publicUrl, // https://cloud.icpay.app/production-uploads/documents/...
   })
 }`}</pre>
         </div>

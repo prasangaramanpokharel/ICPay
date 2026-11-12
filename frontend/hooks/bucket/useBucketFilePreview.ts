@@ -6,6 +6,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { optionalText } from "@/lib/bucket/bucket"
 import {
   bytesToObjectUrl,
+  fetchBucketFileBlob,
   normalizePublicFileUrl,
   revokeObjectUrl,
 } from "@/lib/bucket/filePreview"
@@ -65,5 +66,39 @@ export function useBucketFilePreview(bucketId: string, file: FilePublic | null) 
     handleImageError,
     refresh,
     viaCanister: useCanister,
+  }
+}
+
+export function useBucketTextPreview(bucketId: string, file: FilePublic | null) {
+  const { identity } = useAuth()
+  const publicUrl = file ? optionalText(file.publicUrl) : null
+
+  const swrKey = file
+    ? ["bucket-text-preview", bucketId, file.path, String(file.updatedAt)]
+    : null
+
+  const { data: text, isLoading, error } = useSWR(
+    swrKey,
+    async () => {
+      const blob = await fetchBucketFileBlob({
+        publicUrl,
+        identity: identity ?? undefined,
+        bucketId,
+        path: file!.path,
+        contentType: file!.contentType,
+      })
+      const raw = await blob.text()
+      return raw.slice(0, 100_000)
+    },
+    {
+      ...BUCKET_QUERY,
+      dedupingInterval: 120_000,
+    }
+  )
+
+  return {
+    text: text ?? null,
+    loading: isLoading && text === undefined,
+    error,
   }
 }

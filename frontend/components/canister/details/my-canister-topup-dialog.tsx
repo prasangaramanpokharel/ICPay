@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { FuelStationIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { AmountInput } from "@/components/shared/amount-input"
-import { FieldDescription, FieldGroup } from "@/components/ui/field"
+import { FieldError, FieldGroup } from "@/components/ui/field"
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
@@ -155,11 +155,11 @@ export function MyCanisterTopupDialog({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="gap-1.5">
-            <DialogTitle className="flex items-center gap-2 text-lg font-semibold">
+            <DialogTitle className="flex items-center gap-2">
               <HugeiconsIcon icon={FuelStationIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
               <span>{t("topUpTitle")}</span>
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
+            <DialogDescription>
               {t("topUpHint")}
             </DialogDescription>
           </DialogHeader>
@@ -176,7 +176,7 @@ export function MyCanisterTopupDialog({
               size="xl"
             />
             {amountError ? (
-              <FieldDescription className="text-xs font-medium text-destructive">{amountError}</FieldDescription>
+              <FieldError className="text-xs">{amountError}</FieldError>
             ) : estimated != null ? (
               <div className="rounded-2xl border border-border/60 bg-muted/25 px-4 py-3.5">
                 <p className="text-xs font-medium text-muted-foreground">

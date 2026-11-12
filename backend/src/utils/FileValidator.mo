@@ -209,4 +209,9 @@ module {
     size <= Config.BUCKET_MAX_FILE_BYTES
   };
 
+  public func validateFileSizeForPath(path: Text, size: Nat) : Bool {
+    ignore path;
+    size <= Config.BUCKET_MAX_FILE_BYTES
+  };
+
 };

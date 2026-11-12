@@ -1,0 +1,362 @@
+"use client"
+
+import { useState } from "react"
+import { useTranslations } from "next-intl"
+import { useRouter } from "next/navigation"
+import Image from "next/image"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Spinner } from "@/components/ui/spinner"
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  Tick02Icon,
+  Cancel01Icon,
+  InformationCircleIcon,
+} from "@hugeicons/core-free-icons"
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import { BadgeMark, PremiumBadge } from "@/components/verified/premium-badge"
+import { ShineBorder } from "@/components/ui/shine-border"
+import {
+  BADGE_RANGES,
+  tierBadgeSpans,
+  type BadgeSpan,
+} from "@/lib/verified/premiumTick"
+import { purchaseUsername } from "@/services/buy/buy"
+import type { Purchase } from "@/services/types"
+import { useAuth } from "@/components/auth/auth-provider"
+import {
+  useRefreshWallet,
+  useUsernameAvailability,
+  useUsernameTreasury,
+  useLiveBalance,
+} from "@/hooks/wallet/useWalletData"
+import { formatAmount, ICP_FEE, shortPrincipal } from "@/lib/wallet/utils"
+import { ICP_LOGO } from "@/lib/token/icon"
+import {
+  priceFor,
+  tierFor,
+  validateUsername,
+  TIERS,
+  USERNAME_MAX_LENGTH,
+  USERNAME_FREE_MIN_LENGTH,
+} from "@/lib/profile/username"
+import { SendSuccess } from "@/components/wallet/send-success"
+import { AppPage } from "@/components/layout/dashboard/app-page"
+import { Card, CardContent } from "@/components/ui/card"
+import { primeSuccessChime } from "@/lib/ui/successChime"
+import { cn } from "@/lib/ui/utils"
+
+const SHINE_VARS = ["var(--primary)", "var(--chart-2)", "var(--chart-3)"]
+
+export function UsernamePurchaseView() {
+  const t = useTranslations("buyUsername")
+  const router = useRouter()
+  const { identity } = useAuth()
+  const refreshWallet = useRefreshWallet()
+  const [name, setName] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [buying, setBuying] = useState(false)
+  const [bought, setBought] = useState<Purchase | null>(null)
+
+  const trimmed = name.trim()
+  const shapeError = trimmed ? validateUsername(trimmed) : null
+  const { available, isLoading: checking } = useUsernameAvailability(
+    shapeError ? "" : trimmed
+  )
+
+  const price = trimmed ? priceFor(trimmed) : 0n
+  const tier = trimmed ? tierFor(trimmed) : null
+  const total = price + ICP_FEE
+  const balance = useLiveBalance()
+  const insufficient =
+    balance !== undefined && trimmed !== "" && total > balance
+
+  const treasury = useUsernameTreasury()
+  const canBuy =
+    trimmed !== "" &&
+    !shapeError &&
+    available === true &&
+    !insufficient &&
+    !buying
+
+  const handleBuy = async () => {
+    if (!identity || !canBuy) return
+    primeSuccessChime()
+    setBuying(true)
+    setError(null)
+    const result = await purchaseUsername(identity, trimmed)
+    setBuying(false)
+    if ("err" in result) {
+      setError(result.err)
+      return
+    }
+    refreshWallet()
+    setBought(result.ok)
+  }
+
+  if (bought) {
+    return (
+      <AppPage>
+        <div className="mx-auto w-full max-w-md">
+          <SendSuccess
+            amount={bought.price}
+            recipient={`@${bought.username}`}
+            blockIndex={bought.blockIndex}
+            kind="purchase"
+            onDone={() => router.push("/profile")}
+          />
+        </div>
+      </AppPage>
+    )
+  }
+
+  return (
+    <AppPage title={t("title")} description={t("subtitle")}>
+      <div className="mx-auto w-full max-w-md">
+        <Card className="border-border/60 shadow-sm">
+          <CardContent className="space-y-6 px-5 py-7">
+            <div className="space-y-2">
+              <Label htmlFor="buy-username">{t("label")}</Label>
+              <div className="relative">
+                <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-base text-muted-foreground">
+                  @
+                </span>
+                <Input
+                  id="buy-username"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value)
+                    setError(null)
+                  }}
+                  placeholder="btc"
+                  maxLength={USERNAME_MAX_LENGTH}
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  className="pr-10 pl-9"
+                />
+                {trimmed !== "" && !shapeError && !checking && (
+                  <span className="absolute top-1/2 right-4 -translate-y-1/2">
+                    <HugeiconsIcon
+                      icon={available ? Tick02Icon : Cancel01Icon}
+                      className={cn(
+                        "size-5",
+                        available ? "text-success" : "text-destructive"
+                      )}
+                    />
+                  </span>
+                )}
+                {checking && (
+                  <Spinner className="absolute top-1/2 right-4 size-4 -translate-y-1/2" />
+                )}
+              </div>
+              {shapeError && (
+                <p className="text-xs text-destructive">
+                  {t(`errors.${shapeError}`, {
+                    max: USERNAME_MAX_LENGTH,
+                    min: USERNAME_FREE_MIN_LENGTH,
+                  })}
+                </p>
+              )}
+              {!shapeError && available === false && (
+                <p className="text-xs text-destructive">
+                  {t("taken", { name: trimmed })}
+                </p>
+              )}
+              {!shapeError && available === true && (
+                <p className="text-xs text-success">
+                  {t("availableName", { name: trimmed })}
+                </p>
+              )}
+            </div>
+
+            {trimmed !== "" && !shapeError && tier && (
+              <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card/60 p-4 shadow-xs">
+                <ShineBorder
+                  className="rounded-2xl"
+                  borderWidth={1.2}
+                  duration={12}
+                  shineColor={SHINE_VARS}
+                />
+                <div className="relative z-10 space-y-3">
+                  <div className="flex items-baseline justify-between">
+                    <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
+                      {t(`tiers.${tier.labelKey}`)}
+                      <PremiumBadge name={trimmed} className="size-3.5" />
+                    </span>
+                    <span className="flex items-center gap-1.5 text-lg font-bold tabular-nums">
+                      <Image
+                        src={ICP_LOGO}
+                        alt=""
+                        width={40}
+                        height={40}
+                        className="size-5 object-contain"
+                      />
+                      {formatAmount(price)}
+                    </span>
+                  </div>
+                  <div className="flex items-baseline justify-between text-xs text-muted-foreground">
+                    <span>{t("networkFee")}</span>
+                    <span className="tabular-nums">{formatAmount(ICP_FEE)} ICP</span>
+                  </div>
+                  <div className="flex items-baseline justify-between border-t border-border/60 pt-3 text-sm font-medium">
+                    <span>{t("total")}</span>
+                    <span className="tabular-nums">{formatAmount(total)} ICP</span>
+                  </div>
+                  {treasury && (
+                    <p className="text-xs text-muted-foreground">
+                      {t("treasuryNote", { principal: shortPrincipal(treasury) })}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <Button
+              size="lg"
+              className="h-12 w-full rounded-2xl text-base"
+              disabled={!canBuy}
+              onClick={handleBuy}
+            >
+              {buying ? <Spinner data-icon="inline-start" /> : null}
+              <span>{buying ? t("buying") : insufficient ? t("insufficient") : t("buy")}</span>
+            </Button>
+
+            <div className="space-y-2">
+              <div className="flex items-center gap-1.5">
+                <p className="text-xs font-medium text-muted-foreground">
+                  {t("pricing")}
+                </p>
+                <Popover>
+                  <PopoverTrigger
+                    aria-label={t("badgeInfoTitle")}
+                    className="text-muted-foreground transition-colors hover:text-foreground"
+                  >
+                    <HugeiconsIcon icon={InformationCircleIcon} className="size-4" />
+                  </PopoverTrigger>
+                  <PopoverContent align="start" className="gap-3">
+                    <PopoverHeader>
+                      <PopoverTitle className="text-sm">
+                        {t("badgeInfoTitle")}
+                      </PopoverTitle>
+                      <PopoverDescription className="text-xs">
+                        {t("badgeInfo", { min: USERNAME_FREE_MIN_LENGTH })}
+                      </PopoverDescription>
+                    </PopoverHeader>
+                    <div className="flex flex-col gap-2 text-xs">
+                      {(["gold", "blue"] as const).map((badge) => (
+                        <div key={badge} className="flex items-start gap-2">
+                          <BadgeMark tier={badge} className="mt-px size-3.5" />
+                          <span>
+                            <span className="font-medium text-foreground">
+                              {t(
+                                badge === "gold" ? "goldBadgeTitle" : "blueBadgeTitle"
+                              )}
+                            </span>{" "}
+                            <span className="text-muted-foreground">
+                              {t(
+                                badge === "gold" ? "goldBadgeInfo" : "blueBadgeInfo",
+                                {
+                                  lengths: `${BADGE_RANGES[badge].min}-${BADGE_RANGES[badge].max}`,
+                                }
+                              )}
+                            </span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card/40 shadow-xs">
+                <ShineBorder
+                  className="rounded-2xl"
+                  borderWidth={1.2}
+                  duration={14}
+                  shineColor={SHINE_VARS}
+                />
+                <div className="relative z-10">
+                  {TIERS.map((tItem, i) => (
+                    <div
+                      key={tItem.labelKey}
+                      className={cn(
+                        "flex items-baseline justify-between px-4 py-3 text-sm",
+                        i > 0 && "border-t border-border/60"
+                      )}
+                    >
+                      <div>
+                        <p className="font-medium">{t(`tiers.${tItem.labelKey}`)}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {t(`tiers.${tItem.rangeKey}`)}
+                        </p>
+                        <div className="mt-1.5 flex flex-wrap gap-1">
+                          {tierBadgeSpans(tItem).map((span) => (
+                            <BadgeChip key={span.badge} span={span} />
+                          ))}
+                        </div>
+                      </div>
+                      <span className="font-semibold tabular-nums">
+                        {formatAmount(tItem.price)} ICP
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">{t("note")}</p>
+              <Link
+                href="/brand-protection"
+                className="inline-block text-xs font-medium text-foreground underline underline-offset-4 transition-colors hover:text-primary"
+              >
+                {t("brandProtectionLink")}
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </AppPage>
+  )
+}
+
+function BadgeChip({ span }: { span: BadgeSpan }) {
+  const t = useTranslations("buyUsername")
+  const lengths =
+    span.min === span.max ? `${span.min}` : `${span.min}-${span.max}`
+
+  return (
+    <Popover>
+      <PopoverTrigger className="flex items-center gap-1 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground transition-colors hover:text-foreground">
+        <BadgeMark tier={span.badge} className="size-3" />
+        {t("badgeChip", { lengths })}
+      </PopoverTrigger>
+      <PopoverContent align="start" className="gap-2">
+        <PopoverHeader>
+          <PopoverTitle className="flex items-center gap-1.5 text-sm">
+            <BadgeMark tier={span.badge} />
+            {t(span.badge === "gold" ? "goldBadgeTitle" : "blueBadgeTitle")}
+          </PopoverTitle>
+        </PopoverHeader>
+        <PopoverDescription className="text-xs">
+          {t(span.badge === "gold" ? "goldBadgeInfo" : "blueBadgeInfo", {
+            lengths,
+          })}
+        </PopoverDescription>
+      </PopoverContent>
+    </Popover>
+  )
+}

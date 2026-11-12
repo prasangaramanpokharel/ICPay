@@ -40,15 +40,12 @@ export function ProfileView({ username: propUsername }: ProfileViewProps = {}) {
   const { identity } = useAuth()
   const balance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
-  // A fast query, not the heavy ledger-walking dashboard: the sender's own
-  // handle is only needed to stamp the memo.
   const { data: ownProfile } = useOwnProfile()
   const senderUsername = ownProfile?.username?.[0]
   const [tipOpen, setTipOpen] = useState(false)
   const [tipped, setTipped] = useState<Tipped | null>(null)
   const [copied, setCopied] = useState(false)
 
-  // Resolve target username from prop, query parameter (?id=, ?user=, ?username=), or legacy rewritten URL
   const rewritten = useRewrittenLastSegment()
   const paramUsername =
     searchParams.get("id") ||
@@ -81,8 +78,6 @@ export function ProfileView({ username: propUsername }: ProfileViewProps = {}) {
     router.push("/icpverse")
   }
 
-  // An empty username means the mid-transition frame. Holding
-  // the skeleton avoids asserting the account does not exist.
   if (isLoading || !username) return <ProfileSkeleton />
 
   if (!principal) {

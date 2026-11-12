@@ -13,7 +13,7 @@ import { Particles } from "@/components/ui/particles"
 import { ShineBorder } from "@/components/ui/shine-border"
 
 import { cn } from "@/lib/ui/utils"
-import { Gitlab } from "@dev.icons/react"
+import { Gitlab, NpmIcon } from "@dev.icons/react"
 
 export function HeroSection() {
   const t = useTranslations("publicSite.icfalcon.hero")
@@ -124,7 +124,7 @@ export function HeroSection() {
         <div className="flex flex-col items-center gap-4 pt-6 sm:flex-row sm:justify-center">
           <Button
             size="lg"
-            className="rounded-full px-6 shadow-sm"
+            className="gap-2 rounded-full px-6 shadow-sm"
             nativeButton={false}
             render={
               <Link
@@ -134,7 +134,8 @@ export function HeroSection() {
               />
             }
           >
-            {t("npm")}
+            <NpmIcon size={16} />
+            <span>{t("npm")}</span>
           </Button>
           <Button
             variant="outline"

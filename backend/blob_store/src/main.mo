@@ -3,8 +3,10 @@ import Blob "mo:core/Blob";
 import Text "mo:core/Text";
 import Principal "mo:core/Principal";
 import Nat "mo:core/Nat";
+import Nat8 "mo:core/Nat8";
 import Int "mo:core/Int";
 import Array "mo:core/Array";
+import VarArray "mo:core/VarArray";
 import Time "mo:core/Time";
 
 // Dedicated storage canister for ICPay Cloud file bytes and direct HTTP gateway serving.
@@ -60,6 +62,8 @@ persistent actor class BlobStore(initAuthorized: Principal) {
   let contentTypes = Map.empty<Text, Text>();
   let sessions = Map.empty<Text, UploadSession>();
   var capacityLimitBytes: Nat = 400_000_000_000; // 400 GB maximum per canister
+  var totalStoredBytes: Nat = 0;
+  var totalStoredCount: Nat = 0;
 
   func assertWriter(caller: Principal) {
     if (not Principal.equal(caller, authorized)) {
@@ -71,24 +75,56 @@ persistent actor class BlobStore(initAuthorized: Principal) {
     Principal.equal(caller, authorized) or Principal.equal(caller, session.caller)
   };
 
+  func recordBlob(id: Text, data: Blob, contentType: ?Text) {
+    switch (blobs.get(id)) {
+      case (?old) {
+        if (totalStoredBytes >= old.size()) {
+          totalStoredBytes -= old.size();
+        };
+      };
+      case (null) {
+        totalStoredCount += 1;
+      };
+    };
+    totalStoredBytes += data.size();
+    blobs.add(id, data);
+    switch (contentType) {
+      case (?ct) { contentTypes.add(id, ct) };
+      case (null) {};
+    };
+  };
+
   // Direct put (used by backend inter-canister calls and single-shot uploads)
   public shared ({ caller }) func putBlob(id: Text, data: Blob) : async () {
     assertWriter(caller);
-    blobs.add(id, data);
+    recordBlob(id, data, null);
   };
 
   public shared ({ caller }) func putBlobWithMeta(id: Text, data: Blob, contentType: Text) : async () {
     assertWriter(caller);
-    blobs.add(id, data);
-    contentTypes.add(id, contentType);
+    recordBlob(id, data, ?contentType);
   };
 
   public shared query func getBlob(id: Text) : async ?Blob {
     blobs.get(id)
   };
 
+  public shared query func getBlobSlice(id: Text, offset: Nat, limit: Nat) : async ?Blob {
+    switch (blobs.get(id)) {
+      case (null) null;
+      case (?data) ?blobSlice(data, offset, offset + limit);
+    }
+  };
+
   public shared composite query func fetchBlob(id: Text) : async ?Blob {
     blobs.get(id)
+  };
+
+  public shared composite query func fetchBlobSlice(id: Text, offset: Nat, limit: Nat) : async ?Blob {
+    switch (blobs.get(id)) {
+      case (null) null;
+      case (?data) ?blobSlice(data, offset, offset + limit);
+    }
   };
 
   public shared query func getContentType(id: Text) : async ?Text {
@@ -100,7 +136,13 @@ persistent actor class BlobStore(initAuthorized: Principal) {
     contentTypes.remove(id);
     switch (blobs.get(id)) {
       case (null) false;
-      case (?_) {
+      case (?old) {
+        if (totalStoredBytes >= old.size()) {
+          totalStoredBytes -= old.size();
+        };
+        if (totalStoredCount > 0) {
+          totalStoredCount -= 1;
+        };
         blobs.remove(id);
         true
       };
@@ -156,21 +198,29 @@ persistent actor class BlobStore(initAuthorized: Principal) {
         if (not canAccessSession(caller, session)) return false;
         if (session.chunks.size() < session.totalChunks) return false;
 
-        var assembledArray: [Nat8] = [];
+        let totalBytes = session.totalBytes;
+        let buffer = VarArray.repeat<Nat8>(0, totalBytes);
+        var destOffset : Nat = 0;
         var i: Nat = 0;
         while (i < session.totalChunks) {
           switch (session.chunks.get(i)) {
             case (null) return false;
             case (?c) {
-              assembledArray := Array.concat(assembledArray, Blob.toArray(c));
+              let src = Blob.toVarArray(c);
+              let len = src.size();
+              var j = 0;
+              while (j < len and (destOffset + j) < totalBytes) {
+                buffer[destOffset + j] := src[j];
+                j += 1;
+              };
+              destOffset += len;
             };
           };
           i += 1;
         };
 
-        let finalBlob = Blob.fromArray(assembledArray);
-        blobs.add(targetBlobId, finalBlob);
-        contentTypes.add(targetBlobId, session.contentType);
+        let finalBlob = Blob.fromVarArray(buffer);
+        recordBlob(targetBlobId, finalBlob, ?session.contentType);
         sessions.remove(uploadId);
         true
       };
@@ -201,13 +251,44 @@ persistent actor class BlobStore(initAuthorized: Principal) {
     null
   };
 
+  func parseRangeHeader(headerOpt: ?Text, totalSize: Nat) : (Nat, Bool) {
+    switch (headerOpt) {
+      case (null) (0, false);
+      case (?header) {
+        if (not Text.startsWith(header, #text "bytes=")) return (0, false);
+        let spec = Text.trimStart(header, #text "bytes=");
+        switch (Text.split(spec, #char '-').next()) {
+          case (null) (0, false);
+          case (?startStr) {
+            switch (Nat.fromText(startStr)) {
+              case (null) (0, false);
+              case (?n) {
+                if (n < totalSize) {
+                  (n, true)
+                } else {
+                  (0, false)
+                }
+              };
+            }
+          };
+        }
+      };
+    }
+  };
+
   func blobSlice(data: Blob, start: Nat, end: Nat) : Blob {
     let total = data.size();
     if (start >= total) return Blob.fromArray([]);
     let actualEnd = if (end > total) total else end;
     let len = Nat.sub(actualEnd, start);
-    let bytes = Blob.toArray(data);
-    Blob.fromArray(Array.tabulate<Nat8>(len, func(i) { bytes[start + i] }))
+    let src = Blob.toVarArray(data);
+    let dest = VarArray.repeat<Nat8>(0, len);
+    var i = 0;
+    while (i < len) {
+      dest[i] := src[start + i];
+      i += 1;
+    };
+    Blob.fromVarArray(dest)
   };
 
   // Direct HTTP Gateway: enables public streaming directly from this canister
@@ -216,7 +297,7 @@ persistent actor class BlobStore(initAuthorized: Principal) {
       ("Access-Control-Allow-Origin", "*"),
       ("Access-Control-Allow-Methods", "GET, HEAD, OPTIONS"),
       ("Access-Control-Allow-Headers", "*"),
-      ("Access-Control-Expose-Headers", "ETag, Content-Length, Content-Type"),
+      ("Access-Control-Expose-Headers", "ETag, Content-Length, Content-Type, Content-Range, Accept-Ranges"),
       ("X-Content-Type-Options", "nosniff"),
     ];
 
@@ -229,7 +310,6 @@ persistent actor class BlobStore(initAuthorized: Principal) {
       };
     };
 
-    // Extract path (e.g. "/abc-123" or "/files/abc-123")
     let rawPath = stripQuery(request.url);
     let blobId = cleanBlobId(rawPath);
 
@@ -252,7 +332,6 @@ persistent actor class BlobStore(initAuthorized: Principal) {
           case (null) "application/octet-stream";
         };
 
-        // Check If-None-Match for HTTP 304 Not Modified (15x-30x speedup for concurrent users)
         let clientEtag = getHeader(request.headers, "if-none-match");
         let isMatch = switch (clientEtag) {
           case (?match) {
@@ -274,39 +353,54 @@ persistent actor class BlobStore(initAuthorized: Principal) {
           };
         };
 
-        let responseHeaders: [HeaderField] = Array.concat(corsHeaders, [
+        let totalSize = data.size();
+        let rangeHeader = getHeader(request.headers, "range");
+        let (startOffset, isRange) = parseRangeHeader(rangeHeader, totalSize);
+
+        let initialEnd = if (startOffset + CHUNK_SIZE > totalSize) { totalSize } else { startOffset + CHUNK_SIZE };
+        let bodyChunk = blobSlice(data, startOffset, initialEnd);
+
+        var responseHeaders: [HeaderField] = Array.concat(corsHeaders, [
           ("Content-Type", mime),
-          ("Content-Length", Nat.toText(data.size())),
           ("ETag", etag),
           ("Cache-Control", "public, max-age=31536000, immutable"),
           ("CDN-Cache-Control", "public, max-age=31536000, immutable"),
           ("Accept-Ranges", "bytes"),
         ]);
 
+        let statusCode: Nat16 = if (isRange) {
+          responseHeaders := Array.concat(responseHeaders, [
+            ("Content-Range", "bytes " # Nat.toText(startOffset) # "-" # Nat.toText(if (totalSize > 0) totalSize - 1 else 0) # "/" # Nat.toText(totalSize)),
+            ("Content-Length", Nat.toText(if (totalSize >= startOffset) totalSize - startOffset else 0)),
+          ]);
+          206
+        } else {
+          responseHeaders := Array.concat(responseHeaders, [
+            ("Content-Length", Nat.toText(totalSize)),
+          ]);
+          200
+        };
+
         if (request.method == "HEAD") {
           return {
-            status_code = 200;
+            status_code = statusCode;
             headers = responseHeaders;
             body = Blob.fromArray([]);
             streaming_strategy = null;
           };
         };
 
-        let totalSize = data.size();
-        let (bodyChunk, strategy) = if (totalSize <= CHUNK_SIZE) {
-          (data, null)
+        let strategy: ?StreamingStrategy = if (initialEnd >= totalSize) {
+          null
         } else {
-          (
-            blobSlice(data, 0, CHUNK_SIZE),
-            ?#Callback({
-              callback = http_streaming;
-              token = { blobId = blobId; offset = CHUNK_SIZE };
-            })
-          )
+          ?#Callback({
+            callback = http_streaming;
+            token = { blobId = blobId; offset = initialEnd };
+          })
         };
 
         {
-          status_code = 200;
+          status_code = statusCode;
           headers = responseHeaders;
           body = bodyChunk;
           streaming_strategy = strategy;
@@ -348,22 +442,16 @@ persistent actor class BlobStore(initAuthorized: Principal) {
   func cleanBlobId(path: Text) : Text {
     var p = path;
     if (Text.startsWith(p, #text "/")) {
-      p := Text.replace(p, #text "/", "");
+      p := Text.trimStart(p, #text "/");
     };
     if (Text.startsWith(p, #text "files/")) {
-      p := Text.replace(p, #text "files/", "");
+      p := Text.trimStart(p, #text "files/");
     };
     p
   };
 
   public shared query func stats() : async { count: Nat; bytes: Nat } {
-    var count : Nat = 0;
-    var bytes : Nat = 0;
-    for (data in Map.values(blobs)) {
-      count += 1;
-      bytes += data.size();
-    };
-    { count; bytes }
+    { count = totalStoredCount; bytes = totalStoredBytes }
   };
 
   public shared query func getCapacityLimit() : async Nat {

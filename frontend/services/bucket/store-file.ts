@@ -39,13 +39,35 @@ async function sendChunks(
   await runPool(indexes, UPLOAD_CHUNK_CONCURRENCY, async (index) => {
     if (failure) return
     const bytes = await readFileChunk(file, index, total)
-    const res = (await actor.uploadFileChunkIndexed(
-      uploadId,
-      BigInt(index),
-      bytes
-    )) as Outcome<bigint>
-    if ("err" in res) {
-      failure = res.err
+    let lastErr: string | null = null
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      if (failure) return
+      try {
+        const res = (await actor.uploadFileChunkIndexed(
+          uploadId,
+          BigInt(index),
+          bytes
+        )) as Outcome<bigint>
+        if ("err" in res) {
+          if (res.err.toLowerCase().includes("duplicate")) {
+            lastErr = null
+            break
+          }
+          lastErr = res.err
+          break
+        }
+        lastErr = null
+        break
+      } catch (e) {
+        lastErr = e instanceof Error ? e.message : String(e)
+        if (attempt < 3) {
+          const delay = Math.min(1000 * Math.pow(2, attempt) + Math.random() * 500, 6000)
+          await new Promise((resolve) => setTimeout(resolve, delay))
+        }
+      }
+    }
+    if (lastErr) {
+      failure = lastErr
       return
     }
     completed += 1
@@ -107,19 +129,24 @@ export async function storeFile(
 
     options.onProgress?.(5)
 
-    const chunks = await sendChunks(actor, begin.ok, file, options.onProgress)
-    if ("err" in chunks) return chunks
+    try {
+      const chunks = await sendChunks(actor, begin.ok, file, options.onProgress)
+      if ("err" in chunks) return chunks
 
-    options.onProgress?.(92)
-    const done = (await actor.completeFileUpload(
-      begin.ok,
-      options.apiKey ? [options.apiKey] : []
-    )) as Outcome<string>
-    if ("err" in done) {
-      await cancelUpload(actor, begin.ok)
+      options.onProgress?.(92)
+      const done = (await actor.completeFileUpload(
+        begin.ok,
+        options.apiKey ? [options.apiKey] : []
+      )) as Outcome<string>
+      if ("err" in done) {
+        await cancelUpload(actor, begin.ok)
+        return done
+      }
+      options.onProgress?.(100)
       return done
+    } catch (e) {
+      await cancelUpload(actor, begin.ok)
+      throw e
     }
-    options.onProgress?.(100)
-    return done
   })
 }

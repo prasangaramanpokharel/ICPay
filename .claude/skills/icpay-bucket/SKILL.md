@@ -182,7 +182,7 @@ To scale beyond 400 GB without downtime:
 ## 6. Public vs. Private Bucket Security & CDN Rules
 
 ### Public Buckets
-* Accessible worldwide via global edge CDN (`https://cdn.icpay.app/cloud/{bucket}/{file}`).
+* Accessible worldwide via global edge CDN (`https://cloud.icpay.app/cloud/{bucket}/{file}`).
 * Cache Policy: `s-maxage=60, stale-while-revalidate=300`. Fast edge acceleration while ensuring any status change to Private takes effect in seconds.
 
 ### Private Buckets

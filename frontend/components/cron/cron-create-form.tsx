@@ -349,7 +349,8 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
               disabled={loading}
               className="min-w-28 bg-primary text-primary-foreground hover:bg-primary/90"
             >
-              {loading ? <Spinner className="size-4" /> : "Save"}
+              {loading ? <Spinner data-icon="inline-start" /> : null}
+              <span>Save</span>
             </Button>
           </div>
 

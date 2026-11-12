@@ -1,7 +1,8 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { Field, FieldLabel } from "@/components/ui/field"
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
+import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/ui/utils"
@@ -25,6 +26,7 @@ export function AmountInput({
   balance,
   maxE8s,
   size,
+  description,
 }: {
   id: string
   label: string
@@ -33,6 +35,7 @@ export function AmountInput({
   balance?: bigint
   maxE8s?: bigint
   size?: "default" | "amount" | "lg" | "xl"
+  description?: string
 }) {
   const t = useTranslations("common")
   const { price } = useIcpPrice()
@@ -46,15 +49,15 @@ export function AmountInput({
 
   return (
     <Field className="gap-2">
-      <div className="flex items-baseline justify-between">
-        <FieldLabel htmlFor={id}>{label}</FieldLabel>
+      <div className="flex min-h-6 items-center justify-between gap-2">
+        <FieldLabel htmlFor={id} className="shrink-0">{label}</FieldLabel>
         {balance !== undefined && (
-          <span className="rounded-full bg-muted/60 px-2.5 py-1 text-xs text-muted-foreground">
+          <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
             {t("balance")}{" "}
-            <span className="font-semibold tabular-nums text-foreground">
+            <span className="font-semibold text-foreground">
               {formatAmount(balance)} ICP
             </span>
-          </span>
+          </Badge>
         )}
       </div>
 
@@ -99,11 +102,12 @@ export function AmountInput({
         ))}
       </div>
 
-      <p className="text-xs tabular-nums text-muted-foreground">
+      <FieldDescription className="tabular-nums">
         {fiat.formatted === null
           ? "\u00a0"
           : `≈ ${fiat.symbol}${fiat.formatted} ${fiat.currency}`}
-      </p>
+      </FieldDescription>
+      {description ? <FieldDescription>{description}</FieldDescription> : null}
     </Field>
   )
 }

@@ -48,7 +48,7 @@ export function LandingDownloads() {
             </p>
           </div>
 
-          <div className="flex w-full max-w-md flex-col gap-3">
+          <div className="flex w-full max-w-xl flex-col gap-3">
             {PLATFORM_IDS.map((id) => {
               const meta = PLATFORM_META[id]
 
@@ -139,18 +139,20 @@ export function LandingDownloads() {
           </div>
         </div>
 
-        <div className="relative mx-auto w-full max-w-lg lg:max-w-xl">
-          <Image
-            src={LANDING_MEDIA.laptopMockup}
-            alt={t("imageAlt")}
-            title={t("imageAlt")}
-            width={1152}
-            height={647}
-            loading="lazy"
-            sizes="(max-width: 1024px) 100vw, 576px"
-            className="w-full"
-            style={{ height: "auto" }}
-          />
+        <div className="flex w-full items-center justify-center">
+          <div className="relative mx-auto w-full max-w-[260px] sm:max-w-[320px] lg:max-w-[360px]">
+            <Image
+              src={LANDING_MEDIA.laptopMockup}
+              alt={t("imageAlt")}
+              title={t("imageAlt")}
+              width={2000}
+              height={2000}
+              loading="lazy"
+              sizes="(max-width: 640px) 260px, (max-width: 1024px) 320px, 360px"
+              className="mx-auto w-full object-contain"
+              style={{ height: "auto" }}
+            />
+          </div>
         </div>
       </div>
     </section>

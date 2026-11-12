@@ -27,10 +27,12 @@ export type PreparedUpload = {
 export async function prepareUploadFile(
   file: File,
   prefix = "",
+  relativePath?: string,
 ): Promise<PreparedUpload> {
   const err = uploadValidationError(file)
   if (err) throw new Error("Invalid file format")
 
+  const resolvedRelativePath = relativePath ?? file.webkitRelativePath
   const normalized = normalizeUploadFile(file)
 
   if (shouldConvertRasterToWebp(normalized)) {
@@ -39,7 +41,7 @@ export async function prepareUploadFile(
       file: compressed.file,
       path: joinObjectPath(
         prefix,
-        buildUploadPath(normalized, `.${compressed.targetExt}`)
+        buildUploadPath(normalized, `.${compressed.targetExt}`, resolvedRelativePath)
       ),
       contentType: compressed.targetMime,
       compression: {
@@ -52,7 +54,10 @@ export async function prepareUploadFile(
 
   return {
     file: normalized,
-    path: joinObjectPath(prefix, buildUploadPath(normalized, false)),
+    path: joinObjectPath(
+      prefix,
+      buildUploadPath(normalized, false, resolvedRelativePath)
+    ),
     contentType: guessFileMime(normalized),
   }
 }

@@ -1,4 +1,11 @@
 <!-- BEGIN:nextjs-agent-rules -->
+<!-- BEGIN:nextjs-agent-rules -->
+ 
+# Next.js: ALWAYS read docs before coding
+ 
+Before any Next.js work, find and read the relevant doc in `node_modules/next/dist/docs/`. Your training data is outdated — the docs are the source of truth.
+ 
+<!-- END:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know
 
@@ -25,13 +32,14 @@ Always consult the matching skill before starting a task:
 | **Full Skill & Rule Index** | [`.agents/SKILLS.md`](.agents/SKILLS.md) | Master frontend skills index & domain directory maps |
 | **UI Components Reference** | [`.cursor/ui-components-reference.md`](.cursor/ui-components-reference.md) | Complete catalog of 80+ shadcn UI primitives, sizes, variants, dialog & form patterns |
 | **Architecture & Coding Standard** | [`.agents/skills/coding-standard/SKILL.md`](.agents/skills/coding-standard/SKILL.md) | App Router, Server vs Client components, strict TypeScript, design rules |
-| **shadcn/ui Best Practices** | [`.agents/skills/shadnc/skills.md`](.agents/skills/shadnc/skills.md) | Component priority, composition, Radix/Base-UI primitives, CVA styling |
+| **shadcn/ui Best Practices** | [`.agents/skills/shadcn/SKILL.md`](.agents/skills/shadcn/SKILL.md) | Component priority, composition, Radix/Base-UI primitives, CVA styling |
 | **Pure Helpers (`lib/`)** | [`.agents/skills/lib-standard/SKILL.md`](.agents/skills/lib-standard/SKILL.md) | Pure helper guidelines, domain folders, zero React/SWR/canister dependencies |
 | **Data Hooks (`hooks/`)** | [`.agents/skills/hooks-standard/SKILL.md`](.agents/skills/hooks-standard/SKILL.md) | SWR hook conventions, cache key management, optimistic updates |
-| **Canister Services (`services/`)** | [`.agents/skills/frontend/SKILLS.md`](.agents/skills/frontend/SKILLS.md) | Typed canister actor clients, agent derivation, zero inline `fetch()` |
-| **Next.js 16 Standards** | [`.agents/skills/nextjs/skills.md`](.agents/skills/nextjs/skills.md) | Turbopack, static export constraints, metadata, performance rules |
-| **SWR Official Patterns** | [`.agents/skills/swr-official/api.md`](.agents/skills/swr-official/api.md) | Global cache, mutations, conditional queries, pagination |
+| **Canister Services (`services/`)** | [`.agents/skills/services-standard/SKILL.md`](.agents/skills/services-standard/SKILL.md) | Typed canister actor clients, agent derivation, zero inline `fetch()` |
+| **Next.js 16 Standards** | [`.agents/skills/nextjs/SKILL.md`](.agents/skills/nextjs/SKILL.md) | Turbopack, static export constraints, metadata, performance rules |
+| **SWR Official Patterns** | [`.agents/skills/swr-official/SKILL.md`](.agents/skills/swr-official/SKILL.md) | Global cache, mutations, conditional queries, pagination |
 | **Code Comment Standards** | [`.agents/skills/comments/SKILL.md`](.agents/skills/comments/SKILL.md) | Strict comment guidelines: explain non-obvious *why*, never restate code |
+| **Icons & Visual Elements Standard** | [`.agents/skills/icon-standard/SKILL.md`](.agents/skills/icon-standard/SKILL.md) | Clean formal fintech icons, semantic tokens only, no bg clutter, CopyButton standard |
 
 ### Auto-Applied Cursor Rules
 - [`.agents/rules/ui-components.mdc`](.agents/rules/ui-components.mdc): shadcn primitives, `@hugeicons/react`, semantic color tokens

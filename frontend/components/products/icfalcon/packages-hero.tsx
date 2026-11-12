@@ -11,7 +11,6 @@ import {
   Tick02Icon,
   Package01Icon,
   CommandLineIcon,
-  CodeCircleIcon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Particles } from "@/components/ui/particles"

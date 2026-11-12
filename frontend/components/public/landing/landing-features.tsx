@@ -43,13 +43,13 @@ export function LandingFeatures() {
           {FEATURE_CONFIG.map(({ id, icon: Icon }) => (
             <Card
               key={id}
-              className="border-border/60 bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-md"
+              className="group border-border/60 bg-card shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-md"
             >
-              <CardHeader className="gap-3">
+              <CardHeader className="gap-3.5 p-6">
                 <div className="flex items-center gap-2.5">
                   <HugeiconsIcon
                     icon={Icon}
-                    className="size-5 shrink-0 text-primary"
+                    className="size-5 shrink-0 text-primary transition-transform duration-200 group-hover:scale-105"
                     strokeWidth={1.75}
                   />
                   <CardTitle className="text-base font-semibold text-foreground">

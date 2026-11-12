@@ -24,13 +24,13 @@ export function LandingFaq() {
           <p className="text-sm leading-relaxed text-muted-foreground">{t("subtitle")}</p>
         </div>
 
-        <Accordion className="bg-card">
+        <Accordion className="rounded-2xl border border-border/60 bg-card px-4 py-1 shadow-xs">
           {FAQ_IDS.map((id, index) => (
             <AccordionItem key={id} value={`faq-${index}`}>
-              <AccordionTrigger className="px-3 text-left text-sm font-medium">
+              <AccordionTrigger className="px-2 py-4 text-left text-sm font-semibold text-foreground">
                 {t(`items.${id}.question`)}
               </AccordionTrigger>
-              <AccordionContent className="px-3 text-sm leading-relaxed text-muted-foreground">
+              <AccordionContent className="px-2 pb-4 text-sm leading-relaxed text-muted-foreground">
                 {t(`items.${id}.answer`)}
               </AccordionContent>
             </AccordionItem>

@@ -7,6 +7,7 @@ import { Github01Icon, Linkedin01Icon, Globe02Icon, Add01Icon, Cancel01Icon } fr
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
+import { toast } from "@/components/ui/toast"
 import type { SocialLink, SocialPlatform, UserPublic } from "@/services/types"
 import { setSocialLink, removeSocialLink } from "@/services/sociallink/sociallink"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -67,15 +68,38 @@ export function SocialLinksEditor({
     setError(null)
     const result = await setSocialLink(identity, toPlatform(open), url.trim())
     setSaving(false)
-    if ("err" in result) { setError(result.err); return }
+    if ("err" in result) {
+      setError(result.err)
+      toast.add({
+        title: "Failed to save link",
+        description: result.err,
+        type: "error",
+      })
+      return
+    }
     onUpdate(result.ok)
     setSaved(true)
+    toast.add({
+      title: "Social link saved",
+      type: "success",
+    })
     setTimeout(() => { setOpen(null); setSaved(false) }, 800)
   }
 
   const handleRemove = async (platform: Platform) => {
     const result = await removeSocialLink(identity, toPlatform(platform))
-    if ("ok" in result) onUpdate(result.ok)
+    if ("ok" in result) {
+      onUpdate(result.ok)
+      toast.add({
+        title: "Social link removed",
+        type: "success",
+      })
+    } else {
+      toast.add({
+        title: "Failed to remove link",
+        type: "error",
+      })
+    }
   }
 
   return (

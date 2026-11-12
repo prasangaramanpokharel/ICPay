@@ -1,7 +1,5 @@
 import type { Metadata } from "next"
-import { AcademyAdminGate } from "@/components/products/icacademy/admin/academy-admin-gate"
-import { AcademyAdminNav } from "@/components/products/icacademy/admin/academy-admin-nav"
-import { Toaster } from "@/components/ui/sonner"
+import { AcademyAdminShell } from "@/components/products/icacademy/admin/academy-admin-shell"
 
 export const metadata: Metadata = {
   title: "ICAcademy Management Suite | ICPay",
@@ -18,15 +16,5 @@ export default function AcademyAdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  return (
-    <AcademyAdminGate>
-      <div className="flex min-h-screen w-full flex-col bg-background text-foreground">
-        <AcademyAdminNav />
-        <main className="flex-1 w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-          {children}
-        </main>
-        <Toaster />
-      </div>
-    </AcademyAdminGate>
-  )
+  return <AcademyAdminShell>{children}</AcademyAdminShell>
 }

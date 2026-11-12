@@ -1,0 +1,122 @@
+Here is a practical code summary for handling query parameters and slugs in an ICP on-chain frontend, based on the knowledge sources:
+
+---
+
+### 1. `_redirects` — SPA catch-all rewrite
+
+Place this file at the root of your `dist/` (or build output) directory:
+
+```
+# Serve the app shell for every unmatched path (SPA rewrite)
+/*  /index.html  200
+```
+
+This makes `/channels`, `/channels/world`, and `/channels?id=world` all serve `index.html`, letting your client-side router take over. [[SPA Routing](https://docs.internetcomputer.org/guides/frontends/static-site/routing/#single-page-apps-spa)]
+
+---
+
+### 2. Optional: give real 404s to missing assets
+
+```
+# Return a real 404 for missing build assets, then fall back to the shell
+/assets/*  /404.html    404
+/*         /index.html  200
+```
+
+[[SPA Routing](https://docs.internetcomputer.org/guides/frontends/static-site/routing/#single-page-apps-spa)]
+
+---
+
+### 3. Client-side: read the query param or slug in JS
+
+```js
+// Query param: /channels?id=world
+const params = new URLSearchParams(window.location.search);
+const id = params.get("id"); // "world"
+
+// Path slug: /channels/world
+const slug = window.location.pathname.split("/").pop(); // "world"
+```
+
+---
+
+### Key rules to remember
+
+- Always use **absolute asset paths** (`/assets/app.js`, not `assets/app.js`) — relative paths break under a `/*` rewrite. [[SPA Routing](https://docs.internetcomputer.org/guides/frontends/static-site/routing/#single-page-apps-spa)]
+- Dynamic server-side captures like `/channels/:id` are **not supported** — all routing logic must live in the client. [[Dynamic Rules](https://docs.internetcomputer.org/guides/frontends/static-site/redirects/#what-isnt-supported-dynamic-rules)]
+
+
+
+## Query Parameters and URL Slugs in ICP On-Chain Frontends
+
+Yes, the Internet Computer's on-chain frontend (asset canister / static site canister) **does support query parameters** like `?id=world` in URLs — but with an important distinction about *where* the handling happens.
+
+### Query Parameters (e.g. `?id=world`)
+
+The HTTP Gateway passes the full URL, including query parameters, to the canister. From the HTTP request encoding spec:
+
+> The `url` field contains the URL from the HTTP request line, i.e. without protocol or hostname, and **includes query parameters**.
+
+[[HTTP Request Encoding](https://docs.internetcomputer.org/references/http-gateway-protocol-spec/#http-request-encoding)]
+
+So a request to `http://localhost:3000/channels?id=world` will have `url = "/channels?id=world"` passed to the canister. However, the **static asset canister does not route based on query parameters** — it serves static files. Query parameters are typically read and handled **client-side** by your JavaScript app.
+
+### Path Slugs (e.g. `/channels/world`)
+
+For path-based routing (slugs like `/channels/world`), the asset canister supports **SPA routing** via a `_redirects` rule:
+
+```
+/*  /index.html  200
+```
+
+This rewrites any unmatched path to your app shell, letting your client-side router (React Router, Vue Router, etc.) handle the slug. [[SPA Routing](https://docs.internetcomputer.org/guides/frontends/static-site/routing/#single-page-apps-spa)]
+
+### What is NOT supported
+
+**Dynamic `:placeholder` or `:splat` captures** in redirect rules are not supported. You cannot write `/channels/:id /channels/detail 301` to capture and forward a slug server-side. This is because every response must be certified ahead of time, and dynamically constructed responses cannot be certified. [[Dynamic Rules](https://docs.internetcomputer.org/guides/frontends/static-site/redirects/#what-isnt-supported-dynamic-rules)]
+
+### Summary
+
+| Feature | Supported? | Where handled |
+|---|---|---|
+| `?id=world` query params | ✅ Yes | Client-side JS |
+| `/channels/world` path slugs | ✅ Yes (via SPA `/*` rewrite) | Client-side router |
+| Server-side dynamic routing by param/slug | ❌ No | N/A |
+
+For a URL like `http://localhost:3000/channels?id=world`, add the `/* /index.html 200` rule and let your frontend JS read `window.location.search` to get the `id` parameter.## Query Parameters and URL Slugs in ICP On-Chain Frontends
+
+Yes, the Internet Computer's on-chain frontend (asset canister / static site canister) **does support query parameters** like `?id=world` in URLs — but with an important distinction about *where* the handling happens.
+
+### Query Parameters (e.g. `?id=world`)
+
+The HTTP Gateway passes the full URL, including query parameters, to the canister. From the HTTP request encoding spec:
+
+> The `url` field contains the URL from the HTTP request line, i.e. without protocol or hostname, and **includes query parameters**.
+
+[[HTTP Request Encoding](https://docs.internetcomputer.org/references/http-gateway-protocol-spec/#http-request-encoding)]
+
+So a request to `http://localhost:3000/channels?id=world` will have `url = "/channels?id=world"` passed to the canister. However, the **static asset canister does not route based on query parameters** — it serves static files. Query parameters are typically read and handled **client-side** by your JavaScript app.
+
+### Path Slugs (e.g. `/channels/world`)
+
+For path-based routing (slugs like `/channels/world`), the asset canister supports **SPA routing** via a `_redirects` rule:
+
+```
+/*  /index.html  200
+```
+
+This rewrites any unmatched path to your app shell, letting your client-side router (React Router, Vue Router, etc.) handle the slug. [[SPA Routing](https://docs.internetcomputer.org/guides/frontends/static-site/routing/#single-page-apps-spa)]
+
+### What is NOT supported
+
+**Dynamic `:placeholder` or `:splat` captures** in redirect rules are not supported. You cannot write `/channels/:id /channels/detail 301` to capture and forward a slug server-side. This is because every response must be certified ahead of time, and dynamically constructed responses cannot be certified. [[Dynamic Rules](https://docs.internetcomputer.org/guides/frontends/static-site/redirects/#what-isnt-supported-dynamic-rules)]
+
+### Summary
+
+| Feature | Supported? | Where handled |
+|---|---|---|
+| `?id=world` query params | ✅ Yes | Client-side JS |
+| `/channels/world` path slugs | ✅ Yes (via SPA `/*` rewrite) | Client-side router |
+| Server-side dynamic routing by param/slug | ❌ No | N/A |
+
+For a URL like `http://localhost:3000/channels?id=world`, add the `/* /index.html 200` rule and let your frontend JS read `window.location.search` to get the `id` parameter.

@@ -32,7 +32,7 @@ Create or update your `.env.local` file:
 ```bash
 ICBUCKET_API_KEY=icp_live_sec_994a8e2b
 ICBUCKET_ID=my-app-assets
-NEXT_PUBLIC_ICBUCKET_CDN=https://cdn.icpay.app
+NEXT_PUBLIC_ICBUCKET_CDN=https://cloud.icpay.app
 ```
 
 ### 3. Initialize the Client and Upload a File
@@ -76,7 +76,7 @@ npx tsx upload.ts
 Test access by opening the printed CDN URL in your browser or curling it:
 
 ```bash
-curl -I https://cdn.icpay.app/cloud/my-app-assets/avatar.png
+curl -I https://cloud.icpay.app/cloud/my-app-assets/avatar.png
 ```
 
 You should receive an `HTTP/2 200 OK` response with `Content-Type: image/png` and edge cache headers.

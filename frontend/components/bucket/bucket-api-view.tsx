@@ -17,6 +17,7 @@ import {
   InformationCircleIcon,
   Key01Icon,
   MoreHorizontalIcon,
+  Plug01Icon,
   Search01Icon,
   Tick02Icon,
 } from "@hugeicons/core-free-icons"
@@ -32,6 +33,7 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -79,6 +81,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { PremiumGateDialog } from "@/components/shared/premium-gate"
+import { BucketApiKeyConnectModal } from "@/components/bucket/bucket-api-key-connect-modal"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useBucketList, BUCKET_QUERY } from "@/hooks/bucket/useBucket"
 import { useOwnProfile } from "@/hooks/wallet/useWalletData"
@@ -524,10 +527,12 @@ export function BucketApiView() {
                       <TableCell className="py-3">
                         <div className="flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
                           <span className="truncate">{key.keyHint}</span>
-                          <button
+                          <Button
                             type="button"
+                            variant="ghost"
+                            size="icon-xs"
                             onClick={() => void handleCopyHint(key)}
-                            className="inline-flex size-5 items-center justify-center rounded text-muted-foreground transition-colors hover:bg-muted hover:text-foreground cursor-pointer"
+                            className="size-5 p-0 text-muted-foreground hover:bg-muted hover:text-foreground"
                             aria-label="Copy key token prefix"
                             title={copiedKeyHintId === key.id ? tc("copied") : tc("copy")}
                           >
@@ -535,7 +540,7 @@ export function BucketApiView() {
                               icon={copiedKeyHintId === key.id ? Tick02Icon : Copy01Icon}
                               className="size-3.5"
                             />
-                          </button>
+                          </Button>
                         </div>
                       </TableCell>
 
@@ -578,7 +583,7 @@ export function BucketApiView() {
                               onClick={() => setCodeSnippetKey(key)}
                               className="gap-2 text-xs cursor-pointer"
                             >
-                              <HugeiconsIcon icon={CodeIcon} className="size-3.5 text-muted-foreground" />
+                              <HugeiconsIcon icon={Plug01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
                               <span>Quick connect</span>
                             </DropdownMenuItem>
 
@@ -620,7 +625,7 @@ export function BucketApiView() {
         <DialogContent className="max-w-md gap-4" showCloseButton>
           <DialogHeader>
             <DialogTitle>Create API key</DialogTitle>
-            <DialogDescription className="text-xs">
+            <DialogDescription>
               Generate a secret token for automated S3 uploads, backup scripts, and CLI access.
             </DialogDescription>
           </DialogHeader>
@@ -733,7 +738,7 @@ export function BucketApiView() {
       >
         <DialogContent className="max-w-md gap-4" showCloseButton>
           <DialogHeader className="gap-1">
-            <DialogTitle className="text-base font-semibold">View API Key</DialogTitle>
+            <DialogTitle>View API Key</DialogTitle>
           </DialogHeader>
 
           <div className="flex items-center gap-2 rounded-lg border border-info/30 bg-info/10 p-3 text-xs text-info">
@@ -741,38 +746,36 @@ export function BucketApiView() {
             <span>You can only see this key once. Store it safely.</span>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-foreground">API Key</label>
-            <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 py-2">
-              <input
+          <Field>
+            <FieldLabel htmlFor="created-secret">API Key</FieldLabel>
+            <InputGroup>
+              <InputGroupInput
+                id="created-secret"
                 type={showCreatedSecret ? "text" : "password"}
                 readOnly
                 value={createdResult?.secret || ""}
-                className="w-full bg-transparent font-mono text-xs text-foreground outline-none"
+                className="font-mono text-xs"
               />
-              <div className="flex shrink-0 items-center gap-1">
-                <button
-                  type="button"
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton
+                  size="icon-xs"
                   onClick={() => setShowCreatedSecret((v) => !v)}
-                  className="inline-flex size-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer transition-colors"
                   aria-label={showCreatedSecret ? "Hide secret" : "Reveal secret"}
                   title={showCreatedSecret ? "Hide secret" : "Reveal secret"}
                 >
                   <HugeiconsIcon icon={showCreatedSecret ? EyeOffIcon : EyeIcon} className="size-3.5" />
-                </button>
-
-                <button
-                  type="button"
+                </InputGroupButton>
+                <InputGroupButton
+                  size="icon-xs"
                   onClick={() => void handleCopySecret()}
-                  className="inline-flex size-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer transition-colors"
                   aria-label="Copy secret"
                   title={copiedCreatedSecret ? tc("copied") : tc("copy")}
                 >
                   <HugeiconsIcon icon={copiedCreatedSecret ? Tick02Icon : Copy01Icon} className="size-3.5" />
-                </button>
-              </div>
-            </div>
-          </div>
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
+          </Field>
 
           <div className="mt-2 flex items-center justify-start">
             <Button
@@ -798,7 +801,7 @@ export function BucketApiView() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete API key?</AlertDialogTitle>
-            <AlertDialogDescription className="text-xs leading-relaxed">
+            <AlertDialogDescription>
               This will permanently revoke the API key{" "}
               <span className="font-semibold text-foreground">{keyToRevoke?.name}</span>. Any applications, scripts,
               or automated backups using this token prefix ({keyToRevoke?.keyHint}) will immediately lose access.
@@ -818,75 +821,13 @@ export function BucketApiView() {
         </AlertDialogContent>
       </AlertDialog>
 
-      <Dialog
+      <BucketApiKeyConnectModal
+        apiKey={codeSnippetKey}
         open={codeSnippetKey != null}
         onOpenChange={(v) => {
           if (!v) setCodeSnippetKey(null)
         }}
-      >
-        <DialogContent className="max-w-lg gap-4" showCloseButton>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-base">
-              <HugeiconsIcon icon={CodeIcon} className="size-4 text-muted-foreground" />
-              <span>Connect with {codeSnippetKey?.name}</span>
-            </DialogTitle>
-            <DialogDescription className="text-xs">
-              Install the official client SDK and initialize with your API key.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-3">
-            <div className="rounded-lg border border-border bg-muted/30 p-2.5 font-mono text-xs">
-              <div className="flex items-center justify-between text-muted-foreground">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  Install SDK
-                </span>
-                <button
-                  type="button"
-                  onClick={() => {
-                    void copyText("npm i icpay-bucket")
-                    toast.success("Command copied")
-                  }}
-                  className="inline-flex items-center gap-1 text-[11px] hover:text-foreground cursor-pointer"
-                >
-                  <HugeiconsIcon icon={Copy01Icon} className="size-3" />
-                  <span>Copy</span>
-                </button>
-              </div>
-              <p className="mt-1 text-foreground select-all">npm i icpay-bucket</p>
-            </div>
-
-            <div className="rounded-lg border border-border bg-muted/30 p-3 font-mono text-xs overflow-x-auto">
-              <pre className="text-foreground text-[11px] leading-relaxed">
-{`import { BucketClient } from "icpay-bucket";
-
-const client = new BucketClient({
-  apiKey: process.env.IC_API_KEY, // Use your secret token
-});
-
-// Upload to ${codeSnippetKey?.bucketName || codeSnippetKey?.bucketId}
-const result = await client.uploadFile({
-  bucketId: "${codeSnippetKey?.bucketId}",
-  path: "/uploads/data.json",
-  data: new TextEncoder().encode(JSON.stringify({ active: true })),
-  contentType: "application/json",
-});`}
-              </pre>
-            </div>
-          </div>
-
-          <DialogFooter className="sm:justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setCodeSnippetKey(null)}
-            >
-              Done
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      />
 
       <PremiumGateDialog
         open={premiumGateOpen}

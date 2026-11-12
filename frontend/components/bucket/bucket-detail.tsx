@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -51,6 +51,7 @@ import { BucketConnectModal } from "@/components/bucket/bucket-connect-modal"
 import { BucketNotificationModal } from "@/components/bucket/bucket-notification-modal"
 import { BucketStatsHeader } from "@/components/bucket/bucket-stats-header"
 import {
+  useBucketAllFiles,
   useBucketList,
   useBucketStats,
   useInvalidateBucketCache,
@@ -72,7 +73,7 @@ import { formatBytes, isBucketActive, isBucketFrozen, isBucketTombstoned } from 
 import { joinObjectPath, nestedPrefix, prefixSegments, apiListFolderPrefix } from "@/lib/bucket/folderPath"
 import { clearLegacyBucketStorage } from "@/lib/bucket/legacyStorage"
 import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { cn } from "@/lib/ui/utils"
 
 export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } = {}) {
@@ -92,6 +93,11 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
     (rawLastSegment && rawLastSegment !== "id" && rawLastSegment !== "bucket" ? rawLastSegment : "")
 
   const { stats, isLoading: statsLoading, isValidating: statsValidating, refresh: refreshStats } = useBucketStats(bucketId || null)
+  const { allFiles } = useBucketAllFiles(bucketId || null)
+  const computedStorageUsed = useMemo(
+    () => allFiles.reduce((acc, f) => acc + f.size, 0n),
+    [allFiles]
+  )
   const { buckets, isLoading: bucketsLoading, isValidating: bucketsValidating, refresh: refreshBuckets } = useBucketList()
   const listBucket = buckets.find((b) => b.id === bucketId || b.name === bucketId)
   const isTombstoned = listBucket ? isBucketTombstoned(listBucket.status, listBucket.expiresAt) : false
@@ -211,7 +217,12 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
   const handleDeleteFolders = async (paths: string[]) => {
     for (const path of paths) {
       const res = await deleteFolder(identity, bucketId, path)
-      if ("err" in res) return res.err
+      if ("err" in res) {
+        const lower = res.err.toLowerCase()
+        if (!lower.includes("not found") && !lower.includes("does not exist")) {
+          return res.err
+        }
+      }
     }
     await invalidateBucketCache()
     return null
@@ -242,40 +253,48 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
     setDragOverPrefix(null)
     if (!canWrite) return
 
+    let paths: string[] = []
     try {
       const raw = e.dataTransfer.getData("application/json")
-      if (!raw) return
-      const data = JSON.parse(raw) as { paths: string[] }
-      if (!data.paths || data.paths.length === 0) return
-
-      const operations: FilePathOp[] = []
-      for (const sourcePath of data.paths) {
-        const fileName = sourcePath.split("/").pop() ?? sourcePath
-        const destinationPath = joinObjectPath(targetPrefix, fileName)
-        if (sourcePath !== destinationPath) {
-          operations.push({ source: sourcePath, destination: destinationPath })
-        }
-      }
-
-      if (operations.length === 0) return
-
-      const err = await handleBulkMoveFiles(operations)
-      if (err) {
-        toast.error(err)
-      } else {
-        const destName =
-          targetPrefix === ""
-            ? (bucketDisplayName ?? "root")
-            : targetPrefix.replace(/\/$/, "").split("/").pop() ?? targetPrefix
-        const label =
-          operations.length === 1
-            ? `Moved ${operations[0].source.split("/").pop()} to ${destName}`
-            : `Moved ${operations.length} items to ${destName}`
-        toast.success(label)
-        void refreshFolderListing()
+      if (raw) {
+        const data = JSON.parse(raw) as { paths?: string[] }
+        if (data.paths) paths = data.paths
       }
     } catch {
-      // fallback
+      const text = e.dataTransfer.getData("text/plain")
+      if (text) paths = [text]
+    }
+    if (paths.length === 0) {
+      const text = e.dataTransfer.getData("text/plain")
+      if (text) paths = [text]
+    }
+    if (paths.length === 0) return
+
+    const operations: FilePathOp[] = []
+    for (const sourcePath of paths) {
+      const fileName = sourcePath.split("/").pop() ?? sourcePath
+      const destinationPath = joinObjectPath(targetPrefix, fileName)
+      if (sourcePath !== destinationPath) {
+        operations.push({ source: sourcePath, destination: destinationPath })
+      }
+    }
+
+    if (operations.length === 0) return
+
+    const err = await handleBulkMoveFiles(operations)
+    if (err) {
+      toast.error(err)
+    } else {
+      const destName =
+        targetPrefix === ""
+          ? (bucketDisplayName ?? "root")
+          : targetPrefix.replace(/\/$/, "").split("/").pop() ?? targetPrefix
+      const label =
+        operations.length === 1
+          ? `Moved ${operations[0].source.split("/").pop()} to ${destName}`
+          : `Moved ${operations.length} items to ${destName}`
+      toast.success(label)
+      void refreshFolderListing()
     }
   }
 
@@ -459,6 +478,13 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
         <BucketUploadControl
           disabled={!canWrite}
           pathPrefix={prefix}
+          remainingBytes={
+            stats
+              ? stats.capacity > (computedStorageUsed > stats.storageUsed ? computedStorageUsed : stats.storageUsed)
+                ? stats.capacity - (computedStorageUsed > stats.storageUsed ? computedStorageUsed : stats.storageUsed)
+                : 0n
+              : undefined
+          }
           onUpload={handleUpload}
           onSuccess={handleUploadSuccess}
         />
@@ -599,7 +625,13 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
         {headerActions}
       </div>
 
-      <BucketStatsHeader stats={stats} onRenew={() => setRenewOpen(true)} onRefresh={refreshStats} />
+      <BucketStatsHeader
+        stats={stats}
+        computedStorageUsed={computedStorageUsed}
+        computedFileCount={allFiles.length}
+        onRenew={() => setRenewOpen(true)}
+        onRefresh={refreshStats}
+      />
 
       {!canWrite && (() => {
         const frozen = isBucketFrozen(stats.status, stats.expiresAt)

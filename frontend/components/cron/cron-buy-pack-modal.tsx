@@ -10,6 +10,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -162,13 +163,13 @@ export function CronBuyPackModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="sm:max-w-lg bg-card text-card-foreground border-border">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-foreground flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2">
             <HugeiconsIcon icon={ZapIcon} className="size-5 text-primary" />
             Top Up Execution Runs
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground text-sm">
+          <DialogDescription>
             Pay-as-you-go at $0.0005 per run. Billed in USD, settled on-chain via ICP.
           </DialogDescription>
         </DialogHeader>
@@ -193,9 +194,9 @@ export function CronBuyPackModal({
 
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <label htmlFor="runs-input" className="text-xs font-medium text-foreground">
+              <Label htmlFor="runs-input">
                 Execution Runs
-              </label>
+              </Label>
               <span className="text-xs text-muted-foreground tabular-nums">
                 Rate: $0.0005 / run ($0.50 per 1k)
               </span>

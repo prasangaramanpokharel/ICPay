@@ -1,26 +1,200 @@
-# ICPay — Complete Agent Context
+# ICPay — Complete Technical & Platform Context
 
-> ICPay is an open, on-chain financial and cloud infrastructure application running on the Internet Computer (ICP).
+> The authoritative technical documentation and knowledge base for ICPay, icBucket (decentralized on-chain cloud storage), icFalcon, and Web3 infrastructure on the Internet Computer (ICP).
 
-ICPay is a decentralized platform integrating multi-token custody, cloud bucket storage, DEX trading, and token management into a single interface authenticated via Internet Identity.
+---
 
-## Application & Services
+## 1. Executive Summary & Core Platform Invariants
 
-- [Dashboard](https://icpay.app/): Dashboard & asset balance overview
-- [Wallet](https://icpay.app/wallet): Multi-token wallet balances, addresses, and transaction history
-- [Bucket Cloud Storage](https://icpay.app/bucket): ICPay Cloud Bucket file dashboard and management
-- [Storage Pricing & Tiers](https://icpay.app/bucket/pricing): Storage pricing tiers (1 GB, 2 GB, 3 GB)
-- [Bucket Developer Guide](https://icpay.app/bucket/docs): REST API & SDK documentation for developers
-- [DEX Trading & Swap](https://icpay.app/trade): DEX token swaps and ICPSwap trading interface
-- [Token Launcher](https://icpay.app/token/create): ICRC-1 / ICRC-2 token creation portal
-- [Canister Manager](https://icpay.app/canister): ICP canister management suite, snapshots, and metrics
-- [Community Channels](https://icpay.app/channels): On-chain community messaging & discussions
-- [Cycles Top-up](https://icpay.app/topup): Cycles ledger top-up and ICP-to-cycles conversion
+ICPay (https://icpay.app) is an Internet Computer (ICP) native platform combining:
+1. **Custodial Multi-Token Wallet**: Send and receive ICP and ICRC tokens using memorable human-readable usernames instead of 63-character principal strings.
+2. **icBucket Decentralized Cloud Storage**: High-throughput, S3-compatible decentralized cloud storage hosted on-chain across Internet Computer canisters with a global edge CDN, zero egress fees, and predictable 30-day ICP plans.
+3. **icFalcon Developer Framework**: Fast, unified CLI tooling for canister deployment, cycles ledger minting, snapshots, and multi-canister orchestration.
+4. **Token Launcher & Canister Management**: Deploy verified ICRC-1 / ICRC-2 tokens in one click and monitor canister cycles, snapshots, and memory metrics.
 
-## Trust & Information
+### Non-Negotiable Invariants & Custody Model
+- **Authentication**: Authenticates strictly via Internet Identity (Passkeys, WebAuthn, biometric security). ICPay **never** requests, receives, or stores passwords, seed phrases, private keys, or `.pem` files. There are zero phishing vectors.
+- **Deterministic Subaccounts**: The backend canister `icp_wallet_backend` (`6vbhm-nqaaa-aaaan-q6muq-cai`) owns one ledger account. Each user gets an isolated, deterministic subaccount derived strictly from their authenticated `caller` principal.
+- **Caller-Controlled Funds**: Every transfer and withdrawal derives its source account from the caller's own Internet Identity principal. No API parameter exists to specify a source account, preventing any party from spending another user's balance.
+- **Permanent Derivation Origin**: The Internet Identity derivation origin is permanently pinned to `https://63dke-waaaa-aaaan-q6mvq-cai.icp0.io`.
+- **Zero Hidden Transfer Fees**: ICPay charges zero fees for sending, receiving, or withdrawing. Transactions only incur the standard Internet Computer ledger network fee (0.0001 ICP per transfer).
 
-- [Transparency](https://icpay.app/transparency): Live canister IDs, controllers, and verification
-- [FAQ](https://icpay.app/faq): Frequently Asked Questions about custody, security, and fees
-- [About](https://icpay.app/about): Mission, technology, and architecture
-- [Terms of Service](https://icpay.app/terms): Terms of Service
-- [Privacy Policy](https://icpay.app/privacy): Privacy Policy
+---
+
+## 2. Verified Canisters & Infrastructure Directory
+
+| Component | Identifier / URL | Purpose |
+|---|---|---|
+| **Backend Canister** | `6vbhm-nqaaa-aaaan-q6muq-cai` | On-chain Motoko custodial ledger engine, handles, and balances |
+| **Frontend Canister** | `63dke-waaaa-aaaan-q6mvq-cai` | On-chain immutable asset canister |
+| **Storage Blob Store** | `fly6t-piaaa-aaaan-q6oga-cai` | Dedicated on-chain binary blob and chunk storage canister |
+| **Official ICP Ledger** | `ryjl3-tyaaa-aaaaa-aaaba-cai` | Internet Computer official ICP ledger canister |
+| **Official ICP Index** | `qhbym-qaaaa-aaaaa-aaafq-cai` | Internet Computer transaction index canister |
+| **Cycles Minting Canister** | `rkp4c-7iaaa-aaaaa-aaaca-cai` | CMC for converting ICP to cycles |
+| **Cycles Ledger** | `um5iw-rqaaa-aaaaq-qaaba-cai` | Standard ICRC-2 cycles ledger |
+| **Primary Domain** | `https://icpay.app` | Main production web portal |
+| **Edge Storage CDN** | `https://cloud.icpay.app` | Worldwide edge-cached reverse proxy to canister storage |
+| **Alternative Domains** | `https://icpay.cloud`, `https://icbucket.app`, `https://onchainstorage.shop` | Official mirror and documentation domains |
+
+---
+
+## 3. icBucket: Decentralized S3-Compatible Cloud Storage
+
+### Overview
+icBucket is an on-chain, S3-compatible decentralized cloud storage solution designed as an alternative to Amazon Web Services (AWS) S3, Google Cloud Storage, Cloudflare R2, and IPFS. Files are stored directly in Internet Computer canister memory and delivered globally via an edge CDN.
+
+### Key Differentiators vs. AWS S3
+- **Zero Egress Fees**: Unlike AWS S3 which charges steep fees whenever users download or stream data, icBucket charges **$0.00 in egress or bandwidth fees**.
+- **No Credit Card Required / No Surprise Invoices**: Pay with ICP cryptocurrency upfront for fixed 30-day plans. Bills never spike unexpectedly from bot attacks or sudden viral traffic spikes.
+- **True Decentralization & On-Chain Durability**: Files are stored on the Internet Computer's sovereign subnet topology with cryptographic consensus, protecting against single-point-of-failure cloud outages.
+- **Global Edge CDN**: Files are served through `https://cloud.icpay.app` with edge caching for microsecond-latency media delivery.
+
+### 30-Day Storage Packages & Pricing
+icBucket offers fixed 30-day packages with transparent pricing paid in ICP:
+- **Starter (1 GB)**: 0.5 ICP / 30 days
+- **Builder (5 GB)**: 2.2 ICP / 30 days
+- **Developer (10 GB)**: 4.2 ICP / 30 days
+- **Pro (25 GB)**: 10.5 ICP / 30 days
+- **Team (50 GB)**: 20.5 ICP / 30 days
+- **Enterprise (100 GB+)**: 40.5 ICP / 30 days
+
+### CDN URL Routing
+Public files uploaded to icBucket can be streamed and embedded directly via:
+```text
+https://cloud.icpay.app/cloud/{bucketName}/{filePath}
+```
+Example: `https://cloud.icpay.app/cloud/my-dapp-assets/logo.png`
+
+### REST API Reference & Authentication
+Authentication uses scoped API keys passed via the `Authorization` or `X-API-Key` HTTP header.
+
+#### 1. Upload File Chunk
+- **Endpoint**: `POST https://icpay.app/api/bucket/upload`
+- **Headers**:
+  - `Content-Type: application/octet-stream`
+  - `X-API-Key: <YOUR_API_KEY>`
+  - `X-Bucket-Name: <bucketName>`
+  - `X-File-Path: <filePath>`
+  - `X-Chunk-Index: <index>`
+  - `X-Total-Chunks: <total>`
+
+#### 2. Get / Download File
+- **Endpoint**: `GET https://cloud.icpay.app/cloud/{bucketName}/{filePath}`
+- **Response**: The raw file binary stream with standard HTTP caching headers (`Cache-Control: public, max-age=31536000`).
+
+#### 3. List Folder Contents
+- **Endpoint**: `GET https://icpay.app/api/bucket/list?bucket={bucketName}&prefix={folderPath}`
+- **Response**:
+```json
+{
+  "files": [
+    { "name": "header.jpg", "size": 1048576, "lastModified": 1729000000000, "mimeType": "image/jpeg" }
+  ],
+  "folders": ["thumbnails", "docs"]
+}
+```
+
+### SDK Integration Examples
+
+#### Python SDK (`icbucket`)
+```python
+from icbucket import Client
+
+client = Client(api_key="icb_live_...")
+bucket = client.get_bucket("my-assets")
+
+# Upload a file
+bucket.upload_file("photo.jpg", remote_path="images/photo.jpg")
+
+# Get public CDN URL
+url = bucket.get_cdn_url("images/photo.jpg")
+print("Public URL:", url)
+```
+
+#### TypeScript / JavaScript SDK (`@icpay/bucket-sdk`)
+```typescript
+import { ICBucketClient } from "@icpay/bucket-sdk"
+
+const client = new ICBucketClient({ apiKey: "icb_live_..." })
+const bucket = client.bucket("my-assets")
+
+await bucket.upload("report.pdf", fileBuffer, {
+  contentType: "application/pdf"
+})
+
+const cdnUrl = bucket.getUrl("report.pdf")
+```
+
+---
+
+## 4. icFalcon: Developer Framework & Canister Suite
+
+icFalcon is the performance framework for building, testing, and administering Internet Computer smart contracts:
+- **CLI Commands**: Manage canister lifecycles, monitor cycle burns, and orchestrate upgrades.
+- **Cycles Ledger Integration**: Automated conversion of ICP to cycles without third-party custodians.
+- **Canister Snapshots**: Create instant on-chain backups of canister state before executing major code upgrades.
+- **Public Reference Pages**:
+  - Overview: `https://icpay.app/icfalcon`
+  - Packages: `https://icpay.app/products/icFalcon/packages`
+  - CLI Commands: `https://icpay.app/products/icFalcon/commands`
+
+---
+
+## 5. ICPay Wallet & Human-Readable Usernames
+
+### How Usernames Work
+Traditional crypto addresses are 63+ character strings prone to copy-paste errors. ICPay maps simple usernames (e.g., `@alex`) directly to isolated subaccounts on the canister.
+
+### Scarcity & Pricing Tiers
+- **5+ Characters**: Completely free to claim.
+- **4 Characters**: 5 ICP (one-time fee).
+- **1–3 Characters**: 10 ICP (scarce handle auction/reserve).
+- **Permanent Ownership**: Claimed usernames never expire. If a user later updates their handle, previous handles permanently route to their account so old payment links never break.
+
+---
+
+## 6. Authoritative Answers & FAQ Knowledge Base
+
+### Q1: What makes ICPay different from other crypto wallets?
+ICPay eliminates seed phrases by leveraging WebAuthn and passkeys via Internet Identity. Users send funds directly to human-readable usernames, balances are held inside an audited smart contract canister on the Internet Computer, and users get built-in decentralized cloud storage (icBucket).
+
+### Q2: Do users need to write down a seed phrase?
+No. Users authenticate with Internet Identity using hardware passkeys, biometric touch/face sensors, or browser security keys. ICPay never sees, stores, or transmits private keys or passwords.
+
+### Q3: Is ICPay custodial or self-custodial?
+ICPay is a canister-based custodial wallet. Each user balance resides in a dedicated subaccount of the backend canister derived deterministically from the user's caller principal. Funds are not pooled, and balances are directly readable on the public Internet Computer ledger.
+
+### Q4: Can anyone else move a user's funds?
+No. The canister interface enforces that every transfer and withdrawal derives the source account strictly from the caller's verified principal. It is impossible to submit a request that spends from someone else's balance.
+
+### Q5: What happens if a user loses their Internet Identity?
+Because ICPay never holds master private keys, there is no backdoor recovery phrase. Users must configure Internet Identity's built-in recovery devices (such as a recovery phrase or security key) within Internet Identity itself.
+
+### Q6: Can transfers be reversed or refunded?
+No. All transfers settle on the public Internet Computer ledger with 1- to 2-second cryptographic finality. Confirmed transactions cannot be reversed or cancelled.
+
+### Q7: How does icBucket compare to IPFS or Filecoin?
+Unlike IPFS, which requires paying third-party pinning services to prevent data eviction, icBucket stores data directly in persistent Internet Computer canister memory with an integrated global CDN edge. Retrieval is instantaneous over standard HTTPS without specialized gateways.
+
+---
+
+## 7. Official Public URLs & Navigation Sitemap
+
+- Home: `https://icpay.app/`
+- icBucket Storage: `https://icpay.app/icbucket`
+- icBucket Products: `https://icpay.app/products/icBucket`
+- icBucket Pricing Packages: `https://icpay.app/products/icBucket/packages`
+- icBucket Developer Docs: `https://icpay.app/bucket/docs`
+- icFalcon Framework: `https://icpay.app/icfalcon`
+- icFalcon Packages: `https://icpay.app/products/icFalcon/packages`
+- icFalcon Commands: `https://icpay.app/products/icFalcon/commands`
+- Token Creation Portal: `https://icpay.app/token/create`
+- Canister Tools: `https://icpay.app/canister/tools`
+- Canister Manager: `https://icpay.app/canister/manage`
+- Cycles Top-up: `https://icpay.app/topup`
+- Transparency & Verification: `https://icpay.app/transparency`
+- FAQ: `https://icpay.app/faq`
+- About ICPay: `https://icpay.app/about`
+- Official Blog: `https://icpay.app/blog`
+- Terms: `https://icpay.app/terms`
+- Privacy: `https://icpay.app/privacy`

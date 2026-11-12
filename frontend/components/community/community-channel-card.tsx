@@ -47,8 +47,10 @@ export function CommunityChannelCard({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 px-3 py-2.5 transition-colors",
-        selected && "bg-muted/50 md:bg-muted/40"
+        "group flex items-center gap-3 px-3 py-2.5 transition-all rounded-xl mx-1.5 my-0.5",
+        selected
+          ? "bg-accent/70 text-accent-foreground font-medium shadow-xs"
+          : "hover:bg-muted/50"
       )}
     >
       <Link href={href} prefetch={false} className="flex min-w-0 flex-1 items-center gap-3">

@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useState,
   useSyncExternalStore,
   type ReactNode,
 } from "react"
@@ -101,12 +102,27 @@ function getServerTimeZoneSnapshot() {
 }
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
-  const locale = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
-  const timeZone = useSyncExternalStore(
+  const storeLocale = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
+  const storeTimeZone = useSyncExternalStore(
     subscribeTimeZone,
     getTimeZoneSnapshot,
     getServerTimeZoneSnapshot
   )
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    let active = true
+    const rafId = requestAnimationFrame(() => {
+      if (active) setMounted(true)
+    })
+    return () => {
+      active = false
+      cancelAnimationFrame(rafId)
+    }
+  }, [])
+
+  const locale = mounted ? storeLocale : DEFAULT_LOCALE
+  const timeZone = mounted ? storeTimeZone : "UTC"
 
   const setLocale = useCallback((next: Locale) => {
     localStorage.setItem(STORAGE_KEY, next)
@@ -114,13 +130,14 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
-    document.documentElement.lang = locale
-  }, [locale])
+    if (mounted) {
+      document.documentElement.lang = locale
+    }
+  }, [locale, mounted])
 
   return (
     <LocaleContext.Provider value={{ locale, setLocale }}>
       <NextIntlClientProvider
-        key={locale}
         locale={locale}
         messages={MESSAGES[locale]}
         timeZone={timeZone}

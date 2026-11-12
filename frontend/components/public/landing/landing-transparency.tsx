@@ -1,11 +1,14 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { ShineBorder } from "@/components/ui/shine-border"
+import { copyText } from "@/lib/wallet/utils"
 import {
   BACKEND_CANISTER_ID,
   BLOB_STORE_CANISTER_ID,
@@ -71,15 +74,22 @@ const GUARANTEES = [
 ]
 
 export function LandingTransparency() {
+  const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  const handleCopy = async (id: string) => {
+    await copyText(id)
+    setCopiedId(id)
+    setTimeout(() => setCopiedId((prev) => (prev === id ? null : prev)), 2000)
+  }
+
   return (
     <section className="border-b border-border/60 bg-background">
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20">
         <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
-          {/* Left Column: Heading, Context, and Security Architecture */}
           <div className="space-y-6 lg:col-span-5">
             <div className="space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-wider text-primary">
-                All in progress
+              <p className="text-xs font-semibold uppercase tracking-[0.22em] text-primary">
+                On-Chain Architecture
               </p>
               <h2 className="text-3xl font-extrabold tracking-tight bg-linear-to-b from-foreground via-foreground/90 to-foreground/50 bg-clip-text text-transparent md:text-4xl">
                 Canisters
@@ -128,7 +138,6 @@ export function LandingTransparency() {
               </div>
             </div>
 
-            {/* Formal Security Architecture Card */}
             <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-xs">
               <div className="space-y-3.5">
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -153,7 +162,6 @@ export function LandingTransparency() {
             </div>
           </div>
 
-          {/* Right Column: Canister Cards */}
           <div className="grid gap-3 sm:gap-4 lg:col-span-7">
             {CANISTERS.map((item) => (
               <div
@@ -165,7 +173,7 @@ export function LandingTransparency() {
                     className="rounded-xl"
                     borderWidth={1.2}
                     duration={14}
-                    shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                    shineColor={["var(--primary)", "var(--accent)", "var(--primary)"]}
                   />
                 )}
                 <div className="relative z-10 space-y-3">
@@ -173,29 +181,43 @@ export function LandingTransparency() {
                     <span className="text-base font-semibold text-foreground">
                       {item.name}
                     </span>
-
-
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 px-2.5 py-0.5 text-[11px] font-medium text-foreground">
+                      <span className="size-1.5 rounded-full bg-success" />
+                      <span>{item.status}</span>
+                    </span>
                   </div>
 
-                  <div className="flex w-full items-center justify-between gap-3 rounded-lg border border-border/60 bg-muted/40 px-3 py-1.5">
+                  <div className="flex w-full items-center justify-between gap-2 rounded-lg border border-border/60 bg-muted/40 px-3 py-1.5">
                     <span className="font-mono text-xs tracking-wider text-muted-foreground truncate select-all">
                       {item.canisterId}
                     </span>
-                    <Button
-                      size="xs"
-                      variant="default"
-                      nativeButton={false}
-                      render={
-                        <a
-                          href={`https://dashboard.internetcomputer.org/canister/${item.canisterId}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        />
-                      }
-                      className="h-6 shrink-0 rounded-full px-2.5 text-[11px] font-medium shadow-xs"
-                    >
-                      <span>Explorer</span>
-                    </Button>
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-xs"
+                        onClick={() => void handleCopy(item.canisterId)}
+                        aria-label={`Copy ${item.name} canister ID`}
+                        className="size-6 rounded-full text-muted-foreground hover:text-foreground cursor-pointer"
+                      >
+                        <CopyIconIndicator copied={copiedId === item.canisterId} iconClassName="size-3.5" />
+                      </Button>
+                      <Button
+                        size="xs"
+                        variant="default"
+                        nativeButton={false}
+                        render={
+                          <a
+                            href={`https://dashboard.internetcomputer.org/canister/${item.canisterId}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          />
+                        }
+                        className="h-6 shrink-0 rounded-full px-2.5 text-[11px] font-medium shadow-xs"
+                      >
+                        <span>Explorer</span>
+                      </Button>
+                    </div>
                   </div>
 
                   <p className="text-xs leading-relaxed text-muted-foreground">
@@ -207,6 +229,6 @@ export function LandingTransparency() {
           </div>
         </div>
       </div>
-    </section >
+    </section>
   )
 }

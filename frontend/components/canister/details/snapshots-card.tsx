@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Camera01Icon, RefreshIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"

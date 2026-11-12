@@ -1,51 +1,28 @@
 "use client"
 
-import Link from "next/link"
-import Image from "next/image"
 import type { ComponentProps } from "react"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { DashboardNavFooter, DashboardNavMain } from "@/components/layout/dashboard/nav-main"
 import { SidebarUserFooter } from "@/components/layout/dashboard/sidebar-user-footer"
-import { APP_LOGO, APP_LOGO_ALT } from "@/lib/ui/brand-images"
 import { SIDEBAR_FOOTER } from "@/lib/navigation/app-sidebar-nav"
+import { cn } from "@/lib/ui/utils"
 
-export function AppSidebar(props: ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ className, ...props }: ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="offcanvas" {...props} className="">
-      <SidebarHeader className="">
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              size="lg"
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={<Link href="/home" />}
-            >
-              <span className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-lg">
-                <Image
-                  src={APP_LOGO}
-                  alt={APP_LOGO_ALT}
-                  width={32}
-                  height={32}
-                  priority
-                  loading="eager"
-                  className="size-8 object-cover"
-                />
-              </span>
-              <span className="text-lg font-semibold text-primary">icPay</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent className="gap-0 pt-1">
+    <Sidebar
+      collapsible="offcanvas"
+      className={cn(
+        "inset-y-auto top-14 bottom-0 h-[calc(100svh-3.5rem)] md:top-16 md:h-[calc(100svh-4rem)]",
+        className,
+      )}
+      {...props}
+    >
+      <SidebarContent className="gap-0 pt-2">
         <DashboardNavMain />
       </SidebarContent>
       <SidebarFooter className="mt-auto border-t border-sidebar-border/40 p-2.5 pb-3">

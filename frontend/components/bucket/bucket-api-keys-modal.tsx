@@ -42,7 +42,7 @@ import {
 import { Spinner } from "@/components/ui/spinner"
 import { mapBucketError } from "@/lib/bucket/bucket"
 import { copyText } from "@/lib/wallet/utils"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { useBucketApiKeys } from "@/hooks/bucket/useBucketApiKeys"
 import { useOwnProfile } from "@/hooks/wallet/useWalletData"
 import { isPremiumHandle } from "@/lib/verified/premiumTick"
@@ -131,11 +131,11 @@ export function BucketApiKeysModal({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-md gap-3 sm:max-w-lg" showCloseButton>
           <DialogHeader className="gap-1">
-            <DialogTitle className="flex items-center gap-2 text-base">
+            <DialogTitle className="flex items-center gap-2">
               <HugeiconsIcon icon={Key01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
               {t("apiKeysTitle")}
             </DialogTitle>
-            <DialogDescription className="text-xs leading-relaxed">
+            <DialogDescription>
               {t("apiKeysHint")}
             </DialogDescription>
           </DialogHeader>
@@ -180,15 +180,17 @@ export function BucketApiKeysModal({
                       </div>
                       <div className="mt-0.5 flex items-center gap-1.5 font-mono text-xs text-muted-foreground">
                         <span className="truncate">{key.keyHint}</span>
-                        <button
+                        <Button
                           type="button"
+                          variant="ghost"
+                          size="icon-xs"
                           onClick={() => void handleCopyHint(key)}
-                          className="inline-flex size-3.5 items-center justify-center text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                          className="size-4 p-0 text-muted-foreground hover:text-foreground"
                           aria-label="Copy key prefix"
                           title={copiedHintId === key.id ? "Copied!" : "Copy key prefix"}
                         >
                           <CopyIconIndicator copied={copiedHintId === key.id} iconClassName="size-3" />
-                        </button>
+                        </Button>
                       </div>
                       <div className="mt-1 flex flex-wrap items-center gap-1">
                         {key.permissions.read ? (
@@ -290,7 +292,7 @@ export function BucketApiKeysModal({
         <DialogContent className="max-w-sm gap-4" showCloseButton>
           <DialogHeader>
             <DialogTitle>{t("apiKeyCreate")}</DialogTitle>
-            <DialogDescription className="text-xs">{t("apiKeyCreateHint")}</DialogDescription>
+            <DialogDescription>{t("apiKeyCreateHint")}</DialogDescription>
           </DialogHeader>
           <form
             onSubmit={(e) => {
@@ -377,7 +379,7 @@ export function BucketApiKeysModal({
         <DialogContent className="max-w-sm gap-4" showCloseButton>
           <DialogHeader>
             <DialogTitle>{t("apiKeyCreatedTitle")}</DialogTitle>
-            <DialogDescription className="text-xs">{t("apiKeyCreatedBody")}</DialogDescription>
+            <DialogDescription>{t("apiKeyCreatedBody")}</DialogDescription>
           </DialogHeader>
           <Card size="sm">
             <CardContent className="flex min-w-0 items-center gap-1.5 py-2 pl-3 pr-1.5">

@@ -3,7 +3,7 @@ export const IC_INGRESS_MAX_BYTES = 2_097_152
 export const BUCKET_UPLOAD_CHUNK_BYTES = 1_850_000
 export const BUCKET_UPLOAD_MIN_CHUNK_BYTES = 700_000
 export const BUCKET_UPLOAD_SINGLE_MAX = 1_850_000
-export const UPLOAD_CHUNK_CONCURRENCY = 4
+export const UPLOAD_CHUNK_CONCURRENCY = 2
 
 export function uploadChunkCount(fileSize: number): number {
   if (fileSize <= 0) return 1

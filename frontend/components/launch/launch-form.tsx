@@ -215,7 +215,7 @@ export function LaunchForm({
 
             <div className="flex min-w-0 flex-1 flex-col gap-4">
               <Field>
-                <div className="flex items-baseline justify-between">
+                <div className="flex min-h-6 items-center justify-between gap-2">
                   <FieldLabel htmlFor="token-name">{t("nameLabel")}</FieldLabel>
                   <span className="text-xs tabular-nums text-muted-foreground">
                     {name.length}/{NAME_MAX_LENGTH}
@@ -236,7 +236,7 @@ export function LaunchForm({
               </Field>
 
               <Field>
-                <div className="flex items-baseline justify-between">
+                <div className="flex min-h-6 items-center justify-between gap-2">
                   <FieldLabel htmlFor="token-symbol">{t("symbolLabel")}</FieldLabel>
                   <span className="text-xs tabular-nums text-muted-foreground">
                     {symbol.length}/{SYMBOL_MAX_LENGTH}
@@ -277,7 +277,7 @@ export function LaunchForm({
 
           {/* Description */}
           <Field>
-            <div className="flex items-baseline justify-between">
+            <div className="flex min-h-6 items-center justify-between gap-2">
               <FieldLabel htmlFor="token-description">{t("descriptionLabel")}</FieldLabel>
               <span className="text-xs tabular-nums text-muted-foreground">
                 {description.length}/{DESCRIPTION_MAX_LENGTH}

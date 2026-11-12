@@ -1,8 +1,9 @@
 "use client"
 
-import Link from "next/link"
+import Link, { useLinkStatus } from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
+import { motion } from "motion/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { cn } from "@/lib/ui/utils"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -27,10 +28,7 @@ export function BottomNav() {
       <div
         className={cn(
           "pointer-events-auto grid h-16 grid-cols-5 items-center rounded-3xl px-1.5 py-1",
-          "border border-border/60 dark:border-white/10",
-          "bg-card/85 dark:bg-card/75 backdrop-blur-2xl",
-          "shadow-[0_12px_36px_-6px_rgba(0,0,0,0.12)]",
-          "dark:shadow-[0_16px_40px_-8px_rgba(0,0,0,0.6)]",
+          "border border-border/60 bg-card/85 shadow-lg backdrop-blur-2xl dark:bg-card/75",
         )}
       >
         {APP_NAV_ITEMS.map((item) => (
@@ -81,6 +79,36 @@ function NavTab({
         }
       }}
     >
+      {active && (
+        <motion.span
+          layoutId="bottomNavIndicator"
+          transition={{ type: "spring", stiffness: 450, damping: 35 }}
+          className="absolute inset-x-1.5 inset-y-1 -z-10 rounded-2xl bg-primary/10 dark:bg-primary/15"
+        />
+      )}
+      <NavTabContent label={label} icon={icon} active={active} />
+    </Link>
+  )
+}
+
+function NavTabContent({
+  label,
+  icon,
+  active,
+}: {
+  label: string
+  icon: (typeof APP_NAV_ITEMS)[number]["icon"]
+  active: boolean
+}) {
+  const { pending } = useLinkStatus()
+
+  return (
+    <span
+      className={cn(
+        "flex min-w-0 flex-col items-center justify-center transition-opacity",
+        pending && "opacity-70"
+      )}
+    >
       <span className="relative flex size-8 items-center justify-center transition-all duration-150 group-active:scale-90">
         <HugeiconsIcon
           icon={icon}
@@ -98,6 +126,6 @@ function NavTab({
       >
         {label}
       </span>
-    </Link>
+    </span>
   )
 }

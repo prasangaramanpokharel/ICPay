@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { ThemeProvider, ThemeColorScript } from "@/components/theme-provider"
+import { MotionProvider } from "@/components/motion-provider"
 import { AuthProvider } from "@/components/auth/auth-provider"
 import { SwrProvider } from "@/components/swr-provider"
 import { LocaleProvider } from "@/components/i18n/locale-provider"
@@ -10,7 +11,7 @@ import { AutoLocale } from "@/components/i18n/auto-locale"
 import { FiatProvider } from "@/components/fiat/fiat-provider"
 import { cn } from "@/lib/ui/utils"
 import { SiteAnalytics } from "@/components/analytics/site-analytics"
-import { Toaster } from "@/components/ui/sonner"
+import { Toaster } from "@/components/ui/toast"
 import { SITE_VERIFICATION } from "@/lib/public/site-verification"
 
 const fontSans = Geist({
@@ -81,6 +82,10 @@ export const metadata: Metadata = {
   verification: {
     google: SITE_VERIFICATION.google,
     yandex: SITE_VERIFICATION.yandex,
+    other: {
+      ...(SITE_VERIFICATION.bing ? { "msvalidate.01": SITE_VERIFICATION.bing } : {}),
+      ...(SITE_VERIFICATION.baidu ? { "baidu-site-verification": SITE_VERIFICATION.baidu } : {}),
+    },
   },
 }
 
@@ -180,7 +185,9 @@ export default function RootLayout({
             <AutoLocale />
             <FiatProvider>
               <SwrProvider>
-                <AuthProvider>{children}</AuthProvider>
+                <MotionProvider>
+                  <AuthProvider>{children}</AuthProvider>
+                </MotionProvider>
               </SwrProvider>
             </FiatProvider>
           </LocaleProvider>

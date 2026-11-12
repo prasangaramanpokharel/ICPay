@@ -5,6 +5,7 @@ import { createAgent } from "@/services/icp"
 import { fetchSnsRegistryList } from "@/services/sns/registry"
 import { query } from "@/services/client"
 import { getCustomLedgerIdsSnapshot } from "@/lib/wallet/customTokens"
+import { resolveTokenDisplayName } from "@/lib/wallet/utils"
 import { getTokenByLedger, listTokens, statusOf } from "@/services/launch/launch"
 import { fetchTokenRegistry, type TokenMarket } from "@/lib/token/registry"
 
@@ -177,7 +178,7 @@ export async function fetchTokenMetadata(
     return {
       ledgerId,
       symbol: meta.symbol,
-      name: meta.name,
+      name: resolveTokenDisplayName(meta.symbol, meta.name),
       decimals: meta.decimals,
       fee: meta.fee,
       logo: meta.icon?.startsWith("data:") ? meta.icon : undefined,

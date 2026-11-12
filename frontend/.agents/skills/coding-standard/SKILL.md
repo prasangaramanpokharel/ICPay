@@ -1,3 +1,8 @@
+---
+name: icpay-coding-standard
+description: Frontend architecture, Next.js App Router, Server vs Client components, strict TypeScript, and design standards for ICPay frontend.
+---
+
 # Frontend Coding Standard
 
 > **Status:** Required

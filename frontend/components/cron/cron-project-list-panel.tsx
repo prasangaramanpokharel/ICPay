@@ -9,8 +9,8 @@ import { ButtonGroup } from "@/components/ui/button-group"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Progress } from "@/components/ui/progress"
 import { Skeleton } from "@/components/ui/skeleton"
+import { RadialMeter } from "@/components/ui/radial-meter"
 import {
   Table,
   TableBody,
@@ -50,13 +50,22 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  ArrowRight01Icon,
   Delete02Icon,
   Folder01Icon,
+  InformationCircleIcon,
+  Key01Icon,
+  MoreVerticalIcon,
   PauseIcon,
   PlayIcon,
   PlusSignIcon,
@@ -78,6 +87,7 @@ import type {
   RemoteProjectRecord,
 } from "@/services/cron/types"
 import { CronBuyPackModal } from "./cron-buy-pack-modal"
+import { formatProjectId } from "./cron-types"
 
 type FilterTab = "all" | "active" | "paused"
 
@@ -175,7 +185,10 @@ export function CronProjectListPanel() {
       if (filter === "paused" && hasActive) return false
 
       if (!needle) return true
-      return proj.name.toLowerCase().includes(needle)
+      return (
+        proj.name.toLowerCase().includes(needle) ||
+        formatProjectId(proj.id).toLowerCase().includes(needle)
+      )
     })
   }, [projects, jobsByProject, query, filter])
 
@@ -252,7 +265,7 @@ export function CronProjectListPanel() {
     <AppPage
       title="icCron Scheduler"
       description="Decentralized on-chain automated jobs, recurring tasks, and webhooks"
-      className="mx-auto max-w-6xl w-full space-y-6"
+      className="w-full space-y-6"
       actions={
         <div className="flex items-center gap-2">
           <Button
@@ -260,8 +273,10 @@ export function CronProjectListPanel() {
             size="sm"
             nativeButton={false}
             render={<Link href="/cron/api" />}
+            className="gap-1.5"
           >
-            API
+            <HugeiconsIcon icon={Key01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+            <span>API</span>
           </Button>
           <Button
             variant="outline"
@@ -282,17 +297,68 @@ export function CronProjectListPanel() {
       }
     >
       <div className="flex flex-col gap-6">
-        <div className="rounded-lg border border-border/80 bg-card/60 p-3.5 backdrop-blur-xs shadow-2xs">
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">
-                <span className="font-medium text-foreground tabular-nums">{freeRuns}/60</span> free runs left this month
-              </span>
-              <span className="text-muted-foreground tabular-nums">
-                Paid credits: <span className="font-medium text-foreground">{paidCredits}</span>
-              </span>
+        <div className="rounded-xl border border-border/80 bg-card/60 p-4 backdrop-blur-xs shadow-2xs sm:p-5">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div className="flex flex-1 flex-col gap-3 min-w-0 w-full">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-foreground">
+                  Monthly Quota & Credits
+                </span>
+                <Badge variant="secondary" className="text-[10px] h-5 px-1.5 font-medium">
+                  Active
+                </Badge>
+              </div>
+
+              <p className="text-xs text-muted-foreground leading-relaxed max-w-md">
+                Automate on-chain calls and recurring HTTP webhooks. Free tier gives 60 executions each month.
+              </p>
+
+              <div className="grid grid-cols-2 gap-2.5 sm:max-w-md">
+                <div className="rounded-lg border border-border/60 bg-background/50 p-2.5">
+                  <span className="text-[11px] text-muted-foreground block">Free allowance</span>
+                  <span className="text-sm font-semibold text-foreground tabular-nums">
+                    {freeRuns} <span className="text-xs font-normal text-muted-foreground">/ 60 left</span>
+                  </span>
+                </div>
+                <div className="rounded-lg border border-border/60 bg-background/50 p-2.5">
+                  <div className="flex items-center gap-1">
+                    <span className="text-[11px] text-muted-foreground">Prepaid credits</span>
+                    <Tooltip>
+                      <TooltipTrigger
+                        type="button"
+                        className="inline-flex cursor-help text-muted-foreground/70 transition-colors hover:text-foreground outline-none"
+                      >
+                        <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5" />
+                        <span className="sr-only">Prepaid credits info</span>
+                      </TooltipTrigger>
+                      <TooltipContent side="top" className="max-w-xs text-xs">
+                        $0.0005 per run. Prepaid credits never expire and are automatically used after your monthly free allowance.
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                  <span className="text-sm font-semibold text-foreground tabular-nums">
+                    {paidCredits} <span className="text-xs font-normal text-muted-foreground">runs</span>
+                  </span>
+                </div>
+              </div>
             </div>
-            <Progress value={(freeRuns / 60) * 100} className="[&_[data-slot=progress-track]]:h-1.5" />
+
+            <div className="flex flex-col items-center justify-center shrink-0">
+              <RadialMeter
+                value={freeRuns}
+                max={60}
+                color="var(--primary)"
+                innerRadius={50}
+                outerRadius={74}
+                polarRadius={[66, 56]}
+                centerValue={freeRuns}
+                centerLabel="/ 60 left"
+                width={150}
+                height={150}
+                valueClassName="fill-foreground text-2xl font-bold tabular-nums"
+                labelClassName="fill-muted-foreground text-[10px] font-medium uppercase tracking-wider"
+              />
+            </div>
           </div>
         </div>
 
@@ -385,8 +451,7 @@ export function CronProjectListPanel() {
                     <TableHead className="font-semibold text-muted-foreground py-3.5">Project</TableHead>
                     <TableHead className="font-semibold text-muted-foreground py-3.5 hidden sm:table-cell">Jobs</TableHead>
                     <TableHead className="font-semibold text-muted-foreground py-3.5 hidden sm:table-cell">Status</TableHead>
-                    <TableHead className="text-right font-semibold text-muted-foreground py-3.5 w-24 pr-2">Action</TableHead>
-                    <TableHead className="w-8 pr-4" />
+                    <TableHead className="text-right font-semibold text-muted-foreground py-3.5 pr-4 w-16">Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -406,7 +471,10 @@ export function CronProjectListPanel() {
                             <div className="flex size-8 items-center justify-center rounded-md border border-border/70 bg-muted/30">
                               <HugeiconsIcon icon={Folder01Icon} className="size-4 text-primary" strokeWidth={1.75} />
                             </div>
-                            <span className="font-semibold text-sm">{proj.name}</span>
+                            <div className="flex flex-col">
+                              <span className="font-semibold text-sm">{proj.name}</span>
+                              <span className="font-mono text-[10px] text-muted-foreground">{formatProjectId(proj.id)}</span>
+                            </div>
                           </div>
                         </TableCell>
                         <TableCell className="text-xs text-muted-foreground tabular-nums py-3.5 hidden sm:table-cell">
@@ -420,61 +488,62 @@ export function CronProjectListPanel() {
                             {jobs.length === 0 ? "Empty" : hasActive ? "Active" : "Paused"}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-right py-3.5 w-24 pr-2">
+                        <TableCell className="text-right py-3.5 pr-4 w-16">
                           <div
-                            className="inline-flex items-center justify-end gap-1"
+                            className="inline-flex items-center justify-end"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <Tooltip>
-                              <TooltipTrigger
+                            <DropdownMenu>
+                              <DropdownMenuTrigger
                                 render={
                                   <Button
                                     type="button"
                                     variant="ghost"
-                                    size="icon-sm"
-                                    className="size-8"
-                                    onClick={() => void handleToggleProjectStatus(proj, hasActive)}
-                                    aria-label={jobs.length === 0 ? "No jobs to toggle" : hasActive ? "Pause project" : "Resume project"}
-                                    disabled={isBusy || jobs.length === 0}
-                                  >
-                                    {isBusy ? (
-                                      <Spinner className="size-3.5" />
-                                    ) : (
-                                      <HugeiconsIcon
-                                        icon={hasActive ? PauseIcon : PlayIcon}
-                                        className="size-3.5 text-muted-foreground hover:text-foreground"
-                                      />
-                                    )}
-                                  </Button>
+                                    size="icon-xs"
+                                    className="size-8 text-muted-foreground hover:bg-muted hover:text-foreground"
+                                    aria-label="Project actions"
+                                  />
                                 }
-                              />
-                              <TooltipContent side="top">
-                                {jobs.length === 0 ? "No jobs to toggle" : hasActive ? "Pause project" : "Resume project"}
-                              </TooltipContent>
-                            </Tooltip>
-
-                            <Tooltip>
-                              <TooltipTrigger
-                                render={
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon-sm"
-                                    className="size-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-                                    onClick={() => setProjectToDelete(proj)}
-                                    aria-label="Delete project"
-                                    disabled={isBusy || projects.length <= 1}
-                                  >
-                                    <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
-                                  </Button>
-                                }
-                              />
-                              <TooltipContent side="top">Delete project</TooltipContent>
-                            </Tooltip>
+                              >
+                                <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" strokeWidth={1.75} />
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuItem
+                                  onClick={() => router.push(`/cron?id=${encodeURIComponent(proj.name)}`)}
+                                  className="gap-2 text-xs"
+                                >
+                                  <HugeiconsIcon icon={Folder01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+                                  <span>Project details</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => void handleToggleProjectStatus(proj, hasActive)}
+                                  disabled={isBusy || jobs.length === 0}
+                                  className="gap-2 text-xs"
+                                >
+                                  {isBusy ? (
+                                    <Spinner className="size-3.5" />
+                                  ) : (
+                                    <HugeiconsIcon
+                                      icon={hasActive ? PauseIcon : PlayIcon}
+                                      className="size-3.5 text-muted-foreground"
+                                      strokeWidth={1.75}
+                                    />
+                                  )}
+                                  <span>{hasActive ? "Pause all jobs" : "Resume all jobs"}</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  variant="destructive"
+                                  onClick={() => setProjectToDelete(proj)}
+                                  disabled={isBusy || projects.length <= 1}
+                                  className="gap-2 text-xs text-destructive focus:bg-destructive/10 focus:text-destructive"
+                                >
+                                  <HugeiconsIcon icon={Delete02Icon} className="size-3.5 text-destructive" strokeWidth={1.75} />
+                                  <span>Delete project</span>
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </div>
-                        </TableCell>
-                        <TableCell className="w-8 pr-4 text-right py-3.5">
-                          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground ml-auto" strokeWidth={1.75} />
                         </TableCell>
                       </TableRow>
                     )
@@ -487,12 +556,12 @@ export function CronProjectListPanel() {
       </div>
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-        <DialogContent className="sm:max-w-md bg-card text-card-foreground border-border">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-lg font-semibold text-foreground">
+            <DialogTitle>
               Create a New Project
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
+            <DialogDescription>
               Group related cron jobs, webhooks, and API keys under a project namespace.
             </DialogDescription>
           </DialogHeader>
@@ -520,7 +589,8 @@ export function CronProjectListPanel() {
                 disabled={creatingProject}
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                {creatingProject ? <Spinner className="size-3.5" /> : "Create Project"}
+                {creatingProject ? <Spinner data-icon="inline-start" /> : null}
+                <span>Create Project</span>
               </Button>
             </div>
           </form>

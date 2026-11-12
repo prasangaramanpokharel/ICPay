@@ -90,7 +90,7 @@ export function AcademyPaymentModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="relative max-w-lg sm:max-w-lg border-border bg-card p-6 overflow-hidden rounded-2xl shadow-xl">
+      <DialogContent className="max-w-lg sm:max-w-lg p-6 overflow-hidden">
         <ShineBorder
           className="rounded-[inherit]"
           borderWidth={1.5}
@@ -100,10 +100,10 @@ export function AcademyPaymentModal({
 
         <div className="relative z-10 space-y-4">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold tracking-tight text-card-foreground">
+            <DialogTitle>
               Confirm Payment
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
+            <DialogDescription>
               Authorize one-time on-chain enrollment for {course.title}
             </DialogDescription>
           </DialogHeader>

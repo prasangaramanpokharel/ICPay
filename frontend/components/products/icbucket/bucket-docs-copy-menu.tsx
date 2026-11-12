@@ -21,7 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { copyText } from "@/lib/wallet/utils"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 
 type BucketDocsCopyMenuProps = {
   markdown: string

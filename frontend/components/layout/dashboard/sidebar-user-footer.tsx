@@ -143,5 +143,4 @@ export function NavUser({ user }: NavUserProps) {
   )
 }
 
-// Backwards compatibility alias for app-sidebar
 export const SidebarUserFooter = NavUser

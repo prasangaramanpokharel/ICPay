@@ -1,28 +1,123 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState, type InputHTMLAttributes } from "react"
 import { createPortal } from "react-dom"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Upload01Icon } from "@hugeicons/core-free-icons"
+import { ArrowDown01Icon, Folder02Icon, Upload01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { FILE_ACCEPT, mapBucketError } from "@/lib/bucket/bucket"
 import { clearLegacyBucketStorage } from "@/lib/bucket/legacyStorage"
-import { useBucketUpload } from "@/hooks/bucket/useBucketUpload"
+import { useBucketUpload, type UploadInputItem } from "@/hooks/bucket/useBucketUpload"
 import {
   BucketUploadDesktopTrigger,
   useBucketUploadDesktopOnly,
 } from "@/components/bucket/bucket-upload-desktop-gate"
 import { BucketUploadDock } from "@/components/bucket/bucket-upload-dock"
 
+type WebkitEntry = {
+  isFile: boolean
+  isDirectory: boolean
+  name: string
+  fullPath?: string
+  file?: (success: (file: File) => void, error?: (err: unknown) => void) => void
+  createReader?: () => {
+    readEntries: (
+      success: (entries: WebkitEntry[]) => void,
+      error?: (err: unknown) => void
+    ) => void
+  }
+}
+
+async function readAllDirectoryEntries(entry: WebkitEntry): Promise<WebkitEntry[]> {
+  if (!entry.createReader) return []
+  const reader = entry.createReader()
+  const collected: WebkitEntry[] = []
+  while (true) {
+    const batch = await new Promise<WebkitEntry[]>((resolve) => {
+      reader.readEntries(
+        (entries) => resolve(entries ?? []),
+        () => resolve([])
+      )
+    })
+    if (batch.length === 0) break
+    collected.push(...batch)
+  }
+  return collected
+}
+
+async function traverseWebkitEntry(
+  entry: WebkitEntry,
+  parentPath = ""
+): Promise<UploadInputItem[]> {
+  const currentRelative = parentPath ? `${parentPath}/${entry.name}` : entry.name
+  if (entry.isFile && entry.file) {
+    const file = await new Promise<File | null>((resolve) => {
+      entry.file?.(
+        (f) => resolve(f),
+        () => resolve(null)
+      )
+    })
+    if (!file) return []
+    return [{ file, relativePath: parentPath ? currentRelative : undefined }]
+  }
+  if (entry.isDirectory) {
+    const children = await readAllDirectoryEntries(entry)
+    const nested = await Promise.all(
+      children.map((child) => traverseWebkitEntry(child, currentRelative))
+    )
+    return nested.flat()
+  }
+  return []
+}
+
+async function extractDroppedUploadItems(dataTransfer: DataTransfer): Promise<UploadInputItem[]> {
+  const itemList = dataTransfer.items ? Array.from(dataTransfer.items) : []
+  const webkitEntries: WebkitEntry[] = []
+  for (const item of itemList) {
+    if (item.kind !== "file") continue
+    const getter = (item as DataTransferItem & { webkitGetAsEntry?: () => WebkitEntry | null })
+      .webkitGetAsEntry
+    const entry = getter ? getter.call(item) : null
+    if (entry) {
+      webkitEntries.push(entry)
+    }
+  }
+
+  if (webkitEntries.length > 0) {
+    const results = await Promise.all(webkitEntries.map((entry) => traverseWebkitEntry(entry)))
+    const flattened = results.flat()
+    if (flattened.length > 0) return flattened
+  }
+
+  return dataTransfer.files ? Array.from(dataTransfer.files) : []
+}
+
+const folderInputProps: InputHTMLAttributes<HTMLInputElement> & {
+  webkitdirectory?: string
+  directory?: string
+} = {
+  webkitdirectory: "",
+  directory: "",
+}
+
 export function BucketUploadControl({
   disabled,
   pathPrefix,
+  remainingBytes,
   onUpload,
   onSuccess,
 }: {
   disabled: boolean
   pathPrefix: string
+  remainingBytes?: bigint
   onUpload: (
     file: File,
     path: string,
@@ -33,6 +128,7 @@ export function BucketUploadControl({
 }) {
   const t = useTranslations("bucket")
   const inputRef = useRef<HTMLInputElement>(null)
+  const folderInputRef = useRef<HTMLInputElement>(null)
   const { desktopOnly } = useBucketUploadDesktopOnly()
   const blocked = disabled || desktopOnly
   const [isDragging, setIsDragging] = useState(false)
@@ -42,8 +138,9 @@ export function BucketUploadControl({
     clearLegacyBucketStorage()
   }, [])
 
-  const { items, expanded, busy, doneCount, enqueue, dismiss, setExpanded } = useBucketUpload({
+  const { items, expanded, busy, doneCount, enqueue, retry, dismiss, setExpanded } = useBucketUpload({
     pathPrefix,
+    remainingBytes,
     onUpload,
     onSuccess,
     labels: {
@@ -52,9 +149,20 @@ export function BucketUploadControl({
       blocked: t("errScriptBlocked"),
       format: t("errInvalidFormat"),
       failed: t("uploadFailed"),
+      storageLimit: t("errStorageLimit"),
     },
     mapApiError: (err) => mapBucketError(err, t),
   })
+
+  const handleDataTransferDrop = useCallback(
+    async (dataTransfer: DataTransfer) => {
+      const extracted = await extractDroppedUploadItems(dataTransfer)
+      if (extracted.length > 0) {
+        enqueue(extracted)
+      }
+    },
+    [enqueue]
+  )
 
   useEffect(() => {
     if (blocked) return
@@ -90,10 +198,7 @@ export function BucketUploadControl({
       e.stopPropagation()
       dragCounterRef.current = 0
       setIsDragging(false)
-      const droppedFiles = e.dataTransfer.files
-      if (droppedFiles && droppedFiles.length > 0) {
-        enqueue(droppedFiles)
-      }
+      void handleDataTransferDrop(e.dataTransfer)
     }
 
     window.addEventListener("dragenter", handleDragEnter)
@@ -107,7 +212,7 @@ export function BucketUploadControl({
       window.removeEventListener("dragleave", handleDragLeave)
       window.removeEventListener("drop", handleDrop)
     }
-  }, [blocked, enqueue])
+  }, [blocked, handleDataTransferDrop])
 
   const dock =
     items.length > 0 ? (
@@ -118,6 +223,7 @@ export function BucketUploadControl({
         uploadedLabel={t("uploadedCount", { count: String(doneCount) })}
         onToggle={() => setExpanded((v) => !v)}
         onDismiss={dismiss}
+        onRetry={retry}
       />
     ) : null
 
@@ -138,16 +244,73 @@ export function BucketUploadControl({
         }}
       />
 
+      <input
+        ref={folderInputRef}
+        id="bucket-upload-folder-input"
+        type="file"
+        multiple
+        className="sr-only"
+        disabled={blocked}
+        {...folderInputProps}
+        onChange={(e) => {
+          const list = e.target.files
+          if (list?.length) enqueue(list)
+          if (folderInputRef.current) folderInputRef.current.value = ""
+        }}
+      />
+
       <BucketUploadDesktopTrigger>
-        <Button
-          type="button"
-          size="sm"
-          disabled={blocked}
-          onClick={() => inputRef.current?.click()}
-        >
-          <HugeiconsIcon icon={Upload01Icon} className="size-4" strokeWidth={1.75} />
-          {t("upload")}
-        </Button>
+        <ButtonGroup>
+          <Button
+            type="button"
+            size="sm"
+            disabled={blocked}
+            onClick={() => inputRef.current?.click()}
+            className="gap-1.5"
+          >
+            <HugeiconsIcon icon={Upload01Icon} className="size-4" strokeWidth={1.75} />
+            <span>{t("upload")}</span>
+          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              render={
+                <Button
+                  type="button"
+                  size="icon-sm"
+                  disabled={blocked}
+                  aria-label="Upload options"
+                  className="border-l border-primary-foreground/20 px-1.5"
+                />
+              }
+            >
+              <HugeiconsIcon icon={ArrowDown01Icon} className="size-3.5" strokeWidth={2} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuItem
+                onClick={() => inputRef.current?.click()}
+                className="gap-2"
+              >
+                <HugeiconsIcon
+                  icon={Upload01Icon}
+                  className="size-4 text-muted-foreground"
+                  strokeWidth={1.75}
+                />
+                <span>Upload files</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => folderInputRef.current?.click()}
+                className="gap-2"
+              >
+                <HugeiconsIcon
+                  icon={Folder02Icon}
+                  className="size-4 text-muted-foreground"
+                  strokeWidth={1.75}
+                />
+                <span>Upload folder</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </ButtonGroup>
       </BucketUploadDesktopTrigger>
 
       {dock && typeof document !== "undefined" ? createPortal(dock, document.body) : null}
@@ -169,8 +332,8 @@ export function BucketUploadControl({
                 e.stopPropagation()
                 dragCounterRef.current = 0
                 setIsDragging(false)
-                if (e.dataTransfer.files?.length) {
-                  enqueue(e.dataTransfer.files)
+                if (e.dataTransfer) {
+                  void handleDataTransferDrop(e.dataTransfer)
                 }
               }}
             >
@@ -179,10 +342,10 @@ export function BucketUploadControl({
                   <HugeiconsIcon icon={Upload01Icon} className="size-8" strokeWidth={1.75} />
                 </div>
                 <h3 className="text-xl font-semibold text-foreground">
-                  Drop files to upload
+                  Drop files or folders to upload
                 </h3>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  Release anywhere to instantly upload to your bucket
+                  Release anywhere to upload files and nested folders to your bucket
                 </p>
                 {pathPrefix ? (
                   <div className="mt-4 inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/60 px-3 py-1 text-xs font-mono text-muted-foreground">

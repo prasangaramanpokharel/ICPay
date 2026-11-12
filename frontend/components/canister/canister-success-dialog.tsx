@@ -49,7 +49,7 @@ export function CanisterSuccessDialog({
           <div className="animate-in fade-in zoom-in-75 mb-1 flex items-center justify-center text-success duration-200">
             <HugeiconsIcon icon={Tick02Icon} className="size-10" strokeWidth={2.25} />
           </div>
-          <DialogTitle className="text-lg">{title}</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
           {description ? (
             <DialogDescription>{description}</DialogDescription>
           ) : (

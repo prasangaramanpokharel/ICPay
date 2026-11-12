@@ -6,7 +6,7 @@
 - **Documentation**: https://icpay.app/bucket/docs
 - **Policy & SLA**: https://icpay.app/icbucket/policy.md
 - **Gateway Endpoint**: `https://cloud.icpay.app`
-- **Global Edge CDN**: `https://cdn.icpay.app`
+- **Global Edge CDN**: `https://cloud.icpay.app`
 - **Support**: contact@icpay.cloud
 
 ---
@@ -26,7 +26,7 @@ icBucket partitions operations across three specialized on-chain canisters and a
    - Autonomous daily lifecycle sweeps powered by native IC system timers.
    - Dispatches transactional email receipts on bucket creation and sends warnings when leases near expiration or enter grace periods.
    - Outcalls use deterministic idempotency keys and body stripping for 100% replica consensus.
-4. **Global Edge CDN** (`https://cdn.icpay.app`):
+4. **Global Edge CDN** (`https://cloud.icpay.app`):
    - Globally distributed Cloudflare edge caching network providing sub-50ms TTFB for public bucket assets.
    - Completely free outbound data transfer: **$0.00 / GB egress bandwidth fees**.
 
@@ -99,14 +99,14 @@ mc cp -r ./dist/ icbucket/my-production-bucket/web/
 Files uploaded to public buckets are accessible globally without authentication:
 
 ```text
-https://cdn.icpay.app/cloud/{bucketName}/{filePath}
+https://cloud.icpay.app/cloud/{bucketName}/{filePath}
 ```
 
 **Examples:**
-- `https://cdn.icpay.app/cloud/site-assets/hero.webp`
-- `https://cdn.icpay.app/cloud/dapp-media/video.mp4`
+- `https://cloud.icpay.app/cloud/site-assets/hero.webp`
+- `https://cloud.icpay.app/cloud/dapp-media/video.mp4`
 
-All assets routed through `cdn.icpay.app` benefit from zero egress fees, edge caching, automated SSL, and anti-DDoS protection.
+All assets routed through `cloud.icpay.app` benefit from zero egress fees, edge caching, automated SSL, and anti-DDoS protection.
 
 ---
 

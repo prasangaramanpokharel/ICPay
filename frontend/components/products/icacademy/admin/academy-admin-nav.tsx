@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { useSelectedLayoutSegment } from "next/navigation"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -19,7 +19,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { cn } from "@/lib/ui/utils"
 
 export function AcademyAdminNav() {
-  const pathname = usePathname()
+  const segment = useSelectedLayoutSegment()
   const session = getAdminSession()
   const { identity, isAuthenticated, login } = useAuth()
   const callerPrincipal = identity?.getPrincipal().toText()
@@ -37,25 +37,25 @@ export function AcademyAdminNav() {
       title: "Dashboard",
       href: "/acadamey/dashboard",
       icon: Clock01Icon,
-      active: pathname === "/acadamey/dashboard" || pathname === "/acadamey",
+      active: segment === "dashboard" || segment === null,
     },
     {
       title: "Courses & Tracks",
       href: "/acadamey/courses",
       icon: Layers01Icon,
-      active: pathname.startsWith("/acadamey/courses"),
+      active: segment === "courses",
     },
     {
       title: "Treasury & Payout",
       href: "/acadamey/payout",
       icon: Coins01Icon,
-      active: pathname.startsWith("/acadamey/payout"),
+      active: segment === "payout",
     },
     {
       title: "Audit Trail",
       href: "/acadamey/audit",
       icon: CheckmarkCircle02Icon,
-      active: pathname.startsWith("/acadamey/audit"),
+      active: segment === "audit",
     },
   ]
 
@@ -64,9 +64,7 @@ export function AcademyAdminNav() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-6">
           <Link href="/acadamey/dashboard" className="flex items-center gap-2.5">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <HugeiconsIcon icon={SecurityCheckIcon} className="size-5" />
-            </div>
+            <HugeiconsIcon icon={SecurityCheckIcon} className="size-5 text-primary" strokeWidth={1.75} />
             <div className="flex flex-col">
               <span className="text-sm font-bold tracking-tight text-foreground">
                 ICAcademy Admin
@@ -93,7 +91,7 @@ export function AcademyAdminNav() {
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <HugeiconsIcon icon={link.icon} className="size-3.5" />
+                <HugeiconsIcon icon={link.icon} className="size-3.5" strokeWidth={1.75} />
                 {link.title}
               </Link>
             ))}
@@ -110,16 +108,15 @@ export function AcademyAdminNav() {
             )}
           >
             View Public Academy
-            <HugeiconsIcon icon={ArrowRight01Icon} className="size-3 text-muted-foreground" />
+            <HugeiconsIcon icon={ArrowRight01Icon} className="size-3 text-muted-foreground" strokeWidth={2} />
           </Link>
 
           {isAuthenticated && shortPrincipal ? (
             <Badge
               variant="outline"
               title={callerPrincipal}
-              className="hidden items-center gap-1.5 border-success/30 bg-success/10 text-[11px] font-semibold text-success sm:inline-flex"
+              className="hidden items-center gap-1.5 border-border/50 bg-muted/30 text-[11px] font-semibold text-success sm:inline-flex"
             >
-              <span className="size-1.5 rounded-full bg-success animate-pulse" />
               Signer: {shortPrincipal}
             </Badge>
           ) : (
@@ -129,7 +126,7 @@ export function AcademyAdminNav() {
               onClick={() => void login()}
               className="h-8 gap-1.5 border-warning/30 bg-warning/10 text-xs font-semibold text-warning hover:bg-warning/20"
             >
-              <HugeiconsIcon icon={SecurityCheckIcon} className="size-3.5" />
+              <HugeiconsIcon icon={SecurityCheckIcon} className="size-3.5" strokeWidth={1.75} />
               Connect Signer
             </Button>
           )}
@@ -158,9 +155,9 @@ export function AcademyAdminNav() {
             size="icon"
             onClick={handleSignOut}
             title="Sign out of Admin Session"
-            className="size-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+            className="size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
           >
-            <HugeiconsIcon icon={Logout01Icon} className="size-4" />
+            <HugeiconsIcon icon={Logout01Icon} className="size-4" strokeWidth={1.75} />
           </Button>
         </div>
       </div>
@@ -181,7 +178,7 @@ export function AcademyAdminNav() {
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
-            <HugeiconsIcon icon={link.icon} className="size-3" />
+            <HugeiconsIcon icon={link.icon} className="size-3" strokeWidth={2} />
             {link.title}
           </Link>
         ))}

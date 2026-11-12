@@ -20,6 +20,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { MotionTabPanel } from "@/components/ui/motion-tabs"
 import { BucketCodeBlock } from "@/components/bucket/bucket-code-block"
 import { WALLET_CANISTER_ID } from "@/services/icp"
 import type { BucketStats } from "@/services/bucket/types"
@@ -108,16 +109,15 @@ curl -O "https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${bucketName}/uploads/h
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] w-full max-w-[calc(100vw-2rem)] sm:max-w-2xl overflow-y-auto overflow-x-hidden p-5 sm:p-6 min-w-0">
         <DialogHeader className="gap-2 min-w-0 w-full">
-          <DialogTitle className="flex items-center gap-2 text-lg">
+          <DialogTitle className="flex items-center gap-2">
             <HugeiconsIcon icon={Plug01Icon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
             <span className="truncate">Connect to your bucket</span>
           </DialogTitle>
-          <DialogDescription className="text-xs">
+          <DialogDescription>
             Minimal, production-ready code snippets and credentials to integrate this bucket into
             your application or backend services.
           </DialogDescription>
 
-          {/* Quick Context Bar */}
           <div className="mt-1 flex flex-wrap items-center gap-2 rounded-xl border border-border/60 bg-muted/30 px-3 py-2 text-xs min-w-0 w-full">
             <span className="text-muted-foreground">Bucket:</span>
             <span className="font-mono font-semibold text-foreground">{bucketName}</span>
@@ -140,59 +140,63 @@ curl -O "https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${bucketName}/uploads/h
               <TabsTrigger value="env" className="text-xs truncate">.env</TabsTrigger>
             </TabsList>
 
-            {/* TAB 1: Node.js (icpay-bucket) */}
             <TabsContent value="node" className="space-y-3.5 pt-3 min-w-0 w-full">
-              <div className="space-y-1.5 min-w-0 w-full">
-                <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                  <HugeiconsIcon icon={TerminalIcon} className="size-3.5" />
-                  <span>Install client library (npm)</span>
+              <MotionTabPanel tabKey="node" className="space-y-3.5">
+                <div className="space-y-1.5 min-w-0 w-full">
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                    <HugeiconsIcon icon={TerminalIcon} className="size-3.5" />
+                    <span>Install client library (npm)</span>
+                  </div>
+                  <BucketCodeBlock code={nodeInstall} language="bash" />
                 </div>
-                <BucketCodeBlock code={nodeInstall} language="bash" />
-              </div>
 
-              <div className="space-y-1.5 min-w-0 w-full">
-                <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
-                  <span>Client initialization & upload</span>
-                  <span className="font-mono text-[11px] text-muted-foreground/75">client.ts</span>
+                <div className="space-y-1.5 min-w-0 w-full">
+                  <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
+                    <span>Client initialization & upload</span>
+                    <span className="font-mono text-[11px] text-muted-foreground/75">client.ts</span>
+                  </div>
+                  <BucketCodeBlock code={nodeCode} language="typescript" />
                 </div>
-                <BucketCodeBlock code={nodeCode} language="typescript" />
-              </div>
+              </MotionTabPanel>
             </TabsContent>
 
-            {/* TAB 2: Python (icpay-bucket / ic-py) */}
             <TabsContent value="python" className="space-y-3.5 pt-3 min-w-0 w-full">
-              <div className="space-y-1.5 min-w-0 w-full">
-                <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                  <HugeiconsIcon icon={TerminalIcon} className="size-3.5" />
-                  <span>Install Python client (pip)</span>
+              <MotionTabPanel tabKey="python" className="space-y-3.5">
+                <div className="space-y-1.5 min-w-0 w-full">
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                    <HugeiconsIcon icon={TerminalIcon} className="size-3.5" />
+                    <span>Install Python client (pip)</span>
+                  </div>
+                  <BucketCodeBlock code={pythonInstall} language="bash" />
                 </div>
-                <BucketCodeBlock code={pythonInstall} language="bash" />
-              </div>
 
-              <div className="space-y-1.5 min-w-0 w-full">
-                <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
-                  <span>Client initialization & upload</span>
-                  <span className="font-mono text-[11px] text-muted-foreground/75">client.py</span>
+                <div className="space-y-1.5 min-w-0 w-full">
+                  <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
+                    <span>Client initialization & upload</span>
+                    <span className="font-mono text-[11px] text-muted-foreground/75">client.py</span>
+                  </div>
+                  <BucketCodeBlock code={pythonCode} language="python" />
                 </div>
-                <BucketCodeBlock code={pythonCode} language="python" />
-              </div>
+              </MotionTabPanel>
             </TabsContent>
 
-            {/* TAB 3: cURL */}
             <TabsContent value="curl" className="space-y-3 pt-3 min-w-0 w-full">
-              <p className="text-xs text-muted-foreground">
-                Download or inspect public files directly from the global CDN or on-chain canister HTTP gateway.
-              </p>
-              <BucketCodeBlock code={curlCode} language="bash" />
+              <MotionTabPanel tabKey="curl" className="space-y-3">
+                <p className="text-xs text-muted-foreground">
+                  Download or inspect public files directly from the global CDN or on-chain canister HTTP gateway.
+                </p>
+                <BucketCodeBlock code={curlCode} language="bash" />
+              </MotionTabPanel>
             </TabsContent>
 
-            {/* TAB 4: .env */}
             <TabsContent value="env" className="space-y-3 pt-3 min-w-0 w-full">
-              <p className="text-xs text-muted-foreground">
-                Copy and paste these environment variables into your project’s{" "}
-                <code className="rounded bg-muted px-1 py-0.5 font-mono text-foreground">.env</code> file.
-              </p>
-              <BucketCodeBlock code={envCode} language="bash" />
+              <MotionTabPanel tabKey="env" className="space-y-3">
+                <p className="text-xs text-muted-foreground">
+                  Copy and paste these environment variables into your project’s{" "}
+                  <code className="rounded bg-muted px-1 py-0.5 font-mono text-foreground">.env</code> file.
+                </p>
+                <BucketCodeBlock code={envCode} language="bash" />
+              </MotionTabPanel>
             </TabsContent>
           </Tabs>
         </div>

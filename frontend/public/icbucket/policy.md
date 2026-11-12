@@ -3,7 +3,7 @@
 > **Version**: 1.0  
 > **Effective Date**: October 2026  
 > **Canisters**: `icp_wallet_backend` (`6vbhm-nqaaa-aaaan-q6muq-cai`), `icp_blob_store` (`fly6t-piaaa-aaaan-q6oga-cai`), `icpay_notifier` (`2hvuh-xiaaa-aaaan-q6uua-cai`)  
-> **Official Gateway & CDN**: `https://cdn.icpay.app` | `https://cloud.icpay.app`  
+> **Official Gateway & CDN**: `https://cloud.icpay.app`  
 
 ---
 
@@ -44,7 +44,7 @@ flowchart LR
 
 ### Phase 1: 7-Day Read-Only Grace Period (Days 1–7)
 - **Status**: `EXPIRED (Grace Period)`
-- **File Access**: **100% Online**. Public CDN delivery (`https://cdn.icpay.app`) remains active. External users, live websites, dApps, and mobile apps continue reading and streaming assets without interruption.
+- **File Access**: **100% Online**. Public CDN delivery (`https://cloud.icpay.app`) remains active. External users, live websites, dApps, and mobile apps continue reading and streaming assets without interruption.
 - **Write Operations**: New file uploads, chunk streams, and deletions are paused.
 - **Objective**: Prevents live web production outages if a developer or team misses an expiration date or renewal window.
 
@@ -86,7 +86,7 @@ Lifecycle sweeps are governed autonomously on-chain by the `icpay_notifier` cani
 | **Edge CDN Delivery** | CloudFront billed extra | Third-party proxy | **Sub-50ms Global Edge CDN Included** |
 | **Storage Allocation Model** | Monthly metered bill shock | Volatile token staking | **Predictable ICP Flat-Rate Lease** |
 
-- Public media, images, dApp frontends, and binary assets cached through `https://cdn.icpay.app` incur **\$0.00** in outbound network transfer penalties, regardless of download volume.
+- Public media, images, dApp frontends, and binary assets cached through `https://cloud.icpay.app` incur **\$0.00** in outbound network transfer penalties, regardless of download volume.
 - Developers are protected from malicious denial-of-wallet (DoW) traffic spikes or viral social media surges.
 
 ---
@@ -94,7 +94,7 @@ Lifecycle sweeps are governed autonomously on-chain by the `icpay_notifier` cani
 ## 6. Access Control & Scoped API Credentials
 
 1. **Public vs. Private Visibility**:
-   - **Public Buckets**: Assets are readable globally at `https://cdn.icpay.app/cloud/{bucketName}/{filePath}`.
+   - **Public Buckets**: Assets are readable globally at `https://cloud.icpay.app/cloud/{bucketName}/{filePath}`.
    - **Private Buckets**: Direct access requires authenticated query signatures or scoped API credentials.
 2. **Scoped API Keys (`icp_cloud_*`)**:
    - Generated via biometric passkey in the web dashboard.

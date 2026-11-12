@@ -10,12 +10,12 @@ Read this index first when working on the ICPay frontend (`frontend/`). It maps 
 |---|---|---|
 | **Architecture & Coding Standard** | [`skills/coding-standard/SKILL.md`](skills/coding-standard/SKILL.md) | Architecture rules, strict TypeScript, Server vs Client components, design patterns |
 | **UI Components Inventory & Variants** | [`.cursor/ui-components-reference.md`](../.cursor/ui-components-reference.md) | Complete catalog of 80+ shadcn UI primitives, sizes, variants, dialog & field patterns |
-| **shadcn/ui Best Practices** | [`skills/shadnc/skills.md`](skills/shadnc/skills.md) | Component priority, composition, Radix/Base-UI primitives, CVA styling |
+| **shadcn/ui Best Practices** | [`skills/shadcn/SKILL.md`](skills/shadcn/SKILL.md) | Component priority, composition, Radix/Base-UI primitives, CVA styling |
 | **Pure Helpers (`lib/`)** | [`skills/lib-standard/SKILL.md`](skills/lib-standard/SKILL.md) | Adding/moving pure helpers, domain folder layout, zero React/SWR/canister calls |
 | **Data Hooks (`hooks/`)** | [`skills/hooks-standard/SKILL.md`](skills/hooks-standard/SKILL.md) | Adding/moving SWR data hooks, cache keys, optimistic updates, domain folder layout |
-| **Canister Services (`services/`)** | [`skills/frontend/SKILLS.md`](skills/frontend/SKILLS.md) | Canister client layer, agent/actor creation, typed DTOs, zero inline fetches |
-| **Next.js 16 & App Router** | [`skills/nextjs/skills.md`](skills/nextjs/skills.md) | Next.js 16 + React 19 standards, server components, route groups, static export |
-| **SWR Official Patterns** | [`skills/swr-official/api.md`](skills/swr-official/api.md) | Cache mutation, pagination, conditional fetching, middleware, performance |
+| **Canister Services (`services/`)** | [`skills/services-standard/SKILL.md`](skills/services-standard/SKILL.md) | Canister client layer, agent/actor creation, typed DTOs, zero inline fetches |
+| **Next.js 16 & App Router** | [`skills/nextjs/SKILL.md`](skills/nextjs/SKILL.md) | Next.js 16 + React 19 standards, server components, route groups, static export |
+| **SWR Official Patterns** | [`skills/swr-official/SKILL.md`](skills/swr-official/SKILL.md) | Cache mutation, pagination, conditional fetching, middleware, performance |
 | **Commenting & Doc Standards** | [`skills/comments/SKILL.md`](skills/comments/SKILL.md) | Strict comment rules: explain non-obvious *why*, never restate code, zero clutter |
 | **Icons & Visual Elements Standard** | [`skills/icon-standard/SKILL.md`](skills/icon-standard/SKILL.md) | Clean formal fintech icons, semantic tokens only, no bg clutter, CopyButton standard |
 

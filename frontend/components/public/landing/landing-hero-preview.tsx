@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
+import { Button } from "@/components/ui/button"
 import { LANDING_MEDIA } from "@/lib/public/landing-media"
 import { cn } from "@/lib/ui/utils"
 
@@ -28,8 +29,8 @@ export function LandingHeroPreview() {
             src={isMobile ? LANDING_MEDIA.heroMockup : LANDING_MEDIA.heroDesktop}
             alt={isMobile ? t("imageAlt") : t("imageAltDesktop")}
             title={isMobile ? t("imageAlt") : t("imageAltDesktop")}
-            width={isMobile ? 600 : 1152}
-            height={isMobile ? 960 : 647}
+            width={isMobile ? 1000 : 1152}
+            height={isMobile ? 1600 : 647}
             priority
             sizes={isMobile ? "(max-width: 640px) 280px, 300px" : "(max-width: 1024px) 100vw, 600px"}
             className="w-full rounded-lg"
@@ -47,21 +48,23 @@ export function LandingHeroPreview() {
           {VIEWS.map((id) => {
             const active = view === id
             return (
-              <button
+              <Button
                 key={id}
                 type="button"
+                variant={active ? "default" : "ghost"}
+                size="sm"
                 role="tab"
                 aria-selected={active}
                 onClick={() => setView(id)}
                 className={cn(
-                  "rounded-full px-4 py-1.5 text-xs font-medium transition-all duration-200 cursor-pointer",
+                  "h-8 rounded-full px-4 text-xs font-medium transition-all duration-200 cursor-pointer",
                   active
                     ? "bg-primary text-primary-foreground shadow-xs font-semibold"
-                    : "text-muted-foreground hover:text-foreground"
+                    : "text-muted-foreground hover:bg-transparent hover:text-foreground"
                 )}
               >
                 {t(id === "mobile" ? "previewMobile" : "previewDesktop")}
-              </button>
+              </Button>
             )
           })}
         </div>

@@ -27,6 +27,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { deleteJob, pauseJob, resumeJob, triggerJob } from "@/services/cron/client"
 import type { RemoteJobSummary } from "@/services/cron/types"
 import { CronOutputDrawer } from "./cron-output-drawer"
+import { formatProjectId } from "./cron-types"
 
 interface CronJobTableProps {
   jobs: RemoteJobSummary[]
@@ -118,7 +119,7 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
               nativeButton={false}
               render={
                 <Link
-                  href={projectId ? `/cron/create?projectId=${projectId.toString()}` : "/cron/create"}
+                  href={projectId ? `/cron/create?projectId=${formatProjectId(projectId)}` : "/cron/create"}
                 />
               }
               className="gap-1.5 text-xs h-8"
@@ -150,7 +151,7 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
                   nativeButton={false}
                   render={
                     <Link
-                      href={projectId ? `/cron/create?projectId=${projectId.toString()}` : "/cron/create"}
+                      href={projectId ? `/cron/create?projectId=${formatProjectId(projectId)}` : "/cron/create"}
                     />
                   }
                   className="gap-1.5"
@@ -267,7 +268,8 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
                               onClick={() => handleDelete(job)}
                               className="text-destructive hover:bg-destructive/10 hover:text-destructive border-border font-medium px-3.5 rounded-md text-xs h-8"
                             >
-                              {isDeleting ? <Spinner className="size-3" /> : "Delete"}
+                              {isDeleting ? <Spinner data-icon="inline-start" /> : null}
+                              <span>Delete</span>
                             </Button>
                           </div>
                         </TableCell>

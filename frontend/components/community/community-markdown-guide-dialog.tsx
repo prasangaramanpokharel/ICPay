@@ -38,7 +38,7 @@ export function CommunityMarkdownGuideDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[min(85dvh,640px)] flex-col gap-0 overflow-hidden p-0 sm:max-w-lg">
         <DialogHeader className="border-b border-border/50 px-5 py-4 text-left">
-          <DialogTitle className="text-base font-semibold">{t("markdownGuideTitle")}</DialogTitle>
+          <DialogTitle>{t("markdownGuideTitle")}</DialogTitle>
           <DialogDescription>{t("markdownGuideDescription")}</DialogDescription>
         </DialogHeader>
 

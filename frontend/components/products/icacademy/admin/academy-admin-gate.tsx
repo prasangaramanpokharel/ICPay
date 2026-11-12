@@ -129,16 +129,18 @@ export function AcademyAdminGate({ children, className }: AcademyAdminGateProps)
               </Field>
 
               <Field>
-                <div className="flex items-center justify-between">
+                <div className="flex min-h-6 items-center justify-between gap-2">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="xs"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                    className="h-6 gap-1 text-xs text-muted-foreground hover:text-foreground"
                   >
                     <HugeiconsIcon icon={showPassword ? ViewOffSlashIcon : ViewIcon} className="size-3.5" />
                     <span>{showPassword ? "Hide" : "Show"}</span>
-                  </button>
+                  </Button>
                 </div>
                 <Input
                   id="password"
@@ -159,12 +161,12 @@ export function AcademyAdminGate({ children, className }: AcademyAdminGateProps)
                 >
                   {isSubmitting ? (
                     <>
-                      <Spinner className="size-4" />
-                      Authenticating...
+                      <Spinner data-icon="inline-start" />
+                      <span>Authenticating...</span>
                     </>
                   ) : (
                     <>
-                      Sign In to Academy Admin
+                      <span>Sign In to Academy Admin</span>
                       <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
                     </>
                   )}

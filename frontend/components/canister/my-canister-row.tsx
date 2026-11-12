@@ -7,6 +7,7 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { ConnectIcon, FuelStationIcon, ViewIcon } from "@hugeicons/core-free-icons"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
@@ -61,10 +62,10 @@ export function MyCanisterRow({
                 {statusLoading && !status ? (
                   <Skeleton className="h-4 w-14 rounded-full" />
                 ) : status?.kind === "ok" ? (
-                  <div className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground">
+                  <div className="inline-flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/30 px-2 py-0.5 text-[11px] font-medium text-foreground">
                     <span
                       className={cn(
-                        "size-2 rounded-full shrink-0",
+                        "size-1.5 rounded-full shrink-0",
                         status.data.runStatus === "running"
                           ? "bg-success"
                           : status.data.runStatus === "stopped"
@@ -105,62 +106,66 @@ export function MyCanisterRow({
           </div>
         </TableCell>
         <TableCell className="text-right">
-          <span className="text-xs tabular-nums text-muted-foreground">
-            {status?.kind === "ok" ? status.data.cyclesLabel : "—"}
-          </span>
+          {status?.kind === "ok" ? (
+            <span className="text-xs font-medium tabular-nums text-foreground">
+              {status.data.cyclesLabel}{" "}
+              <span className="text-[11px] font-normal text-muted-foreground">cycles</span>
+            </span>
+          ) : (
+            <span className="text-xs tabular-nums text-muted-foreground">—</span>
+          )}
         </TableCell>
-        <TableCell className="w-[100px] text-right align-middle">
-          <div className="flex items-center justify-end gap-1">
-            {((status?.kind === "denied") || (status?.kind === "ok" && !status.data.isController)) && onConnect ? (
+        <TableCell className="w-[140px] text-right align-middle">
+          <div className="flex items-center justify-end">
+            <ButtonGroup>
+              {((status?.kind === "denied") || (status?.kind === "ok" && !status.data.isController)) && onConnect ? (
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon-sm"
+                        onClick={onConnect}
+                        aria-label="Connect Canister"
+                        className="cursor-pointer"
+                      >
+                        <HugeiconsIcon icon={ConnectIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+                      </Button>
+                    }
+                  />
+                  <TooltipContent side="top">Connect controller via CLI</TooltipContent>
+                </Tooltip>
+              ) : null}
               <Tooltip>
                 <TooltipTrigger
                   render={
                     <Button
-                      type="button"
-                      variant="ghost"
+                      nativeButton={false}
+                      variant="outline"
                       size="icon-sm"
-                      onClick={onConnect}
-                      aria-label="Connect Canister"
+                      render={<Link href={`/canister?id=${id}`} />}
+                      aria-label={t("view")}
+                      className="cursor-pointer"
                     >
-                      <HugeiconsIcon icon={ConnectIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+                      <HugeiconsIcon icon={ViewIcon} className="size-3.5" strokeWidth={1.75} />
                     </Button>
                   }
                 />
-                <TooltipContent side="top">Connect controller via CLI</TooltipContent>
+                <TooltipContent side="top">{t("view")}</TooltipContent>
               </Tooltip>
-            ) : null}
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    nativeButton={false}
-                    variant="ghost"
-                    size="icon-sm"
-                    render={<Link href={`/canister?id=${id}`} />}
-                    aria-label={t("view")}
-                  >
-                    <HugeiconsIcon icon={ViewIcon} className="size-4" strokeWidth={1.75} />
-                  </Button>
-                }
-              />
-              <TooltipContent side="top">{t("view")}</TooltipContent>
-            </Tooltip>
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    onClick={onTopUp}
-                    aria-label={t("topUp")}
-                  >
-                    <HugeiconsIcon icon={FuelStationIcon} className="size-4" strokeWidth={1.75} />
-                  </Button>
-                }
-              />
-              <TooltipContent side="top">{t("topUp")}</TooltipContent>
-            </Tooltip>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={onTopUp}
+                aria-label={t("topUp")}
+                className="gap-1.5 px-3 text-xs font-medium cursor-pointer"
+              >
+                <HugeiconsIcon icon={FuelStationIcon} className="size-3.5" strokeWidth={1.75} />
+                <span className="hidden sm:inline">{t("topUp")}</span>
+              </Button>
+            </ButtonGroup>
           </div>
         </TableCell>
       </TableRow>

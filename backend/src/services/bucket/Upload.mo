@@ -101,7 +101,7 @@ module {
       };
       case (?ct) ct;
     };
-    if (not FileValidator.validateFileSize(fileSize)) {
+    if (not FileValidator.validateFileSizeForPath(path, fileSize)) {
       return #err("File too large — max 10 MB");
     };
 
@@ -225,8 +225,8 @@ module {
     if (not FileValidator.validatePathExtension(path)) {
       return #err("Invalid file format — file type not allowed or video blocked");
     };
-    if (not FileValidator.validateFileSize(totalSize)) {
-      return #err("File too large — max 10 MB");
+    if (not FileValidator.validateFileSizeForPath(path, totalSize)) {
+      return #err("File too large — max 10 MB (25 MB for MP4 video)");
     };
 
     let bucket = switch (Auth.requireBucket(service, bucketId)) {

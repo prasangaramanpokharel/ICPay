@@ -9,18 +9,27 @@
   var shell = null
   var shellId = null
 
-  if (/^\/bucket\/(?!docs$)[^/]+$/.test(path)) {
-    shell = "/bucket/id.html"
-    shellId = "bucket-id"
+  if (/^\/bucket\/(?!docs$|pricing$|api$)[^/]+$/.test(path)) {
+    var bucketSeg = path.slice("/bucket/".length)
+    if (bucketSeg && bucketSeg !== "id") {
+      location.replace("/bucket?id=" + encodeURIComponent(bucketSeg) + (location.search ? "&" + location.search.slice(1) : ""))
+      return
+    }
   } else if (/^\/launch\/[^/]+$/.test(path)) {
-    shell = "/launch/id.html"
-    shellId = "launch-id"
+    var launchSeg = path.slice("/launch/".length)
+    if (launchSeg && launchSeg !== "id") {
+      location.replace("/token?id=" + encodeURIComponent(launchSeg) + (location.search ? "&" + location.search.slice(1) : ""))
+      return
+    }
   } else if (/^\/token\/[^/]+\/deposit$/.test(path)) {
     shell = "/token/token/deposit.html"
     shellId = "token-deposit"
   } else if (/^\/token\/[^/]+$/.test(path)) {
-    shell = "/token/token.html"
-    shellId = "token-ledger"
+    var tokenSeg = path.slice("/token/".length)
+    if (tokenSeg && tokenSeg !== "token" && tokenSeg !== "create") {
+      location.replace("/token?id=" + encodeURIComponent(tokenSeg) + (location.search ? "&" + location.search.slice(1) : ""))
+      return
+    }
   } else if (/^\/channels\/join\/[^/]+$/.test(path)) {
     var joinSeg = path.slice("/channels/join/".length)
     if (joinSeg) {

@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { ShineBorder } from "@/components/ui/shine-border"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import type { Lesson } from "./academy-data"
 
 interface LessonCodeLabPlayerProps {
