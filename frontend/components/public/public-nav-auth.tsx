@@ -96,7 +96,6 @@ export function PublicNavAuth() {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger
-          nativeButton={false}
           render={
             <Button
               variant="outline"
