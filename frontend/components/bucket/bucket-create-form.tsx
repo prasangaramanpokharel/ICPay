@@ -3,14 +3,15 @@
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
   Field,
   FieldContent,
   FieldDescription,
+  FieldError,
   FieldLabel,
   FieldTitle,
 } from "@/components/ui/field"
@@ -96,10 +97,10 @@ export function BucketCreateForm({
       )}
 
       <div className="space-y-5">
-        <div className="space-y-2">
-          <Label htmlFor="bucket-name" className="text-xs font-medium">
+        <Field className="space-y-2">
+          <FieldLabel htmlFor="bucket-name" className="text-xs font-medium">
             {t("name")}
-          </Label>
+          </FieldLabel>
           <Input
             id="bucket-name"
             value={name}
@@ -108,15 +109,15 @@ export function BucketCreateForm({
             autoComplete="off"
             className="h-10"
           />
-          <p className="text-xs text-muted-foreground">{t("nameHint")}</p>
+          <FieldDescription className="text-xs text-muted-foreground">{t("nameHint")}</FieldDescription>
           {nameError && name.length > 0 && (
-            <p className="text-xs text-destructive">{nameError}</p>
+            <FieldError>{nameError}</FieldError>
           )}
-        </div>
+        </Field>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label className="text-xs font-medium">{t("capacity")}</Label>
+        <Field className="space-y-2">
+          <div className="flex min-h-6 items-center justify-between gap-2">
+            <FieldLabel className="text-xs font-medium">{t("capacity")}</FieldLabel>
             <span className="text-[11px] text-muted-foreground">
               Dedicated EOP Canister
             </span>
@@ -141,10 +142,10 @@ export function BucketCreateForm({
               )
             })}
           </div>
-        </div>
+        </Field>
 
-        <div className="space-y-2">
-          <Label className="text-xs font-medium">{t("visibility")}</Label>
+        <Field className="space-y-2">
+          <FieldLabel className="text-xs font-medium">{t("visibility")}</FieldLabel>
           <RadioGroup
             value={"Public" in visibility ? "public" : "private"}
             onValueChange={(value) => {
@@ -172,12 +173,11 @@ export function BucketCreateForm({
               </Field>
             </FieldLabel>
           </RadioGroup>
-        </div>
+        </Field>
 
-        {/* Billing Period Selector */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label className="text-xs font-medium">Billing Cycle</Label>
+        <Field className="space-y-2">
+          <div className="flex min-h-6 items-center justify-between gap-2">
+            <FieldLabel className="text-xs font-medium">Billing Cycle</FieldLabel>
             <span className="text-[11px] font-medium text-success">
               {billingPeriod === "yearly"
                 ? "Save ~17% · 2 Months Free"
@@ -185,46 +185,47 @@ export function BucketCreateForm({
             </span>
           </div>
           <div className="grid grid-cols-2 gap-1.5 rounded-xl border border-border/80 bg-muted/40 p-1">
-            <button
+            <Button
               type="button"
+              variant={billingPeriod === "monthly" ? "secondary" : "ghost"}
               onClick={() => setBillingPeriod("monthly")}
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 rounded-lg py-2 px-3 text-xs font-medium transition-all",
+                "h-auto flex-col gap-0.5 rounded-lg py-2 px-3 text-xs font-medium transition-all",
                 billingPeriod === "monthly"
-                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-border"
+                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-border hover:bg-background"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               <span>Monthly</span>
               <span className="text-[10px] font-normal text-muted-foreground">30-day cycle</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant={billingPeriod === "yearly" ? "secondary" : "ghost"}
               onClick={() => setBillingPeriod("yearly")}
               className={cn(
-                "relative flex flex-col items-center justify-center gap-0.5 rounded-lg py-2 px-3 text-xs font-medium transition-all",
+                "relative h-auto flex-col gap-0.5 rounded-lg py-2 px-3 text-xs font-medium transition-all",
                 billingPeriod === "yearly"
-                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-primary/40"
+                  ? "bg-background text-foreground shadow-xs font-semibold ring-1 ring-primary/40 hover:bg-background"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               <span className="flex items-center gap-1.5">
                 <span>Annual</span>
-                <span className="rounded-full bg-success/15 px-1.5 py-0.5 text-[9px] font-bold text-success">
+                <Badge variant="outline" className="border-transparent bg-success/15 px-1.5 py-0 text-[9px] font-bold text-success">
                   2 MO FREE
-                </span>
+                </Badge>
               </span>
               <span className="text-[10px] font-normal text-muted-foreground">365-day cycle</span>
-            </button>
+            </Button>
           </div>
-        </div>
+        </Field>
 
-        {/* Expiry Alert Email (Optional) */}
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <Label htmlFor="bucket-alert-email" className="text-xs font-medium">
+        <Field className="space-y-1.5">
+          <div className="flex min-h-6 items-center justify-between gap-2">
+            <FieldLabel htmlFor="bucket-alert-email" className="text-xs font-medium">
               Expiry Alert Email <span className="text-muted-foreground font-normal">(Optional)</span>
-            </Label>
+            </FieldLabel>
             <span className="text-[11px] text-muted-foreground">3-day warning</span>
           </div>
           <div className="relative">
@@ -245,21 +246,20 @@ export function BucketCreateForm({
               className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
             />
           </div>
-          <p className="text-[11px] text-muted-foreground">
+          <FieldDescription className="text-[11px] text-muted-foreground">
             Receive automated warnings before your plan expires so your storage is never interrupted.
-          </p>
+          </FieldDescription>
           {alertEmailError && (
-            <p className="text-xs text-destructive">{alertEmailError}</p>
+            <FieldError>{alertEmailError}</FieldError>
           )}
-        </div>
+        </Field>
 
-        {/* Pricing Card with ShineBorder */}
         <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-b from-primary/10 via-background to-background p-4 shadow-sm">
           <ShineBorder
             className="rounded-2xl z-0"
             borderWidth={1.5}
             duration={10}
-            shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+            shineColor={["var(--primary)", "var(--accent)", "var(--primary)"]}
           />
           <div className="relative z-10 space-y-2.5">
             <div className="flex items-center justify-between">

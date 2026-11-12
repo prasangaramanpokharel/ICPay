@@ -30,7 +30,7 @@ export function PublicTokenCreate() {
     if ("err" in result) return result.err
 
     refreshWallet()
-    router.push(`/launch/${result.ok.id}`)
+    router.push(`/token?id=${encodeURIComponent(result.ok.id)}`)
     return null
   }
 

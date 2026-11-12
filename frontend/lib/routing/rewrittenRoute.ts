@@ -58,13 +58,19 @@ function getBrowserLastSegment(): string {
   if (typeof window === "undefined") return ""
   try {
     const params = new URLSearchParams(window.location.search)
-    const id = params.get("id") || params.get("slug")
+    const id = params.get("id") || params.get("slug") || params.get("token") || params.get("ledgerId")
     if (id) return id
   } catch { }
   return lastSegment(window.location.pathname)
 }
 
 function getBrowserTokenLedgerId(): string {
+  if (typeof window === "undefined") return ""
+  try {
+    const params = new URLSearchParams(window.location.search)
+    const id = params.get("id") || params.get("token") || params.get("ledgerId")
+    if (id && id !== "token") return id
+  } catch { }
   return tokenLedgerIdFromPath(window.location.pathname)
 }
 

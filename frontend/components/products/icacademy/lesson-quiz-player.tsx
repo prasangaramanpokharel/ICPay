@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { ShineBorder } from "@/components/ui/shine-border"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import type { Lesson } from "./academy-data"
 
 interface QuizQuestion {

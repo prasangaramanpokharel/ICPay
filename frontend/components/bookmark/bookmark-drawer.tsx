@@ -18,6 +18,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer"
 import { Button } from "@/components/ui/button"
+import { toast } from "@/components/ui/toast"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { PremiumBadge } from "@/components/verified/premium-badge"
 import { avatarUriFor } from "@/lib/profile/avatar"
@@ -50,6 +51,10 @@ export function BookmarkDrawer({
     await removeBookmark(identity, targetUserId)
     removeCachedBookmarkUsername(targetUserId)
     mutate()
+    toast.add({
+      title: t("remove"),
+      type: "info",
+    })
   }
 
   const usable = bookmarks
@@ -108,9 +113,17 @@ export function BookmarkButton({
     if (isBookmarked) {
       await removeBookmark(identity, targetUserId)
       removeCachedBookmarkUsername(targetUserId)
+      toast.add({
+        title: t("remove"),
+        type: "info",
+      })
     } else {
       await addBookmark(identity, targetUserId)
       cacheBookmarkUsername(targetUserId, username)
+      toast.add({
+        title: t("added"),
+        type: "success",
+      })
     }
     mutate()
     setLoading(false)

@@ -30,10 +30,8 @@ export function TokenCard({ token }: { token: TokenPublic }) {
   const [cyclesFunded] = token.cyclesFunded
 
   return (
-    // Keyed by the internal id, not the canister id: a launch that failed before
-    // creation has no canister id, and those are exactly the rows worth opening.
     <Link
-      href={`/launch/${token.id}`}
+      href={`/token?id=${token.id}`}
       prefetch
       className="group flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40"
     >

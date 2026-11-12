@@ -12,7 +12,11 @@ export function useBucketExplorerHotkeys({
   canWrite,
   selectedCount,
   confirmOpen,
+  previewOpen,
   onSelectAll,
+  onClearSelection,
+  onClosePreview,
+  onQuickLook,
   onRequestDelete,
   onCreateFolder,
   onConfirmDelete,
@@ -21,7 +25,11 @@ export function useBucketExplorerHotkeys({
   canWrite: boolean
   selectedCount: number
   confirmOpen: boolean
+  previewOpen?: boolean
   onSelectAll: () => void
+  onClearSelection?: () => void
+  onClosePreview?: () => void
+  onQuickLook?: () => void
   onRequestDelete: () => void
   onCreateFolder: () => void
   onConfirmDelete: () => void
@@ -42,6 +50,37 @@ export function useBucketExplorerHotkeys({
       }
 
       const typing = isTypingTarget(event.target)
+
+      if (event.key === "Escape" && !typing) {
+        if (previewOpen && onClosePreview) {
+          event.preventDefault()
+          onClosePreview()
+          return
+        }
+        if (selectedCount > 0 && onClearSelection) {
+          event.preventDefault()
+          onClearSelection()
+          return
+        }
+      }
+
+      if (event.key === " " && !mod && !typing && selectedCount === 1 && onQuickLook) {
+        event.preventDefault()
+        onQuickLook()
+        return
+      }
+
+      if (
+        (event.key === "Delete" || event.key === "Backspace") &&
+        !mod &&
+        !typing &&
+        canWrite &&
+        selectedCount > 0
+      ) {
+        event.preventDefault()
+        onRequestDelete()
+        return
+      }
 
       if (mod && event.key.toLowerCase() === "a" && !typing) {
         event.preventDefault()
@@ -68,7 +107,11 @@ export function useBucketExplorerHotkeys({
     canWrite,
     selectedCount,
     confirmOpen,
+    previewOpen,
     onSelectAll,
+    onClearSelection,
+    onClosePreview,
+    onQuickLook,
     onRequestDelete,
     onCreateFolder,
     onConfirmDelete,

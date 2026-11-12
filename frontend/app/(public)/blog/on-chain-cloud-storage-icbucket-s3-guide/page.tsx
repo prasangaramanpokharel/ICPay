@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Image from "next/image"
 import Link from "next/link"
 import { BlogAuthorMeta } from "@/components/blog/blog-author-meta"
 import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
@@ -122,11 +123,13 @@ export default function IcBucketS3GuidePage() {
       {/* Hero Visual Card */}
       <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         <div className="relative w-full overflow-hidden bg-muted/40">
-          <img
+          <Image
             src="https://res.cloudinary.com/dn2ycbmrc/image/upload/v1790573975/bb_dpkf0m.png"
             alt="icBucket 1GB per ICP Cloud Storage"
+            width={1200}
+            height={675}
+            unoptimized
             className="w-full h-auto object-cover max-h-[440px]"
-            loading="lazy"
           />
         </div>
         <div className="p-4 bg-muted/20 border-t border-border/60 flex items-center justify-between text-xs text-muted-foreground">

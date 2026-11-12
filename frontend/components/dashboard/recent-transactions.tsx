@@ -9,6 +9,8 @@ import { InboxIcon, Message01Icon, ArrowRight01Icon } from "@hugeicons/core-free
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
+import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@/components/ui/item"
 import { PremiumBadge } from "@/components/verified/premium-badge"
 import type { TransactionPublic } from "@/services/types"
 import {
@@ -53,17 +55,21 @@ export function RecentTransactions({ transactions, embedded }: RecentTransaction
       )}
 
       {hasTransactions ? (
-        <ul className={cn("divide-y rounded-2xl border", embedded && "rounded-none border-0")}>
+        <ItemGroup className={cn("gap-0 divide-y divide-border rounded-2xl border overflow-hidden", embedded && "rounded-none border-0")}>
           {transactions.map((tx) => (
             <TransactionRow key={tx.id} tx={tx} />
           ))}
-        </ul>
+        </ItemGroup>
       ) : (
-        <div className={cn("rounded-2xl border border-dashed px-6 py-10 text-center", embedded && "border-0")}>
-          <HugeiconsIcon icon={InboxIcon} className="mx-auto size-5 text-muted-foreground/50" />
-          <p className="mt-3 text-sm font-medium">{t("noTransactions")}</p>
-          <p className="mt-1 text-xs text-muted-foreground">{t("noTransactionsHint")}</p>
-        </div>
+        <Empty className={cn("rounded-2xl border border-dashed py-8", embedded && "border-0 rounded-none")}>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <HugeiconsIcon icon={InboxIcon} className="size-5 text-muted-foreground" />
+            </EmptyMedia>
+            <EmptyTitle>{t("noTransactions")}</EmptyTitle>
+            <EmptyDescription>{t("noTransactionsHint")}</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       )}
     </section>
   )
@@ -82,57 +88,57 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
   const avatarUri = useMemo(() => avatarUriFor(counterparty), [counterparty])
 
   return (
-    <li className="[content-visibility:auto] [contain-intrinsic-size:auto_64px]">
-      <Link
-        href={`/transactions?id=${encodeURIComponent(tx.id)}`}
-        prefetch
-        className="group flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-muted/50 active:bg-muted/70"
-      >
+    <Item
+      size="sm"
+      className="rounded-none border-0 px-4 py-2.5 transition-colors hover:bg-muted/50 active:bg-muted/70 [content-visibility:auto] [contain-intrinsic-size:auto_64px]"
+      render={<Link href={`/transactions?id=${encodeURIComponent(tx.id)}`} prefetch />}
+    >
+      <ItemMedia>
         <Avatar className="size-10 shrink-0">
           <AvatarImage src={avatarUri} alt="" />
           <AvatarFallback className="bg-muted text-xs">
             {counterparty.replace(/^@/, "").slice(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
+      </ItemMedia>
 
-        <div className="min-w-0 flex-1">
-          <p className={cn("flex items-center gap-1.5 truncate text-sm font-medium", !handle && "font-mono tracking-tight")}>
-            {handle ?? shortenCounterparty(counterparty)}
-            <PremiumBadge name={handle} className="size-3.5" />
+      <ItemContent className="min-w-0 flex-1 gap-0.5">
+        <ItemTitle className={cn("text-sm font-medium", !handle && "font-mono tracking-tight")}>
+          {handle ?? shortenCounterparty(counterparty)}
+          <PremiumBadge name={handle} className="size-3.5" />
+        </ItemTitle>
+        <ItemDescription className="text-xs text-muted-foreground">
+          {t(`type.${txTypeKey(tx.txType)}`)} · {formatTime(tx.createdAt)}
+        </ItemDescription>
+        {memo && (
+          <div className="mt-1 flex items-center">
+            <span className="inline-flex max-w-[220px] items-center gap-1 rounded-md border border-border/60 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-foreground/85">
+              <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0 text-muted-foreground" />
+              <span className="truncate">{memo}</span>
+            </span>
+          </div>
+        )}
+      </ItemContent>
+
+      <ItemActions className="shrink-0 gap-2">
+        <div className="text-right">
+          <p
+            className={cn(
+              "font-mono text-sm font-semibold tabular-nums",
+              incoming ? "text-success" : "text-foreground"
+            )}
+          >
+            {incoming ? "+" : "−"}
+            {formatTokenAmount(tx.amount, decimals, 4)} {symbol}
           </p>
-          <p className="mt-0.5 text-xs font-normal text-muted-foreground">
-            {t(`type.${txTypeKey(tx.txType)}`)} · {formatTime(tx.createdAt)}
-          </p>
-          {memo && (
-            <div className="mt-1 flex items-center">
-              <span className="inline-flex max-w-[220px] items-center gap-1 rounded-md border border-border/60 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-foreground/85">
-                <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0 text-muted-foreground" />
-                <span className="truncate">{memo}</span>
-              </span>
-            </div>
+          {status !== "completed" && (
+            <Badge variant={getTxStatusVariant(tx.status)} className="mt-0.5 text-[10px]">
+              {t(`status.${status}`)}
+            </Badge>
           )}
         </div>
-
-        <div className="flex shrink-0 items-center gap-2">
-          <div className="text-right">
-            <p
-              className={cn(
-                "font-mono text-sm font-semibold tabular-nums",
-                incoming ? "text-success" : "text-foreground",
-              )}
-            >
-              {incoming ? "+" : "−"}
-              {formatTokenAmount(tx.amount, decimals, 4)} {symbol}
-            </p>
-            {status !== "completed" && (
-              <Badge variant={getTxStatusVariant(tx.status)} className="mt-0.5 text-[10px]">
-                {t(`status.${status}`)}
-              </Badge>
-            )}
-          </div>
-          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
-        </div>
-      </Link>
-    </li>
+        <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
+      </ItemActions>
+    </Item>
   )
 }

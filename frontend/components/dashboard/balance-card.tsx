@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { EyeIcon, ViewOffIcon } from "@hugeicons/core-free-icons"
 import { PremiumBadge } from "@/components/verified/premium-badge"
@@ -58,16 +59,17 @@ export function BalanceCard({
       <div className="flex min-w-0 items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
           {username ? (
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="xs"
               onClick={() => void handleCopyUsername()}
               title="Click to copy username"
-              className="group inline-flex min-w-0 items-center gap-1.5 rounded-full px-2 py-0.5 -ml-2 font-mono text-sm font-semibold tracking-tight text-foreground hover:bg-muted active:scale-98 transition-all cursor-pointer"
+              className="group -ml-2 h-7 gap-1.5 font-mono text-sm font-semibold tracking-tight text-foreground"
             >
               <span className="truncate">{username}</span>
               <PremiumBadge name={username} className="size-3.5" />
               <CopyIconIndicator copied={copied} iconClassName="size-3 text-muted-foreground group-hover:text-foreground" />
-            </button>
+            </Button>
           ) : (
             <span className="font-mono text-xs font-medium tracking-tight text-muted-foreground">
               ICPay Wallet
@@ -105,14 +107,15 @@ export function BalanceCard({
       </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border/60">
-        <button
-          type="button"
+        <Button
+          variant="outline"
+          size="xs"
           onClick={() => void onRefreshPrice()}
           title="Click to refresh balance & price"
-          className="inline-flex items-center rounded-full bg-muted/60 hover:bg-muted px-3 py-1 text-xs font-medium tabular-nums text-foreground transition-all cursor-pointer border border-border/40"
+          className="font-medium tabular-nums"
         >
           {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
-        </button>
+        </Button>
 
         <div className="flex items-center gap-1.5 text-xs">
           {!hidden && price && (
@@ -126,17 +129,16 @@ export function BalanceCard({
             </span>
           )}
           {!hidden && price && price.change24h !== 0 && (
-            <span
+            <Badge
+              variant={price.change24h > 0 ? "default" : "destructive"}
               className={cn(
-                "inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold tabular-nums",
-                price.change24h > 0
-                  ? "text-success bg-success/10"
-                  : "text-destructive bg-destructive/10"
+                "tabular-nums text-[11px]",
+                price.change24h > 0 && "bg-success/15 text-success border-transparent hover:bg-success/20"
               )}
             >
               {price.change24h > 0 ? "+" : ""}
               {price.change24h.toFixed(2)}%
-            </span>
+            </Badge>
           )}
         </div>
       </div>

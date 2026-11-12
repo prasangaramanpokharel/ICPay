@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 import {
   Field,
-  FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -94,7 +94,7 @@ export function BucketFolderDialog({
                 disabled={busy}
               />
               {error ? (
-                <FieldDescription className="text-sm font-medium text-destructive">{error}</FieldDescription>
+                <FieldError className="text-sm">{error}</FieldError>
               ) : null}
             </Field>
           </FieldGroup>

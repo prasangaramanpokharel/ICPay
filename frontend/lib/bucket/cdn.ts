@@ -1,6 +1,6 @@
 import { WALLET_CANISTER_ID } from "@/services/icp"
 
-export const BUCKET_CDN_ORIGIN = "https://cdn.icpay.app"
+export const BUCKET_CDN_ORIGIN = "https://cloud.icpay.app"
 
 const LEGACY_GATEWAY =
   /^https:\/\/a4gq6-oaaaa-aaaab-qaa4q-cai\.raw\.icp0\.io(\/cloud\/[^?]+)\?id=6vbhm-nqaaa-aaaan-q6muq-cai/
@@ -49,7 +49,7 @@ export function toCdnUrl(url: string): string {
   const cdnBase = getBucketCdnBase()
   const tail = rawCloudTail(url)
   if (tail) return `${cdnBase}/cloud/${tail}`
-  return url.replace(/https?:\/\/cloud\.icpay\.app\b/g, cdnBase)
+  return url.replace(/https?:\/\/cdn\.icpay\.app\b/g, cdnBase)
 }
 
 export type BucketUrlMode = "cdn" | "raw"

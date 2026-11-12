@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { GripVerticalIcon } from "@hugeicons/core-free-icons"
+import { MotionList, MotionListItem } from "@/components/ui/motion-list"
 import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
@@ -16,6 +17,7 @@ import {
 } from "@/components/bucket/bucket-file-row-actions"
 import { formatFileSize } from "@/components/bucket/bucket-card"
 import { fileTypeChip } from "@/lib/bucket/allowedFiles"
+import { middleTruncateFileName } from "@/lib/bucket/bucket"
 import { folderTotals, type FolderListEntry } from "@/lib/bucket/folderPath"
 import { cn } from "@/lib/ui/utils"
 import type { FilePublic } from "@/services/bucket/types"
@@ -59,7 +61,10 @@ export function BucketFilesGrid({
   const [dragOverFolder, setDragOverFolder] = useState<string | null>(null)
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+    <MotionList
+      key={`grid-${prefix}-${visible.length}`}
+      className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+    >
       {visible.map((entry) => {
         const key = entryKey(entry)
         const isSelected = selected.has(key)
@@ -74,11 +79,11 @@ export function BucketFilesGrid({
           const isOver = dragOverFolder === entry.name
 
           return (
-            <Card
-              key={key}
-              role="button"
-              tabIndex={0}
-              onClick={() => onOpenFolder(entry.name)}
+            <MotionListItem key={key}>
+              <Card
+                role="button"
+                tabIndex={0}
+                onClick={() => onOpenFolder(entry.name)}
               onDragOver={(e) => {
                 if (!canWrite) return
                 e.preventDefault()
@@ -151,14 +156,15 @@ export function BucketFilesGrid({
                 <span className="tabular-nums">{sizeLabel}</span>
               </div>
             </Card>
-          )
-        }
+          </MotionListItem>
+        )
+      }
 
-        const chip = fileTypeChip(entry.file.contentType, entry.file.path)
+      const chip = fileTypeChip(entry.file.contentType, entry.file.path)
 
-        return (
+      return (
+        <MotionListItem key={key}>
           <Card
-            key={key}
             role="button"
             tabIndex={0}
             draggable={canWrite}
@@ -240,7 +246,7 @@ export function BucketFilesGrid({
                 className="max-w-full truncate text-center text-xs font-medium text-foreground group-hover:text-foreground"
                 title={entry.file.path}
               >
-                {entry.file.path.split("/").pop()}
+                {middleTruncateFileName(entry.file.path.split("/").pop() ?? entry.file.path, 22)}
               </p>
             </div>
 
@@ -254,8 +260,9 @@ export function BucketFilesGrid({
               <span className="tabular-nums">{formatFileSize(entry.file.size)}</span>
             </div>
           </Card>
-        )
-      })}
-    </div>
-  )
+        </MotionListItem>
+      )
+    })}
+  </MotionList>
+)
 }

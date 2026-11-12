@@ -8,6 +8,8 @@ import { ArrowRight01Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
+import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@/components/ui/item"
 import { PremiumBadge } from "@/components/verified/premium-badge"
 import { TransactionDetailDrawer } from "@/components/transactions/transaction-detail-drawer"
 import type { TransactionPublic } from "@/services/types"
@@ -64,11 +66,15 @@ export function TransactionList({
 
   if (transactions.length === 0) {
     return (
-      <div className="rounded-2xl border border-dashed border-border/70 p-8 text-center">
-        <HugeiconsIcon icon={InboxIcon} className="mx-auto size-6 text-muted-foreground/50" />
-        <p className="mt-3 text-sm font-medium text-foreground">{td("noTransactions")}</p>
-        <p className="mt-1 text-xs text-muted-foreground">{td("noTransactionsHint")}</p>
-      </div>
+      <Empty className="rounded-2xl border border-dashed border-border/70 p-8">
+        <EmptyHeader>
+          <EmptyMedia variant="icon">
+            <HugeiconsIcon icon={InboxIcon} className="size-6 text-muted-foreground" />
+          </EmptyMedia>
+          <EmptyTitle>{td("noTransactions")}</EmptyTitle>
+          <EmptyDescription>{td("noTransactionsHint")}</EmptyDescription>
+        </EmptyHeader>
+      </Empty>
     )
   }
 
@@ -80,7 +86,7 @@ export function TransactionList({
             <h2 className="mb-2 px-1 text-xs font-semibold tracking-wide text-muted-foreground text-balance">
               {formatTransactionDateGroup(group.items[0].createdAt, dateLabels)}
             </h2>
-            <div className="divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/60 bg-card">
+            <ItemGroup className="divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/60 bg-card gap-0">
               {group.items.map((tx) => (
                 <TransactionRow
                   key={tx.id}
@@ -88,7 +94,7 @@ export function TransactionList({
                   onSelect={() => setSelectedTxId(tx.id)}
                 />
               ))}
-            </div>
+            </ItemGroup>
           </section>
         ))}
       </div>
@@ -151,20 +157,23 @@ function TransactionRow({
   const handle = counterparty.startsWith("@") ? counterparty.slice(1) : null
 
   return (
-    <button
-      type="button"
+    <Item
+      size="sm"
       onClick={onSelect}
-      className="flex w-full items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-muted/40 active:bg-muted/60 cursor-pointer select-none [content-visibility:auto] [contain-intrinsic-size:auto_68px]"
+      render={<button type="button" />}
+      className="w-full rounded-none border-0 px-4 py-3.5 text-left transition-colors hover:bg-muted/40 active:bg-muted/60 cursor-pointer select-none [content-visibility:auto] [contain-intrinsic-size:auto_68px]"
     >
-      <Avatar className="size-11 shrink-0">
-        <AvatarImage src={avatarUri} alt="" />
-        <AvatarFallback className="bg-muted text-xs">
-          {counterparty.replace(/^@/, "").slice(0, 2).toUpperCase()}
-        </AvatarFallback>
-      </Avatar>
+      <ItemMedia>
+        <Avatar className="size-11 shrink-0">
+          <AvatarImage src={avatarUri} alt="" />
+          <AvatarFallback className="bg-muted text-xs">
+            {counterparty.replace(/^@/, "").slice(0, 2).toUpperCase()}
+          </AvatarFallback>
+        </Avatar>
+      </ItemMedia>
 
-      <div className="min-w-0 flex-1">
-        <p
+      <ItemContent className="min-w-0 flex-1 gap-0.5">
+        <ItemTitle
           className={cn(
             "flex items-center gap-1 truncate text-sm font-medium text-foreground",
             !handle && "font-mono tracking-tight"
@@ -172,19 +181,19 @@ function TransactionRow({
         >
           {handle ?? shortenCounterparty(counterparty)}
           <PremiumBadge name={handle} className="size-3.5" />
-        </p>
-        <p className="mt-0.5 text-xs text-muted-foreground">
+        </ItemTitle>
+        <ItemDescription className="text-xs text-muted-foreground">
           <span>{t(`type.${type}`)}</span> · {formatClockTime(tx.createdAt)}
-        </p>
+        </ItemDescription>
         {memo ? (
           <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
             <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0" />
             <span className="truncate">{memo}</span>
           </p>
         ) : null}
-      </div>
+      </ItemContent>
 
-      <div className="flex shrink-0 items-center gap-2">
+      <ItemActions className="shrink-0 gap-2">
         <div className="text-right">
           <p
             className={cn(
@@ -202,7 +211,7 @@ function TransactionRow({
           ) : null}
         </div>
         <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
-      </div>
-    </button>
+      </ItemActions>
+    </Item>
   )
 }

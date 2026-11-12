@@ -1,0 +1,104 @@
+[
+  {
+    "id": 34793102,
+    "file": "hero-automation.jpg",
+    "query": "futuristic clock digital neon time",
+    "alt": "A stylish modern workspace featuring multiple screens, neon lights, and digital clocks.",
+    "photographer": "Engin Bolat",
+    "url": "https://www.pexels.com/photo/modern-neon-lit-workstation-with-digital-clocks-34793102/"
+  },
+  {
+    "id": 37730212,
+    "file": "cloud-network.jpg",
+    "query": "server data center network technology",
+    "alt": "Close-up of server racks in a data center highlighting modern technology infrastructure.",
+    "photographer": "panumas nikhomkhai",
+    "url": "https://www.pexels.com/photo/data-center-server-racks-with-active-equipment-37730212/"
+  },
+  {
+    "id": 97077,
+    "file": "workflow-automation.jpg",
+    "query": "code abstract digital dark blue technology",
+    "alt": "Dynamic abstract background featuring computer code in focus with blurred effect.",
+    "photographer": "Negative Space",
+    "url": "https://www.pexels.com/photo/pink-white-black-purple-blue-textile-web-scripts-97077/"
+  },
+  {
+    "id": 39511470,
+    "file": "defi-finance.jpg",
+    "query": "crypto fintech trading data dashboard",
+    "alt": "Colorful financial trading chart displaying candlestick patterns and price data trends.",
+    "photographer": "Rafael Minguet Delgado",
+    "url": "https://www.pexels.com/photo/financial-trading-chart-with-candlestick-patterns-39511470/"
+  },
+  {
+    "id": 38486959,
+    "file": "security-shield.jpg",
+    "query": "cyber security encryption digital lock",
+    "alt": "Black and white abstract image with the word 'ENCRYPTION' prominently displayed.",
+    "photographer": "Ann Hannes",
+    "url": "https://www.pexels.com/photo/abstract-concept-of-encryption-security-38486959/"
+  },
+  {
+    "id": 7325498,
+    "file": "developer-code.jpg",
+    "query": "programming terminal code dark",
+    "alt": "Close-up of colorful programming code on a blurred computer monitor.",
+    "photographer": "Al Nahian",
+    "url": "https://www.pexels.com/photo/computer-program-on-computer-screen-7325498/"
+  },
+  {
+    "filename": "precision-timer.jpg",
+    "id": 6120181,
+    "photographer": "Nataliya Vaitkevich",
+    "photographer_url": "https://www.pexels.com/@n-voitkevich",
+    "original_url": "https://www.pexels.com/photo/text-blocks-on-black-background-6120181/",
+    "query": "digital clock abstract technology",
+    "size_bytes": 143220
+  },
+  {
+    "filename": "global-nodes.jpg",
+    "id": 37730212,
+    "photographer": "panumas nikhomkhai",
+    "photographer_url": "https://www.pexels.com/@cookiecutter",
+    "original_url": "https://www.pexels.com/photo/data-center-server-racks-with-active-equipment-37730212/",
+    "query": "cyberpunk server technology dark",
+    "size_bytes": 123395
+  },
+  {
+    "filename": "execution-metrics.jpg",
+    "id": 577210,
+    "photographer": "Lukas Blazek",
+    "photographer_url": "https://www.pexels.com/@goumbik",
+    "original_url": "https://www.pexels.com/photo/close-up-photo-of-gray-laptop-577210/",
+    "query": "data dashboard screen analytics",
+    "size_bytes": 126826
+  },
+  {
+    "filename": "autonomous-dispatch.jpg",
+    "id": 8439084,
+    "photographer": "Pavel Danilyuk",
+    "photographer_url": "https://www.pexels.com/@pavel-danilyuk",
+    "original_url": "https://www.pexels.com/photo/close-up-shot-of-a-robotic-device-8439084/",
+    "query": "robotic arm automation futuristic",
+    "size_bytes": 152315
+  },
+  {
+    "filename": "instant-webhooks.jpg",
+    "id": 30820142,
+    "photographer": "Rostislav Uzunov",
+    "photographer_url": "https://www.pexels.com/@rostislav",
+    "original_url": "https://www.pexels.com/photo/abstract-futuristic-digital-tunnel-illusion-30820142/",
+    "query": "abstract neon laser network",
+    "size_bytes": 167487
+  },
+  {
+    "filename": "decentralized-cloud.jpg",
+    "id": 39492347,
+    "photographer": "Santhosh Kanthala",
+    "photographer_url": "https://www.pexels.com/@santhosh-kanthala-372615",
+    "original_url": "https://www.pexels.com/photo/futuristic-3d-geometric-abstract-art-with-cubes-39492347/",
+    "query": "blockchain network nodes crypto",
+    "size_bytes": 2056512
+  }
+]

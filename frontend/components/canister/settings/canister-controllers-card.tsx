@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   UserAdd01Icon,
@@ -206,7 +206,7 @@ export function CanisterControllersCard({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Remove controller?</AlertDialogTitle>
-            <AlertDialogDescription className="flex flex-col gap-2 text-xs">
+            <AlertDialogDescription className="flex flex-col gap-2">
               <p>Are you sure you want to remove this principal as a controller?</p>
               <p className="break-all font-mono font-medium text-foreground">{removeTarget}</p>
               <p>

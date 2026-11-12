@@ -1,0 +1,374 @@
+"use client"
+
+import * as React from "react"
+import { Principal } from "@icp-sdk/core/principal"
+import { useTranslations } from "next-intl"
+import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
+import { Spinner } from "@/components/ui/spinner"
+import { toast } from "sonner"
+import { useAuth } from "@/components/auth/auth-provider"
+import { createJob } from "@/services/cron/client"
+import type { RemoteJobTarget } from "@/services/cron/types"
+import {
+  COMMON_PRESETS,
+  MINUTE_OPTIONS,
+  HOUR_OPTIONS,
+  DAY_OPTIONS,
+  MONTH_OPTIONS,
+  WEEKDAY_OPTIONS,
+} from "./cron-types"
+
+interface CronCreateFormProps {
+  projectId: bigint
+  onJobCreated?: () => void
+}
+
+export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps) {
+  const { identity } = useAuth()
+  const t = useTranslations("cron")
+  const [jobType, setJobType] = React.useState<"php" | "custom" | "canister">("custom")
+  const [command, setCommand] = React.useState(
+    "wget -O /dev/null https://commandosecurity.com.np/wp-cron.php/"
+  )
+  const [label, setLabel] = React.useState("My Cron Job")
+
+  const [commonPreset, setCommonPreset] = React.useState("")
+  const [minute, setMinute] = React.useState("*")
+  const [hour, setHour] = React.useState("*")
+  const [day, setDay] = React.useState("*")
+  const [month, setMonth] = React.useState("*")
+  const [weekday, setWeekday] = React.useState("*")
+
+  const [loading, setLoading] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
+  const [success, setSuccess] = React.useState(false)
+
+  const cronExpression = React.useMemo(() => {
+    return `${minute} ${hour} ${day} ${month} ${weekday}`.trim()
+  }, [minute, hour, day, month, weekday])
+
+  const handlePresetChange = (presetValue: string) => {
+    setCommonPreset(presetValue)
+    if (!presetValue) return
+    const parts = presetValue.split(" ")
+    if (parts.length === 5) {
+      setMinute(parts[0])
+      setHour(parts[1])
+      setDay(parts[2])
+      setMonth(parts[3])
+      setWeekday(parts[4])
+    }
+  }
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!command.trim()) {
+      setError("Please specify a command or URL to execute.")
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+    setSuccess(false)
+
+    try {
+      let target: RemoteJobTarget
+
+      if (jobType === "canister") {
+        const [canisterStr, method] = command.split("::")
+        if (!canisterStr || !method) {
+          throw new Error("Canister target format must be: <canister_id>::<method_name>")
+        }
+        target = {
+          CanisterCall: {
+            canister_id: Principal.fromText(canisterStr.trim()),
+            method: method.trim(),
+            payload: new Uint8Array(),
+          },
+        }
+      } else {
+        let cleanUrl = command.trim()
+        if (cleanUrl.startsWith("wget -O /dev/null ")) {
+          cleanUrl = cleanUrl.replace("wget -O /dev/null ", "").trim()
+        }
+        if (!cleanUrl.startsWith("http://") && !cleanUrl.startsWith("https://")) {
+          cleanUrl = `https://${cleanUrl}`
+        }
+
+        let host = ""
+        try {
+          host = new URL(cleanUrl).host
+        } catch {
+          host = ""
+        }
+
+        const headers: [string, string][] = [
+          ["User-Agent", "Mozilla/5.0 (compatible; icCron/1.0; +https://icpay.app)"],
+          ["Accept", "*/*"],
+        ]
+        if (host) {
+          headers.push(["Host", host])
+        }
+
+        target = {
+          HttpWebhook: {
+            url: cleanUrl,
+            method: { GET: null },
+            headers,
+            body: [],
+          },
+        }
+      }
+
+      if (!identity) {
+        setError("Please sign in with Internet Identity first.")
+        toast.error("Please sign in with Internet Identity first.")
+        return
+      }
+
+      const created = await createJob(
+        {
+          project_id: projectId,
+          label: label.trim() || "Cron Job",
+          target,
+          cron_expression: cronExpression,
+          max_retries: [10],
+        },
+        identity
+      )
+
+      setSuccess(true)
+      toast.success(`Job "${created.label}" created successfully.`)
+      if (onJobCreated) {
+        onJobCreated()
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to create cron job"
+      setError(msg)
+      toast.error(msg)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Card className="border border-border/80 bg-card text-card-foreground shadow-xs">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-xl font-semibold tracking-tight text-foreground">
+          {t("createNew")}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSave} className="flex flex-col gap-6">
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">{t("jobType")}</Label>
+            <ButtonGroup>
+              <Button
+                type="button"
+                variant={jobType === "php" ? "default" : "outline"}
+                size="sm"
+                onClick={() => {
+                  setJobType("php")
+                  setCommand("wget -O /dev/null https://commandosecurity.com.np/wp-cron.php/")
+                }}
+                className="text-xs"
+              >
+                PHP Webhook
+              </Button>
+              <Button
+                type="button"
+                variant={jobType === "custom" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setJobType("custom")}
+                className="text-xs"
+              >
+                Custom Webhook
+              </Button>
+              <Button
+                type="button"
+                variant={jobType === "canister" ? "default" : "outline"}
+                size="sm"
+                onClick={() => {
+                  setJobType("canister")
+                  setCommand("ryjl3-tyaaa-aaaaa-aaaba-cai::get_account_identifier")
+                }}
+                className="text-xs"
+              >
+                {t("canisterCall")}
+              </Button>
+            </ButtonGroup>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="job-label" className="text-sm font-medium text-foreground">
+              {t("jobLabel")}
+            </Label>
+            <Input
+              id="job-label"
+              value={label}
+              onChange={(e) => setLabel(e.target.value)}
+              placeholder="e.g. Sync Balances"
+              className="text-sm"
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="command" className="text-sm font-medium text-foreground">
+              {t("commandToRun")}
+            </Label>
+            <Input
+              id="command"
+              value={command}
+              onChange={(e) => setCommand(e.target.value)}
+              placeholder="wget -O /dev/null https://commandosecurity.com.np/wp-cron.php/"
+              className="font-mono text-sm"
+              required
+            />
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="common-options" className="text-sm font-medium text-foreground">
+              {t("commonOptions")}
+            </Label>
+            <NativeSelect
+              id="common-options"
+              value={commonPreset}
+              onChange={(e) => handlePresetChange(e.target.value)}
+              className="w-full"
+            >
+              {COMMON_PRESETS.map((opt) => (
+                <NativeSelectOption key={opt.value} value={opt.value}>
+                  {opt.label}
+                </NativeSelectOption>
+              ))}
+            </NativeSelect>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="select-minute" className="text-sm font-medium text-muted-foreground">
+                {t("minute")}
+              </Label>
+              <NativeSelect
+                id="select-minute"
+                value={minute}
+                onChange={(e) => setMinute(e.target.value)}
+                className="w-full"
+              >
+                {MINUTE_OPTIONS.map((opt) => (
+                  <NativeSelectOption key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="select-hour" className="text-sm font-medium text-muted-foreground">
+                {t("hour")}
+              </Label>
+              <NativeSelect
+                id="select-hour"
+                value={hour}
+                onChange={(e) => setHour(e.target.value)}
+                className="w-full"
+              >
+                {HOUR_OPTIONS.map((opt) => (
+                  <NativeSelectOption key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="select-day" className="text-sm font-medium text-muted-foreground">
+                {t("day")}
+              </Label>
+              <NativeSelect
+                id="select-day"
+                value={day}
+                onChange={(e) => setDay(e.target.value)}
+                className="w-full"
+              >
+                {DAY_OPTIONS.map((opt) => (
+                  <NativeSelectOption key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="select-month" className="text-sm font-medium text-muted-foreground">
+                {t("month")}
+              </Label>
+              <NativeSelect
+                id="select-month"
+                value={month}
+                onChange={(e) => setMonth(e.target.value)}
+                className="w-full"
+              >
+                {MONTH_OPTIONS.map((opt) => (
+                  <NativeSelectOption key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="select-weekday" className="text-sm font-medium text-muted-foreground">
+                {t("weekday")}
+              </Label>
+              <NativeSelect
+                id="select-weekday"
+                value={weekday}
+                onChange={(e) => setWeekday(e.target.value)}
+                className="w-full"
+              >
+                {WEEKDAY_OPTIONS.map((opt) => (
+                  <NativeSelectOption key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-2">
+            <div className="text-xs font-mono text-muted-foreground">
+              Expression: <span className="text-foreground font-semibold">{cronExpression}</span>
+            </div>
+
+            <Button
+              type="submit"
+              disabled={loading}
+              className="min-w-28 bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              {loading ? <Spinner data-icon="inline-start" /> : null}
+              <span>{t("save")}</span>
+            </Button>
+          </div>
+
+          {error && (
+            <div className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+              {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="rounded-md border border-success/30 bg-success/10 p-3 text-sm text-success">
+              Cron job successfully created and armed in on-chain scheduler!
+            </div>
+          )}
+        </form>
+      </CardContent>
+    </Card>
+  )
+}

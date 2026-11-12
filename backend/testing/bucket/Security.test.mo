@@ -36,9 +36,35 @@ switch (FileValidator.normalizeUpload("/page.html", "text/html", Blob.fromArray(
   case (null) { Debug.print("PASS: html blocked") };
 };
 
+switch (FileValidator.normalizeUpload("/install.exe", "application/octet-stream", fake)) {
+  case (?_) { assert false; Debug.print("FAIL: exe accepted") };
+  case (null) { Debug.print("PASS: exe blocked") };
+};
+
+switch (FileValidator.normalizeUpload("/deploy.sh", "text/x-sh", Blob.fromArray([0x23]))) {
+  case (?_) { assert false; Debug.print("FAIL: sh accepted") };
+  case (null) { Debug.print("PASS: sh blocked") };
+};
+
+switch (FileValidator.normalizeUpload("/secret.pem", "text/plain", Blob.fromArray([0x2D]))) {
+  case (?_) { assert false; Debug.print("FAIL: pem accepted") };
+  case (null) { Debug.print("PASS: pem blocked") };
+};
+
 switch (FileValidator.normalizeUpload("/app.js", "text/javascript", Blob.fromArray([0x7B]))) {
-  case (?_) { assert false; Debug.print("FAIL: js accepted") };
-  case (null) { Debug.print("PASS: js blocked") };
+  case (?ct) {
+    assert ct == "text/plain; charset=utf-8";
+    Debug.print("PASS: js served safely as text/plain; charset=utf-8");
+  };
+  case (null) { assert false; Debug.print("FAIL: js rejected") };
+};
+
+switch (FileValidator.normalizeUpload("/Main.mo", "text/plain", Blob.fromArray([0x69]))) {
+  case (?ct) {
+    assert ct == "text/plain; charset=utf-8";
+    Debug.print("PASS: mo normalize");
+  };
+  case (null) { assert false; Debug.print("FAIL: mo normalize") };
 };
 
 switch (FileValidator.normalizeUpload("/raw.svg", "image/svg+xml", Blob.fromArray([0x3C]))) {
@@ -48,7 +74,7 @@ switch (FileValidator.normalizeUpload("/raw.svg", "image/svg+xml", Blob.fromArra
 
 switch (FileValidator.normalizeUpload("/notes.txt", "text/plain", Blob.fromArray([0x68, 0x69]))) {
   case (?ct) {
-    assert ct == "text/plain";
+    assert ct == "text/plain; charset=utf-8";
     Debug.print("PASS: txt normalize");
   };
   case (null) { assert false; Debug.print("FAIL: txt normalize") };
@@ -56,6 +82,8 @@ switch (FileValidator.normalizeUpload("/notes.txt", "text/plain", Blob.fromArray
 
 assert FileValidator.validateFileSize(10_000_000);
 assert not FileValidator.validateFileSize(10_000_001);
-Debug.print("PASS: size gate 10 MB");
+assert FileValidator.validateFileSizeForPath("/doc.pdf", 10_000_000);
+assert not FileValidator.validateFileSizeForPath("/doc.pdf", 10_000_001);
+Debug.print("PASS: size gate 10 MB general");
 
 Debug.print("Bucket security validation tests done");

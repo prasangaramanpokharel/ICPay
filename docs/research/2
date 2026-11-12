@@ -1,0 +1,83 @@
+v## All On-Chain Frontend Features — Certified Assets (Static Site)
+
+Here is a complete list of features from the knowledge sources, organized by category:
+
+---
+
+### ✅ Automatic (No Configuration Needed)
+
+| Feature | Details |
+|---|---|
+| **Response certification** | Every response is certified via a proof tree; no uncertified path exists |
+| **Clean URLs** | `.html` files get extension-less canonical URLs automatically (e.g. `about.html` → `/about`) |
+| **Compression** | gzip + Brotli stored and negotiated per request via `Accept-Encoding` |
+| **ETag / 304 Not Modified** | Content-hash ETag; unchanged files are not re-downloaded |
+| **Default 404 page** | Built-in certified 404 for unmatched paths (replaceable with your own `404.html`) |
+| **`ic_env` cookie** | Injected on HTML responses; carries `PUBLIC_*` env vars (canister IDs) and root key |
+
+[[What You Get Automatically](https://skills.internetcomputer.org/skills/static-site/#what-you-get-automatically)]
+
+---
+
+### ⚙️ Configurable via `_redirects`
+
+| Feature | Syntax |
+|---|---|
+| **SPA fallback / rewrite** | `/* /index.html 200` |
+| **Permanent redirect** | `/old /new 301` |
+| **Temporary redirect** | `/discord https://discord.gg/example 302` |
+| **Pretty URL rewrite** | `/article /content/article.html 200` |
+| **Subtree redirect** | `/docs/v1/* /docs/v2/ 301` |
+| **Custom error pages** | `/secret /403.html 404` |
+
+[[SPA Routing & Redirects](https://skills.internetcomputer.org/skills/static-site/#spa-routing-and-redirects-_redirects)]
+
+---
+
+### ⚙️ Configurable via `_headers`
+
+| Feature | Example |
+|---|---|
+| **Security headers (CSP, X-Frame-Options, etc.)** | `Content-Security-Policy: default-src 'self'` |
+| **Cache control** | `Cache-Control: public, max-age=31536000, immutable` |
+| **Content-Type override** | `Content-Type: text/markdown` (for extension-less files) |
+| **Set-Cookie** | Any cookie name except `ic_env` |
+| **Referrer policy** | `Referrer-Policy: strict-origin-when-cross-origin` |
+
+[[Custom Headers](https://skills.internetcomputer.org/skills/static-site/#custom-headers-_headers)]
+
+> ⚠️ **No default headers are added** — you must declare all security/cache headers yourself. [[No Default Headers](https://docs.internetcomputer.org/guides/frontends/static-site/headers/#no-headers-are-added-for-you)]
+
+---
+
+### 🔒 Access Protection (Controller-Only)
+
+| Feature | Details |
+|---|---|
+| **Enable/disable protection** | Gate the site behind a login page |
+| **Issue / revoke tokens** | Mint access tokens for private/preview sites |
+| **List live tokens** | View tokens with expiry |
+
+[[Certified Assets Interface](https://docs.internetcomputer.org/references/application-canisters/#certified-assets-canister)]
+
+---
+
+### ❌ NOT Supported (On-Chain Limitations)
+
+| Feature | Reason |
+|---|---|
+| **Dynamic `:splat` / `:placeholder` routing** | Responses must be enumerable and certified ahead of time |
+| **Server-side rendering (SSR)** | Canisters cannot run JS at the server level |
+| **Dynamic URL routing at server level** | Only static files are served |
+| **`AssetManager` JS SDK uploads** | That targets the legacy canister, not static-site |
+| **`.ic-assets.json5` config** | Legacy asset canister only; ignored here |
+
+[[Dynamic Rules](https://docs.internetcomputer.org/guides/frontends/static-site/redirects/#what-isnt-supported-dynamic-rules)] [[Pitfalls](https://skills.internetcomputer.org/skills/static-site/#pitfalls)]
+
+---
+
+### 🚫 Reserved Headers (Rejected at Deploy Time)
+
+`Content-Length`, `Content-Encoding`, `ETag`, `Transfer-Encoding`, `Accept-Ranges`, `Content-Range`, `IC-Certificate`, `IC-CertificateExpression`, `Location`
+
+[[Reserved Headers](https://docs.internetcomputer.org/guides/frontends/static-site/headers/#reserved-headers)]

@@ -212,7 +212,14 @@ switch (
   await BucketService.uploadFile(svc, owner, "bucket-flow-1", "/clip.mp4", Blob.fromArray([0, 0, 0, 0]), "video/mp4", null)
 ) {
   case (#ok(_)) { assert false; Debug.print("FAIL [FLOW]: mp4 accepted") };
-  case (#err(_)) { Debug.print("PASS [FLOW]: video blocked") };
+  case (#err(_)) { Debug.print("PASS [FLOW]: video mp4 blocked") };
+};
+
+switch (
+  await BucketService.uploadFile(svc, owner, "bucket-flow-1", "/malware.exe", Blob.fromArray([0, 0, 0, 0]), "application/octet-stream", null)
+) {
+  case (#ok(_)) { assert false; Debug.print("FAIL [FLOW]: exe accepted") };
+  case (#err(_)) { Debug.print("PASS [FLOW]: executable blocked") };
 };
 
 switch (BucketService.getPrice(25)) {

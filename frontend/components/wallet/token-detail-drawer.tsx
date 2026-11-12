@@ -19,7 +19,7 @@ import { TokenLogo } from "@/components/token/token-logo"
 import { TokenFiatHint } from "@/components/token/token-fiat-hint"
 import { TokenStandardsBadge } from "@/components/token/token-standards-badge"
 import { useIsMobile } from "@/hooks/use-mobile"
-import { formatTokenAmount, copyText } from "@/lib/wallet/utils"
+import { formatTokenAmount, copyText, resolveTokenDisplayName } from "@/lib/wallet/utils"
 import { icrc1Account } from "@/lib/wallet/accountId"
 import {
   useDepositAddress,
@@ -82,6 +82,7 @@ export function TokenDetailDrawer({
   if (!token) return null
 
   const tokenIcon = resolveTokenIcon(token.ledgerId, token.logo, registry)
+  const displayName = resolveTokenDisplayName(token.symbol, token.name)
   const icrcAddress = deposit
     ? icrc1Account(deposit.address.owner, deposit.address.subaccount[0])
     : ""
@@ -129,8 +130,8 @@ export function TokenDetailDrawer({
               <TokenLogo token={token} className="size-6 shrink-0" />
               <div className="min-w-0">
                 <DrawerTitle className="truncate text-sm font-semibold text-foreground">
-                  {token.name && token.name !== token.symbol
-                    ? `${token.name} (${token.symbol})`
+                  {displayName !== token.symbol
+                    ? `${displayName} (${token.symbol})`
                     : token.symbol}
                 </DrawerTitle>
                 <DrawerDescription className="sr-only">
@@ -171,7 +172,7 @@ export function TokenDetailDrawer({
                       {formatTokenAmount(token.balance, token.decimals, token.decimals)}
                     </p>
                     <p className="text-xs font-medium text-muted-foreground">
-                      {token.name} · {token.symbol}
+                      {displayName} · {token.symbol}
                     </p>
                   </div>
                   <TokenFiatHint

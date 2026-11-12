@@ -115,12 +115,11 @@ const { publicUrl } = await bucket.uploadFile("banner.webp", fileBuffer, {
 })
 
 console.log("Edge CDN URL:", publicUrl)
-// Output: https://cdn.icpay.app/cloud/my-app-assets/banner.webp`}
+// Output: https://cloud.icpay.app/cloud/my-app-assets/banner.webp`}
               language="tsx"
             />
           </div>
 
-          {/* API & Environment Configuration */}
           <div className="space-y-3">
             <div>
               <h3 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">
@@ -134,7 +133,7 @@ console.log("Edge CDN URL:", publicUrl)
               tabs={[
                 {
                   label: ".env.local",
-                  code: `NEXT_PUBLIC_ICBUCKET_API_URL=https://cdn.icpay.app
+                  code: `NEXT_PUBLIC_ICBUCKET_API_URL=https://cloud.icpay.app
 ICBUCKET_API_KEY=icp_live_sec_994a8e2b
 NEXT_PUBLIC_DEFAULT_BUCKET=my-app-assets`,
                   language: "bash",
@@ -142,9 +141,9 @@ NEXT_PUBLIC_DEFAULT_BUCKET=my-app-assets`,
                 {
                   label: "icbucket.config.ts",
                   code: `export const icBucketConfig = {
-  cdnBase: "https://cdn.icpay.app",
+  cdnBase: "https://cloud.icpay.app",
   defaultBucket: "my-app-assets",
-  maxUploadSizeBytes: 50 * 1024 * 1024, // 50MB
+  maxUploadSizeBytes: 50 * 1024 * 1024,
   cacheControl: "public, max-age=31536000, immutable",
 }`,
                   language: "typescript",

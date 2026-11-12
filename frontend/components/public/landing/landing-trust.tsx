@@ -2,8 +2,28 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  ArrowRight01Icon,
+  ArrowUpRight01Icon,
+  CodeIcon,
+  Database01Icon,
+  Globe02Icon,
+  NewTwitterIcon,
+  ShieldIcon,
+  UserGroupIcon,
+} from "@hugeicons/core-free-icons"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ICPAY_CANISTERS, TRUST_LINK_DEFS } from "@/lib/public/trust-links"
+
+const TRUST_ICONS: Record<string, typeof CodeIcon> = {
+  github: CodeIcon,
+  backendCanister: Database01Icon,
+  transparency: ShieldIcon,
+  x: NewTwitterIcon,
+  linkedin: UserGroupIcon,
+  frontendCanister: Globe02Icon,
+}
 
 export function LandingTrust() {
   const t = useTranslations("publicSite.landing.trust") as (
@@ -45,10 +65,27 @@ export function LandingTrust() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {trustLinks.map((item) => {
+            const Icon = TRUST_ICONS[item.id] ?? ShieldIcon
             const content = (
-              <Card className="h-full border-border/60 bg-card shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md hover:border-border">
+              <Card className="h-full border-border/60 bg-card shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-md">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-base font-semibold leading-snug transition-colors group-hover:text-primary">{item.label}</CardTitle>
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <HugeiconsIcon
+                        icon={Icon}
+                        className="size-5 shrink-0 text-primary transition-transform duration-200 group-hover:scale-105"
+                        strokeWidth={1.75}
+                      />
+                      <CardTitle className="truncate text-base font-semibold leading-snug transition-colors group-hover:text-primary">
+                        {item.label}
+                      </CardTitle>
+                    </div>
+                    <HugeiconsIcon
+                      icon={item.external ? ArrowUpRight01Icon : ArrowRight01Icon}
+                      className="size-4 shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary"
+                      strokeWidth={1.75}
+                    />
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>

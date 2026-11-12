@@ -48,9 +48,12 @@ export function SiteAnalytics() {
           </Script>
           <noscript>
             <div>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`https://mc.yandex.ru/watch/${YANDEX_METRIKA_ID}`}
                 style={{ position: "absolute", left: "-9999px" }}
+                width={1}
+                height={1}
                 alt=""
               />
             </div>

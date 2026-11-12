@@ -1,6 +1,8 @@
 "use client"
 
 import { useTranslations } from "next-intl"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Mail01Icon } from "@hugeicons/core-free-icons"
 import {
   Drawer,
   DrawerContent,
@@ -48,9 +50,7 @@ export function SettingsDrawer({
             href="mailto:contact@icpay.cloud"
             className="flex items-center justify-center gap-2 rounded-2xl border border-border/60 bg-muted/20 px-4 py-2.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/40 hover:text-foreground"
           >
-            <svg viewBox="0 0 24 24" className="size-4 shrink-0 fill-none stroke-current stroke-2">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-            </svg>
+            <HugeiconsIcon icon={Mail01Icon} className="size-4 shrink-0" strokeWidth={1.75} />
             <span>contact@icpay.cloud</span>
           </a>
 

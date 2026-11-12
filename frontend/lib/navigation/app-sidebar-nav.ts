@@ -14,6 +14,11 @@ import {
 } from "@hugeicons/core-free-icons"
 import { APP_NAV_ITEMS, isAppNavActive } from "@/lib/navigation/app-nav-items"
 
+export type SidebarNavSubItem = {
+  href: string
+  labelKey: string
+}
+
 export type SidebarNavItem = {
   href: string
   labelKey: string
@@ -21,6 +26,7 @@ export type SidebarNavItem = {
   badgeKey?: string
   badgeVariant?: "default" | "secondary" | "outline"
   badgeType?: "gradient" | "text"
+  subItems?: SidebarNavSubItem[]
 }
 
 export type SidebarNavSection = {
@@ -53,7 +59,18 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
   {
     sectionKey: "services",
     items: [
-      { href: "/bucket", labelKey: "settings.items.bucket", icon: CloudIcon, badgeKey: "settings.items.bucketBadge", badgeVariant: "secondary" },
+      {
+        href: "/bucket",
+        labelKey: "settings.items.bucket",
+        icon: CloudIcon,
+        badgeKey: "settings.items.bucketBadge",
+        badgeVariant: "secondary",
+        subItems: [
+          { href: "/bucket", labelKey: "settings.sections.overview" },
+          { href: "/bucket/api", labelKey: "cron.apiKeys" },
+          { href: "/bucket/docs", labelKey: "bucket.docs" },
+        ],
+      },
       {
         href: "/canister",
         labelKey: "settings.items.canisters",
@@ -87,6 +104,9 @@ const ALL_ITEMS: SidebarNavItem[] = [
 
 export function isSidebarItemActive(pathname: string, href: string): boolean {
   if (href === "/home") return pathname === "/home"
+  if (href === "/cron") {
+    return pathname === "/cron" || pathname.startsWith("/cron/")
+  }
   return pathname === href || pathname.startsWith(`${href}/`)
 }
 
@@ -114,7 +134,7 @@ export function resolveAppPageTitle(
     return translate("common.swap")
   }
   if (pathname.startsWith("/withdraw")) return translate("transactions.type.transfer")
-  if (pathname.startsWith("/token/")) return translate("settings.items.tokens")
+  if (pathname === "/token" || pathname.startsWith("/token")) return translate("settings.items.launch")
   if (pathname === "/blog" || pathname.startsWith("/blog/")) {
     return translate("settings.items.blog")
   }

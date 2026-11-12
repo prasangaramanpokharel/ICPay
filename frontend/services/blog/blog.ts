@@ -31,6 +31,33 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "icpay-changelog",
+    title: "ICPay v1.7.0 Changelog: Introducing icCron Autonomous Scheduler, Dead Letter Queues & On-Chain Automation",
+    description:
+      "Explore the major updates in ICPay v1.7.0: The launch of icCron, our decentralized autonomous cron and webhook dispatcher running natively on Internet Computer canister timers. Featuring sub-second precision, O(1) bitmask scheduling, Dead Letter Queues, and 99.4% cycle savings over legacy heartbeats.",
+    publishedAt: "2026-11-12",
+    readingMinutes: 12,
+    category: "Product",
+  },
+  {
+    slug: "icpay-github-details",
+    title: "Inside the ICPay GitHub Repository: Codebase Architecture, 641 Commits, and 311K+ Lines of Decentralized Code",
+    description:
+      "A transparent architectural deep dive into the official ICPay open-source repository on GitHub. Explore repository metrics, 641 commits across 69 active development days, 311,769 lines of code spanning Next.js, Motoko, and Rust, and how we build enterprise-grade custodial Web3 infrastructure on the Internet Computer.",
+    publishedAt: "2026-11-12",
+    readingMinutes: 11,
+    category: "Technology",
+  },
+  {
+    slug: "bypassing-vercel-cron-tax-decentralized-scheduler",
+    title: "Bypassing the Vercel $20/Month Cron Tax: How to Trigger Next.js Scheduled Jobs with Decentralized On-Chain Timers",
+    description:
+      "A hands-on architectural guide to eliminating Vercel's $20/month per seat Pro plan requirement for sub-daily cron jobs. Discover how to trigger Next.js route handlers with sub-second precision, threshold-signed HTTPS outcalls, automated retries, and zero server maintenance using icCron on the Internet Computer for just $0.36/month.",
+    publishedAt: "2026-11-12",
+    readingMinutes: 14,
+    category: "Developers",
+  },
+  {
     slug: "dfinity-near-patent-dispute-threshold-ecdsa-chain-signatures-intents",
     title: "DFINITY vs. NEAR: The Cryptographic Patent Dispute Over Chain Signatures, Threshold ECDSA, and Confidential Intents Explained",
     description:

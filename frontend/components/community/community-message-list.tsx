@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
+import { motion, AnimatePresence } from "motion/react"
 import {
   BroadcastMessage,
   PendingBroadcastMessage,
@@ -10,6 +11,7 @@ import { CommunityForwardModal } from "@/components/community/community-forward-
 import { Button } from "@/components/ui/button"
 import { MessageGroup } from "@/components/ui/message"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { formatMessageDateHeader } from "@/lib/community/format"
 import { cn } from "@/lib/ui/utils"
 import type { ReactionCode } from "@/lib/community/reactions"
 import type { PendingMessage } from "@/lib/community/pendingMessage"
@@ -171,32 +173,64 @@ export function CommunityMessageList({
             </div>
           ) : (
             <MessageGroup className="gap-1">
-              {messages.map((msg) => (
-                <BroadcastMessage
-                  key={msg.id.toString()}
-                  message={msg}
-                  channelSlug={channel.slug}
-                  highlighted={highlightMessageId != null && msg.id === highlightMessageId}
-                  pinned={pinnedId != null && msg.id === pinnedId}
-                  delivered={isOwner && deliveredIds.has(msg.id.toString())}
-                  isOwner={isOwner}
-                  canReact={canReact}
-                  onPin={onPin}
-                  onDelete={onDelete}
-                  onReact={onReact}
-                  canForward={canForward}
-                  onForward={() => {
-                    setForwardText(msg.text)
-                    setForwardOpen(true)
-                  }}
-                />
-              ))}
-              {pendingMessages.map((pending) => (
-                <PendingBroadcastMessage
-                  key={pending.clientId}
-                  pending={pending}
-                />
-              ))}
+              {(() => {
+                let lastDateHeader = ""
+                return messages.map((msg) => {
+                  const dateHeader = formatMessageDateHeader(msg.createdAt)
+                  const showDateHeader = dateHeader !== lastDateHeader
+                  lastDateHeader = dateHeader
+
+                  return (
+                    <motion.div
+                      key={msg.id.toString()}
+                      initial={{ opacity: 0, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex flex-col"
+                    >
+                      {showDateHeader ? (
+                        <div className="my-3 flex justify-center select-none">
+                          <span className="rounded-full border border-border/40 bg-muted/75 px-3 py-0.5 text-[11px] font-medium text-muted-foreground shadow-2xs backdrop-blur-xs">
+                            {dateHeader}
+                          </span>
+                        </div>
+                      ) : null}
+                      <BroadcastMessage
+                        message={msg}
+                        channelSlug={channel.slug}
+                        highlighted={highlightMessageId != null && msg.id === highlightMessageId}
+                        pinned={pinnedId != null && msg.id === pinnedId}
+                        delivered={isOwner && deliveredIds.has(msg.id.toString())}
+                        isOwner={isOwner}
+                        canReact={canReact}
+                        onPin={onPin}
+                        onDelete={onDelete}
+                        onReact={onReact}
+                        canForward={canForward}
+                        onForward={() => {
+                          setForwardText(msg.text)
+                          setForwardOpen(true)
+                        }}
+                      />
+                    </motion.div>
+                  )
+                })
+              })()}
+              <AnimatePresence initial={false}>
+                {pendingMessages.map((pending) => (
+                  <motion.div
+                    key={pending.clientId}
+                    initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.18, ease: "easeOut" }}
+                  >
+                    <PendingBroadcastMessage
+                      pending={pending}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </MessageGroup>
           )}
         </div>

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl"
 import { CommunityAvatar } from "@/components/community/community-avatar"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
+import { toast } from "@/components/ui/toast"
 import { ChannelAvatarError, compressChannelAvatar } from "@/lib/community/compressChannelAvatar"
 import type { CommunityChannelPublic } from "@/services/community/community"
 
@@ -38,7 +39,13 @@ export function CommunityChannelAvatarPicker({
       setPreviewBytes(bytes)
       const err = await onSave(bytes)
       if (err) setError(err)
-      else setPreviewBytes(undefined)
+      else {
+        setPreviewBytes(undefined)
+        toast.add({
+          title: "Channel avatar updated",
+          type: "success",
+        })
+      }
     } catch (e) {
       setError(e instanceof ChannelAvatarError ? e.message : t("channelAvatarFailed"))
     } finally {
@@ -52,7 +59,13 @@ export function CommunityChannelAvatarPicker({
     setError(null)
     const err = await onRemove()
     if (err) setError(err)
-    else setPreviewBytes(undefined)
+    else {
+      setPreviewBytes(undefined)
+      toast.add({
+        title: "Channel avatar removed",
+        type: "success",
+      })
+    }
     setBusy(false)
   }
 

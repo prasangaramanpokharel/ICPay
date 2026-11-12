@@ -4,6 +4,8 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@/components/ui/item"
+import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TokenLogo } from "@/components/token/token-logo"
 import { formatTokenAmount } from "@/lib/wallet/utils"
@@ -25,34 +27,43 @@ export function HomeHoldingsCard({ hidden = false }: { hidden?: boolean }) {
           </Button>
         </CardAction>
       </CardHeader>
-      <CardContent className="p-0">
+      <CardContent className="p-3">
         {isLoading && top.length === 0 ? (
-          <div className="space-y-3 p-6">
+          <div className="space-y-3 p-3">
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-10 w-full" />
             <Skeleton className="h-10 w-full" />
           </div>
         ) : top.length === 0 ? (
-          <p className="p-6 text-sm text-muted-foreground">{t("noTokens")}</p>
+          <Empty className="py-8">
+            <EmptyHeader>
+              <EmptyTitle>{t("noTokens")}</EmptyTitle>
+            </EmptyHeader>
+          </Empty>
         ) : (
-          <div className="divide-y">
+          <ItemGroup className="gap-1">
             {top.map((token) => (
-              <Link
+              <Item
                 key={token.ledgerId}
-                href={`/wallet?token=${token.ledgerId}`}
-                className="flex items-center gap-3 px-6 py-3 transition-colors hover:bg-muted/50"
+                size="sm"
+                className="rounded-xl px-3 py-2.5 hover:bg-muted/50 transition-colors"
+                render={<Link href={`/wallet?token=${token.ledgerId}`} />}
               >
-                <TokenLogo token={token} className="size-9" />
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">{token.symbol}</p>
-                  <p className="truncate text-xs text-muted-foreground">{token.name}</p>
-                </div>
-                <p className="shrink-0 font-mono text-sm tabular-nums text-foreground/90">
-                  {hidden ? "••••" : formatTokenAmount(token.balance, token.decimals, 4)}
-                </p>
-              </Link>
+                <ItemMedia>
+                  <TokenLogo token={token} className="size-8" />
+                </ItemMedia>
+                <ItemContent className="min-w-0 flex-1 gap-0">
+                  <ItemTitle className="text-sm font-medium">{token.symbol}</ItemTitle>
+                  <ItemDescription className="text-xs text-muted-foreground">{token.name}</ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                  <span className="font-mono text-sm tabular-nums text-foreground/90">
+                    {hidden ? "••••" : formatTokenAmount(token.balance, token.decimals, 4)}
+                  </span>
+                </ItemActions>
+              </Item>
             ))}
-          </div>
+          </ItemGroup>
         )}
       </CardContent>
     </Card>

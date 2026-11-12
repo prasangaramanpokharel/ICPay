@@ -5,6 +5,8 @@ alwaysApply: true
 
 # Services — one folder per module
 
+> **Canonical Standard:** Maintained at [`skills/services-standard/SKILL.md`](../services-standard/SKILL.md).
+
 All backend calls go through a typed **service layer**, organized **folder-first by module**
 (mirrors the components rule). Components and pages call services — **never `fetch()` inline**.
 

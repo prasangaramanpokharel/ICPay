@@ -70,8 +70,11 @@ function NavDropdown({
   return (
     <MotionHighlightItem asChild value={label}>
       <NavigationMenuItem>
-        <NavigationMenuTrigger className="bg-transparent px-3 font-normal text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground data-open:bg-transparent data-popup-open:bg-transparent">
-          {label}
+        <NavigationMenuTrigger
+          suppressHydrationWarning
+          className="bg-transparent px-3 font-normal text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground data-open:bg-transparent data-popup-open:bg-transparent"
+        >
+          <span suppressHydrationWarning>{label}</span>
         </NavigationMenuTrigger>
         <NavigationMenuContent>
           <ul
@@ -105,12 +108,13 @@ export function PublicNav() {
 
   return (
     <header
+      suppressHydrationWarning
       className={cn(
         "sticky top-0 z-50 backdrop-blur-md bg-background/80",
         isCharityCampaignPage && charityCampaignShellClass
       )}
     >
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between gap-4 px-4 md:h-16 md:px-6">
+      <div className="mx-auto flex h-14 w-full items-center justify-between gap-4 px-4 md:h-16 md:px-6 lg:px-8">
         <div className="flex min-w-0 items-center gap-5 lg:gap-8">
           <Link
             href="/"
@@ -127,11 +131,11 @@ export function PublicNav() {
               loading="eager"
             />
             <span className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
-              ICPay
+              ic<span className="text-primary">Pay</span>
             </span>
           </Link>
 
-          <NavigationMenu className="hidden max-w-none lg:flex" align="start">
+          <NavigationMenu suppressHydrationWarning className="hidden max-w-none lg:flex" align="start">
             <MotionHighlight
               hover
               value={null}
@@ -150,7 +154,11 @@ export function PublicNav() {
                             "bg-transparent px-3 font-normal shadow-none hover:bg-transparent hover:text-foreground",
                             active ? "text-foreground" : "text-muted-foreground"
                           )}
-                          render={<Link href={link.href}>{link.label}</Link>}
+                          render={
+                            <Link href={link.href} suppressHydrationWarning>
+                              <span suppressHydrationWarning>{link.label}</span>
+                            </Link>
+                          }
                         />
                       </NavigationMenuItem>
                     </MotionHighlightItem>

@@ -78,7 +78,7 @@ const faqJsonLd = {
       name: "How does icBucket serve as an alternative to Cloudinary?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "icBucket provides a direct, high-speed upload API, scoped developer API keys, and instant public CDN delivery URLs (https://cdn.icpay.app/...) with zero bandwidth egress taxes. Files are stored 100% on-chain on the Internet Computer at a flat, predictable rate of ~$5/GB/year.",
+        text: "icBucket provides a direct, high-speed upload API, scoped developer API keys, and instant public CDN delivery URLs (https://cloud.icpay.app/...) with zero bandwidth egress taxes. Files are stored 100% on-chain on the Internet Computer at a flat, predictable rate of ~$5/GB/year.",
       },
     },
     {
@@ -230,7 +230,7 @@ export default function BestCloudinaryAlternativePage() {
                 <td className="p-3 font-medium text-foreground">Public CDN URL</td>
                 <td className="p-3 text-emerald-500 font-medium">res.cloudinary.com</td>
                 <td className="p-3 text-emerald-500 font-medium">ik.imagekit.io</td>
-                <td className="p-3 text-emerald-500 font-bold">cdn.icpay.app / On-chain raw</td>
+                <td className="p-3 text-emerald-500 font-bold">cloud.icpay.app / On-chain raw</td>
               </tr>
             </tbody>
           </table>
@@ -258,7 +258,7 @@ export default function BestCloudinaryAlternativePage() {
               Every public bucket in icBucket provides blazing-fast edge delivery:
             </p>
             <div className="rounded-md bg-muted p-3 font-mono text-xs text-foreground overflow-x-auto">
-              https://cdn.icpay.app/&lt;bucket-id&gt;/avatars/user-123.webp
+              https://cloud.icpay.app/&lt;bucket-id&gt;/avatars/user-123.webp
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Drop the URL straight into your Next.js <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">&lt;Image /&gt;</code> or
@@ -302,7 +302,7 @@ export async function POST(req: Request) {
   })
 
   return Response.json({
-    url: \`https://cdn.icpay.app/production-cdn/images/\${file.name}\`,
+    url: \`https://cloud.icpay.app/production-cdn/images/\${file.name}\`,
   })
 }`}</pre>
         </div>

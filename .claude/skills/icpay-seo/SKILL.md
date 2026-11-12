@@ -9,7 +9,9 @@ Automated indexing and search engine optimization workflows for `https://icpay.a
 
 The project uses a unified CLI command to push instant crawl and index requests to:
 1. **Google Indexing API** (instant indexing for pages, updates, and deletes)
-2. **IndexNow** (instant index distribution for Yandex, Bing, Naver, and Seznam)
+2. **IndexNow Mesh** (instant index distribution across Microsoft Bing, Copilot, DuckDuckGo, Yandex, Naver, Seznam.cz, and Yep)
+3. **Baidu Link Submission** (instant push via Baidu Ziyuan Token API if configured)
+4. **AI & LLM Crawlers** (`OAI-SearchBot`, `ChatGPT-User`, `PerplexityBot`, `ClaudeBot`, `Bravebot` via `robots.ts` and `llms.txt`)
 
 ---
 

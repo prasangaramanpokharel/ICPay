@@ -484,6 +484,25 @@ export async function purchaseCourse(
   return { blockIndex }
 }
 
+export function formatAcademyCanisterError(err: unknown): string {
+  const raw = err instanceof Error ? err.message : String(err)
+  const trapMatch = raw.match(/with message:\s*'([^']+)'/i) ?? raw.match(/with message:\s*"([^"]+)"/i)
+  if (trapMatch?.[1]) {
+    if (trapMatch[1].toLowerCase().includes("not authorized as an academy administrator")) {
+      return "Your connected wallet principal is not registered as an authorized Academy canister administrator."
+    }
+    return trapMatch[1]
+  }
+  if (raw.toLowerCase().includes("not authorized as an academy administrator")) {
+    return "Your connected wallet principal is not registered as an authorized Academy canister administrator."
+  }
+  const rejectMatch = raw.match(/Reject text:\s*([^\n]+?)(?:\s+Error code:|\s+Call context:|$)/i)
+  if (rejectMatch?.[1]) {
+    return rejectMatch[1].trim()
+  }
+  return raw
+}
+
 export interface AdminCreateCoursePayload {
   id: string
   slug: string
@@ -508,27 +527,31 @@ export async function adminCreateCourse(
   const actor = await getAcademyActor(identity)
   if (!actor) throw new Error("Canister client unavailable")
 
-  const res = await actor.create_course({
-    id: payload.id,
-    slug: payload.slug,
-    title: payload.title,
-    headline: payload.headline,
-    description: payload.description,
-    level: payload.level,
-    badge: payload.badge,
-    price_e8s: payload.price_e8s,
-    total_hours: payload.total_hours,
-    cover_image: payload.cover_image,
-    instructor_name: payload.instructor_name,
-    instructor_role: payload.instructor_role,
-    is_published: payload.is_published,
-  })
+  try {
+    const res = await actor.create_course({
+      id: payload.id,
+      slug: payload.slug,
+      title: payload.title,
+      headline: payload.headline,
+      description: payload.description,
+      level: payload.level,
+      badge: payload.badge,
+      price_e8s: payload.price_e8s,
+      total_hours: payload.total_hours,
+      cover_image: payload.cover_image,
+      instructor_name: payload.instructor_name,
+      instructor_role: payload.instructor_role,
+      is_published: payload.is_published,
+    })
 
-  if ("Ok" in res) {
-    recordAuditLog("create_course", adminEmail, payload.id, `Created course "${payload.title}"`)
-    return res.Ok
+    if ("Ok" in res) {
+      recordAuditLog("create_course", adminEmail, payload.id, `Created course "${payload.title}"`)
+      return res.Ok
+    }
+    throw new Error(res.Err)
+  } catch (err) {
+    throw new Error(formatAcademyCanisterError(err))
   }
-  throw new Error(res.Err)
 }
 
 export async function adminUpdateCourse(
@@ -540,32 +563,36 @@ export async function adminUpdateCourse(
   const actor = await getAcademyActor(identity)
   if (!actor) throw new Error("Canister client unavailable")
 
-  const res = await actor.update_course({
-    id: courseId,
-    slug: updates.slug !== undefined ? [updates.slug] : [],
-    title: updates.title !== undefined ? [updates.title] : [],
-    headline: updates.headline !== undefined ? [updates.headline] : [],
-    description: updates.description !== undefined ? [updates.description] : [],
-    level: updates.level !== undefined ? [updates.level] : [],
-    badge: updates.badge !== undefined ? [updates.badge] : [],
-    price_e8s: updates.price_e8s !== undefined ? [updates.price_e8s] : [],
-    total_hours: updates.total_hours !== undefined ? [updates.total_hours] : [],
-    cover_image: updates.cover_image !== undefined ? [updates.cover_image] : [],
-    instructor_name: updates.instructor_name !== undefined ? [updates.instructor_name] : [],
-    instructor_role: updates.instructor_role !== undefined ? [updates.instructor_role] : [],
-    is_published: updates.is_published !== undefined ? [updates.is_published] : [],
-  })
+  try {
+    const res = await actor.update_course({
+      id: courseId,
+      slug: updates.slug !== undefined ? [updates.slug] : [],
+      title: updates.title !== undefined ? [updates.title] : [],
+      headline: updates.headline !== undefined ? [updates.headline] : [],
+      description: updates.description !== undefined ? [updates.description] : [],
+      level: updates.level !== undefined ? [updates.level] : [],
+      badge: updates.badge !== undefined ? [updates.badge] : [],
+      price_e8s: updates.price_e8s !== undefined ? [updates.price_e8s] : [],
+      total_hours: updates.total_hours !== undefined ? [updates.total_hours] : [],
+      cover_image: updates.cover_image !== undefined ? [updates.cover_image] : [],
+      instructor_name: updates.instructor_name !== undefined ? [updates.instructor_name] : [],
+      instructor_role: updates.instructor_role !== undefined ? [updates.instructor_role] : [],
+      is_published: updates.is_published !== undefined ? [updates.is_published] : [],
+    })
 
-  if ("Ok" in res) {
-    recordAuditLog(
-      "update_course",
-      adminEmail,
-      courseId,
-      `Updated fields: ${Object.keys(updates).join(", ")}`
-    )
-    return
+    if ("Ok" in res) {
+      recordAuditLog(
+        "update_course",
+        adminEmail,
+        courseId,
+        `Updated fields: ${Object.keys(updates).join(", ")}`
+      )
+      return
+    }
+    throw new Error(res.Err)
+  } catch (err) {
+    throw new Error(formatAcademyCanisterError(err))
   }
-  throw new Error(res.Err)
 }
 
 export async function adminDeleteCourse(
@@ -576,17 +603,21 @@ export async function adminDeleteCourse(
   const actor = await getAcademyActor(identity)
   if (!actor) throw new Error("Canister client unavailable")
 
-  const res = await actor.delete_course(courseId)
-  if ("Ok" in res) {
-    recordAuditLog(
-      "delete_course",
-      adminEmail,
-      courseId,
-      "Cascading deletion of course, modules, and lessons"
-    )
-    return
+  try {
+    const res = await actor.delete_course(courseId)
+    if ("Ok" in res) {
+      recordAuditLog(
+        "delete_course",
+        adminEmail,
+        courseId,
+        "Cascading deletion of course, modules, and lessons"
+      )
+      return
+    }
+    throw new Error(res.Err)
+  } catch (err) {
+    throw new Error(formatAcademyCanisterError(err))
   }
-  throw new Error(res.Err)
 }
 
 export async function adminDuplicateCourse(
@@ -597,12 +628,16 @@ export async function adminDuplicateCourse(
   const actor = await getAcademyActor(identity)
   if (!actor) throw new Error("Canister client unavailable")
 
-  const res = await actor.duplicate_course(courseId)
-  if ("Ok" in res) {
-    recordAuditLog("duplicate_course", adminEmail, res.Ok, `Cloned from ${courseId}`)
-    return res.Ok
+  try {
+    const res = await actor.duplicate_course(courseId)
+    if ("Ok" in res) {
+      recordAuditLog("duplicate_course", adminEmail, res.Ok, `Cloned from ${courseId}`)
+      return res.Ok
+    }
+    throw new Error(res.Err)
+  } catch (err) {
+    throw new Error(formatAcademyCanisterError(err))
   }
-  throw new Error(res.Err)
 }
 
 export async function adminTogglePublish(
@@ -614,17 +649,21 @@ export async function adminTogglePublish(
   const actor = await getAcademyActor(identity)
   if (!actor) throw new Error("Canister client unavailable")
 
-  const res = await actor.publish_course(courseId, isPublished)
-  if ("Ok" in res) {
-    recordAuditLog(
-      isPublished ? "publish_course" : "unpublish_course",
-      adminEmail,
-      courseId,
-      `Status set to ${isPublished ? "Published" : "Draft"}`
-    )
-    return
+  try {
+    const res = await actor.publish_course(courseId, isPublished)
+    if ("Ok" in res) {
+      recordAuditLog(
+        isPublished ? "publish_course" : "unpublish_course",
+        adminEmail,
+        courseId,
+        `Status set to ${isPublished ? "Published" : "Draft"}`
+      )
+      return
+    }
+    throw new Error(res.Err)
+  } catch (err) {
+    throw new Error(formatAcademyCanisterError(err))
   }
-  throw new Error(res.Err)
 }
 
 export async function adminSetPrice(
@@ -636,17 +675,21 @@ export async function adminSetPrice(
   const actor = await getAcademyActor(identity)
   if (!actor) throw new Error("Canister client unavailable")
 
-  const res = await actor.set_course_price(courseId, priceE8s)
-  if ("Ok" in res) {
-    recordAuditLog(
-      "set_price",
-      adminEmail,
-      courseId,
-      `Price updated to ${priceE8s === BigInt(0) ? "Free" : `${Number(priceE8s) / 100_000_000} ICP`}`
-    )
-    return
+  try {
+    const res = await actor.set_course_price(courseId, priceE8s)
+    if ("Ok" in res) {
+      recordAuditLog(
+        "set_price",
+        adminEmail,
+        courseId,
+        `Price updated to ${priceE8s === BigInt(0) ? "Free" : `${Number(priceE8s) / 100_000_000} ICP`}`
+      )
+      return
+    }
+    throw new Error(res.Err)
+  } catch (err) {
+    throw new Error(formatAcademyCanisterError(err))
   }
-  throw new Error(res.Err)
 }
 
 export interface AdminAddModulePayload {
@@ -686,20 +729,24 @@ export async function adminAddModule(
   const newModId = payload.id?.trim() || `mod-${Date.now()}`
   const slug = payload.slug?.trim() || payload.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")
 
-  const res = await actor.add_module(courseId, {
-    id: newModId,
-    title: payload.title,
-    slug,
-    description: payload.description,
-    order: payload.order ?? 1,
-    estimated_hours: payload.estimated_hours ?? 2,
-  })
+  try {
+    const res = await actor.add_module(courseId, {
+      id: newModId,
+      title: payload.title,
+      slug,
+      description: payload.description,
+      order: payload.order ?? 1,
+      estimated_hours: payload.estimated_hours ?? 2,
+    })
 
-  if ("Ok" in res) {
-    recordAuditLog("add_module", adminEmail, res.Ok, `Added module "${payload.title}" to ${courseId}`)
-    return res.Ok
+    if ("Ok" in res) {
+      recordAuditLog("add_module", adminEmail, res.Ok, `Added module "${payload.title}" to ${courseId}`)
+      return res.Ok
+    }
+    throw new Error(res.Err)
+  } catch (err) {
+    throw new Error(formatAcademyCanisterError(err))
   }
-  throw new Error(res.Err)
 }
 
 export async function adminDeleteModule(
@@ -711,12 +758,16 @@ export async function adminDeleteModule(
   const actor = await getAcademyActor(identity)
   if (!actor) throw new Error("Canister client unavailable")
 
-  const res = await actor.delete_module(courseId, moduleId)
-  if ("Ok" in res) {
-    recordAuditLog("delete_module", adminEmail, moduleId, `Deleted module from ${courseId}`)
-    return
+  try {
+    const res = await actor.delete_module(courseId, moduleId)
+    if ("Ok" in res) {
+      recordAuditLog("delete_module", adminEmail, moduleId, `Deleted module from ${courseId}`)
+      return
+    }
+    throw new Error(res.Err)
+  } catch (err) {
+    throw new Error(formatAcademyCanisterError(err))
   }
-  throw new Error(res.Err)
 }
 
 export async function adminAddLesson(
@@ -737,27 +788,31 @@ export async function adminAddLesson(
   else if (payload.lessonType === "Reading") lessonTypeVariant = { Reading: null }
   else if (payload.lessonType === "Quiz") lessonTypeVariant = { Quiz: null }
 
-  const res = await actor.add_lesson(courseId, moduleId, {
-    id: newLessonId,
-    title: payload.title,
-    slug,
-    description: payload.description,
-    duration_minutes: payload.durationMinutes,
-    lesson_type: lessonTypeVariant,
-    video_url: payload.videoUrl,
-    thumbnail_url: payload.thumbnailUrl,
-    preview_available: payload.previewAvailable,
-    order: payload.order ?? 1,
-    key_takeaways: payload.keyTakeaways && payload.keyTakeaways.length > 0
-      ? payload.keyTakeaways
-      : ["Web3 Architecture", "On-Chain Verification"],
-  })
+  try {
+    const res = await actor.add_lesson(courseId, moduleId, {
+      id: newLessonId,
+      title: payload.title,
+      slug,
+      description: payload.description,
+      duration_minutes: payload.durationMinutes,
+      lesson_type: lessonTypeVariant,
+      video_url: payload.videoUrl,
+      thumbnail_url: payload.thumbnailUrl,
+      preview_available: payload.previewAvailable,
+      order: payload.order ?? 1,
+      key_takeaways: payload.keyTakeaways && payload.keyTakeaways.length > 0
+        ? payload.keyTakeaways
+        : ["Web3 Architecture", "On-Chain Verification"],
+    })
 
-  if ("Ok" in res) {
-    recordAuditLog("add_lesson", adminEmail, res.Ok, `Added lesson "${payload.title}"`)
-    return res.Ok
+    if ("Ok" in res) {
+      recordAuditLog("add_lesson", adminEmail, res.Ok, `Added lesson "${payload.title}"`)
+      return res.Ok
+    }
+    throw new Error(res.Err)
+  } catch (err) {
+    throw new Error(formatAcademyCanisterError(err))
   }
-  throw new Error(res.Err)
 }
 
 export async function adminDeleteLesson(
@@ -770,12 +825,16 @@ export async function adminDeleteLesson(
   const actor = await getAcademyActor(identity)
   if (!actor) throw new Error("Canister client unavailable")
 
-  const res = await actor.delete_lesson(courseId, moduleId, lessonId)
-  if ("Ok" in res) {
-    recordAuditLog("delete_lesson", adminEmail, lessonId, `Deleted lesson from ${courseId}`)
-    return
+  try {
+    const res = await actor.delete_lesson(courseId, moduleId, lessonId)
+    if ("Ok" in res) {
+      recordAuditLog("delete_lesson", adminEmail, lessonId, `Deleted lesson from ${courseId}`)
+      return
+    }
+    throw new Error(res.Err)
+  } catch (err) {
+    throw new Error(formatAcademyCanisterError(err))
   }
-  throw new Error(res.Err)
 }
 
 export async function fetchAuditLogs(
@@ -854,42 +913,46 @@ export async function adminWithdrawTreasury(
   const actor = await getAcademyActor(identity)
   if (!actor) throw new Error("Canister client unavailable")
 
-  const res = await actor.withdraw_treasury(toAccount, amountE8s)
-  if ("Ok" in res) {
-    const blockIndex = res.Ok
-    const record: TreasuryPayoutRecord = {
+  try {
+    const res = await actor.withdraw_treasury(toAccount, amountE8s)
+    if ("Ok" in res) {
+      const blockIndex = res.Ok
+      const record: TreasuryPayoutRecord = {
+        id: `payout-${Date.now()}`,
+        timestamp: Date.now(),
+        toAccount,
+        amountE8s: amountE8s.toString(),
+        blockIndex: blockIndex.toString(),
+        admin: adminEmail,
+        status: "completed",
+      }
+      const existing = getStoredPayoutRecords()
+      existing.unshift(record)
+      setStoredPayoutRecords(existing)
+
+      const icpFormatted = (Number(amountE8s) / 100_000_000).toFixed(4)
+      recordAuditLog(
+        "treasury_withdraw",
+        adminEmail,
+        `block-${blockIndex}`,
+        `Withdrew ${icpFormatted} ICP to ${toAccount.slice(0, 8)}...${toAccount.slice(-6)}`
+      )
+      return blockIndex
+    }
+
+    const failRecord: TreasuryPayoutRecord = {
       id: `payout-${Date.now()}`,
       timestamp: Date.now(),
       toAccount,
       amountE8s: amountE8s.toString(),
-      blockIndex: blockIndex.toString(),
       admin: adminEmail,
-      status: "completed",
+      status: "failed",
     }
     const existing = getStoredPayoutRecords()
-    existing.unshift(record)
+    existing.unshift(failRecord)
     setStoredPayoutRecords(existing)
-
-    const icpFormatted = (Number(amountE8s) / 100_000_000).toFixed(4)
-    recordAuditLog(
-      "treasury_withdraw",
-      adminEmail,
-      `block-${blockIndex}`,
-      `Withdrew ${icpFormatted} ICP to ${toAccount.slice(0, 8)}...${toAccount.slice(-6)}`
-    )
-    return blockIndex
+    throw new Error(res.Err)
+  } catch (err) {
+    throw new Error(formatAcademyCanisterError(err))
   }
-
-  const failRecord: TreasuryPayoutRecord = {
-    id: `payout-${Date.now()}`,
-    timestamp: Date.now(),
-    toAccount,
-    amountE8s: amountE8s.toString(),
-    admin: adminEmail,
-    status: "failed",
-  }
-  const existing = getStoredPayoutRecords()
-  existing.unshift(failRecord)
-  setStoredPayoutRecords(existing)
-  throw new Error(res.Err)
 }

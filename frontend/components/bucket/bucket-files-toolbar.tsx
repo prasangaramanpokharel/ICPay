@@ -9,6 +9,7 @@ import {
   Search01Icon,
 } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { ButtonGroup } from "@/components/ui/button-group"
 import { Input } from "@/components/ui/input"
 import {
   Select,
@@ -118,10 +119,10 @@ export function BucketFilesToolbar({
         </Select>
 
         {onViewModeChange ? (
-          <div className="inline-flex items-center rounded-lg border border-border bg-muted/40 p-0.5">
+          <ButtonGroup>
             <Button
               type="button"
-              variant={viewMode === "list" ? "secondary" : "ghost"}
+              variant={viewMode === "list" ? "secondary" : "outline"}
               size="icon-xs"
               className="size-7"
               aria-label="List view"
@@ -131,7 +132,7 @@ export function BucketFilesToolbar({
             </Button>
             <Button
               type="button"
-              variant={viewMode === "grid" ? "secondary" : "ghost"}
+              variant={viewMode === "grid" ? "secondary" : "outline"}
               size="icon-xs"
               className="size-7"
               aria-label="Grid view"
@@ -139,7 +140,7 @@ export function BucketFilesToolbar({
             >
               <HugeiconsIcon icon={GridViewIcon} className="size-3.5" />
             </Button>
-          </div>
+          </ButtonGroup>
         ) : null}
 
         <Button

@@ -233,7 +233,7 @@ function ChannelList({
   }
 
   return (
-    <div className="divide-y divide-border/50">
+    <div className="space-y-0.5 p-1">
       {channels.map((ch) => {
         const latest = getCachedLatest(ch.slug)
         const lastActiveNs = latest ? BigInt(latest.at) : undefined

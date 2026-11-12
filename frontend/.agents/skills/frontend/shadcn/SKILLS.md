@@ -5,6 +5,8 @@ alwaysApply: true
 
 # shadcn Blocks — blocks first
 
+> **Canonical Standard:** Maintained at [`skills/shadcn/SKILL.md`](../../shadcn/SKILL.md) and [`rules/shadcn-blocks.mdc`](../../../rules/shadcn-blocks.mdc).
+
 For any **full section** (auth pages, app shell/sidebar, dashboards, settings, tables with
 toolbars), **start from an official shadcn block** instead of composing primitives by hand.
 Blocks: https://ui.shadcn.com/blocks · login: /blocks/login · signup: /blocks/signup

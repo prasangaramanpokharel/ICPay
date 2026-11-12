@@ -6,11 +6,11 @@ import {
 import { PAGE_IMAGES } from "@/lib/public/page-images"
 
 const HERO_BANNER_RAW =
-  "https://res.cloudinary.com/dn2ycbmrc/image/upload/v1788002660/Pink_Hue_Minimalist_Simple_Futuristic_Crypto_NFT_Blockchain_Article_Blog_Banner_hanoin.png"
+  "https://res.cloudinary.com/dn2ycbmrc/image/upload/v1793421231/icpayWallet_ovlwhv.webp"
 const ICBUCKET_RAW =
-  "https://res.cloudinary.com/dn2ycbmrc/image/upload/v1788002708/test_c2owra.jpg"
+  "https://res.cloudinary.com/dn2ycbmrc/image/upload/v1793421230/icbucket_ojw8kl.webp"
 const ICFALCON_RAW =
-  "https://res.cloudinary.com/dn2ycbmrc/image/upload/v1788002696/tetet_dbsvek.jpg"
+  "https://res.cloudinary.com/dn2ycbmrc/image/upload/v1793421777/icfalcon1_w3bepn.webp"
 const ICBUCKET_VIDEO_RAW =
   "https://res.cloudinary.com/dn2ycbmrc/video/upload/v1788002750/Copy_of_Black_and_Blue_Simple_Countdown_Video_Collage_c09apn.mp4"
 

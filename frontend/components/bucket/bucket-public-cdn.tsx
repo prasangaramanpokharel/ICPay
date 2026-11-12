@@ -18,7 +18,7 @@ import {
   InputGroupText,
 } from "@/components/ui/input-group"
 import { copyText } from "@/lib/wallet/utils"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import {
   getBucketCdnBase,
   resolvePublicFileUrl,

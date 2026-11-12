@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Tick02Icon,
@@ -155,7 +155,7 @@ export function AcademyCertificateModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] sm:max-w-3xl overflow-hidden border-border bg-card p-0 shadow-2xl">
+      <DialogContent className="w-[95vw] sm:max-w-3xl overflow-hidden p-0">
         <div className="relative overflow-hidden p-6 sm:p-8">
           <Particles
             className="absolute inset-0 pointer-events-none opacity-40"
@@ -177,7 +177,7 @@ export function AcademyCertificateModal({
                 {certificate.id}
               </span>
             </div>
-            <DialogTitle className="text-xl font-bold tracking-tight text-foreground sm:text-2xl pt-2">
+            <DialogTitle className="pt-2">
               Verifiable Certificate of Mastery
             </DialogTitle>
           </DialogHeader>
@@ -334,14 +334,17 @@ export function AcademyCertificateModal({
                   <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
                     Proof
                   </span>
-                  <button
+                  <Button
+                    type="button"
+                    variant="link"
+                    size="xs"
                     onClick={handleCopyHash}
-                    className="flex items-center gap-1 font-mono text-xs text-primary hover:underline"
+                    className="h-auto gap-1 p-0 font-mono"
                     title={certificate.verification_hash}
                   >
                     <span>{certificate.verification_hash.slice(0, 8)}...</span>
                     <HugeiconsIcon icon={copiedHash ? Tick02Icon : Copy01Icon} className="size-3" />
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

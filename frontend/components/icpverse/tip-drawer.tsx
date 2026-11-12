@@ -170,7 +170,7 @@ export function TipDrawer({
           )}
 
           <div className="space-y-2">
-            <div className="flex items-baseline justify-between">
+            <div className="flex min-h-6 items-center justify-between gap-2">
               <Label htmlFor="tip-message">{t("messageLabel")}</Label>
               <span
                 className={cn(

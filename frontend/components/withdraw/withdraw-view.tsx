@@ -1,0 +1,62 @@
+"use client"
+
+import { useState } from "react"
+import { useTranslations } from "next-intl"
+import { WithdrawForm } from "@/components/withdraw/withdraw-form"
+import { SendSuccess } from "@/components/wallet/send-success"
+import { AppPage } from "@/components/layout/dashboard/app-page"
+import { useAuth } from "@/components/auth/auth-provider"
+import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { Skeleton } from "@/components/ui/skeleton"
+import { withdraw } from "@/services/withdraw/withdraw"
+
+type Sent = { amount: bigint; recipient: string; blockIndex: bigint }
+
+export function WithdrawView() {
+  const t = useTranslations("withdraw")
+  const { identity } = useAuth()
+  const balance = useLiveBalance()
+  const refreshWallet = useRefreshWallet()
+  const [sent, setSent] = useState<Sent | null>(null)
+
+  const handleWithdraw = async (amount: bigint, destination: string): Promise<string | null> => {
+    const result = await withdraw(identity, amount, destination)
+    if ("err" in result) return result.err
+
+    refreshWallet()
+    setSent({ amount, recipient: destination, blockIndex: result.ok.blockIndex })
+    return null
+  }
+
+  if (sent) {
+    return (
+      <AppPage>
+        <div className="mx-auto w-full max-w-md">
+          <SendSuccess
+            amount={sent.amount}
+            recipient={sent.recipient}
+            blockIndex={sent.blockIndex}
+            onDone={() => setSent(null)}
+          />
+        </div>
+      </AppPage>
+    )
+  }
+
+  return (
+    <AppPage title={t("title")} description={t("subtitle")}>
+      <div className="mx-auto w-full max-w-md">
+        {balance === undefined ? (
+          <div className="space-y-4">
+            <Skeleton className="h-16 w-full rounded-2xl" />
+            <Skeleton className="h-14 w-full rounded-xl" />
+            <Skeleton className="h-10 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded-2xl" />
+          </div>
+        ) : (
+          <WithdrawForm balance={balance} onWithdraw={handleWithdraw} />
+        )}
+      </div>
+    </AppPage>
+  )
+}

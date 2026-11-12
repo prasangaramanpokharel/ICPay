@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import {
   Breadcrumb,
   BreadcrumbItem,

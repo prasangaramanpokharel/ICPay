@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { UserAdd01Icon, InformationCircleIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input"
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -88,11 +89,11 @@ export function MyCanisterAddControllerDialog({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="gap-1.5">
-            <DialogTitle className="flex items-center gap-2 text-lg font-semibold">
+            <DialogTitle className="flex items-center gap-2">
               <HugeiconsIcon icon={UserAdd01Icon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
               <span>{t("addControllerTitle")}</span>
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
+            <DialogDescription>
               {t("addControllerHint")}
             </DialogDescription>
           </DialogHeader>
@@ -134,7 +135,7 @@ export function MyCanisterAddControllerDialog({
                   className="font-mono text-sm"
                 />
                 {principalError ? (
-                  <FieldDescription className="text-xs font-medium text-destructive">{principalError}</FieldDescription>
+                  <FieldError className="text-xs">{principalError}</FieldError>
                 ) : (
                   <FieldDescription className="text-[11px] text-muted-foreground">{t("addControllerFullListHint")}</FieldDescription>
                 )}

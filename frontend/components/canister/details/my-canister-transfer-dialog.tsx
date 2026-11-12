@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { SentIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input"
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -135,11 +136,11 @@ export function MyCanisterTransferDialog({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="gap-1.5">
-            <DialogTitle className="flex items-center gap-2 text-lg font-semibold">
+            <DialogTitle className="flex items-center gap-2">
               <HugeiconsIcon icon={SentIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
               <span>{t("transferTitle")}</span>
             </DialogTitle>
-            <DialogDescription className="text-xs text-muted-foreground">
+            <DialogDescription>
               {t("transferHint")}
             </DialogDescription>
           </DialogHeader>
@@ -197,7 +198,7 @@ export function MyCanisterTransferDialog({
               </div>
               <FieldDescription className="text-xs text-muted-foreground">{tw("cyclesHint")}</FieldDescription>
               {amountError ? (
-                <FieldDescription className="text-xs font-medium text-destructive">{amountError}</FieldDescription>
+                <FieldError className="text-xs">{amountError}</FieldError>
               ) : null}
               {!loadingBal && ledgerBal === 0n ? (
                 <FieldDescription className="text-xs text-muted-foreground">

@@ -7,7 +7,9 @@ module {
   public type Actor = actor {
     putBlob: shared (Text, Blob) -> async ();
     getBlob: shared query (Text) -> async ?Blob;
+    getBlobSlice: shared query (Text, Nat, Nat) -> async ?Blob;
     fetchBlob: shared composite query (Text) -> async ?Blob;
+    fetchBlobSlice: shared composite query (Text, Nat, Nat) -> async ?Blob;
     deleteBlob: shared (Text) -> async Bool;
     stats: shared query () -> async { count: Nat; bytes: Nat };
   };

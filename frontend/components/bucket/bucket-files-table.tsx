@@ -25,6 +25,7 @@ import {
 } from "@/components/bucket/bucket-file-row-actions"
 import { formatFileSize } from "@/components/bucket/bucket-card"
 import { fileTypeChip } from "@/lib/bucket/allowedFiles"
+import { middleTruncateFileName } from "@/lib/bucket/bucket"
 import { folderTotals, type FolderListEntry } from "@/lib/bucket/folderPath"
 import { cn } from "@/lib/ui/utils"
 import type { FilePublic } from "@/services/bucket/types"
@@ -174,12 +175,18 @@ export function BucketFilesTable({
                     </TableCell>
                   ) : null}
                   <TableCell>
-                    <div className="flex items-center gap-3">
+                    <div className="flex min-w-0 items-center gap-2.5">
+                      {canWrite ? <span className="size-4 shrink-0" aria-hidden="true" /> : null}
                       <BucketFolderIcon />
-                      <div className="min-w-0">
+                      <div className="flex min-w-0 items-center gap-2">
                         <span className="truncate text-sm font-medium text-foreground">
                           {entry.name}
                         </span>
+                        {totals.count > 0 ? (
+                          <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground tabular-nums">
+                            {totals.count} {totals.count === 1 ? "item" : "items"}
+                          </span>
+                        ) : null}
                       </div>
                     </div>
                   </TableCell>
@@ -194,8 +201,8 @@ export function BucketFilesTable({
                   <TableCell className="text-right text-xs text-muted-foreground tabular-nums">
                     {sizeLabel}
                   </TableCell>
-                  <TableCell className="text-right text-xs text-muted-foreground/70 tabular-nums">
-                    —
+                  <TableCell className="text-right text-xs text-muted-foreground tabular-nums">
+                    {totals.latestModified > 0n ? formatFileDate(totals.latestModified) : "—"}
                   </TableCell>
                   <TableCell className="text-right">
                     <BucketFolderRowActions
@@ -280,7 +287,7 @@ export function BucketFilesTable({
                       className="truncate text-sm font-medium text-foreground transition-colors group-hover:text-foreground"
                       title={entry.file.path}
                     >
-                      {entry.file.path.split("/").pop()}
+                      {middleTruncateFileName(entry.file.path.split("/").pop() ?? entry.file.path, 38)}
                     </span>
                   </div>
                 </TableCell>

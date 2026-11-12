@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -9,11 +9,13 @@ import { LaunchStatus } from "@/components/launch/launch-status"
 import { useToken } from "@/hooks/token/useLaunchData"
 import { useRewrittenLastSegment } from "@/lib/routing/rewrittenRoute"
 
-export function LaunchDetail() {
+export function LaunchDetail({ id: propId }: { id?: string } = {}) {
   const t = useTranslations("launch")
   const router = useRouter()
+  const searchParams = useSearchParams()
 
-  const id = useRewrittenLastSegment()
+  const rewrittenId = useRewrittenLastSegment()
+  const id = propId || searchParams.get("id") || searchParams.get("token") || rewrittenId
 
   const { token, isLoading } = useToken(id || null)
 
@@ -28,8 +30,6 @@ export function LaunchDetail() {
     </Button>
   )
 
-  // An empty id means the mid-transition frame above, so the loader is held
-  // rather than asserting the token does not exist.
   if (isLoading || !id) {
     return (
       <div className="space-y-4 pt-2">

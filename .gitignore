@@ -48,6 +48,18 @@ frontend/.agents/skills/vercel-react-best-practices
 !/docs/indexToken/**
 !/docs/chatgpt/
 !/docs/chatgpt/**
+!/docs/research/
+!/docs/research/**
+!/docs/memory/
+!/docs/memory/**
+!/docs/motion/
+!/docs/motion/**
+!/docs/dailyTask/
+!/docs/dailyTask/**
+!/docs/iccron/
+!/docs/iccron/**
+!/docs/agents/
+!/docs/agents/**
 !/docs/workflow.md
 
 # docs/bucket/ stays local (PDF exports, not committed)
@@ -70,6 +82,7 @@ ci/academy/
 frontend/app/(public)/academy/
 frontend/app/(admin)/acadamey/
 frontend/components/products/icacademy/
+frontend/hooks/academy/
 frontend/public/images/pages/icacademy/
 frontend/services/academy/
 

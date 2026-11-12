@@ -53,10 +53,9 @@ export function CanisterSnapshotsGuide() {
         <CollapsibleContent>
           <CardContent className="border-t border-border/40 pt-4 pb-5">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {/* Point in Time */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={Camera01Icon} className="size-4 text-blue-500" />
+                  <HugeiconsIcon icon={Camera01Icon} className="size-4 text-info" strokeWidth={1.75} />
                   <span>Point-in-Time State</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -64,10 +63,9 @@ export function CanisterSnapshotsGuide() {
                 </p>
               </div>
 
-              {/* Safe Upgrades */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={Clock01Icon} className="size-4 text-success" />
+                  <HugeiconsIcon icon={Clock01Icon} className="size-4 text-success" strokeWidth={1.75} />
                   <span>Pre-Upgrade Safety</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -75,10 +73,9 @@ export function CanisterSnapshotsGuide() {
                 </p>
               </div>
 
-              {/* State Restoration */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={Alert02Icon} className="size-4 text-destructive" />
+                  <HugeiconsIcon icon={Alert02Icon} className="size-4 text-destructive" strokeWidth={1.75} />
                   <span>Restore Considerations</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -86,10 +83,9 @@ export function CanisterSnapshotsGuide() {
                 </p>
               </div>
 
-              {/* Storage Overhead */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={Coins01Icon} className="size-4 text-primary" />
+                  <HugeiconsIcon icon={Coins01Icon} className="size-4 text-primary" strokeWidth={1.75} />
                   <span>Storage & Cycles Cost</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">

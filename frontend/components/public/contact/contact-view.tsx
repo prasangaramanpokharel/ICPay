@@ -2,26 +2,28 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  Mail,
-  Copy,
-  Check,
-  ExternalLink,
-  ShieldCheck,
-  Headphones,
-  Sparkles,
-  Send,
-  MessageSquare,
-  HelpCircle,
-  FileCode2,
-  Lock,
-} from "lucide-react"
+  Copy01Icon,
+  HeadphonesIcon,
+  HelpCircleIcon,
+  LinkSquare02Icon,
+  LockPasswordIcon,
+  Mail01Icon,
+  Message01Icon,
+  SentIcon,
+  Shield01Icon,
+  SourceCodeIcon,
+  SparklesIcon,
+  Tick02Icon,
+} from "@hugeicons/core-free-icons"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { copyText } from "@/lib/wallet/utils"
 
 const CONTACT_EMAIL = "contact@icpay.cloud"
@@ -37,7 +39,7 @@ const TOPICS = [
 
 const CONTACT_CHANNELS = [
   {
-    icon: Headphones,
+    icon: HeadphonesIcon,
     title: "General & Technical Support",
     description: "Account help, custodial wallet inquiries, transaction verification, or feature questions.",
     actionText: "contact@icpay.cloud",
@@ -46,7 +48,7 @@ const CONTACT_CHANNELS = [
     badgeVariant: "secondary" as const,
   },
   {
-    icon: Sparkles,
+    icon: SparklesIcon,
     title: "icBucket Cloud Storage",
     description: "Assistance with custom capacity tiers, edge CDN reverse proxies, API keys, or SDK integrations.",
     actionText: "contact@icpay.cloud",
@@ -55,7 +57,7 @@ const CONTACT_CHANNELS = [
     badgeVariant: "outline" as const,
   },
   {
-    icon: ShieldCheck,
+    icon: Shield01Icon,
     title: "Security & Vulnerability Disclosure",
     description: "Responsible vulnerability disclosures, smart contract audit feedback, and infrastructure issues.",
     actionText: "contact@icpay.cloud",
@@ -64,7 +66,7 @@ const CONTACT_CHANNELS = [
     badgeVariant: "destructive" as const,
   },
   {
-    icon: MessageSquare,
+    icon: Message01Icon,
     title: "Community & Ecosystem",
     description: "Join community discussions, propose token listings, or follow official engineering announcements.",
     actionText: "Community Channels",
@@ -75,9 +77,9 @@ const CONTACT_CHANNELS = [
 ]
 
 const QUICK_LINKS = [
-  { title: "Transparency & Canister IDs", href: "/transparency", icon: Lock, desc: "Verify on-chain Motoko wasm and live subnets" },
-  { title: "icBucket Developer Docs", href: "/bucket/docs", icon: FileCode2, desc: "API methods, Python/TypeScript SDKs, and tutorials" },
-  { title: "Frequently Asked Questions", href: "/faq", icon: HelpCircle, desc: "Internet Identity, self-custody model, and gas fees" },
+  { title: "Transparency & Canister IDs", href: "/transparency", icon: LockPasswordIcon, desc: "Verify on-chain Motoko wasm and live subnets" },
+  { title: "icBucket Developer Docs", href: "/bucket/docs", icon: SourceCodeIcon, desc: "API methods, Python/TypeScript SDKs, and tutorials" },
+  { title: "Frequently Asked Questions", href: "/faq", icon: HelpCircleIcon, desc: "Internet Identity, self-custody model, and gas fees" },
 ]
 
 export function ContactView() {
@@ -91,7 +93,7 @@ export function ContactView() {
   const handleCopyEmail = async () => {
     await copyText(CONTACT_EMAIL)
     setCopiedEmail(true)
-    toast.success("Email address copied to clipboard!")
+    toast.success("Successfully copied")
     setTimeout(() => setCopiedEmail(false), 2000)
   }
 
@@ -115,230 +117,245 @@ export function ContactView() {
     const draftText = `To: ${CONTACT_EMAIL}\nSubject: ${fullSubject}\n\n${name ? `From: ${name}\n` : ""}Topic: ${currentTopic.label}\n\n${message || "Hello ICPay team,"}`
     await copyText(draftText)
     setCopiedDraft(true)
-    toast.success("Draft message copied to clipboard!")
+    toast.success("Successfully copied")
     setTimeout(() => setCopiedDraft(false), 2000)
   }
 
   return (
-    <div className="space-y-12">
-      {/* Hero Header */}
-      <div className="text-center space-y-4 max-w-2xl mx-auto pt-4">
-        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-          <Mail className="size-3.5" />
-          <span>Official Communications</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground">
-          Contact the ICPay Team
-        </h1>
-        <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-          Have a question about on-chain custodial wallets, icBucket storage quotas, developer APIs, or security disclosures? We are here to help.
-        </p>
+    <section className="relative w-full border-b border-border/60 bg-background overflow-hidden">
+      <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 md:py-14 space-y-12">
+        <div className="text-center space-y-4 max-w-2xl mx-auto pt-2 sm:pt-4">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-muted/40 px-3.5 py-1 text-xs font-medium text-foreground backdrop-blur-xs">
+            <HugeiconsIcon icon={Mail01Icon} className="size-3.5 text-primary" strokeWidth={1.75} />
+            <span>Official Communications</span>
+          </div>
+          <h1 className="text-3xl font-extrabold tracking-tight bg-linear-to-b from-foreground via-foreground/90 to-foreground/55 bg-clip-text text-transparent sm:text-4xl md:text-5xl">
+            Contact the ICPay Team
+          </h1>
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-xl mx-auto">
+            Have a question about on-chain custodial wallets, icBucket storage quotas, developer APIs, or security disclosures? We are here to help.
+          </p>
 
-        {/* Highlighted Email Badge */}
-        <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
-          <div className="inline-flex items-center gap-2 rounded-xl border border-border/70 bg-card/70 px-3.5 py-2 shadow-xs backdrop-blur-xs">
-            <span className="font-mono text-sm font-semibold text-foreground">{CONTACT_EMAIL}</span>
-            <Button
-              variant="ghost"
-              size="icon-xs"
-              onClick={handleCopyEmail}
-              aria-label="Copy email address"
-              title={copiedEmail ? "Copied!" : "Copy email address"}
-              className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
-            >
-              {copiedEmail ? <Check className="size-3.5 text-success" /> : <Copy className="size-3.5" />}
-            </Button>
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="inline-flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              title="Open email client"
-            >
-              <ExternalLink className="size-3.5" />
-            </a>
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
+            <div className="inline-flex items-center gap-2.5 rounded-2xl border border-border/80 bg-card/70 px-4 py-2 shadow-xs backdrop-blur-xs">
+              <HugeiconsIcon icon={Mail01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+              <span className="font-mono text-xs sm:text-sm font-semibold text-foreground">{CONTACT_EMAIL}</span>
+              <div className="h-4 w-px bg-border/80" />
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                onClick={handleCopyEmail}
+                aria-label="Copy email address"
+                title={copiedEmail ? "Copied!" : "Copy email address"}
+                className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
+              >
+                {copiedEmail ? (
+                  <HugeiconsIcon icon={Tick02Icon} className="size-3.5 text-success" strokeWidth={1.75} />
+                ) : (
+                  <HugeiconsIcon icon={Copy01Icon} className="size-3.5" strokeWidth={1.75} />
+                )}
+              </Button>
+              <a
+                href={`mailto:${CONTACT_EMAIL}`}
+                className="inline-flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                title="Open email client"
+              >
+                <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5" strokeWidth={1.75} />
+              </a>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* 4 Primary Channels Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {CONTACT_CHANNELS.map((channel) => {
-          const Icon = channel.icon
-          return (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+          {CONTACT_CHANNELS.map((channel) => (
             <Card
               key={channel.title}
-              className="relative overflow-hidden border border-border/70 bg-card/60 transition-all duration-200 hover:border-primary/40 hover:bg-card/90"
+              className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-card/60 p-5 sm:p-6 shadow-xs backdrop-blur-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-card/90 hover:shadow-md"
             >
-              <CardHeader className="pb-3">
+              <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2">
-                  <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary ring-1 ring-primary/20">
-                    <Icon className="size-4.5" />
+                  <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                    <HugeiconsIcon icon={channel.icon} className="size-4.5" strokeWidth={1.75} />
                   </div>
                   <Badge variant={channel.badgeVariant} className="text-[10px] font-medium h-5">
                     {channel.badge}
                   </Badge>
                 </div>
-                <CardTitle className="text-base font-semibold pt-2 text-foreground">{channel.title}</CardTitle>
-                <CardDescription className="text-xs leading-relaxed text-muted-foreground">
-                  {channel.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-0">
+                <div>
+                  <h3 className="text-base font-semibold text-foreground tracking-tight">
+                    {channel.title}
+                  </h3>
+                  <p className="mt-1 text-xs sm:text-sm leading-relaxed text-muted-foreground">
+                    {channel.description}
+                  </p>
+                </div>
+              </div>
+              <div className="pt-4">
                 {channel.href ? (
                   <Link
                     href={channel.href}
-                    className={buttonVariants({ variant: "outline", size: "sm", className: "h-8 gap-1.5 text-xs" })}
+                    className={buttonVariants({ variant: "outline", size: "sm", className: "h-8 gap-1.5 text-xs rounded-xl" })}
                   >
                     <span>{channel.actionText}</span>
-                    <ExternalLink className="size-3 opacity-70" />
+                    <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5 opacity-70" strokeWidth={1.75} />
                   </Link>
                 ) : (
                   <a
                     href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(channel.mailtoSubject || "Inquiry")}`}
-                    className={buttonVariants({ variant: "outline", size: "sm", className: "h-8 gap-1.5 text-xs font-mono" })}
+                    className={buttonVariants({ variant: "outline", size: "sm", className: "h-8 gap-1.5 text-xs font-mono rounded-xl" })}
                   >
-                    <Mail className="size-3" />
+                    <HugeiconsIcon icon={Mail01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
                     <span>{channel.actionText}</span>
                   </a>
                 )}
-              </CardContent>
+              </div>
             </Card>
-          )
-        })}
-      </div>
+          ))}
+        </div>
 
-      {/* Interactive Message Composer */}
-      <Card className="border border-border/70 bg-gradient-to-b from-card/90 to-card/50 shadow-sm overflow-hidden">
-        <CardHeader className="pb-4 border-b border-border/50">
-          <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
-              <Send className="size-3.5" />
+        <Card className="rounded-2xl border border-border/70 bg-card/70 shadow-sm backdrop-blur-xs overflow-hidden">
+          <CardHeader className="p-5 sm:p-6 pb-4 border-b border-border/50">
+            <div className="flex items-center gap-3">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
+                <HugeiconsIcon icon={SentIcon} className="size-5" strokeWidth={1.75} />
+              </div>
+              <div>
+                <CardTitle className="text-base sm:text-lg font-semibold tracking-tight">Direct Email Composer</CardTitle>
+                <CardDescription className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+                  Draft a message to get connected with the appropriate ICPay engineer or coordinator.
+                </CardDescription>
+              </div>
             </div>
-            <div>
-              <CardTitle className="text-base font-semibold">Direct Email Composer</CardTitle>
-              <CardDescription className="text-xs">
-                Draft a message to get connected with the appropriate ICPay engineer or coordinator.
-              </CardDescription>
-            </div>
-          </div>
-        </CardHeader>
+          </CardHeader>
 
-        <CardContent className="p-4 sm:p-6 space-y-4">
-          {/* Topic Selectors */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-foreground">Select Inquiring Topic</label>
-            <div className="flex flex-wrap gap-1.5">
-              {TOPICS.map((topic) => (
-                <button
-                  key={topic.id}
+          <CardContent className="p-5 sm:p-6 space-y-5">
+            <FieldGroup className="gap-5">
+              <Field className="gap-2">
+                <FieldLabel className="text-xs font-medium text-foreground">Select Inquiring Topic</FieldLabel>
+                <div className="flex flex-wrap gap-2">
+                  {TOPICS.map((topic) => (
+                    <Button
+                      key={topic.id}
+                      type="button"
+                      size="sm"
+                      variant={selectedTopic === topic.id ? "default" : "outline"}
+                      onClick={() => setSelectedTopic(topic.id)}
+                      className="h-8 rounded-lg px-3 text-xs font-medium cursor-pointer transition-all"
+                    >
+                      {topic.label}
+                    </Button>
+                  ))}
+                </div>
+              </Field>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Field className="gap-1.5">
+                  <FieldLabel htmlFor="name-input" className="text-xs font-medium text-foreground">
+                    Your Name / Handle (Optional)
+                  </FieldLabel>
+                  <Input
+                    id="name-input"
+                    placeholder="e.g. Satoshi or @alice"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="h-10 text-xs sm:text-sm rounded-xl"
+                  />
+                </Field>
+                <Field className="gap-1.5">
+                  <FieldLabel htmlFor="subject-input" className="text-xs font-medium text-foreground">
+                    Subject Line
+                  </FieldLabel>
+                  <Input
+                    id="subject-input"
+                    placeholder="Brief summary of your question"
+                    value={subject}
+                    onChange={(e) => setSubject(e.target.value)}
+                    className="h-10 text-xs sm:text-sm rounded-xl"
+                  />
+                </Field>
+              </div>
+
+              <Field className="gap-1.5">
+                <FieldLabel htmlFor="message-input" className="text-xs font-medium text-foreground">
+                  Message Details
+                </FieldLabel>
+                <Textarea
+                  id="message-input"
+                  rows={5}
+                  placeholder="Describe your question, project, or issue in detail..."
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  className="text-xs sm:text-sm resize-y rounded-xl min-h-[130px] leading-relaxed p-3"
+                />
+              </Field>
+            </FieldGroup>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-4 border-t border-border/50">
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-mono">
+                <span className="text-muted-foreground/70">Destination:</span>
+                <span className="font-semibold text-foreground">{CONTACT_EMAIL}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
                   type="button"
-                  onClick={() => setSelectedTopic(topic.id)}
-                  className={`rounded-lg px-2.5 py-1 text-xs font-medium transition-all cursor-pointer border ${
-                    selectedTopic === topic.id
-                      ? "bg-primary text-primary-foreground border-primary shadow-xs"
-                      : "bg-muted/50 text-muted-foreground border-border/60 hover:bg-muted hover:text-foreground"
-                  }`}
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCopyDraft}
+                  className="h-9 gap-1.5 text-xs rounded-xl"
                 >
-                  {topic.label}
-                </button>
-              ))}
+                  {copiedDraft ? (
+                    <HugeiconsIcon icon={Tick02Icon} className="size-3.5 text-success" strokeWidth={1.75} />
+                  ) : (
+                    <HugeiconsIcon icon={Copy01Icon} className="size-3.5" strokeWidth={1.75} />
+                  )}
+                  <span>{copiedDraft ? "Copied" : "Copy Draft"}</span>
+                </Button>
+                <a
+                  href={generateMailto()}
+                  className={buttonVariants({ variant: "default", size: "sm", className: "h-9 gap-1.5 text-xs rounded-xl" })}
+                >
+                  <HugeiconsIcon icon={SentIcon} className="size-3.5" strokeWidth={1.75} />
+                  <span>Send via Email</span>
+                </a>
+              </div>
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-            <div className="space-y-1.5">
-              <label htmlFor="name-input" className="text-xs font-medium text-foreground">Your Name / Handle (Optional)</label>
-              <Input
-                id="name-input"
-                placeholder="e.g. Satoshi or @alice"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="h-9 text-xs"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label htmlFor="subject-input" className="text-xs font-medium text-foreground">Subject Line</label>
-              <Input
-                id="subject-input"
-                placeholder="Brief summary of your question"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                className="h-9 text-xs"
-              />
-            </div>
+        <div className="space-y-4 pt-2">
+          <div className="flex items-center gap-2">
+            <div className="h-2.5 w-1 rounded-full bg-primary" />
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Self-Service Resources & Verification
+            </h2>
           </div>
-
-          <div className="space-y-1.5">
-            <label htmlFor="message-input" className="text-xs font-medium text-foreground">Message Details</label>
-            <Textarea
-              id="message-input"
-              rows={4}
-              placeholder="Describe your question, project, or issue in detail..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className="text-xs resize-y"
-            />
-          </div>
-
-          {/* Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-border/50">
-            <p className="text-[11px] text-muted-foreground font-mono">
-              Destination: <span className="text-foreground">{CONTACT_EMAIL}</span>
-            </p>
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleCopyDraft}
-                className="h-8 gap-1.5 text-xs"
-              >
-                {copiedDraft ? <Check className="size-3 text-success" /> : <Copy className="size-3" />}
-                <span>{copiedDraft ? "Copied" : "Copy Draft"}</span>
-              </Button>
-              <a
-                href={generateMailto()}
-                className={buttonVariants({ variant: "default", size: "sm", className: "h-8 gap-1.5 text-xs" })}
-              >
-                <Send className="size-3" />
-                <span>Send via Email</span>
-              </a>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Quick Help / Self-service Shortcuts */}
-      <div className="space-y-3 pt-2">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Self-Service Resources & Verification
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          {QUICK_LINKS.map((link) => {
-            const Icon = link.icon
-            return (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {QUICK_LINKS.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="group flex flex-col justify-between rounded-xl border border-border/60 bg-card/40 p-3.5 transition-all hover:border-primary/40 hover:bg-card/80"
+                className="group relative flex flex-col justify-between rounded-2xl border border-border/70 bg-card/50 p-4 sm:p-5 transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:bg-card/90 hover:shadow-xs"
               >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <Icon className="size-4 text-primary shrink-0" />
-                    <span className="text-xs font-semibold text-foreground group-hover:text-primary transition-colors">
-                      {link.title}
-                    </span>
+                <div className="space-y-2">
+                  <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                    <HugeiconsIcon icon={link.icon} className="size-4.5" strokeWidth={1.75} />
                   </div>
-                  <p className="text-[11px] text-muted-foreground leading-normal">{link.desc}</p>
+                  <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                    {link.title}
+                  </h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    {link.desc}
+                  </p>
                 </div>
-                <div className="pt-2 flex items-center gap-1 text-[10px] font-medium text-primary">
+                <div className="pt-3 flex items-center gap-1.5 text-xs font-medium text-primary">
                   <span>Explore</span>
-                  <ExternalLink className="size-2.5" />
+                  <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
                 </div>
               </Link>
-            )
-          })}
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

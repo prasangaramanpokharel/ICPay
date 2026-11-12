@@ -231,6 +231,14 @@ function findIndexNowKey(): string | null {
   return null
 }
 
+function findBaiduToken(): string | null {
+  const baiduTokenPath = join(root, "auto/seo/baidu/token.txt")
+  if (existsSync(baiduTokenPath)) {
+    return readFileSync(baiduTokenPath, "utf-8").trim()
+  }
+  return process.env.BAIDU_TOKEN?.trim() || null
+}
+
 function base64UrlEncode(str: string): string {
   return Buffer.from(str)
     .toString("base64")
@@ -425,6 +433,8 @@ if (!onlyGoogle) {
       { name: "IndexNow Global Hub (Broadcasts to Yandex, Bing, Naver, Seznam)", url: "https://api.indexnow.org/indexnow" },
       { name: "Microsoft Bing IndexNow (Copilot & Bing)", url: "https://www.bing.com/indexnow" },
       { name: "Yandex Direct IndexNow", url: "https://yandex.com/indexnow" },
+      { name: "Seznam.cz Direct IndexNow", url: "https://search.seznam.cz/indexnow" },
+      { name: "Yep Direct IndexNow", url: "https://indexnow.yep.com/indexnow" },
     ]
 
     for (const ep of endpoints) {
@@ -447,6 +457,28 @@ if (!onlyGoogle) {
     for (const u of targetUrls) {
       console.log(`      ✓ ${u}`)
     }
+  }
+}
+
+// 3. Baidu Link Submission API (China)
+const baiduToken = findBaiduToken()
+if (baiduToken && !onlyGoogle && !onlyIndexNow) {
+  console.log("\n─── 3. Baidu Link Submission API ────────────────────")
+  try {
+    const baiduApiUrl = `http://data.zz.baidu.com/urls?site=${encodeURIComponent(BASE_DOMAIN)}&token=${encodeURIComponent(baiduToken)}`
+    const res = await fetch(baiduApiUrl, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: targetUrls.join("\n"),
+    })
+    const data = (await res.json()) as { success?: number; remain?: number; message?: string }
+    if (res.ok && data.success) {
+      console.log(`  🟢  [Baidu] Success: ${data.success} URLs submitted, ${data.remain ?? 0} daily quota remaining.`)
+    } else {
+      console.log(`  🟡  [Baidu] HTTP ${res.status}: ${data.message ?? "Failed to submit"}`)
+    }
+  } catch (e: unknown) {
+    console.error("❌ Baidu Link Submission error:", e instanceof Error ? e.message : e)
   }
 }
 

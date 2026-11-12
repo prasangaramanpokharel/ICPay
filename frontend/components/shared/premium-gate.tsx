@@ -193,10 +193,10 @@ export function PremiumGateDialog({
             <HugeiconsIcon icon={CrownIcon} className="size-7 text-primary" strokeWidth={2} />
           </div>
 
-          <DialogTitle className="pt-2 text-lg font-semibold tracking-tight text-foreground">
+          <DialogTitle className="pt-2">
             {title}
           </DialogTitle>
-          <DialogDescription className="text-xs leading-relaxed text-muted-foreground">
+          <DialogDescription>
             {description}
           </DialogDescription>
         </DialogHeader>

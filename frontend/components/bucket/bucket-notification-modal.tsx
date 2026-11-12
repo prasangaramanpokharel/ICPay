@@ -10,7 +10,7 @@ import {
   Clock01Icon,
 } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Field, FieldLabel } from "@/components/ui/field"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -125,17 +126,16 @@ export function BucketNotificationModal({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-md gap-4 sm:max-w-lg">
         <DialogHeader className="gap-1.5">
-          <DialogTitle className="flex items-center gap-2 text-lg">
+          <DialogTitle className="flex items-center gap-2">
             <HugeiconsIcon icon={BellIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
             <span>Expiry Alerts</span>
           </DialogTitle>
-          <DialogDescription className="text-xs">
+          <DialogDescription>
             Email notifications for <span className="font-semibold text-foreground">{displayName}</span>
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-1 text-sm">
-          {/* Status banner */}
           {isLoading ? (
             <div className="flex items-center justify-center py-6 text-xs text-muted-foreground">
               Loading notification status...
@@ -166,12 +166,11 @@ export function BucketNotificationModal({
             </div>
           )}
 
-          {/* Form */}
           <form onSubmit={handleSave} className="space-y-3">
-            <div className="space-y-1.5">
-              <label htmlFor="bucket-notif-email" className="text-xs font-medium text-foreground">
+            <Field className="space-y-1.5">
+              <FieldLabel htmlFor="bucket-notif-email">
                 Email Address
-              </label>
+              </FieldLabel>
               <div className="relative">
                 <Input
                   id="bucket-notif-email"
@@ -187,9 +186,8 @@ export function BucketNotificationModal({
                   className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
                 />
               </div>
-            </div>
+            </Field>
 
-            {/* Lifecycle Stages Card */}
             <div className="rounded-lg border border-border/40 bg-muted/10 p-3 text-[11px] space-y-2">
               <div className="font-medium text-foreground/90 flex items-center gap-1.5">
                 <HugeiconsIcon icon={Clock01Icon} className="size-3.5 text-muted-foreground" />

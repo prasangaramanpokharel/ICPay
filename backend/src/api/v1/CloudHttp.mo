@@ -3,6 +3,8 @@ import HttpTypes "../../http/Types";
 import CloudHttpService "../../services/CloudHttpService";
 import BucketService "../../services/BucketService";
 import BucketRepository "../../repositories/BucketRepository";
+import BucketCrypto "../../utils/BucketCrypto";
+import Config "../../config/Config";
 
 mixin (buckets: BucketService.BucketService) {
 
@@ -22,13 +24,35 @@ mixin (buckets: BucketService.BucketService) {
       case (null) { return { body = Blob.fromArray([]); token = null } };
       case (?f) f;
     };
-    let stored = switch (buckets.remoteBlobActor) {
-      case (?remote) await remote.fetchBlob(file.id);
-      case null null;
+    let bucket = switch (BucketRepository.get(buckets.store, token.bucketId)) {
+      case (null) { return { body = Blob.fromArray([]); token = null } };
+      case (?b) b;
     };
-    switch (stored) {
-      case (null) { { body = Blob.fromArray([]); token = null } };
-      case (?data) { CloudHttpService.streamingCallbackFromStored(buckets, token, data) };
+    switch (buckets.remoteBlobActor) {
+      case (?remote) {
+        let chunkLimit = Config.HTTP_CHUNK_BYTES;
+        switch (await remote.fetchBlobSlice(file.id, token.offset, chunkLimit)) {
+          case (null) { { body = Blob.fromArray([]); token = null } };
+          case (?encSlice) {
+            let key = BucketCrypto.deriveKey(bucket.owner, token.bucketId);
+            let decrypted = BucketCrypto.decryptChunk(encSlice, key, token.offset);
+            let next = token.offset + decrypted.size();
+            let nextToken = if (next >= file.size) {
+              null
+            } else {
+              ?{
+                bucketId = token.bucketId;
+                path = token.path;
+                offset = next;
+              }
+            };
+            { body = decrypted; token = nextToken }
+          };
+        }
+      };
+      case null {
+        { body = Blob.fromArray([]); token = null }
+      };
     }
   };
 
@@ -69,35 +93,44 @@ mixin (buckets: BucketService.BucketService) {
           };
           case (?f) f;
         };
-        let stored = switch (buckets.remoteBlobActor) {
-      case (?remote) await remote.fetchBlob(file.id);
-      case null null;
-    };
-        switch (stored) {
+        let bucket = switch (BucketRepository.get(buckets.store, bucketId)) {
           case (null) {
-            #err(CloudHttpService.textResponse(404, "text/plain", "File not found"))
+            return #err(CloudHttpService.textResponse(404, "text/plain", "Bucket not found"))
           };
-          case (?data) {
-            switch (
-              CloudHttpService.prepareServeFromStored(buckets, parsed.bucketSegment, parsed.path, data)
-            ) {
-              case (#err(resp)) { #err(resp) };
-              case (#ok(#Direct({ contentType; data = body }))) {
-                #ok(CloudHttpService.buildDirectResponse(contentType, body))
+          case (?b) b;
+        };
+
+        let totalSize = file.size;
+        let firstLimit = if (totalSize <= Config.HTTP_MAX_BODY_BYTES) totalSize else Config.HTTP_CHUNK_BYTES;
+
+        switch (buckets.remoteBlobActor) {
+          case (?remote) {
+            switch (await remote.fetchBlobSlice(file.id, 0, firstLimit)) {
+              case (null) {
+                #err(CloudHttpService.textResponse(404, "text/plain", "File not found"))
               };
-              case (#ok(#Stream({ contentType; bucketId = id; path = filePath; firstChunk; totalSize }))) {
-                #ok(
-                  CloudHttpService.buildStreamResponse(
-                    contentType,
-                    id,
-                    filePath,
-                    firstChunk,
-                    totalSize,
-                    http_request_streaming_callback,
+              case (?encSlice) {
+                let key = BucketCrypto.deriveKey(bucket.owner, bucketId);
+                let decrypted = BucketCrypto.decryptChunk(encSlice, key, 0);
+                if (totalSize <= Config.HTTP_MAX_BODY_BYTES) {
+                  #ok(CloudHttpService.buildDirectResponse(file.contentType, decrypted))
+                } else {
+                  #ok(
+                    CloudHttpService.buildStreamResponse(
+                      file.contentType,
+                      bucketId,
+                      parsed.path,
+                      decrypted,
+                      totalSize,
+                      http_request_streaming_callback,
+                    )
                   )
-                )
+                }
               };
             }
+          };
+          case null {
+            #err(CloudHttpService.textResponse(500, "text/plain", "Blob store not configured"))
           };
         }
       };

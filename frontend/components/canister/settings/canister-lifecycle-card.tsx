@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Alert02Icon,
@@ -175,7 +175,7 @@ export function CanisterLifecycleCard({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Stop this canister?</AlertDialogTitle>
-            <AlertDialogDescription className="text-xs">
+            <AlertDialogDescription>
               Stopping pauses execution until you start it again. Only authorized controllers can
               start or stop canisters.
             </AlertDialogDescription>
@@ -199,7 +199,7 @@ export function CanisterLifecycleCard({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Irrevocably delete this canister?</AlertDialogTitle>
-            <AlertDialogDescription className="flex flex-col gap-2 text-xs">
+            <AlertDialogDescription className="flex flex-col gap-2">
               <p>This action is completely permanent and cannot be reversed.</p>
               <p className="break-all font-mono font-medium text-foreground">{canisterId}</p>
               <p>All canister memory, code, and stable state will be destroyed.</p>
