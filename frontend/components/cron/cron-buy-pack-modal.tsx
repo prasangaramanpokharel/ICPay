@@ -193,14 +193,9 @@ export function CronBuyPackModal({
           )}
 
           <div className="flex flex-col gap-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="runs-input">
-                Execution Runs
-              </Label>
-              <span className="text-xs text-muted-foreground tabular-nums">
-                Rate: $0.0005 / run ($0.50 per 1k)
-              </span>
-            </div>
+            <Label htmlFor="runs-input">
+              Execution Runs
+            </Label>
 
             <div className="relative">
               <Input
@@ -273,10 +268,8 @@ export function CronBuyPackModal({
           >
             {purchasing ? (
               <Spinner className="size-4 mr-2" />
-            ) : (
-              <HugeiconsIcon icon={ZapIcon} className="size-4 mr-2" />
-            )}
-            Top Up {runs > 0 ? runs.toLocaleString() : 0} Runs (${dollarsFormatted} • {icpFormatted} ICP)
+            ) : null}
+            Confirm
           </Button>
 
           {error && (
