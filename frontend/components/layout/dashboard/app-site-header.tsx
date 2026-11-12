@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -133,7 +134,25 @@ export function AppSiteHeader() {
         <React.Suspense fallback={<h1 className="flex-1 truncate text-sm font-normal">icPay</h1>}>
           <HeaderTitleOrBreadcrumb pathname={pathname} />
         </React.Suspense>
-        <div className="flex shrink-0 items-center">
+        <div className="flex shrink-0 items-center gap-1.5">
+          <Link
+            href="/presale"
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "icon-sm" }),
+              "size-8 rounded-full p-1 transition-transform hover:scale-105 active:scale-95",
+            )}
+            title={t("nav.presale" as never) || "ICPAY Token Presale"}
+            aria-label={t("nav.presale" as never) || "ICPAY Token Presale"}
+          >
+            <Image
+              src="/images/pages/dashboard/presale.webp"
+              alt="Presale"
+              width={20}
+              height={20}
+              className="size-5 shrink-0 object-contain rounded-sm"
+              priority
+            />
+          </Link>
           <Link
             href="/username"
             className={cn(
