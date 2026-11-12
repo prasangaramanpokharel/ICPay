@@ -82,6 +82,7 @@ ci/academy/
 frontend/app/(public)/academy/
 frontend/app/(admin)/acadamey/
 frontend/components/products/icacademy/
+frontend/hooks/academy/
 frontend/public/images/pages/icacademy/
 frontend/services/academy/
 
