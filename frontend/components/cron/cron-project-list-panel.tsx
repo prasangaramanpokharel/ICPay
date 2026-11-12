@@ -3,6 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
@@ -94,6 +95,8 @@ type FilterTab = "all" | "active" | "paused"
 export function CronProjectListPanel() {
   const router = useRouter()
   const { identity } = useAuth()
+  const t = useTranslations("cron")
+  const tCommon = useTranslations("common")
 
   const [projects, setProjects] = React.useState<RemoteProjectRecord[]>([])
   const [allJobs, setAllJobs] = React.useState<RemoteJobSummary[]>([])
@@ -256,15 +259,10 @@ export function CronProjectListPanel() {
   const freeRuns = credits ? Number(credits.free_runs_remaining) : 18
   const paidCredits = credits ? credits.prepaid_credits.toLocaleString() : "0"
 
-  const jobsCountFor = (proj: RemoteProjectRecord | null) => {
-    if (!proj) return 0
-    return (jobsByProject.get(proj.id.toString()) ?? []).length
-  }
-
   return (
     <AppPage
-      title="icCron Scheduler"
-      description="Decentralized on-chain automated jobs, recurring tasks, and webhooks"
+      title={t("schedulerTitle")}
+      description={t("schedulerSubtitle")}
       className="w-full space-y-6"
       actions={
         <div className="flex items-center gap-2">
@@ -276,14 +274,14 @@ export function CronProjectListPanel() {
             className="gap-1.5"
           >
             <HugeiconsIcon icon={Key01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
-            <span>API</span>
+            <span>{t("api")}</span>
           </Button>
           <Button
             variant="outline"
             size="sm"
             onClick={() => setBuyModalOpen(true)}
           >
-            Top Up
+            {t("topUp")}
           </Button>
           <Button
             size="sm"
@@ -291,7 +289,7 @@ export function CronProjectListPanel() {
             className="gap-1.5"
           >
             <HugeiconsIcon icon={PlusSignIcon} className="size-4" strokeWidth={1.75} />
-            <span>New Project</span>
+            <span>{t("newProject")}</span>
           </Button>
         </div>
       }
@@ -302,42 +300,42 @@ export function CronProjectListPanel() {
             <div className="flex flex-1 flex-col gap-3 min-w-0 w-full">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-semibold text-foreground">
-                  Monthly Quota & Credits
+                  {t("monthlyQuota")}
                 </span>
                 <Badge variant="secondary" className="text-[10px] h-5 px-1.5 font-medium">
-                  Active
+                  {t("active")}
                 </Badge>
               </div>
 
               <p className="text-xs text-muted-foreground leading-relaxed max-w-md">
-                Automate on-chain calls and recurring HTTP webhooks. Free tier gives 60 executions each month.
+                {t("quotaDesc")}
               </p>
 
               <div className="grid grid-cols-2 gap-2.5 sm:max-w-md">
                 <div className="rounded-lg border border-border/60 bg-background/50 p-2.5">
-                  <span className="text-[11px] text-muted-foreground block">Free allowance</span>
+                  <span className="text-[11px] text-muted-foreground block">{t("freeAllowance")}</span>
                   <span className="text-sm font-semibold text-foreground tabular-nums">
-                    {freeRuns} <span className="text-xs font-normal text-muted-foreground">/ 60 left</span>
+                    {freeRuns} <span className="text-xs font-normal text-muted-foreground">{t("leftLabel")}</span>
                   </span>
                 </div>
                 <div className="rounded-lg border border-border/60 bg-background/50 p-2.5">
                   <div className="flex items-center gap-1">
-                    <span className="text-[11px] text-muted-foreground">Prepaid credits</span>
+                    <span className="text-[11px] text-muted-foreground">{t("prepaidCredits")}</span>
                     <Tooltip>
                       <TooltipTrigger
                         type="button"
                         className="inline-flex cursor-help text-muted-foreground/70 transition-colors hover:text-foreground outline-none"
                       >
                         <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5" />
-                        <span className="sr-only">Prepaid credits info</span>
+                        <span className="sr-only">{t("prepaidCredits")}</span>
                       </TooltipTrigger>
                       <TooltipContent side="top" className="max-w-xs text-xs">
-                        $0.0005 per run. Prepaid credits never expire and are automatically used after your monthly free allowance.
+                        {t("prepaidTooltip")}
                       </TooltipContent>
                     </Tooltip>
                   </div>
                   <span className="text-sm font-semibold text-foreground tabular-nums">
-                    {paidCredits} <span className="text-xs font-normal text-muted-foreground">runs</span>
+                    {paidCredits} <span className="text-xs font-normal text-muted-foreground">{t("runs")}</span>
                   </span>
                 </div>
               </div>
@@ -352,7 +350,7 @@ export function CronProjectListPanel() {
                 outerRadius={74}
                 polarRadius={[66, 56]}
                 centerValue={freeRuns}
-                centerLabel="/ 60 left"
+                centerLabel={t("leftLabel")}
                 width={150}
                 height={150}
                 valueClassName="fill-foreground text-2xl font-bold tabular-nums"
@@ -371,7 +369,7 @@ export function CronProjectListPanel() {
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search projects"
+              placeholder={t("searchProjects")}
               className="pl-10"
               autoComplete="off"
               spellCheck={false}
@@ -386,7 +384,7 @@ export function CronProjectListPanel() {
                 variant={filter === tab ? "secondary" : "outline"}
                 onClick={() => setFilter(tab)}
               >
-                {tab === "all" ? "All" : tab === "active" ? "Active" : "Paused"}
+                {tab === "all" ? t("all") : tab === "active" ? t("active") : t("paused")}
               </Button>
             ))}
           </ButtonGroup>
@@ -406,15 +404,15 @@ export function CronProjectListPanel() {
               <EmptyMedia variant="icon">
                 <HugeiconsIcon icon={Folder01Icon} className="size-6 text-muted-foreground" strokeWidth={1.75} />
               </EmptyMedia>
-              <EmptyTitle>No projects yet</EmptyTitle>
+              <EmptyTitle>{t("noProjectsTitle")}</EmptyTitle>
               <EmptyDescription>
-                Create a project to organize and schedule your automated cron jobs, recurring HTTP webhooks, and canister tasks.
+                {t("noProjectsDesc")}
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
               <Button onClick={() => setCreateOpen(true)} className="gap-1.5">
                 <HugeiconsIcon icon={PlusSignIcon} className="size-4" strokeWidth={1.75} />
-                Create your first project
+                {t("createFirstProject")}
               </Button>
             </EmptyContent>
           </Empty>
@@ -424,9 +422,9 @@ export function CronProjectListPanel() {
               <EmptyMedia variant="icon">
                 <HugeiconsIcon icon={Search01Icon} className="size-6 text-muted-foreground" strokeWidth={1.75} />
               </EmptyMedia>
-              <EmptyTitle>No projects match your search</EmptyTitle>
+              <EmptyTitle>{t("noProjectsMatch")}</EmptyTitle>
               <EmptyDescription>
-                Try clearing your search query or switching filters.
+                {t("noProjectsMatchDesc")}
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
@@ -438,7 +436,7 @@ export function CronProjectListPanel() {
                   setFilter("all")
                 }}
               >
-                Clear filters
+                {t("clearFilters")}
               </Button>
             </EmptyContent>
           </Empty>
@@ -448,10 +446,10 @@ export function CronProjectListPanel() {
               <Table>
                 <TableHeader>
                   <TableRow className="border-border hover:bg-transparent">
-                    <TableHead className="font-semibold text-muted-foreground py-3.5">Project</TableHead>
-                    <TableHead className="font-semibold text-muted-foreground py-3.5 hidden sm:table-cell">Jobs</TableHead>
-                    <TableHead className="font-semibold text-muted-foreground py-3.5 hidden sm:table-cell">Status</TableHead>
-                    <TableHead className="text-right font-semibold text-muted-foreground py-3.5 pr-4 w-16">Action</TableHead>
+                    <TableHead className="font-semibold text-muted-foreground py-3.5">{t("project")}</TableHead>
+                    <TableHead className="font-semibold text-muted-foreground py-3.5 hidden sm:table-cell">{t("jobs")}</TableHead>
+                    <TableHead className="font-semibold text-muted-foreground py-3.5 hidden sm:table-cell">{t("status")}</TableHead>
+                    <TableHead className="text-right font-semibold text-muted-foreground py-3.5 pr-4 w-16">{t("action")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -485,7 +483,7 @@ export function CronProjectListPanel() {
                             variant={jobs.length === 0 ? "secondary" : hasActive ? "outline" : "secondary"}
                             className="text-[10px] px-1.5 py-0 font-medium"
                           >
-                            {jobs.length === 0 ? "Empty" : hasActive ? "Active" : "Paused"}
+                            {jobs.length === 0 ? t("empty") : hasActive ? t("active") : t("paused")}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right py-3.5 pr-4 w-16">
@@ -513,7 +511,7 @@ export function CronProjectListPanel() {
                                   className="gap-2 text-xs"
                                 >
                                   <HugeiconsIcon icon={Folder01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
-                                  <span>Project details</span>
+                                  <span>{t("projectDetails")}</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => void handleToggleProjectStatus(proj, hasActive)}
@@ -529,7 +527,7 @@ export function CronProjectListPanel() {
                                       strokeWidth={1.75}
                                     />
                                   )}
-                                  <span>{hasActive ? "Pause all jobs" : "Resume all jobs"}</span>
+                                  <span>{hasActive ? t("pauseAllJobs") : t("resumeAllJobs")}</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
@@ -539,7 +537,7 @@ export function CronProjectListPanel() {
                                   className="gap-2 text-xs text-destructive focus:bg-destructive/10 focus:text-destructive"
                                 >
                                   <HugeiconsIcon icon={Delete02Icon} className="size-3.5 text-destructive" strokeWidth={1.75} />
-                                  <span>Delete project</span>
+                                  <span>{t("deleteProject")}</span>
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
@@ -559,10 +557,10 @@ export function CronProjectListPanel() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              Create a New Project
+              {t("createProjectTitle")}
             </DialogTitle>
             <DialogDescription>
-              Group related cron jobs, webhooks, and API keys under a project namespace.
+              {t("createProjectDesc")}
             </DialogDescription>
           </DialogHeader>
 
@@ -570,7 +568,7 @@ export function CronProjectListPanel() {
             <Input
               value={newProjectName}
               onChange={(e) => setNewProjectName(e.target.value)}
-              placeholder="e.g. Production Webhooks, Analytics Poller..."
+              placeholder={t("projectNamePlaceholder")}
               className="text-sm"
               required
             />
@@ -581,7 +579,7 @@ export function CronProjectListPanel() {
                 size="sm"
                 onClick={() => setCreateOpen(false)}
               >
-                Cancel
+                {tCommon("cancel")}
               </Button>
               <Button
                 type="submit"
@@ -590,7 +588,7 @@ export function CronProjectListPanel() {
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 {creatingProject ? <Spinner data-icon="inline-start" /> : null}
-                <span>Create Project</span>
+                <span>{t("createProject")}</span>
               </Button>
             </div>
           </form>
@@ -614,20 +612,20 @@ export function CronProjectListPanel() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Project?</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteProjectTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete project &quot;{projectToDelete?.name}&quot; ({jobsCountFor(projectToDelete)} jobs)? All associated cron jobs will be permanently deleted. This action cannot be undone.
+              {t("deleteProjectConfirm")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               onClick={() => {
                 void handleDeleteProject()
               }}
             >
-              Delete Project
+              {t("deleteProject")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

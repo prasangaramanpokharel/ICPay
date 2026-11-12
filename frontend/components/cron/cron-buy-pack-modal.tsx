@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Principal } from "@icp-sdk/core/principal"
+import { useTranslations } from "next-intl"
 import {
   Dialog,
   DialogContent,
@@ -55,6 +56,7 @@ export function CronBuyPackModal({
   credits,
   onPurchased,
 }: CronBuyPackModalProps) {
+  const t = useTranslations("cron")
   const { identity } = useAuth()
   const [runs, setRuns] = React.useState<number>(2500)
   const [quote, setQuote] = React.useState<RemotePackQuote | null>(null)
@@ -167,10 +169,10 @@ export function CronBuyPackModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <HugeiconsIcon icon={ZapIcon} className="size-5 text-primary" />
-            Top Up Execution Runs
+            {t("topUpTitle")}
           </DialogTitle>
           <DialogDescription>
-            Pay-as-you-go at $0.0005 per run. Billed in USD, settled on-chain via ICP.
+            {t("topUpDesc")}
           </DialogDescription>
         </DialogHeader>
 
@@ -178,15 +180,15 @@ export function CronBuyPackModal({
           {credits && (
             <div className="rounded-lg border border-border bg-muted/40 p-3.5 flex items-center justify-between text-xs">
               <div>
-                <span className="text-muted-foreground">Free monthly allowance:</span>{" "}
+                <span className="text-muted-foreground">{t("freeMonthlyAllowance")}:</span>{" "}
                 <span className="font-semibold text-foreground tabular-nums">
-                  {credits.free_runs_remaining.toString()} / 60 remaining
+                  {credits.free_runs_remaining.toString()} / 60 {t("remaining")}
                 </span>
               </div>
               <div>
-                <span className="text-muted-foreground">Prepaid balance:</span>{" "}
+                <span className="text-muted-foreground">{t("prepaidBalance")}:</span>{" "}
                 <span className="font-semibold text-foreground tabular-nums">
-                  {credits.prepaid_credits.toLocaleString()} runs
+                  {credits.prepaid_credits.toLocaleString()} {t("runs")}
                 </span>
               </div>
             </div>
@@ -194,7 +196,7 @@ export function CronBuyPackModal({
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="runs-input">
-              Execution Runs
+              {t("executionRuns")}
             </Label>
 
             <div className="relative">
@@ -208,7 +210,7 @@ export function CronBuyPackModal({
                 className="pr-16 font-semibold tabular-nums text-foreground bg-input border-border"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-medium text-muted-foreground pointer-events-none">
-                runs
+                {t("runs")}
               </span>
             </div>
 
@@ -234,14 +236,14 @@ export function CronBuyPackModal({
           <div className="rounded-lg border border-border bg-background p-4 flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
-                <span className="text-xs text-muted-foreground">Total USD</span>
+                <span className="text-xs text-muted-foreground">{t("totalUsd")}</span>
                 <span className="text-2xl font-bold tracking-tight text-foreground tabular-nums">
                   ${dollarsFormatted}
                 </span>
               </div>
 
               <div className="text-right flex flex-col items-end">
-                <span className="text-xs text-muted-foreground">Estimated ICP</span>
+                <span className="text-xs text-muted-foreground">{t("estimatedIcp")}</span>
                 <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground tabular-nums">
                   <HugeiconsIcon icon={Coins01Icon} className="size-4 text-primary" />
                   {loadingQuote ? <Spinner className="size-3.5" /> : `${icpFormatted} ICP`}
@@ -252,7 +254,7 @@ export function CronBuyPackModal({
             <div className="flex items-center justify-between border-t border-border/60 pt-2.5 text-xs text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <HugeiconsIcon icon={Clock01Icon} className="size-3.5 text-primary" />
-                <span>Estimated Runway:</span>
+                <span>{t("estimatedRunway")}:</span>
               </div>
               <Badge variant="secondary" className="font-normal text-[11px]">
                 {formatRunway(runs)}
@@ -269,7 +271,7 @@ export function CronBuyPackModal({
             {purchasing ? (
               <Spinner className="size-4 mr-2" />
             ) : null}
-            Confirm
+            {t("confirm")}
           </Button>
 
           {error && (

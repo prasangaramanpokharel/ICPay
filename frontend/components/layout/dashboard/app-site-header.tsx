@@ -38,7 +38,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage className="font-medium text-foreground">
-                API Keys
+                {t("cron.apiKeys")}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -72,7 +72,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
             )}
             <BreadcrumbItem>
               <BreadcrumbPage className="font-medium text-foreground">
-                Create Job
+                {t("cron.createJob")}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -105,7 +105,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
       <Breadcrumb className="flex-1 min-w-0">
         <BreadcrumbList className="text-xs sm:text-sm">
           <BreadcrumbItem>
-            <span className="text-muted-foreground">Services</span>
+            <span className="text-muted-foreground">{t("settings.sections.services")}</span>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>

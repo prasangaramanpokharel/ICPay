@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Principal } from "@icp-sdk/core/principal"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Input } from "@/components/ui/input"
@@ -29,6 +30,7 @@ interface CronCreateFormProps {
 
 export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps) {
   const { identity } = useAuth()
+  const t = useTranslations("cron")
   const [jobType, setJobType] = React.useState<"php" | "custom" | "canister">("custom")
   const [command, setCommand] = React.useState(
     "wget -O /dev/null https://commandosecurity.com.np/wp-cron.php/"
@@ -158,13 +160,13 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
     <Card className="border border-border/80 bg-card text-card-foreground shadow-xs">
       <CardHeader className="pb-4">
         <CardTitle className="text-xl font-semibold tracking-tight text-foreground">
-          Create a New Cron Job
+          {t("createNew")}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSave} className="flex flex-col gap-6">
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Job Type</Label>
+            <Label className="text-xs text-muted-foreground">{t("jobType")}</Label>
             <ButtonGroup>
               <Button
                 type="button"
@@ -197,14 +199,14 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                 }}
                 className="text-xs"
               >
-                Canister Call
+                {t("canisterCall")}
               </Button>
             </ButtonGroup>
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="job-label" className="text-sm font-medium text-foreground">
-              Job Name / Label
+              {t("jobLabel")}
             </Label>
             <Input
               id="job-label"
@@ -217,7 +219,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="command" className="text-sm font-medium text-foreground">
-              Command to Run
+              {t("commandToRun")}
             </Label>
             <Input
               id="command"
@@ -231,7 +233,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="common-options" className="text-sm font-medium text-foreground">
-              Common Options
+              {t("commonOptions")}
             </Label>
             <NativeSelect
               id="common-options"
@@ -250,7 +252,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             <div className="flex flex-col gap-2">
               <Label htmlFor="select-minute" className="text-sm font-medium text-muted-foreground">
-                Minute
+                {t("minute")}
               </Label>
               <NativeSelect
                 id="select-minute"
@@ -268,7 +270,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="select-hour" className="text-sm font-medium text-muted-foreground">
-                Hour
+                {t("hour")}
               </Label>
               <NativeSelect
                 id="select-hour"
@@ -286,7 +288,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="select-day" className="text-sm font-medium text-muted-foreground">
-                Day
+                {t("day")}
               </Label>
               <NativeSelect
                 id="select-day"
@@ -304,7 +306,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="select-month" className="text-sm font-medium text-muted-foreground">
-                Month
+                {t("month")}
               </Label>
               <NativeSelect
                 id="select-month"
@@ -322,7 +324,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="select-weekday" className="text-sm font-medium text-muted-foreground">
-                Weekday
+                {t("weekday")}
               </Label>
               <NativeSelect
                 id="select-weekday"
@@ -350,7 +352,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
               className="min-w-28 bg-primary text-primary-foreground hover:bg-primary/90"
             >
               {loading ? <Spinner data-icon="inline-start" /> : null}
-              <span>Save</span>
+              <span>{t("save")}</span>
             </Button>
           </div>
 
