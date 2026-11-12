@@ -1317,6 +1317,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "Production Motoko framework na may global CLI."
+        },
+        "iccron": {
+          "title": "icCron",
+          "description": "Autonomous on-chain cron scheduler and webhook dispatcher."
         }
       },
       "resources": {
@@ -1418,7 +1422,8 @@
         "icbucket": "ICBucket",
         "canister": "Mga Canister",
         "topup": "Top up cycles",
-        "wallet": "ICPay Wallet"
+        "wallet": "ICPay Wallet",
+        "iccron": "icCron"
       },
       "resources": {
         "falconCli": "Falcon CLI",

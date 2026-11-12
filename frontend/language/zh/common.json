@@ -1317,6 +1317,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "生产级 Motoko 框架，配备全局 CLI。"
+        },
+        "iccron": {
+          "title": "icCron",
+          "description": "Autonomous on-chain cron scheduler and webhook dispatcher."
         }
       },
       "resources": {
@@ -1418,7 +1422,8 @@
         "icbucket": "ICBucket",
         "canister": "容器",
         "topup": "充值 Cycles",
-        "wallet": "ICPay 钱包"
+        "wallet": "ICPay 钱包",
+        "iccron": "icCron"
       },
       "resources": {
         "falconCli": "Falcon CLI",

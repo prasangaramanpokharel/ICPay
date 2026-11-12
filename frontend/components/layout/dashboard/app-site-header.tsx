@@ -25,8 +25,8 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
   const searchParams = useSearchParams()
   const t = useTranslations()
 
-  if (pathname.startsWith("/cron") || pathname.startsWith("/iccron")) {
-    if (pathname === "/cron/api" || pathname === "/iccron/api") {
+  if (pathname.startsWith("/cron")) {
+    if (pathname === "/cron/api") {
       return (
         <Breadcrumb className="flex-1 min-w-0">
           <BreadcrumbList className="text-xs sm:text-sm">
@@ -46,7 +46,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
       )
     }
 
-    if (pathname === "/cron/create" || pathname === "/iccron/create") {
+    if (pathname === "/cron/create") {
       const projectName = searchParams.get("id") || searchParams.get("name")
       return (
         <Breadcrumb className="flex-1 min-w-0">

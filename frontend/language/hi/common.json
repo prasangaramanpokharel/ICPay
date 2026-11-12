@@ -1317,6 +1317,10 @@
         "icfalcon": {
           "title": "ICFalcon",
           "description": "ग्लोबल CLI के साथ प्रोडक्शन Motoko फ्रेमवर्क।"
+        },
+        "iccron": {
+          "title": "icCron",
+          "description": "Autonomous on-chain cron scheduler and webhook dispatcher."
         }
       },
       "resources": {
@@ -1418,7 +1422,8 @@
         "icbucket": "ICBucket",
         "canister": "कैनिस्टर्स",
         "topup": "Top up cycles",
-        "wallet": "ICPay Wallet"
+        "wallet": "ICPay Wallet",
+        "iccron": "icCron"
       },
       "resources": {
         "falconCli": "Falcon CLI",

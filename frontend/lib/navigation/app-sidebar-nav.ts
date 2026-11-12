@@ -117,12 +117,7 @@ const ALL_ITEMS: SidebarNavItem[] = [
 export function isSidebarItemActive(pathname: string, href: string): boolean {
   if (href === "/home") return pathname === "/home"
   if (href === "/cron") {
-    return (
-      pathname === "/cron" ||
-      pathname.startsWith("/cron/") ||
-      pathname === "/iccron" ||
-      pathname.startsWith("/iccron/")
-    )
+    return pathname === "/cron" || pathname.startsWith("/cron/")
   }
   return pathname === href || pathname.startsWith(`${href}/`)
 }

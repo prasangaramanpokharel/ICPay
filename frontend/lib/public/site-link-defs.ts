@@ -17,6 +17,7 @@ export const PUBLIC_PRODUCT_MENU_DEFS: NavMenuItemDef[] = [
   { id: "launch", href: "/token/create" },
   { id: "icbucket", href: "/icbucket" },
   { id: "icfalcon", href: "/icfalcon" },
+  { id: "iccron", href: "/iccron" },
 ]
 
 export const PUBLIC_CANISTER_MENU_DEFS: NavMenuItemDef[] = [
@@ -50,6 +51,7 @@ export const PUBLIC_LEGAL_MENU_DEFS: NavMenuItemDef[] = [
 export const PUBLIC_PRODUCT_LINK_DEFS: SiteLinkDef[] = [
   { id: "icfalcon", href: "/icfalcon" },
   { id: "icbucket", href: "/icbucket" },
+  { id: "iccron", href: "/iccron" },
   { id: "canister", href: "/canister" },
   { id: "topup", href: "/topup" },
   { id: "wallet", href: "/login" },
