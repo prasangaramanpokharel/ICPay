@@ -27,6 +27,7 @@ import {
   HoverCardTrigger,
   HoverCardContent,
 } from "@/components/ui/hover-card"
+import { ShineBorder } from "@/components/ui/shine-border"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useIcpaySale } from "@/hooks/icpay/useIcpaySale"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
@@ -63,7 +64,13 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
   return (
     <section className="mx-auto w-full max-w-2xl space-y-4">
       <Card className="relative overflow-hidden rounded-3xl border border-border/80 bg-card shadow-sm">
-        <CardHeader className="flex flex-row items-start justify-between gap-4 pb-2">
+        <ShineBorder
+          borderWidth={1.2}
+          duration={12}
+          shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+        />
+
+        <CardHeader className="relative flex flex-row items-start justify-between gap-4 pb-2">
           <div className="flex items-center gap-3.5">
             <Avatar size="lg" className="size-12 shrink-0 ring-1 ring-border/70 shadow-sm">
               <AvatarImage src={ICPAY_TOKEN_ICON} alt={symbol} />
@@ -125,7 +132,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
           </HoverCard>
         </CardHeader>
 
-        <CardContent className="space-y-5 pt-2">
+        <CardContent className="relative space-y-5 pt-2">
           <div className="relative rounded-2xl border border-border/60 bg-muted/30 p-5 text-center">
             <span className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
               {t("rateInfoTitle")}
@@ -227,7 +234,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
           </div>
         </CardContent>
 
-        <CardFooter className="px-6 pt-1 pb-6">
+        <CardFooter className="relative px-6 pt-1 pb-6">
           {identity ? (
             <Button
               size="lg"

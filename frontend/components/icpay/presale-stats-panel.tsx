@@ -43,26 +43,43 @@ export function PresaleStatsPanel({
 
   return (
     <div className="space-y-4">
-      <div className="space-y-2">
-        <div className="flex items-baseline justify-between text-xs">
-          <div className="flex items-center gap-1.5 text-muted-foreground">
-            <span className="font-bold text-foreground">
-              {formatTokenAmount(sale.icpaySold, ICP_DECIMALS, 0)}
+      <div className="space-y-2.5 rounded-2xl border border-border/60 bg-muted/20 p-4">
+        <div className="flex items-center justify-between text-xs">
+          <div className="space-y-0.5">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Presale Allocation
             </span>
-            <span className="text-muted-foreground/40">/</span>
-            <span>{formatTokenAmount(sale.inventoryCap, ICP_DECIMALS, 0)}</span>
-            <span className="font-medium text-foreground">{symbol}</span>
+            <div className="flex items-center gap-1.5 font-medium tabular-nums text-foreground">
+              <span className="text-sm font-bold sm:text-base">
+                {formatTokenAmount(sale.icpaySold, ICP_DECIMALS, 0)}
+              </span>
+              <span className="text-muted-foreground/50">/</span>
+              <span className="text-muted-foreground">
+                {formatTokenAmount(sale.inventoryCap, ICP_DECIMALS, 0)} {symbol}
+              </span>
+            </div>
           </div>
-          <span className="font-mono text-xs font-bold text-primary tabular-nums">
-            {percentLabel}%
-          </span>
+          <div className="text-right">
+            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+              Filled
+            </span>
+            <div className="font-mono text-sm font-extrabold text-primary tabular-nums sm:text-base">
+              {percentLabel}%
+            </div>
+          </div>
         </div>
 
-        <div className="relative h-2.5 w-full overflow-hidden rounded-full bg-muted/60 p-0.5">
+        <div className="relative h-3 w-full overflow-hidden rounded-full bg-muted/80 p-0.5 ring-1 ring-border/50">
           <div
             className="h-full rounded-full bg-primary shadow-xs transition-all duration-700 ease-out"
             style={{ width: `${percent}%` }}
           />
+        </div>
+
+        <div className="flex items-center justify-between text-[10px] font-medium text-muted-foreground tabular-nums">
+          <span>0 {symbol}</span>
+          <span className="font-semibold text-primary/90">{percentLabel}% Completed</span>
+          <span>{formatTokenAmount(sale.inventoryCap, ICP_DECIMALS, 0)} {symbol}</span>
         </div>
       </div>
 
