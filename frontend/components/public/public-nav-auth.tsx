@@ -36,6 +36,8 @@ import { cn } from "@/lib/ui/utils"
 export function PublicNavAuth() {
   const tNav = useTranslations("publicSite.nav")
   const tSettings = useTranslations("settings")
+  const tDeposit = useTranslations("deposit")
+  const tCommon = useTranslations("common")
   const { identity, isAuthenticated, isLoading, logout } = useAuth()
   const { data: dashboard } = useDashboard()
   const { data: deposit } = useDepositAddress()
@@ -52,7 +54,7 @@ export function PublicNavAuth() {
   const icrcAddress = deposit ? icrc1Account(deposit.address.owner, deposit.address.subaccount[0]) : ""
   const depositAddress = icrcAddress || principal
   const username = dashboard?.user.username?.[0]
-  const displayName = username || "Your Wallet"
+  const displayName = username || tNav("wallet")
 
   const avatarUri = React.useMemo(
     () => (principal ? avatarUriFor(principal) : ""),
@@ -64,21 +66,21 @@ export function PublicNavAuth() {
     ? `${depositAddress.slice(0, 8)}…${depositAddress.slice(-4)}`
     : depositAddress || "..."
 
-  const handleCopy = async (e: React.MouseEvent | React.KeyboardEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
+  const handleCopy = async (e?: React.MouseEvent | React.KeyboardEvent) => {
+    e?.stopPropagation()
+    e?.preventDefault()
     if (!depositAddress) return
     try {
       await copyText(depositAddress)
       setCopied(true)
       toast.add({
-        title: "Deposit address copied to clipboard",
+        title: tDeposit("copyAddress"),
         type: "info",
       })
       setTimeout(() => setCopied(false), 2000)
     } catch {
       toast.add({
-        title: "Failed to copy address",
+        title: tCommon("retry"),
         type: "error",
       })
     }
@@ -96,10 +98,10 @@ export function PublicNavAuth() {
         <DropdownMenuTrigger
           nativeButton={false}
           render={
-            <div
-              role="button"
-              tabIndex={0}
-              className="group flex cursor-pointer items-center gap-2.5 rounded-lg border border-border/70 bg-card/60 px-2.5 py-1 text-left transition-colors hover:bg-muted/50 outline-none focus-visible:ring-2 focus-visible:ring-ring select-none"
+            <Button
+              variant="outline"
+              size="sm"
+              className="group h-auto gap-2.5 rounded-lg border-border/70 bg-card/60 px-2.5 py-1 text-left transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring select-none"
             />
           }
         >
@@ -113,36 +115,9 @@ export function PublicNavAuth() {
             <span className="text-xs font-semibold text-foreground">
               {displayName}
             </span>
-            <div className="flex items-center gap-1">
-              <span className="font-mono text-[11px] text-muted-foreground">
-                {formattedAddress}
-              </span>
-              <button
-                type="button"
-                ref={(node) => {
-                  if (node) {
-                    node.onmousedown = (e) => e.stopPropagation()
-                    node.onpointerdown = (e) => e.stopPropagation()
-                  }
-                }}
-                onPointerDown={(e) => e.stopPropagation()}
-                onMouseDown={(e) => e.stopPropagation()}
-                onClick={handleCopy}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.stopPropagation()
-                    handleCopy(e)
-                  }
-                }}
-                title="Copy deposit address"
-                className="flex size-4 items-center justify-center rounded text-muted-foreground/80 hover:text-foreground transition-colors cursor-pointer"
-              >
-                <HugeiconsIcon
-                  icon={copied ? CheckmarkCircle02Icon : Copy01Icon}
-                  className={cn("size-3", copied && "text-success")}
-                />
-              </button>
-            </div>
+            <span className="font-mono text-[11px] text-muted-foreground">
+              {formattedAddress}
+            </span>
           </div>
           <HugeiconsIcon
             icon={ArrowDown01Icon}
@@ -155,13 +130,21 @@ export function PublicNavAuth() {
               <HugeiconsIcon icon={Wallet01Icon} className="size-4" strokeWidth={1.75} />
               {tNav("wallet")}
             </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleCopy}>
+              <HugeiconsIcon
+                icon={copied ? CheckmarkCircle02Icon : Copy01Icon}
+                className={cn("size-4", copied && "text-success")}
+                strokeWidth={1.75}
+              />
+              {copied ? tCommon("copied") : tDeposit("copyAddress")}
+            </DropdownMenuItem>
             <DropdownMenuItem render={<Link href="/deposit" />}>
               <HugeiconsIcon icon={Download01Icon} className="size-4" strokeWidth={1.75} />
-              Deposit
+              {tDeposit("title")}
             </DropdownMenuItem>
             <DropdownMenuItem render={<Link href="/transfer" />}>
               <HugeiconsIcon icon={SentIcon} className="size-4" strokeWidth={1.75} />
-              Send
+              {tCommon("send")}
             </DropdownMenuItem>
             <DropdownMenuItem render={<Link href="/profile" />}>
               <HugeiconsIcon icon={UserIcon} className="size-4" strokeWidth={1.75} />

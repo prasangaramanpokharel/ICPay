@@ -17,7 +17,7 @@ import { APP_NAV_ITEMS, isAppNavActive } from "@/lib/navigation/app-nav-items"
 
 export type SidebarNavSubItem = {
   href: string
-  label: string
+  labelKey: string
 }
 
 export type SidebarNavItem = {
@@ -67,9 +67,9 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
         badgeKey: "settings.items.bucketBadge",
         badgeVariant: "secondary",
         subItems: [
-          { href: "/bucket", label: "Overview" },
-          { href: "/bucket/api", label: "API Keys" },
-          { href: "/bucket/docs", label: "Documentation" },
+          { href: "/bucket", labelKey: "services.sections.overview" },
+          { href: "/bucket/api", labelKey: "cron.apiKeys" },
+          { href: "/bucket/docs", labelKey: "bucket.docs" },
         ],
       },
       {
@@ -84,8 +84,8 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
         badgeKey: "settings.items.cronBadge",
         badgeVariant: "secondary",
         subItems: [
-          { href: "/cron", label: "Overview" },
-          { href: "/cron/api", label: "API Keys" },
+          { href: "/cron", labelKey: "services.sections.overview" },
+          { href: "/cron/api", labelKey: "cron.apiKeys" },
         ],
       },
     ],

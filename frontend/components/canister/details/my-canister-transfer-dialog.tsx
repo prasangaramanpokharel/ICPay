@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input"
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -197,7 +198,7 @@ export function MyCanisterTransferDialog({
               </div>
               <FieldDescription className="text-xs text-muted-foreground">{tw("cyclesHint")}</FieldDescription>
               {amountError ? (
-                <FieldDescription className="text-xs font-medium text-destructive">{amountError}</FieldDescription>
+                <FieldError className="text-xs">{amountError}</FieldError>
               ) : null}
               {!loadingBal && ledgerBal === 0n ? (
                 <FieldDescription className="text-xs text-muted-foreground">

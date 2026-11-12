@@ -572,7 +572,8 @@ export function CronApiView() {
                 disabled={creatingKey || !targetProjectId || !newKeyLabel.trim()}
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                {creatingKey ? <Spinner className="size-3.5" /> : "Generate Key"}
+                {creatingKey ? <Spinner data-icon="inline-start" /> : null}
+                <span>Generate Key</span>
               </Button>
             </div>
           </form>

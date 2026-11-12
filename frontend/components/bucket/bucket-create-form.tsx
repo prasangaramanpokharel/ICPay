@@ -6,12 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
   Field,
   FieldContent,
   FieldDescription,
+  FieldError,
   FieldLabel,
   FieldTitle,
 } from "@/components/ui/field"
@@ -97,10 +97,10 @@ export function BucketCreateForm({
       )}
 
       <div className="space-y-5">
-        <div className="space-y-2">
-          <Label htmlFor="bucket-name" className="text-xs font-medium">
+        <Field className="space-y-2">
+          <FieldLabel htmlFor="bucket-name" className="text-xs font-medium">
             {t("name")}
-          </Label>
+          </FieldLabel>
           <Input
             id="bucket-name"
             value={name}
@@ -109,15 +109,15 @@ export function BucketCreateForm({
             autoComplete="off"
             className="h-10"
           />
-          <p className="text-xs text-muted-foreground">{t("nameHint")}</p>
+          <FieldDescription className="text-xs text-muted-foreground">{t("nameHint")}</FieldDescription>
           {nameError && name.length > 0 && (
-            <p className="text-xs text-destructive">{nameError}</p>
+            <FieldError>{nameError}</FieldError>
           )}
-        </div>
+        </Field>
 
-        <div className="space-y-2">
+        <Field className="space-y-2">
           <div className="flex min-h-6 items-center justify-between gap-2">
-            <Label className="text-xs font-medium">{t("capacity")}</Label>
+            <FieldLabel className="text-xs font-medium">{t("capacity")}</FieldLabel>
             <span className="text-[11px] text-muted-foreground">
               Dedicated EOP Canister
             </span>
@@ -142,10 +142,10 @@ export function BucketCreateForm({
               )
             })}
           </div>
-        </div>
+        </Field>
 
-        <div className="space-y-2">
-          <Label className="text-xs font-medium">{t("visibility")}</Label>
+        <Field className="space-y-2">
+          <FieldLabel className="text-xs font-medium">{t("visibility")}</FieldLabel>
           <RadioGroup
             value={"Public" in visibility ? "public" : "private"}
             onValueChange={(value) => {
@@ -173,11 +173,11 @@ export function BucketCreateForm({
               </Field>
             </FieldLabel>
           </RadioGroup>
-        </div>
+        </Field>
 
-        <div className="space-y-2">
+        <Field className="space-y-2">
           <div className="flex min-h-6 items-center justify-between gap-2">
-            <Label className="text-xs font-medium">Billing Cycle</Label>
+            <FieldLabel className="text-xs font-medium">Billing Cycle</FieldLabel>
             <span className="text-[11px] font-medium text-success">
               {billingPeriod === "yearly"
                 ? "Save ~17% · 2 Months Free"
@@ -219,13 +219,13 @@ export function BucketCreateForm({
               <span className="text-[10px] font-normal text-muted-foreground">365-day cycle</span>
             </Button>
           </div>
-        </div>
+        </Field>
 
-        <div className="space-y-1.5">
+        <Field className="space-y-1.5">
           <div className="flex min-h-6 items-center justify-between gap-2">
-            <Label htmlFor="bucket-alert-email" className="text-xs font-medium">
+            <FieldLabel htmlFor="bucket-alert-email" className="text-xs font-medium">
               Expiry Alert Email <span className="text-muted-foreground font-normal">(Optional)</span>
-            </Label>
+            </FieldLabel>
             <span className="text-[11px] text-muted-foreground">3-day warning</span>
           </div>
           <div className="relative">
@@ -246,13 +246,13 @@ export function BucketCreateForm({
               className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
             />
           </div>
-          <p className="text-[11px] text-muted-foreground">
+          <FieldDescription className="text-[11px] text-muted-foreground">
             Receive automated warnings before your plan expires so your storage is never interrupted.
-          </p>
+          </FieldDescription>
           {alertEmailError && (
-            <p className="text-xs text-destructive">{alertEmailError}</p>
+            <FieldError>{alertEmailError}</FieldError>
           )}
-        </div>
+        </Field>
 
         <div className="relative overflow-hidden rounded-2xl border border-border/80 bg-gradient-to-b from-primary/10 via-background to-background p-4 shadow-sm">
           <ShineBorder

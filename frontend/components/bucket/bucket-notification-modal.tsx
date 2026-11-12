@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
+import { Field, FieldLabel } from "@/components/ui/field"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -167,10 +167,10 @@ export function BucketNotificationModal({
           )}
 
           <form onSubmit={handleSave} className="space-y-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="bucket-notif-email">
+            <Field className="space-y-1.5">
+              <FieldLabel htmlFor="bucket-notif-email">
                 Email Address
-              </Label>
+              </FieldLabel>
               <div className="relative">
                 <Input
                   id="bucket-notif-email"
@@ -186,7 +186,7 @@ export function BucketNotificationModal({
                   className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
                 />
               </div>
-            </div>
+            </Field>
 
             <div className="rounded-lg border border-border/40 bg-muted/10 p-3 text-[11px] space-y-2">
               <div className="font-medium text-foreground/90 flex items-center gap-1.5">

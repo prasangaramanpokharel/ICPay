@@ -106,6 +106,7 @@ function NavRow({
   active: boolean
   onWarm: () => void
 }) {
+  const t = useTranslations()
   const pathname = usePathname()
   const hasSubItems = Boolean(item.subItems && item.subItems.length > 0)
   const isSubActive = Boolean(
@@ -153,7 +154,7 @@ function NavRow({
                   )}
                   render={<Link href={sub.href} />}
                 >
-                  <span className="truncate">{sub.label}</span>
+                  <span className="truncate">{t(sub.labelKey as never)}</span>
                 </SidebarMenuSubButton>
               </SidebarMenuSubItem>
             )

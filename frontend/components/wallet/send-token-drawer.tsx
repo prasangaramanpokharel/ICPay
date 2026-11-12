@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Field,
-  FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -335,9 +335,9 @@ export function SendTokenDrawer({
               </div>
             )}
             {value !== "" && amount === null && (
-              <FieldDescription className="text-destructive">
+              <FieldError>
                 {t("badAmount", { decimals: token.decimals })}
-              </FieldDescription>
+              </FieldError>
             )}
           </Field>
 

@@ -17,7 +17,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { AmountInput } from "@/components/shared/amount-input"
-import { FieldDescription, FieldGroup } from "@/components/ui/field"
+import { FieldError, FieldGroup } from "@/components/ui/field"
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
@@ -176,7 +176,7 @@ export function MyCanisterTopupDialog({
               size="xl"
             />
             {amountError ? (
-              <FieldDescription className="text-xs font-medium text-destructive">{amountError}</FieldDescription>
+              <FieldError className="text-xs">{amountError}</FieldError>
             ) : estimated != null ? (
               <div className="rounded-2xl border border-border/60 bg-muted/25 px-4 py-3.5">
                 <p className="text-xs font-medium text-muted-foreground">

@@ -51,10 +51,15 @@ export function TradeLimitInputs({
     <div className="space-y-2">
       <div className="overflow-hidden rounded-lg border border-border/60 bg-background/80 transition-colors focus-within:border-ring">
         <div className="relative">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-muted-foreground">
+          <label
+            htmlFor="trade-limit-price-input"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-muted-foreground cursor-text"
+          >
             {t("limitPrice")}
-          </span>
+          </label>
           <Input
+            id="trade-limit-price-input"
+            aria-label={t("limitPrice")}
             inputMode="decimal"
             placeholder="0.00"
             className="h-10 border-0 bg-transparent pl-20 pr-24 text-right text-sm tabular-nums shadow-none focus-visible:ring-0"
@@ -91,10 +96,15 @@ export function TradeLimitInputs({
 
       <div className="overflow-hidden rounded-lg border border-border/60 bg-background/80 transition-colors focus-within:border-ring">
         <div className="relative">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-muted-foreground">
+          <label
+            htmlFor="trade-limit-amount-input"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-muted-foreground cursor-text"
+          >
             {t("amountLabel")}
-          </span>
+          </label>
           <Input
+            id="trade-limit-amount-input"
+            aria-label={t("amountLabel")}
             inputMode="decimal"
             placeholder="0.00"
             className="h-10 border-0 bg-transparent pl-16 pr-22 text-right text-sm tabular-nums shadow-none focus-visible:ring-0"
@@ -117,10 +127,15 @@ export function TradeLimitInputs({
 
       <div className="overflow-hidden rounded-lg border border-border/60 bg-background/80 transition-colors focus-within:border-ring">
         <div className="relative">
-          <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-muted-foreground">
+          <label
+            htmlFor="trade-limit-total-input"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[11px] font-medium text-muted-foreground cursor-text"
+          >
             {t("total")}
-          </span>
+          </label>
           <Input
+            id="trade-limit-total-input"
+            aria-label={t("total")}
             inputMode="decimal"
             placeholder="0.00"
             className="h-10 border-0 bg-transparent pl-14 pr-20 text-right text-sm tabular-nums shadow-none focus-visible:ring-0"

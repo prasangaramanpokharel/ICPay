@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input"
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -134,7 +135,7 @@ export function MyCanisterAddControllerDialog({
                   className="font-mono text-sm"
                 />
                 {principalError ? (
-                  <FieldDescription className="text-xs font-medium text-destructive">{principalError}</FieldDescription>
+                  <FieldError className="text-xs">{principalError}</FieldError>
                 ) : (
                   <FieldDescription className="text-[11px] text-muted-foreground">{t("addControllerFullListHint")}</FieldDescription>
                 )}

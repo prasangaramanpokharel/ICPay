@@ -106,7 +106,8 @@ export function RenameCanisterDialog({
               Cancel
             </Button>
             <Button type="submit" disabled={saving}>
-              {saving ? <Spinner className="size-4" /> : "Save"}
+              {saving ? <Spinner data-icon="inline-start" /> : null}
+              <span>Save</span>
             </Button>
           </DialogFooter>
         </form>

@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import {
   Field,
-  FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
@@ -317,9 +317,9 @@ export function TransferForm({
           onChange={(e) => setMemo(e.target.value)}
         />
         {memoTooLong ? (
-          <FieldDescription className="text-destructive">
+          <FieldError>
             {t("memoTooLong", { max: MEMO_MAX_BYTES })}
-          </FieldDescription>
+          </FieldError>
         ) : null}
       </Field>
 

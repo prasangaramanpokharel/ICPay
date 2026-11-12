@@ -725,7 +725,8 @@ export function CronProjectDetail({
                 disabled={renaming}
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                {renaming ? <Spinner className="size-3.5" /> : "Save"}
+                {renaming ? <Spinner data-icon="inline-start" /> : null}
+                <span>Save</span>
               </Button>
             </div>
           </form>

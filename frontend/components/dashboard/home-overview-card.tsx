@@ -7,17 +7,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  ChartContainer,
-  type ChartConfig,
-} from "@/components/ui/chart"
-import {
-  Label,
-  PolarGrid,
-  PolarRadiusAxis,
-  RadialBar,
-  RadialBarChart,
-} from "recharts"
+import { RadialMeter } from "@/components/ui/radial-meter"
 import type { IcpPrice } from "@/lib/market/icpPrice"
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 import { PremiumBadge } from "@/components/verified/premium-badge"
@@ -138,35 +128,6 @@ export function HomeOverviewCard({
   const displayLabel = activeItem ? activeItem.label : "Assets"
   const activeColor = activeItem ? activeItem.color : "var(--chart-1)"
 
-  const radialData = useMemo(() => {
-    return [
-      {
-        name: displayLabel,
-        value: displayValue > 0 ? displayValue : 1,
-        fill: activeColor,
-      },
-    ]
-  }, [displayLabel, displayValue, activeColor])
-
-  const endAngle = useMemo(() => {
-    if (totalValue <= 0) return 100
-    const ratio = activeItem ? activeItem.value / totalValue : 1
-    return Math.min(360, Math.max(30, Math.round(ratio * 360)))
-  }, [activeItem, totalValue])
-
-  const chartConfig = useMemo(() => {
-    const config: ChartConfig = {
-      value: { label: "Value" },
-    }
-    tokenItems.forEach((item) => {
-      config[item.label] = {
-        label: item.label,
-        color: item.color,
-      }
-    })
-    return config
-  }, [tokenItems])
-
   const handleCopyUsername = async () => {
     if (!username) return
     await copyText(username)
@@ -238,64 +199,28 @@ export function HomeOverviewCard({
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-5 sm:gap-6 shrink-0 self-center lg:self-auto">
-            <ChartContainer
-              config={chartConfig}
-              initialDimension={{ width: 140, height: 140 }}
-              className="mx-auto aspect-square w-[140px] h-[140px] shrink-0"
-            >
-              <RadialBarChart
-                data={radialData}
-                endAngle={endAngle}
-                innerRadius={44}
-                outerRadius={62}
-              >
-                <PolarGrid
-                  gridType="circle"
-                  radialLines={false}
-                  stroke="none"
-                  className="first:fill-muted last:fill-background"
-                  polarRadius={[56, 50]}
-                />
-                <RadialBar dataKey="value" background cornerRadius={5} />
-                <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
-                  <Label
-                    content={({ viewBox }) => {
-                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                        return (
-                          <text
-                            x={viewBox.cx}
-                            y={viewBox.cy}
-                            textAnchor="middle"
-                            dominantBaseline="middle"
-                          >
-                            <tspan
-                              x={viewBox.cx}
-                              y={(viewBox.cy || 0) - 4}
-                              className="fill-foreground font-semibold text-sm tabular-nums"
-                            >
-                              {hidden
-                                ? "••••"
-                                : displayValue < 0.01 && displayValue > 0
-                                  ? "<0.01"
-                                  : displayValue.toLocaleString("en-US", {
-                                      maximumFractionDigits: 2,
-                                    })}
-                            </tspan>
-                            <tspan
-                              x={viewBox.cx}
-                              y={(viewBox.cy || 0) + 12}
-                              className="fill-muted-foreground text-[10px]"
-                            >
-                              {displayLabel}
-                            </tspan>
-                          </text>
-                        )
-                      }
-                    }}
-                  />
-                </PolarRadiusAxis>
-              </RadialBarChart>
-            </ChartContainer>
+            <RadialMeter
+              value={totalValue > 0 ? (activeItem ? activeItem.value : totalValue) : 1}
+              max={totalValue > 0 ? totalValue : 1}
+              color={activeColor}
+              innerRadius={44}
+              outerRadius={62}
+              polarRadius={[56, 50]}
+              centerValue={
+                hidden
+                  ? "••••"
+                  : displayValue < 0.01 && displayValue > 0
+                    ? "<0.01"
+                    : displayValue.toLocaleString("en-US", {
+                        maximumFractionDigits: 2,
+                      })
+              }
+              centerLabel={displayLabel}
+              width={140}
+              height={140}
+              valueClassName="fill-foreground font-semibold text-sm tabular-nums"
+              labelClassName="fill-muted-foreground text-[10px]"
+            />
             <div className="w-36 sm:w-44 space-y-1">
               {tokenItems.map((item, index) => {
                 const isHovered = hovered === index

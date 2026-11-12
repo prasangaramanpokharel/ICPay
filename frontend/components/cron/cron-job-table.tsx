@@ -268,7 +268,8 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
                               onClick={() => handleDelete(job)}
                               className="text-destructive hover:bg-destructive/10 hover:text-destructive border-border font-medium px-3.5 rounded-md text-xs h-8"
                             >
-                              {isDeleting ? <Spinner className="size-3" /> : "Delete"}
+                              {isDeleting ? <Spinner data-icon="inline-start" /> : null}
+                              <span>Delete</span>
                             </Button>
                           </div>
                         </TableCell>

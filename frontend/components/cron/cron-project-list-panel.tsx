@@ -10,14 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
-import {
-  Label,
-  PolarGrid,
-  PolarRadiusAxis,
-  RadialBar,
-  RadialBarChart,
-} from "recharts"
-import { ChartContainer, type ChartConfig } from "@/components/ui/chart"
+import { RadialMeter } from "@/components/ui/radial-meter"
 import {
   Table,
   TableBody,
@@ -95,13 +88,6 @@ import type {
 } from "@/services/cron/types"
 import { CronBuyPackModal } from "./cron-buy-pack-modal"
 import { formatProjectId } from "./cron-types"
-
-const chartConfig = {
-  runs: {
-    label: "Free Runs",
-    color: "var(--color-primary)",
-  },
-} satisfies ChartConfig
 
 type FilterTab = "all" | "active" | "paused"
 
@@ -270,11 +256,6 @@ export function CronProjectListPanel() {
   const freeRuns = credits ? Number(credits.free_runs_remaining) : 18
   const paidCredits = credits ? credits.prepaid_credits.toLocaleString() : "0"
 
-  const chartData = React.useMemo(
-    () => [{ name: "free_runs", runs: freeRuns, fill: "var(--color-primary)" }],
-    [freeRuns],
-  )
-
   const jobsCountFor = (proj: RemoteProjectRecord | null) => {
     if (!proj) return 0
     return (jobsByProject.get(proj.id.toString()) ?? []).length
@@ -363,57 +344,20 @@ export function CronProjectListPanel() {
             </div>
 
             <div className="flex flex-col items-center justify-center shrink-0">
-              <ChartContainer
-                config={chartConfig}
-                className="aspect-square w-[150px] max-h-[150px]"
-              >
-                <RadialBarChart
-                  data={chartData}
-                  endAngle={Math.max(12, Math.min(360, Math.round((freeRuns / 60) * 360)))}
-                  innerRadius={50}
-                  outerRadius={74}
-                >
-                  <PolarGrid
-                    gridType="circle"
-                    radialLines={false}
-                    stroke="none"
-                    className="first:fill-muted/40 last:fill-background"
-                    polarRadius={[66, 56]}
-                  />
-                  <RadialBar dataKey="runs" background cornerRadius={6} />
-                  <PolarRadiusAxis tick={false} tickLine={false} axisLine={false}>
-                    <Label
-                      content={({ viewBox }) => {
-                        if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                          return (
-                            <text
-                              x={viewBox.cx}
-                              y={viewBox.cy}
-                              textAnchor="middle"
-                              dominantBaseline="middle"
-                            >
-                              <tspan
-                                x={viewBox.cx}
-                                y={viewBox.cy}
-                                className="fill-foreground text-2xl font-bold tabular-nums"
-                              >
-                                {freeRuns}
-                              </tspan>
-                              <tspan
-                                x={viewBox.cx}
-                                y={(viewBox.cy || 0) + 16}
-                                className="fill-muted-foreground text-[10px] font-medium uppercase tracking-wider"
-                              >
-                                / 60 left
-                              </tspan>
-                            </text>
-                          )
-                        }
-                      }}
-                    />
-                  </PolarRadiusAxis>
-                </RadialBarChart>
-              </ChartContainer>
+              <RadialMeter
+                value={freeRuns}
+                max={60}
+                color="var(--primary)"
+                innerRadius={50}
+                outerRadius={74}
+                polarRadius={[66, 56]}
+                centerValue={freeRuns}
+                centerLabel="/ 60 left"
+                width={150}
+                height={150}
+                valueClassName="fill-foreground text-2xl font-bold tabular-nums"
+                labelClassName="fill-muted-foreground text-[10px] font-medium uppercase tracking-wider"
+              />
             </div>
           </div>
         </div>
@@ -645,7 +589,8 @@ export function CronProjectListPanel() {
                 disabled={creatingProject}
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                {creatingProject ? <Spinner className="size-3.5" /> : "Create Project"}
+                {creatingProject ? <Spinner data-icon="inline-start" /> : null}
+                <span>Create Project</span>
               </Button>
             </div>
           </form>

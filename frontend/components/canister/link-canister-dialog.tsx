@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button"
 import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Separator } from "@/components/ui/separator"
 import { Spinner } from "@/components/ui/spinner"
 import { CodeBlock } from "@/components/ui/code-block"
@@ -290,9 +290,9 @@ export function LinkCanisterDialog({
                         )}
                       </div>
                       {draftInvalid ? (
-                        <FieldDescription className="text-xs text-destructive">
+                        <FieldError className="text-xs">
                           Please enter a valid ICP canister ID
-                        </FieldDescription>
+                        </FieldError>
                       ) : (
                         <FieldDescription className="text-[11px] text-muted-foreground">
                           Enter the principal ID of the canister you wish to attach.
