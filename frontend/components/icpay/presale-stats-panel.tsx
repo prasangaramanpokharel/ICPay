@@ -63,7 +63,7 @@ export function PresaleStatsPanel({
             <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               Filled
             </span>
-            <div className="font-mono text-sm font-extrabold text-primary tabular-nums sm:text-base">
+            <div className="font-mono text-sm font-extrabold text-amber-400 tabular-nums sm:text-base">
               {percentLabel}%
             </div>
           </div>
@@ -71,14 +71,14 @@ export function PresaleStatsPanel({
 
         <div className="relative h-3 w-full overflow-hidden rounded-full bg-muted/80 p-0.5 ring-1 ring-border/50">
           <div
-            className="h-full rounded-full bg-primary shadow-xs transition-all duration-700 ease-out"
+            className="h-full rounded-full bg-gradient-to-r from-amber-400 via-amber-500 to-orange-500 shadow-[0_0_12px_rgba(245,158,11,0.35)] transition-all duration-700 ease-out"
             style={{ width: `${percent}%` }}
           />
         </div>
 
         <div className="flex items-center justify-between text-[10px] font-medium text-muted-foreground tabular-nums">
           <span>0 {symbol}</span>
-          <span className="font-semibold text-primary/90">{percentLabel}% Completed</span>
+          <span className="font-semibold text-amber-400/90">{percentLabel}% Completed</span>
           <span>{formatTokenAmount(sale.inventoryCap, ICP_DECIMALS, 0)} {symbol}</span>
         </div>
       </div>
