@@ -1,3 +1,8 @@
+---
+name: icpay-icon-standard
+description: ICPay formal fintech icon and visual standards — @hugeicons/react only, semantic CSS tokens, zero background clutter, zero hardcoded colors.
+---
+
 # Icon & Visual Element Standard
 
 > **Status:** Required  

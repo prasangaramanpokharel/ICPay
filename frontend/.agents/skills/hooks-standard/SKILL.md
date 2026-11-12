@@ -123,5 +123,5 @@ Inside a module, relative imports are OK for co-located hooks.
 | Doc | Path |
 |---|---|
 | lib standard | [`skills/lib-standard/SKILL.md`](../lib-standard/SKILL.md) |
-| SWR skill | [`.agents/skills/swr-official/`](../../skills/swr-official/) |
+| SWR skill | [`swr-official/SKILL.md`](../swr-official/SKILL.md) |
 | Frontend skill | [`.claude/skills/icpay-frontend/SKILL.md`](../../../.claude/skills/icpay-frontend/SKILL.md) |

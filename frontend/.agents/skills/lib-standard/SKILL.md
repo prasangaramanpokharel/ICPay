@@ -169,6 +169,6 @@ lib/notifications/
 
 | Doc | Path |
 |---|---|
-| Services layer | [`.agents/rules/frontend/SKILLS.md`](../../rules/frontend/SKILLS.md) |
+| Services layer | [`services-standard/SKILL.md`](../services-standard/SKILL.md) |
 | Frontend skill | [`.claude/skills/icpay-frontend/SKILL.md`](../../../.claude/skills/icpay-frontend/SKILL.md) |
 | Backend lib (Motoko pkg) | `backend/pkg/` — separate from frontend `lib/` |
