@@ -37,3 +37,21 @@ export async function resolveUsername(
   return principal ? principal.toText() : null
 }
 
+export function claimProPerk(
+  identity: Identity | undefined
+): Promise<Outcome<boolean>> {
+  return call<boolean>(identity, "Failed to claim perk", async (actor) => {
+    const res = await actor.claim_pro_perk()
+    if ("ok" in res && res.ok !== undefined) {
+      return { ok: res.ok }
+    }
+    return { err: "err" in res && res.err ? res.err : "Failed to claim perk" }
+  })
+}
+
+export function hasClaimedProPerk(
+  identity: Identity | undefined
+): Promise<boolean> {
+  return query(identity, (actor) => actor.has_claimed_pro_perk())
+}
+

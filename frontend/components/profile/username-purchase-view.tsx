@@ -38,6 +38,7 @@ import {
   type BadgeSpan,
 } from "@/lib/verified/premiumTick"
 import { purchaseUsername } from "@/services/buy/buy"
+import { claimProPerk } from "@/services/profile/profile"
 import type { Purchase } from "@/services/types"
 import { useAuth } from "@/components/auth/auth-provider"
 import {
@@ -47,6 +48,7 @@ import {
   useLiveBalance,
   useDashboard,
   useTokenHolding,
+  useProPerkClaimed,
 } from "@/hooks/wallet/useWalletData"
 import { isProPerkClaimed, markProPerkClaimed } from "@/lib/profile/claimPerk"
 import { ICPAY_LEDGER_ID } from "@/services/tokens"
@@ -84,17 +86,22 @@ export function UsernamePurchaseView() {
   const [buying, setBuying] = useState(false)
   const [bought, setBought] = useState<Purchase | null>(null)
   const [claimedLocal, setClaimedLocal] = useState(false)
+  const { claimed: onChainClaimed, refresh: refreshPerkClaimed } = useProPerkClaimed()
 
   const existingHandle = dashboard?.user.username[0]
   const existingTier = existingHandle ? tierFor(existingHandle) : null
   const isExistingPro = existingTier && existingTier.perks.storageGb > 0
   const proStorageGb = existingTier?.perks.storageGb ?? 0
-  const perkClaimed = claimedLocal || isProPerkClaimed(dashboard?.user.id)
+  const perkClaimed = claimedLocal || onChainClaimed || isProPerkClaimed(dashboard?.user.id)
 
   const handleClaimPerk = () => {
     if (!dashboard?.user.id || !existingHandle) return
+    if (identity) {
+      void claimProPerk(identity)
+    }
     markProPerkClaimed(dashboard.user.id)
     setClaimedLocal(true)
+    refreshPerkClaimed()
     primeSuccessChime()
     toast.success(t("perkActivated"), {
       description: t("perkReady", { gb: proStorageGb, handle: existingHandle }),

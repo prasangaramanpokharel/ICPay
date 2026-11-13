@@ -19,7 +19,7 @@ import { useTokenRegistry } from "@/lib/token/registry"
 import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap/utils"
 import type { DashboardData, UserPublic } from "@/services/types"
 import { getTransactions, getTransactionDetail } from "@/services/transactions/transactions"
-import { resolveUsername, searchUsers } from "@/services/profile/profile"
+import { resolveUsername, searchUsers, hasClaimedProPerk } from "@/services/profile/profile"
 import { listBookmarks } from "@/services/bookmark/bookmark"
 import { USERNAME_MIN_LENGTH } from "@/lib/profile/username"
 import { checkUsername, getUsernameTreasury } from "@/services/buy/buy"
@@ -681,5 +681,15 @@ function writeCachedStats(owner: string, s: AccountStats) {
 export function useTokenPrices(...args: unknown[]) {
   void args
   return { prices: new Map<string, { priceUsd: number }>(), isLoading: false }
+}
+
+export function useProPerkClaimed() {
+  const { identity } = useAuth()
+  const { data, isLoading, mutate } = useSWR(
+    identity ? ["pro-perk-claimed", identity.getPrincipal().toText()] : null,
+    () => hasClaimedProPerk(identity),
+    { revalidateOnFocus: false, dedupingInterval: 60_000 }
+  )
+  return { claimed: data === true, isLoading, refresh: mutate }
 }
 
