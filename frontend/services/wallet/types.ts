@@ -39,6 +39,7 @@ export interface WalletActor {
   getUsernames: () => Promise<string[]>
   getMyUsernames: () => Promise<string[]>
   updateUsername: (newUsername: string) => Promise<ApiResult_2>
+  setPrimaryUsername: (username: string) => Promise<ApiResult_2>
   checkUsername: (name: string) => Promise<boolean>
   searchUsers: (searchText: string) => Promise<UserPublic[]>
   resolveUsername: (name: string) => Promise<[] | [Principal]>

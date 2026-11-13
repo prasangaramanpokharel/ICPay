@@ -396,7 +396,10 @@
     "handlesTitle": "Handle Anda",
     "handlesHint": "Semua handle meneruskan pembayaran langsung ke akun kustodian Anda.",
     "primaryHandle": "Utama",
-    "aliasHandle": "Alias"
+    "aliasHandle": "Alias",
+    "setPrimary": "Jadikan utama",
+    "primaryUpdated": "Nama pengguna utama diperbarui ke @{handle}",
+    "primaryFailed": "Gagal memperbarui nama pengguna utama"
   },
   "wallet": {
     "title": "Dompet",

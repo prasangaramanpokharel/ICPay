@@ -365,7 +365,10 @@
     "handlesTitle": "Ihre Benutzernamen",
     "handlesHint": "Alle Benutzernamen leiten Zahlungen direkt an Ihr Depotkonto weiter.",
     "primaryHandle": "Primär",
-    "aliasHandle": "Alias"
+    "aliasHandle": "Alias",
+    "setPrimary": "Als primär festlegen",
+    "primaryUpdated": "Primärer Benutzername auf @{handle} aktualisiert",
+    "primaryFailed": "Fehler beim Aktualisieren des primären Benutzernamens"
   },
   "wallet": {
     "title": "Wallet",

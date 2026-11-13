@@ -27,6 +27,15 @@ export function updateUsername(
   )
 }
 
+export function setPrimaryUsername(
+  identity: Identity | undefined,
+  username: string
+): Promise<Outcome<UserPublic>> {
+  return call(identity, "Failed to switch primary username", (actor) =>
+    actor.setPrimaryUsername(username)
+  )
+}
+
 export function searchUsers(
   identity: Identity | undefined,
   search: string

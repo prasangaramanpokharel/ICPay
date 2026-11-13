@@ -365,7 +365,10 @@
     "handlesTitle": "Tus nombres de usuario",
     "handlesHint": "Todos los nombres de usuario envían pagos directamente a tu cuenta de custodia.",
     "primaryHandle": "Principal",
-    "aliasHandle": "Alias"
+    "aliasHandle": "Alias",
+    "setPrimary": "Establecer principal",
+    "primaryUpdated": "Nombre de usuario principal actualizado a @{handle}",
+    "primaryFailed": "Error al actualizar el nombre principal"
   },
   "wallet": {
     "title": "Monedero",

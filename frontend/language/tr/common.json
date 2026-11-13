@@ -396,7 +396,10 @@
     "handlesTitle": "Kullanıcı Adlarınız",
     "handlesHint": "Tüm kullanıcı adları ödemeleri doğrudan emanet hesabınıza yönlendirir.",
     "primaryHandle": "Birincil",
-    "aliasHandle": "Takma Ad"
+    "aliasHandle": "Takma Ad",
+    "setPrimary": "Birincil yap",
+    "primaryUpdated": "Birincil kullanıcı adı @{handle} olarak güncellendi",
+    "primaryFailed": "Birincil kullanıcı adı güncellenemedi"
   },
   "wallet": {
     "title": "Cüzdan",

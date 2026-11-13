@@ -365,7 +365,10 @@
     "handlesTitle": "Vos identifiants",
     "handlesHint": "Tous les identifiants acheminent les paiements vers votre compte de garde.",
     "primaryHandle": "Principal",
-    "aliasHandle": "Alias"
+    "aliasHandle": "Alias",
+    "setPrimary": "Définir comme principal",
+    "primaryUpdated": "Identifiant principal mis à jour vers @{handle}",
+    "primaryFailed": "Échec de la mise à jour de l'identifiant principal"
   },
   "wallet": {
     "title": "Portefeuille",

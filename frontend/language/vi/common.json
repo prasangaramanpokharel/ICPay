@@ -396,7 +396,10 @@
     "handlesTitle": "Các tên người dùng của bạn",
     "handlesHint": "Tất cả các tên người dùng đều chuyển tiền trực tiếp vào tài khoản lưu ký của bạn.",
     "primaryHandle": "Chính",
-    "aliasHandle": "Bí danh"
+    "aliasHandle": "Bí danh",
+    "setPrimary": "Đặt làm chính",
+    "primaryUpdated": "Đã cập nhật tên người dùng chính thành @{handle}",
+    "primaryFailed": "Không thể cập nhật tên người dùng chính"
   },
   "wallet": {
     "title": "Ví",

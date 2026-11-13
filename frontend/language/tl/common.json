@@ -396,7 +396,10 @@
     "handlesTitle": "Iyong mga handle",
     "handlesHint": "Direktang nagpapadala ng bayad ang lahat ng handle sa iyong custodial account.",
     "primaryHandle": "Pangunahin",
-    "aliasHandle": "Alyas"
+    "aliasHandle": "Alyas",
+    "setPrimary": "Itakda bilang primary",
+    "primaryUpdated": "Na-update ang primary handle sa @{handle}",
+    "primaryFailed": "Nabigong i-update ang primary handle"
   },
   "wallet": {
     "title": "wallet",

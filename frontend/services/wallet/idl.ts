@@ -500,6 +500,7 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     getUsernames: IDL.Func([], [IDL.Vec(IDL.Text)], ["query"]),
     getMyUsernames: IDL.Func([], [IDL.Vec(IDL.Text)], ["query"]),
     updateUsername: IDL.Func([IDL.Text], [ApiResult_2], []),
+    setPrimaryUsername: IDL.Func([IDL.Text], [ApiResult_2], []),
     checkUsername: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
     searchUsers: IDL.Func([IDL.Text], [IDL.Vec(UserPublic)], ["query"]),
     resolveUsername: IDL.Func([IDL.Text], [IDL.Opt(IDL.Principal)], ["query"]),
