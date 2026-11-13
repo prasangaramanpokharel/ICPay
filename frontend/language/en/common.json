@@ -396,7 +396,10 @@
     "handlesTitle": "Your handles",
     "handlesHint": "All handles route payments directly to your custodial account.",
     "primaryHandle": "Primary",
-    "aliasHandle": "Alias"
+    "aliasHandle": "Alias",
+    "setPrimary": "Set primary",
+    "primaryUpdated": "Primary handle updated to @{handle}",
+    "primaryFailed": "Failed to update primary handle"
   },
   "wallet": {
     "title": "Wallet",

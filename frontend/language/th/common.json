@@ -396,7 +396,10 @@
     "handlesTitle": "ชื่อผู้ใช้ของคุณ",
     "handlesHint": "ชื่อผู้ใช้ทั้งหมดจะส่งการชำระเงินไปยังบัญชีของคุณโดยตรง",
     "primaryHandle": "หลัก",
-    "aliasHandle": "ชื่อแทน"
+    "aliasHandle": "ชื่อแทน",
+    "setPrimary": "ตั้งเป็นชื่อหลัก",
+    "primaryUpdated": "อัปเดตชื่อผู้ใช้หลักเป็น @{handle} แล้ว",
+    "primaryFailed": "ไม่สามารถอัปเดตชื่อผู้ใช้หลักได้"
   },
   "wallet": {
     "title": "กระเป๋าเงิน",

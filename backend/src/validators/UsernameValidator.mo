@@ -42,6 +42,7 @@ module {
   // Priced tier by length alone, so both a quote and a badge cost no state read
   // and the frontend can mirror the rule without a call.
   public type Tier = { #ultra; #premium; #standard; #basic };
+  public type Currency = { #ICP; #ICPAY };
 
   public func tierFor(name: Text): Tier {
     let len = name.size();
@@ -52,11 +53,27 @@ module {
   };
 
   public func priceFor(name: Text): Nat {
-    switch (tierFor(name)) {
-      case (#ultra) { Config.PRICE_ULTRA_PREMIUM };
-      case (#premium) { Config.PRICE_PREMIUM };
-      case (#standard) { Config.PRICE_STANDARD };
-      case (#basic) { Config.PRICE_BASIC };
+    priceForCurrency(name, #ICP);
+  };
+
+  public func priceForCurrency(name: Text, currency: Currency): Nat {
+    switch (currency) {
+      case (#ICP) {
+        switch (tierFor(name)) {
+          case (#ultra) { Config.PRICE_ULTRA_PREMIUM };
+          case (#premium) { Config.PRICE_PREMIUM };
+          case (#standard) { Config.PRICE_STANDARD };
+          case (#basic) { Config.PRICE_BASIC };
+        };
+      };
+      case (#ICPAY) {
+        switch (tierFor(name)) {
+          case (#ultra) { Config.PRICE_ULTRA_ICPAY };
+          case (#premium) { Config.PRICE_PREMIUM_ICPAY };
+          case (#standard) { Config.PRICE_STANDARD_ICPAY };
+          case (#basic) { Config.PRICE_BASIC_ICPAY };
+        };
+      };
     };
   };
 

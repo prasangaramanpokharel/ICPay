@@ -365,7 +365,10 @@
     "handlesTitle": "आपके हैंडल",
     "handlesHint": "सभी हैंडल सीधे आपके कस्टोडियल खाते में भुगतान भेजते हैं।",
     "primaryHandle": "प्राथमिक",
-    "aliasHandle": "उपनाम"
+    "aliasHandle": "उपनाम",
+    "setPrimary": "प्राथमिक बनाएं",
+    "primaryUpdated": "प्राथमिक हैंडल @{handle} पर अपडेट किया गया",
+    "primaryFailed": "प्राथमिक हैंडल अपडेट करने में विफल"
   },
   "wallet": {
     "title": "वॉलेट",

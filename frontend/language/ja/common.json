@@ -365,7 +365,10 @@
     "handlesTitle": "保有ハンドル",
     "handlesHint": "すべてのハンドル宛ての支払いは直接カストディ口座に届きます。",
     "primaryHandle": "メイン",
-    "aliasHandle": "エイリアス"
+    "aliasHandle": "エイリアス",
+    "setPrimary": "プライマリに設定",
+    "primaryUpdated": "プライマリハンドルを @{handle} に更新しました",
+    "primaryFailed": "プライマリハンドルの更新に失敗しました"
   },
   "wallet": {
     "title": "ウォレット",

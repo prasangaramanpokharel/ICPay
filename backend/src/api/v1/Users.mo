@@ -19,6 +19,10 @@ mixin (users: UserService.UserService, mwConfig: MiddlewareAuth.Config) {
     UserService.updateUsername(users, MiddlewareAuth.effectiveCaller(mwConfig, caller), newUsername);
   };
 
+  public shared ({ caller }) func setPrimaryUsername(username: Text) : async Types.ApiResult<Types.UserPublic> {
+    UserService.setPrimaryUsername(users, MiddlewareAuth.effectiveCaller(mwConfig, caller), username);
+  };
+
   public shared query func checkUsername(name: Text) : async Bool {
     UserService.checkAvailability(users, name);
   };

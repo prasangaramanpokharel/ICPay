@@ -396,7 +396,10 @@
     "handlesTitle": "المعرفات الخاصة بك",
     "handlesHint": "تقوم جميع المعرفات بتوجيه المدفوعات مباشرة إلى حسابك الائتماني.",
     "primaryHandle": "رئيسي",
-    "aliasHandle": "اسم مستعار"
+    "aliasHandle": "اسم مستعار",
+    "setPrimary": "تعيين كأساسي",
+    "primaryUpdated": "تم تحديث المعرف الأساسي إلى @{handle}",
+    "primaryFailed": "فشل تحديث المعرف الأساسي"
   },
   "wallet": {
     "title": "محفظة",

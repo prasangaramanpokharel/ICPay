@@ -39,12 +39,15 @@ export interface WalletActor {
   getUsernames: () => Promise<string[]>
   getMyUsernames: () => Promise<string[]>
   updateUsername: (newUsername: string) => Promise<ApiResult_2>
+  setPrimaryUsername: (username: string) => Promise<ApiResult_2>
   checkUsername: (name: string) => Promise<boolean>
   searchUsers: (searchText: string) => Promise<UserPublic[]>
   resolveUsername: (name: string) => Promise<[] | [Principal]>
   getUsernamePrice: (name: string) => Promise<bigint>
+  getUsernamePriceWithCurrency: (name: string, currency: string) => Promise<bigint>
   getUsernameTreasury: () => Promise<Principal>
   purchaseUsername: (name: string) => Promise<ApiResult_9>
+  purchaseUsernameWithCurrency: (name: string, currency: string) => Promise<ApiResult_9>
   getDashboard: (ledgerId: string) => Promise<ApiResult_8>
   getDepositAddress: () => Promise<ICRC1Account>
   getDepositAccountIdentifier: () => Promise<string>

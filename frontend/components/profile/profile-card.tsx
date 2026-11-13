@@ -23,7 +23,11 @@ import {
 } from "@hugeicons/core-free-icons"
 import type { UserPublic } from "@/services/types"
 import Link from "next/link"
-import { useUsernameAvailability, useOwnUsernames } from "@/hooks/wallet/useWalletData"
+import { useAuth } from "@/components/auth/auth-provider"
+import { useUsernameAvailability, useOwnUsernames, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { setPrimaryUsername } from "@/services/profile/profile"
+import { primeSuccessChime } from "@/lib/ui/successChime"
+import { toast } from "sonner"
 import {
   validateFreeUsername,
   USERNAME_MAX_LENGTH,
@@ -38,12 +42,15 @@ type ProfileCardProps = {
 export function ProfileCard({ user, onUpdateUsername }: ProfileCardProps) {
   const t = useTranslations("profile")
   const te = useTranslations("buyUsername.errors")
+  const { identity } = useAuth()
+  const refreshWallet = useRefreshWallet()
   const claimed = user.username?.[0]
   const [username, setUsername] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [switchingPrimary, setSwitchingPrimary] = useState<string | null>(null)
 
-  const { data: fetchedUsernames } = useOwnUsernames()
+  const { data: fetchedUsernames, mutate: mutateUsernames } = useOwnUsernames()
   const handles =
     fetchedUsernames && fetchedUsernames.length > 0
       ? fetchedUsernames
@@ -55,6 +62,20 @@ export function ProfileCard({ user, onUpdateUsername }: ProfileCardProps) {
   const { available, isLoading: checking } = useUsernameAvailability(trimmed)
   const tooShortToClaim =
     trimmed !== "" && trimmed.length < USERNAME_FREE_MIN_LENGTH
+
+  const handleSetPrimary = async (targetHandle: string) => {
+    if (!identity || switchingPrimary) return
+    setSwitchingPrimary(targetHandle)
+    const res = await setPrimaryUsername(identity, targetHandle)
+    setSwitchingPrimary(null)
+    if ("ok" in res) {
+      primeSuccessChime()
+      toast.success(t("primaryUpdated", { handle: targetHandle }))
+      await Promise.all([mutateUsernames(), refreshWallet()])
+    } else {
+      toast.error(res.err || t("primaryFailed"))
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -112,6 +133,18 @@ export function ProfileCard({ user, onUpdateUsername }: ProfileCardProps) {
                       </Badge>
                     </div>
                     <div className="flex items-center gap-1 shrink-0">
+                      {!isPrimary && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          disabled={switchingPrimary !== null}
+                          onClick={() => handleSetPrimary(handle)}
+                          className="h-6 px-2 text-[10px] font-medium"
+                        >
+                          {switchingPrimary === handle && <Spinner data-icon="inline-start" className="size-3" />}
+                          <span>{t("setPrimary")}</span>
+                        </Button>
+                      )}
                       <CopyButton text={`@${handle}`} size="icon-xs" variant="ghost" />
                       <Button
                         variant="ghost"

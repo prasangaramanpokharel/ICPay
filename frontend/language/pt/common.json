@@ -365,7 +365,10 @@
     "handlesTitle": "Seus nomes de usuário",
     "handlesHint": "Todos os nomes encaminham pagamentos diretamente para sua conta de custódia.",
     "primaryHandle": "Principal",
-    "aliasHandle": "Alias"
+    "aliasHandle": "Alias",
+    "setPrimary": "Definir como principal",
+    "primaryUpdated": "Nome de usuário principal atualizado para @{handle}",
+    "primaryFailed": "Falha ao atualizar o nome principal"
   },
   "wallet": {
     "title": "Carteira",

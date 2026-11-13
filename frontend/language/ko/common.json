@@ -365,7 +365,10 @@
     "handlesTitle": "보유 핸들",
     "handlesHint": "모든 핸들로 전송된 결제는 커스터디 계정으로 직접 입금됩니다.",
     "primaryHandle": "기본",
-    "aliasHandle": "별칭"
+    "aliasHandle": "별칭",
+    "setPrimary": "기본으로 설정",
+    "primaryUpdated": "기본 핸들이 @{handle}(으)로 업데이트되었습니다",
+    "primaryFailed": "기본 핸들 업데이트 실패"
   },
   "wallet": {
     "title": "지갑",

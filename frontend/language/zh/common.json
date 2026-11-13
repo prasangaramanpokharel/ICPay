@@ -365,7 +365,10 @@
     "handlesTitle": "您的用户名",
     "handlesHint": "所有用户名都会直接将付款转至您的托管账户。",
     "primaryHandle": "主要",
-    "aliasHandle": "别名"
+    "aliasHandle": "别名",
+    "setPrimary": "设为主要",
+    "primaryUpdated": "主要用户名已更新为 @{handle}",
+    "primaryFailed": "更新主要用户名失败"
   },
   "wallet": {
     "title": "钱包",

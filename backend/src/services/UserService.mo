@@ -1,7 +1,9 @@
 import Principal "mo:core/Principal";
 import Time "mo:core/Time";
+import Text "mo:core/Text";
 import Map "mo:core/Map";
 import Types "../types";
+import UserModel "../models/User";
 import UserRepo "../repositories/UserRepository";
 import UserStorage "../storage/UserStorage";
 import ReservedRepo "../repositories/ReservedUsernameRepository";
@@ -81,6 +83,27 @@ module {
 
   public func getUsernames(service: UserService, caller: Principal): [Text] {
     UserRepo.getUsernamesByPrincipal(service.usernames, service.users, caller);
+  };
+
+  public func setPrimaryUsername(service: UserService, caller: Principal, targetUsername: Text): Types.ApiResult<Types.UserPublic> {
+    switch (UserRepo.getByPrincipal(service.users, caller)) {
+      case (?user) {
+        let normalizedTarget = UsernameValidator.normalize(targetUsername);
+        switch (service.usernames.get(normalizedTarget)) {
+          case (?owner) {
+            if (owner != caller) {
+              return #err("Username is owned by another account");
+            };
+            UserModel.setUsername(user, targetUsername, Time.now());
+            #ok(Types.userToPublic(user));
+          };
+          case (null) {
+            #err("Username not owned by you");
+          };
+        };
+      };
+      case (null) { #err("User not found") };
+    };
   };
 
   /** Claimed handles only — one query for ops (`npm run ci users:count`). */
