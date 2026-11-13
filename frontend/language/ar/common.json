@@ -322,7 +322,20 @@
       "invalidChars": "الحروف والأرقام والشرطة فقط",
       "notFree": "أسماء المستخدمين تحتاج إلى {min}+ أحرف. يمكن شراء الأسماء المختارة."
     },
-    "brandProtectionLink": "الأسماء التجارية المحجوزة"
+    "brandProtectionLink": "الأسماء التجارية المحجوزة",
+    "perkAvailable": "ميزة ICPay Pro متاحة",
+    "perkActivated": "تم تفعيل ميزة ICPay Pro!",
+    "perkReady": "مساحة تخزين سحابية {gb} جيجابايت على السلسلة (سنة واحدة) جاهزة لـ @{handle}",
+    "claimPerk": "المطالبة بمساحة {gb} جيجابايت",
+    "payWithIcp": "الدفع بواسطة ICP",
+    "payWithIcpay": "الدفع بواسطة $ICPAY",
+    "bundledPerks": "مزايا ICPay Pro المضمنة:",
+    "cloudStoragePerk": "{gb} جيجابايت تخزين سحابي على السلسلة (سنة واحدة)",
+    "verifiedIdentity": "معرّف موثق",
+    "savePercent": "وفر 20%",
+    "buyWithDiscount": "شراء بواسطة $ICPAY (خصم 20%)",
+    "standardLedgerFee": "رسوم الشبكة القياسية",
+    "payWithIcpayNotice": "التسوية المباشرة عبر العقد الذكي إلى الخزينة في مرحلة الاختبار النهائية. ادفع بواسطة ICP الآن لتأمين اسمك فورًا."
   },
   "analytics": {
     "title": "التحليلات",

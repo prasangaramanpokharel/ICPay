@@ -322,7 +322,20 @@
       "invalidChars": "Hanya huruf, angka, dan garis bawah",
       "notFree": "Nama pengguna gratis memerlukan {min}+ karakter. Nama yang lebih pendek bisa dibeli."
     },
-    "brandProtectionLink": "Nama merek yang dipesan"
+    "brandProtectionLink": "Nama merek yang dipesan",
+    "perkAvailable": "Manfaat ICPay Pro Tersedia",
+    "perkActivated": "Manfaat ICPay Pro Diaktifkan!",
+    "perkReady": "Penyimpanan Cloud On-Chain {gb} GB (1 Tahun) siap untuk @{handle}",
+    "claimPerk": "Klaim Penyimpanan {gb} GB",
+    "payWithIcp": "Bayar dengan ICP",
+    "payWithIcpay": "Bayar dengan $ICPAY",
+    "bundledPerks": "Paket Manfaat ICPay Pro:",
+    "cloudStoragePerk": "Penyimpanan Cloud On-Chain {gb} GB (1 Tahun)",
+    "verifiedIdentity": "Handle Identitas Terverifikasi",
+    "savePercent": "Hemat 20%",
+    "buyWithDiscount": "Beli dengan $ICPAY (Diskon 20%)",
+    "standardLedgerFee": "Biaya jaringan standar",
+    "payWithIcpayNotice": "Penyelesaian kontrak pintar langsung ke kas sedang dalam tahap pengujian akhir. Bayar dengan ICP sekarang untuk mengamankan nama Anda."
   },
   "analytics": {
     "title": "Analisis",

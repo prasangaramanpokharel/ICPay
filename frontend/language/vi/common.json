@@ -322,7 +322,20 @@
       "invalidChars": "Chỉ chữ, số và gạch dưới",
       "notFree": "Tên miễn phí cần {min}+ ký tự. Tên ngắn hơn có thể mua."
     },
-    "brandProtectionLink": "Tên thương hiệu được bảo lưu"
+    "brandProtectionLink": "Tên thương hiệu được bảo lưu",
+    "perkAvailable": "Đặc quyền ICPay Pro có sẵn",
+    "perkActivated": "Đặc quyền ICPay Pro đã được kích hoạt!",
+    "perkReady": "{gb} GB Lưu trữ đám mây On-Chain (1 năm) đã sẵn sàng cho @{handle}",
+    "claimPerk": "Nhận {gb} GB lưu trữ",
+    "payWithIcp": "Thanh toán bằng ICP",
+    "payWithIcpay": "Thanh toán bằng $ICPAY",
+    "bundledPerks": "Các đặc quyền ICPay Pro đi kèm:",
+    "cloudStoragePerk": "{gb} GB Lưu trữ đám mây On-Chain (1 năm)",
+    "verifiedIdentity": "Tên định danh đã xác minh",
+    "savePercent": "Tiết kiệm 20%",
+    "buyWithDiscount": "Mua bằng $ICPAY (Giảm 20%)",
+    "standardLedgerFee": "Phí mạng tiêu chuẩn",
+    "payWithIcpayNotice": "Thanh toán trực tiếp bằng hợp đồng thông minh vào kho bạc đang trong giai đoạn thử nghiệm cuối cùng. Vui lòng thanh toán bằng ICP ngay bây giờ để sở hữu tên người dùng."
   },
   "analytics": {
     "title": "Phân tích",

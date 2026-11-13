@@ -97,26 +97,17 @@ export const TIERS: Tier[] = [
   },
 ]
 
-export function priceFor(name: string, currency: CurrencyMode = "ICP"): bigint {
-  const len = name.length
-  if (currency === "ICPAY") {
-    if (len <= 3) return PRICE_ULTRA_ICPAY
-    if (len === 4) return PRICE_PREMIUM_ICPAY
-    if (len === 5) return PRICE_STANDARD_ICPAY
-    return PRICE_BASIC_ICPAY
-  }
-  if (len <= 3) return PRICE_ULTRA_PREMIUM
-  if (len === 4) return PRICE_PREMIUM
-  if (len === 5) return PRICE_STANDARD
-  return PRICE_BASIC
-}
-
 export function tierFor(name: string): Tier {
   const len = name.length
   if (len <= 3) return TIERS[0]
   if (len === 4) return TIERS[1]
   if (len === 5) return TIERS[2]
   return TIERS[3]
+}
+
+export function priceFor(name: string, currency: CurrencyMode = "ICP"): bigint {
+  const tier = tierFor(name)
+  return currency === "ICPAY" ? tier.priceIcpay : tier.priceIcp
 }
 
 const VALID_CHARS = /^[a-zA-Z0-9_]+$/

@@ -322,7 +322,20 @@
       "invalidChars": "Nur Buchstaben, Zahlen und Unterstrich",
       "notFree": "Kostenlose Namen brauchen {min}+ Zeichen. Kürzere sind kaufbar."
     },
-    "brandProtectionLink": "Reservierte Markennamen"
+    "brandProtectionLink": "Reservierte Markennamen",
+    "perkAvailable": "ICPay Pro Vorteil verfügbar",
+    "perkActivated": "ICPay Pro Vorteil aktiviert!",
+    "perkReady": "{gb} GB On-Chain Cloud-Speicher (1 Jahr) bereit für @{handle}",
+    "claimPerk": "{gb} GB Speicher beanspruchen",
+    "payWithIcp": "Mit ICP bezahlen",
+    "payWithIcpay": "Mit $ICPAY bezahlen",
+    "bundledPerks": "Inbegriffene ICPay Pro Vorteile:",
+    "cloudStoragePerk": "{gb} GB On-Chain Cloud-Speicher (1 Jahr)",
+    "verifiedIdentity": "Verifizierte Identität",
+    "savePercent": "20% sparen",
+    "buyWithDiscount": "Mit $ICPAY kaufen (-20% Rabatt)",
+    "standardLedgerFee": "Standard-Netzwerkgebühr",
+    "payWithIcpayNotice": "Die direkte Smart-Contract-Abrechnung an die Treasury befindet sich in der finalen Testphase. Zahlen Sie jetzt mit ICP, um Ihren Namen sofort zu sichern."
   },
   "profile": {
     "title": "Profil",

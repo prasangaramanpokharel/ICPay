@@ -11,7 +11,12 @@ import {
   PRICE_STANDARD_ICPAY,
   PRICE_BASIC_ICPAY,
 } from "@/lib/profile/username"
-import { isProPerkClaimed, markProPerkClaimed } from "@/lib/profile/claimPerk"
+import {
+  getProPerkClaimStatus,
+  isProPerkClaimed,
+  markProPerkClaimed,
+  resetProPerkClaim,
+} from "@/lib/profile/claimPerk"
 
 assert.equal(priceFor("ceo", "ICP"), PRICE_ULTRA_PREMIUM)
 assert.equal(priceFor("elon", "ICP"), PRICE_PREMIUM)
@@ -47,24 +52,39 @@ assert.equal(basicTier.labelKey, "basic")
 assert.equal(basicTier.perks.storageGb, 0)
 assert.equal(basicTier.perks.storageDurationMonths, 0)
 
-assert.equal(isProPerkClaimed(undefined), false)
-assert.equal(isProPerkClaimed("user_123", []), false)
-markProPerkClaimed("user_123")
+assert.equal(getProPerkClaimStatus(undefined), 0)
+assert.equal(getProPerkClaimStatus("user_abc"), 0)
+assert.equal(isProPerkClaimed("user_abc"), false)
+
+markProPerkClaimed("user_abc")
 markProPerkClaimed(undefined)
+resetProPerkClaim(undefined)
 
-import type { BucketPublic } from "@/services/bucket/types"
-
-const mockBucket: BucketPublic = {
-  id: "test-bucket-id",
-  name: "test-cloud",
-  capacity: 1073741824n,
-  storageUsed: 0n,
-  visibility: { Public: null },
-  status: { ACTIVE: null },
-  expiresAt: 2000n,
-  createdAt: 1000n,
+const mockStore: Record<string, string> = {}
+globalThis.localStorage = {
+  getItem: (k: string) => mockStore[k] ?? null,
+  setItem: (k: string, v: string) => {
+    mockStore[k] = v
+  },
+  removeItem: (k: string) => {
+    delete mockStore[k]
+  },
+  clear: () => {
+    for (const k of Object.keys(mockStore)) delete mockStore[k]
+  },
+  key: () => null,
+  length: 0,
 }
 
-assert.equal(isProPerkClaimed("user_123", [mockBucket]), true)
+assert.equal(getProPerkClaimStatus("user_live"), 0)
+assert.equal(isProPerkClaimed("user_live"), false)
 
-console.log("PASS: username dual-currency pricing and pro perk rules verified")
+markProPerkClaimed("user_live")
+assert.equal(getProPerkClaimStatus("user_live"), 1)
+assert.equal(isProPerkClaimed("user_live"), true)
+
+resetProPerkClaim("user_live")
+assert.equal(getProPerkClaimStatus("user_live"), 0)
+assert.equal(isProPerkClaimed("user_live"), false)
+
+console.log("PASS: username pricing and claimed=0/1 perk rules verified")

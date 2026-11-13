@@ -322,7 +322,20 @@
       "invalidChars": "英字、数字、アンダースコアのみ使用できます",
       "notFree": "無料のユーザー名は {min} 文字以上必要です。より短い名前は購入できます。"
     },
-    "brandProtectionLink": "予約済みブランド名"
+    "brandProtectionLink": "予約済みブランド名",
+    "perkAvailable": "ICPay Pro 特典を利用可能",
+    "perkActivated": "ICPay Pro 特典が有効化されました！",
+    "perkReady": "@{handle} のオンチェーンクラウドストレージ {gb} GB（1年間）の準備が完了しました",
+    "claimPerk": "{gb} GB ストレージを請求",
+    "payWithIcp": "ICP で支払う",
+    "payWithIcpay": "$ICPAY で支払う",
+    "bundledPerks": "ICPay Pro 特典セット:",
+    "cloudStoragePerk": "{gb} GB オンチェーンクラウドストレージ（1年間）",
+    "verifiedIdentity": "認証済みIDハンドル",
+    "savePercent": "20% お得",
+    "buyWithDiscount": "$ICPAY で購入（20% OFF）",
+    "standardLedgerFee": "標準台帳手数料",
+    "payWithIcpayNotice": "国庫への直接スマートコントラクト決済は最終テスト段階です。ハンドルを確保するには今すぐICPで決済してください。"
   },
   "profile": {
     "title": "プロフィール",

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Add01Icon, Book02Icon, CloudIcon, Key01Icon, PlayIcon, Search01Icon } from "@hugeicons/core-free-icons"
@@ -53,7 +53,10 @@ export function BucketListPanel() {
   const { buckets, isLoading, refresh } = useBucketList()
   const [query, setQuery] = useState("")
   const [filter, setFilter] = useState<FilterTab>("all")
-  const [createOpen, setCreateOpen] = useState(false)
+  const searchParams = useSearchParams()
+  const [createOpen, setCreateOpen] = useState(
+    searchParams.get("create") === "1" || searchParams.get("create") === "true"
+  )
   const [guideOpen, setGuideOpen] = useState(false)
 
   useEffect(() => {

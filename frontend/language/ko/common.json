@@ -322,7 +322,20 @@
       "invalidChars": "영문, 숫자, 밑줄만 사용 가능합니다",
       "notFree": "무료 사용자 이름은 {min}자 이상이어야 합니다. 더 짧은 이름은 구매할 수 있습니다."
     },
-    "brandProtectionLink": "예약된 브랜드 이름"
+    "brandProtectionLink": "예약된 브랜드 이름",
+    "perkAvailable": "ICPay Pro 혜택 이용 가능",
+    "perkActivated": "ICPay Pro 혜택이 활성화되었습니다!",
+    "perkReady": "@{handle}님을 위한 {gb} GB 온체인 클라우드 스토리지 (1년)가 준비되었습니다",
+    "claimPerk": "{gb} GB 스토리지 받기",
+    "payWithIcp": "ICP로 결제",
+    "payWithIcpay": "$ICPAY로 결제",
+    "bundledPerks": "포함된 ICPay Pro 혜택:",
+    "cloudStoragePerk": "{gb} GB 온체인 클라우드 스토리지 (1년)",
+    "verifiedIdentity": "인증된 핸들",
+    "savePercent": "20% 절약",
+    "buyWithDiscount": "$ICPAY로 구매 (20% 할인)",
+    "standardLedgerFee": "기본 원장 수수료",
+    "payWithIcpayNotice": "국고로 직접 스마트 계약 정산은 최종 테스트 단계입니다. 이름을 즉시 확보하려면 지금 ICP로 결제하세요."
   },
   "profile": {
     "title": "프로필",

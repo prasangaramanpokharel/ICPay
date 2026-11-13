@@ -322,7 +322,20 @@
       "invalidChars": "अक्षर, संख्या र अन्डरस्कोर मात्र",
       "notFree": "नि: शुल्क प्रयोगकर्ता नामहरू {min}+ वर्णहरू चाहिन्छ। रूप नामहरू किन्न छोड्नुहोस्।"
     },
-    "brandProtectionLink": "आरक्षित ब्रान्ड नामहरू"
+    "brandProtectionLink": "आरक्षित ब्रान्ड नामहरू",
+    "perkAvailable": "ICPay Pro सुविधा उपलब्ध छ",
+    "perkActivated": "ICPay Pro सुविधा सक्रिय भयो!",
+    "perkReady": "@{handle} को लागि {gb} GB अन-चेन क्लाउड स्टोरेज (१ वर्ष) तयार छ",
+    "claimPerk": "{gb} GB स्टोरेज दाबी गर्नुहोस्",
+    "payWithIcp": "ICP बाट भुक्तानी गर्नुहोस्",
+    "payWithIcpay": "$ICPAY बाट भुक्तानी गर्नुहोस्",
+    "bundledPerks": "समावेश ICPay Pro सुविधाहरू:",
+    "cloudStoragePerk": "{gb} GB अन-चेन क्लाउड स्टोरेज (१ वर्ष)",
+    "verifiedIdentity": "प्रमाणित पहिचान ह्यान्डल",
+    "savePercent": "२०% बचत गर्नुहोस्",
+    "buyWithDiscount": "$ICPAY बाट किन्नुहोस् (२०% छुट)",
+    "standardLedgerFee": "मानक नेटवर्क शुल्क",
+    "payWithIcpayNotice": "ट्रेजरीमा सीधा स्मार्ट सम्झौता फछ्र्यौट अन्तिम परीक्षणमा छ। आफ्नो नाम तत्काल सुरक्षित गर्न अहिले ICP बाट भुक्तानी गर्नुहोस्।"
   },
   "analytics": {
     "title": "विश्लेषण",

@@ -48,7 +48,6 @@ import {
   useDashboard,
   useTokenHolding,
 } from "@/hooks/wallet/useWalletData"
-import { useBucketList } from "@/hooks/bucket/useBucket"
 import { isProPerkClaimed, markProPerkClaimed } from "@/lib/profile/claimPerk"
 import { ICPAY_LEDGER_ID } from "@/services/tokens"
 import { formatAmount, formatTokenAmount, ICP_FEE, shortPrincipal } from "@/lib/wallet/utils"
@@ -77,7 +76,6 @@ export function UsernamePurchaseView() {
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
   const { data: dashboard } = useDashboard()
-  const { buckets } = useBucketList()
   const icpayHolding = useTokenHolding(ICPAY_LEDGER_ID)
 
   const [name, setName] = useState("")
@@ -89,19 +87,19 @@ export function UsernamePurchaseView() {
 
   const existingHandle = dashboard?.user.username[0]
   const existingTier = existingHandle ? tierFor(existingHandle) : null
-  const isExistingPro = existingTier && (existingTier.labelKey === "ultra" || existingTier.labelKey === "premium")
-  const proStorageGb = existingTier?.labelKey === "ultra" ? 5 : 1
-  const perkClaimed = claimedLocal || isProPerkClaimed(dashboard?.user.id, buckets)
+  const isExistingPro = existingTier && existingTier.perks.storageGb > 0
+  const proStorageGb = existingTier?.perks.storageGb ?? 0
+  const perkClaimed = claimedLocal || isProPerkClaimed(dashboard?.user.id)
 
   const handleClaimPerk = () => {
     if (!dashboard?.user.id || !existingHandle) return
     markProPerkClaimed(dashboard.user.id)
     setClaimedLocal(true)
     primeSuccessChime()
-    toast.success("ICPay Pro Perk Activated!", {
-      description: `${proStorageGb} GB On-Chain Cloud Storage (1 Year) is ready for @${existingHandle}`,
+    toast.success(t("perkActivated"), {
+      description: t("perkReady", { gb: proStorageGb, handle: existingHandle }),
     })
-    router.push(`/bucket/create?storage=${proStorageGb}&name=${existingHandle}-cloud`)
+    router.push(`/bucket?create=1&storage=${proStorageGb}`)
   }
 
   const trimmed = name.trim()
@@ -134,8 +132,8 @@ export function UsernamePurchaseView() {
   const handleBuy = async () => {
     if (!identity || !canBuy) return
     if (currency === "ICPAY") {
-      toast.info("Pay with $ICPAY", {
-        description: "Direct on-chain smart contract settlement with 100% treasury routing is currently in final test phase. Settle with ICP now to lock in your handle immediately.",
+      toast.info(t("payWithIcpay"), {
+        description: t("payWithIcpayNotice"),
       })
       setCurrency("ICP")
       return
@@ -179,7 +177,7 @@ export function UsernamePurchaseView() {
                 <div className="flex items-center gap-2">
                   <HugeiconsIcon icon={GiftIcon} className="size-4 text-primary" />
                   <span className="text-sm font-semibold text-foreground">
-                    ICPay Pro Perk Available
+                    {t("perkAvailable")}
                   </span>
                   <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-wider">
                     Unclaimed
@@ -187,7 +185,7 @@ export function UsernamePurchaseView() {
                 </div>
                 <p className="text-xs text-muted-foreground">
                   As the owner of <span className="font-semibold text-foreground">@{existingHandle}</span>, you qualify for{" "}
-                  <span className="font-semibold text-foreground">{proStorageGb} GB On-Chain Cloud Storage (1 Year)</span> in icBucket.
+                  <span className="font-semibold text-foreground">{t("cloudStoragePerk", { gb: proStorageGb })}</span> in icBucket.
                 </p>
               </div>
               <Button
@@ -196,7 +194,7 @@ export function UsernamePurchaseView() {
                 className="shrink-0 gap-1.5 font-semibold"
               >
                 <HugeiconsIcon icon={CloudIcon} className="size-4" />
-                <span>Claim {proStorageGb} GB</span>
+                <span>{t("claimPerk", { gb: proStorageGb })}</span>
                 <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
               </Button>
             </CardContent>
@@ -216,7 +214,7 @@ export function UsernamePurchaseView() {
                 }}
                 className="flex-1 rounded-xl text-xs font-semibold"
               >
-                Pay with ICP
+                {t("payWithIcp")}
               </Button>
               <Button
                 type="button"
@@ -228,7 +226,7 @@ export function UsernamePurchaseView() {
                 }}
                 className="flex-1 gap-1.5 rounded-xl text-xs font-semibold"
               >
-                <span>Pay with $ICPAY</span>
+                <span>{t("payWithIcpay")}</span>
                 <Badge variant="secondary" className="h-4.5 px-1.5 text-[9px] font-bold uppercase tracking-wider text-primary">
                   -20% OFF
                 </Badge>
@@ -356,12 +354,12 @@ export function UsernamePurchaseView() {
                   </div>
 
                   <div className="space-y-1.5 rounded-xl border border-border/50 bg-muted/30 p-3 text-xs">
-                    <p className="font-semibold text-foreground">Bundled ICPay Pro Perks:</p>
+                    <p className="font-semibold text-foreground">{t("bundledPerks")}</p>
                     <div className="flex items-center gap-2 text-muted-foreground">
                       <HugeiconsIcon icon={CloudIcon} className="size-3.5 text-primary shrink-0" />
                       <span>
                         {tier.perks.storageGb > 0
-                          ? `${tier.perks.storageGb} GB On-Chain Cloud Storage (1 Year in icBucket)`
+                          ? t("cloudStoragePerk", { gb: tier.perks.storageGb })
                           : "Handle alias forwarding & vanity routing"}
                       </span>
                     </div>
@@ -372,7 +370,7 @@ export function UsernamePurchaseView() {
                           ? "Gold Verified Badge & #1 directory search rank"
                           : tier.perks.badge === "blue"
                             ? "Blue Verified Badge & priority search rank"
-                            : "Verified Identity Handle"}
+                            : t("verifiedIdentity")}
                       </span>
                     </div>
                     {tier.perks.launchpadDiscountPercent > 0 && (
@@ -386,7 +384,7 @@ export function UsernamePurchaseView() {
                   <div className="flex items-baseline justify-between text-xs text-muted-foreground">
                     <span>{t("networkFee")}</span>
                     <span className="tabular-nums">
-                      {currency === "ICP" ? `${formatAmount(ICP_FEE)} ICP` : "Standard ledger fee"}
+                      {currency === "ICP" ? `${formatAmount(ICP_FEE)} ICP` : t("standardLedgerFee")}
                     </span>
                   </div>
                   <div className="flex items-baseline justify-between border-t border-border/60 pt-3 text-sm font-medium">
@@ -425,7 +423,7 @@ export function UsernamePurchaseView() {
                   : insufficient
                     ? t("insufficient")
                     : currency === "ICPAY" && trimmed
-                      ? `Buy with $ICPAY (-20% OFF)`
+                      ? t("buyWithDiscount")
                       : t("buy")}
               </span>
             </Button>
@@ -518,7 +516,7 @@ export function UsernamePurchaseView() {
                             : `${formatTokenAmount(tItem.priceIcpay, 8)} $ICPAY`}
                         </span>
                         {currency === "ICPAY" && (
-                          <p className="text-[10px] text-primary font-medium">Save 20%</p>
+                          <p className="text-[10px] text-primary font-medium">{t("savePercent")}</p>
                         )}
                       </div>
                     </div>
