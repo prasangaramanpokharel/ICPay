@@ -11,11 +11,16 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
+import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Tick02Icon,
   Cancel01Icon,
   InformationCircleIcon,
+  CloudIcon,
+  GiftIcon,
+  Rocket01Icon,
+  ArrowRight01Icon,
 } from "@hugeicons/core-free-icons"
 import {
   Popover,
@@ -40,8 +45,13 @@ import {
   useUsernameAvailability,
   useUsernameTreasury,
   useLiveBalance,
+  useDashboard,
+  useTokenHolding,
 } from "@/hooks/wallet/useWalletData"
-import { formatAmount, ICP_FEE, shortPrincipal } from "@/lib/wallet/utils"
+import { useBucketList } from "@/hooks/bucket/useBucket"
+import { isProPerkClaimed, markProPerkClaimed } from "@/lib/profile/claimPerk"
+import { ICPAY_LEDGER_ID } from "@/services/tokens"
+import { formatAmount, formatTokenAmount, ICP_FEE, shortPrincipal } from "@/lib/wallet/utils"
 import { ICP_LOGO } from "@/lib/token/icon"
 import {
   priceFor,
@@ -50,6 +60,7 @@ import {
   TIERS,
   USERNAME_MAX_LENGTH,
   USERNAME_FREE_MIN_LENGTH,
+  type CurrencyMode,
 } from "@/lib/profile/username"
 import { SendSuccess } from "@/components/wallet/send-success"
 import { AppPage } from "@/components/layout/dashboard/app-page"
@@ -65,10 +76,33 @@ export function UsernamePurchaseView() {
   const router = useRouter()
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
+  const { data: dashboard } = useDashboard()
+  const { buckets } = useBucketList()
+  const icpayHolding = useTokenHolding(ICPAY_LEDGER_ID)
+
   const [name, setName] = useState("")
+  const [currency, setCurrency] = useState<CurrencyMode>("ICP")
   const [error, setError] = useState<string | null>(null)
   const [buying, setBuying] = useState(false)
   const [bought, setBought] = useState<Purchase | null>(null)
+  const [claimedLocal, setClaimedLocal] = useState(false)
+
+  const existingHandle = dashboard?.user.username[0]
+  const existingTier = existingHandle ? tierFor(existingHandle) : null
+  const isExistingPro = existingTier && (existingTier.labelKey === "ultra" || existingTier.labelKey === "premium")
+  const proStorageGb = existingTier?.labelKey === "ultra" ? 5 : 1
+  const perkClaimed = claimedLocal || isProPerkClaimed(dashboard?.user.id, buckets)
+
+  const handleClaimPerk = () => {
+    if (!dashboard?.user.id || !existingHandle) return
+    markProPerkClaimed(dashboard.user.id)
+    setClaimedLocal(true)
+    primeSuccessChime()
+    toast.success("ICPay Pro Perk Activated!", {
+      description: `${proStorageGb} GB On-Chain Cloud Storage (1 Year) is ready for @${existingHandle}`,
+    })
+    router.push(`/bucket/create?storage=${proStorageGb}&name=${existingHandle}-cloud`)
+  }
 
   const trimmed = name.trim()
   const shapeError = trimmed ? validateUsername(trimmed) : null
@@ -76,12 +110,18 @@ export function UsernamePurchaseView() {
     shapeError ? "" : trimmed
   )
 
-  const price = trimmed ? priceFor(trimmed) : 0n
   const tier = trimmed ? tierFor(trimmed) : null
-  const total = price + ICP_FEE
-  const balance = useLiveBalance()
+  const priceIcp = trimmed ? priceFor(trimmed, "ICP") : 0n
+  const priceIcpay = trimmed ? priceFor(trimmed, "ICPAY") : 0n
+  const totalIcp = priceIcp + ICP_FEE
+
+  const balanceIcp = useLiveBalance()
+  const balanceIcpay = icpayHolding?.token?.balance ?? 0n
+
   const insufficient =
-    balance !== undefined && trimmed !== "" && total > balance
+    currency === "ICP"
+      ? balanceIcp !== undefined && trimmed !== "" && totalIcp > balanceIcp
+      : trimmed !== "" && priceIcpay > balanceIcpay
 
   const treasury = useUsernameTreasury()
   const canBuy =
@@ -93,6 +133,13 @@ export function UsernamePurchaseView() {
 
   const handleBuy = async () => {
     if (!identity || !canBuy) return
+    if (currency === "ICPAY") {
+      toast.info("Pay with $ICPAY", {
+        description: "Direct on-chain smart contract settlement with 100% treasury routing is currently in final test phase. Settle with ICP now to lock in your handle immediately.",
+      })
+      setCurrency("ICP")
+      return
+    }
     primeSuccessChime()
     setBuying(true)
     setError(null)
@@ -124,17 +171,101 @@ export function UsernamePurchaseView() {
 
   return (
     <AppPage title={t("title")} description={t("subtitle")}>
-      <div className="mx-auto w-full max-w-md">
+      <div className="mx-auto w-full max-w-md space-y-4">
+        {isExistingPro && !perkClaimed && (
+          <Card className="border-primary/40 bg-linear-to-r from-primary/10 via-background to-card shadow-sm">
+            <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <HugeiconsIcon icon={GiftIcon} className="size-4 text-primary" />
+                  <span className="text-sm font-semibold text-foreground">
+                    ICPay Pro Perk Available
+                  </span>
+                  <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-wider">
+                    Unclaimed
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  As the owner of <span className="font-semibold text-foreground">@{existingHandle}</span>, you qualify for{" "}
+                  <span className="font-semibold text-foreground">{proStorageGb} GB On-Chain Cloud Storage (1 Year)</span> in icBucket.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                onClick={handleClaimPerk}
+                className="shrink-0 gap-1.5 font-semibold"
+              >
+                <HugeiconsIcon icon={CloudIcon} className="size-4" />
+                <span>Claim {proStorageGb} GB</span>
+                <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         <Card className="border-border/60 shadow-sm">
           <CardContent className="space-y-6 px-5 py-7">
+            <div className="flex items-center justify-between rounded-2xl border border-border/60 bg-muted/40 p-1">
+              <Button
+                type="button"
+                variant={currency === "ICP" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => {
+                  setCurrency("ICP")
+                  setError(null)
+                }}
+                className="flex-1 rounded-xl text-xs font-semibold"
+              >
+                Pay with ICP
+              </Button>
+              <Button
+                type="button"
+                variant={currency === "ICPAY" ? "default" : "ghost"}
+                size="sm"
+                onClick={() => {
+                  setCurrency("ICPAY")
+                  setError(null)
+                }}
+                className="flex-1 gap-1.5 rounded-xl text-xs font-semibold"
+              >
+                <span>Pay with $ICPAY</span>
+                <Badge variant="secondary" className="h-4.5 px-1.5 text-[9px] font-bold uppercase tracking-wider text-primary">
+                  -20% OFF
+                </Badge>
+              </Button>
+            </div>
+
+            <div className="flex items-center justify-between gap-2 rounded-2xl border border-border/40 bg-muted/20 px-3.5 py-2.5 text-xs">
+              <span className="text-muted-foreground">Available balance:</span>
+              <div className="flex items-center gap-2 tabular-nums">
+                {currency === "ICP" ? (
+                  <span className="font-semibold text-foreground">
+                    {balanceIcp !== undefined ? `${formatAmount(balanceIcp)} ICP` : "—"}
+                  </span>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-foreground">
+                      {formatTokenAmount(balanceIcpay, 8)} $ICPAY
+                    </span>
+                    <Link
+                      href="/swap"
+                      className="text-primary hover:underline"
+                    >
+                      Swap
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+
             <div className="space-y-2">
               <div className="flex min-h-6 items-center justify-between gap-2">
                 <Label htmlFor="buy-username" className="shrink-0">{t("label")}</Label>
-                {balance !== undefined && (
+                {currency === "ICP" && balanceIcp !== undefined && (
                   <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
                     {tc("balance")}{" "}
                     <span className="font-semibold text-foreground">
-                      {formatAmount(balance)} ICP
+                      {formatAmount(balanceIcp)} ICP
                     </span>
                   </Badge>
                 )}
@@ -207,23 +338,64 @@ export function UsernamePurchaseView() {
                       <PremiumBadge name={trimmed} className="size-3.5" />
                     </span>
                     <span className="flex items-center gap-1.5 text-lg font-bold tabular-nums">
-                      <Image
-                        src={ICP_LOGO}
-                        alt=""
-                        width={40}
-                        height={40}
-                        className="size-5 object-contain"
-                      />
-                      {formatAmount(price)}
+                      {currency === "ICP" ? (
+                        <>
+                          <Image
+                            src={ICP_LOGO}
+                            alt=""
+                            width={40}
+                            height={40}
+                            className="size-5 object-contain"
+                          />
+                          {formatAmount(priceIcp)}
+                        </>
+                      ) : (
+                        <span>{formatTokenAmount(priceIcpay, 8)} $ICPAY</span>
+                      )}
                     </span>
                   </div>
+
+                  <div className="space-y-1.5 rounded-xl border border-border/50 bg-muted/30 p-3 text-xs">
+                    <p className="font-semibold text-foreground">Bundled ICPay Pro Perks:</p>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <HugeiconsIcon icon={CloudIcon} className="size-3.5 text-primary shrink-0" />
+                      <span>
+                        {tier.perks.storageGb > 0
+                          ? `${tier.perks.storageGb} GB On-Chain Cloud Storage (1 Year in icBucket)`
+                          : "Handle alias forwarding & vanity routing"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <HugeiconsIcon icon={Tick02Icon} className="size-3.5 text-primary shrink-0" />
+                      <span>
+                        {tier.perks.badge === "gold"
+                          ? "Gold Verified Badge & #1 directory search rank"
+                          : tier.perks.badge === "blue"
+                            ? "Blue Verified Badge & priority search rank"
+                            : "Verified Identity Handle"}
+                      </span>
+                    </div>
+                    {tier.perks.launchpadDiscountPercent > 0 && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <HugeiconsIcon icon={Rocket01Icon} className="size-3.5 text-primary shrink-0" />
+                        <span>{tier.perks.launchpadDiscountPercent}% Token Launcher voucher</span>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="flex items-baseline justify-between text-xs text-muted-foreground">
                     <span>{t("networkFee")}</span>
-                    <span className="tabular-nums">{formatAmount(ICP_FEE)} ICP</span>
+                    <span className="tabular-nums">
+                      {currency === "ICP" ? `${formatAmount(ICP_FEE)} ICP` : "Standard ledger fee"}
+                    </span>
                   </div>
                   <div className="flex items-baseline justify-between border-t border-border/60 pt-3 text-sm font-medium">
                     <span>{t("total")}</span>
-                    <span className="tabular-nums">{formatAmount(total)} ICP</span>
+                    <span className="tabular-nums font-bold">
+                      {currency === "ICP"
+                        ? `${formatAmount(totalIcp)} ICP`
+                        : `${formatTokenAmount(priceIcpay, 8)} $ICPAY`}
+                    </span>
                   </div>
                   {treasury && (
                     <p className="text-xs text-muted-foreground">
@@ -242,12 +414,20 @@ export function UsernamePurchaseView() {
 
             <Button
               size="lg"
-              className="h-12 w-full rounded-2xl text-base"
+              className="h-12 w-full rounded-2xl text-base font-semibold"
               disabled={!canBuy}
               onClick={handleBuy}
             >
               {buying ? <Spinner data-icon="inline-start" /> : null}
-              <span>{buying ? t("buying") : insufficient ? t("insufficient") : t("buy")}</span>
+              <span>
+                {buying
+                  ? t("buying")
+                  : insufficient
+                    ? t("insufficient")
+                    : currency === "ICPAY" && trimmed
+                      ? `Buy with $ICPAY (-20% OFF)`
+                      : t("buy")}
+              </span>
             </Button>
 
             <div className="space-y-2">
@@ -296,6 +476,7 @@ export function UsernamePurchaseView() {
                   </PopoverContent>
                 </Popover>
               </div>
+
               <div className="relative overflow-hidden rounded-2xl border border-border/70 bg-card/40 shadow-xs">
                 <ShineBorder
                   className="rounded-2xl"
@@ -313,7 +494,14 @@ export function UsernamePurchaseView() {
                       )}
                     >
                       <div>
-                        <p className="font-medium">{t(`tiers.${tItem.labelKey}`)}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium">{t(`tiers.${tItem.labelKey}`)}</p>
+                          {tItem.perks.storageGb > 0 && (
+                            <Badge variant="secondary" className="text-[10px] font-normal">
+                              {tItem.perks.storageGb} GB / 1 Yr
+                            </Badge>
+                          )}
+                        </div>
                         <p className="text-xs text-muted-foreground">
                           {t(`tiers.${tItem.rangeKey}`)}
                         </p>
@@ -323,13 +511,21 @@ export function UsernamePurchaseView() {
                           ))}
                         </div>
                       </div>
-                      <span className="font-semibold tabular-nums">
-                        {formatAmount(tItem.price)} ICP
-                      </span>
+                      <div className="text-right">
+                        <span className="font-semibold tabular-nums">
+                          {currency === "ICP"
+                            ? `${formatAmount(tItem.priceIcp)} ICP`
+                            : `${formatTokenAmount(tItem.priceIcpay, 8)} $ICPAY`}
+                        </span>
+                        {currency === "ICPAY" && (
+                          <p className="text-[10px] text-primary font-medium">Save 20%</p>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
+
               <p className="text-xs text-muted-foreground">{t("note")}</p>
               <Link
                 href="/brand-protection"
