@@ -43,13 +43,16 @@ flowchart TD
 
 ## 2. Core Strategic Invariants & Guardrails
 
-1. **Time-Bounded Storage (1 GB for 1 Year)**:
+1. **Time-Bounded Storage (5 GB Gold / 1 GB Blue for 1 Year)**:
    - **No Lifetime Storage**: Perpetual storage on-chain creates permanent cycle burn liabilities.
-   - Storage is granted as a **12-Month 1 GB Lease** in `icBucket` (`icp_blob_store`).
-   - Unit economics: 1 GB for 1 year costs ~0.4 ICP in cycle burn. On a 5–10 ICP purchase, the net treasury margin exceeds 90%.
+   - Storage is granted as a **12-Month Lease** in `icBucket` (`icp_blob_store`):
+     - **Gold Ultra (1–3 chars)**: **5 GB for 1 Year**.
+     - **Blue Premium (4 chars)**: **1 GB for 1 Year**.
+     - **Standard & Basic / Alias**: **0 GB (No storage included)** — strictly handle alias forwarding.
+   - Unit economics: 5 GB for 1 year costs ~2.0 ICP in cycle burn, leaving a high net margin on 10 ICP (or 160k $ICPAY). 1 GB for 1 year costs ~0.4 ICP in cycle burn on a 5 ICP purchase.
    - **Renewal**: After 12 months, users can renew or upgrade using $ICPAY at a preferential rate or ICP.
 2. **Backward-Compatibility for Existing Premium Users**:
-   - Users who already hold 1–4 character handles (Gold/Blue badges) automatically receive the **1 GB for 1 Year** cloud storage benefit without paying again.
+   - Users who already hold 1–3 character handles (Gold badge) automatically qualify for **5 GB for 1 Year**, and 4-character handles (Blue badge) qualify for **1 GB for 1 Year** cloud storage without paying again.
 3. **Zero Migration Required**:
    - Entitlements are derived dynamically from handle length (`len <= 3` = Gold, `len == 4` = Blue).
    - No database schema modification, no data migrations, and zero risk to the 3.0 GiB Wasm memory ceiling.
@@ -61,12 +64,12 @@ flowchart TD
 
 ## 3. Tier Matrix & Dual-Currency Economics
 
-| Tier | Length | Price (ICP) | Price ($ICPAY) | Effective Savings | icBucket Cloud Storage | Monthly Free Transfers | Launcher Discount | Badge Rank |
-|---|---|---|---|---|---|---|---|---|
-| **Gold Ultra** | 1–3 chars | **10 ICP** | **160,000 ICPAY** | **20% OFF** | **1 GB for 1 Year** | 50 transfers/mo | 50% off (2.5 ICP) | Gold Tick (#1 Rank) |
-| **Blue Premium** | 4 chars | **5 ICP** | **85,000 ICPAY** | **15% OFF** | **1 GB for 1 Year** | 30 transfers/mo | 25% off (3.75 ICP) | Blue Tick (#2 Rank) |
-| **Standard** | 5 chars | **2 ICP** | **35,000 ICPAY** | **12.5% OFF** | 250 MB for 1 Year | 10 transfers/mo | — | Verified Identity |
-| **Basic / Alias** | 6–8 chars | **1 ICP** | **18,000 ICPAY** | **10% OFF** | 100 MB Starter | — | — | Standard Alias |
+| Tier | Length | Price (ICP) | Price ($ICPAY) | Effective Savings | icBucket Cloud Storage | Launcher Discount | Badge Rank |
+|---|---|---|---|---|---|---|---|
+| **Gold Ultra** | 1–3 chars | **10 ICP** | **160,000 ICPAY** | **20% OFF** | **5 GB for 1 Year** | 50% off (2.5 ICP) | Gold Tick (#1 Rank) |
+| **Blue Premium** | 4 chars | **5 ICP** | **85,000 ICPAY** | **15% OFF** | **1 GB for 1 Year** | 25% off (3.75 ICP) | Blue Tick (#2 Rank) |
+| **Standard** | 5 chars | **2 ICP** | **35,000 ICPAY** | **12.5% OFF** | **None (0 GB)** | — | Verified Identity |
+| **Basic / Alias** | 6–8 chars | **1 ICP** | **18,000 ICPAY** | **10% OFF** | **None (0 GB)** | — | Standard Alias |
 
 *Note: Free first claim remains active for 5+ character handles.*
 
@@ -122,9 +125,8 @@ export const TIERS: Tier[] = [
     minLength: USERNAME_MIN_LENGTH,
     maxLength: 3,
     perks: {
-      storageGb: 1,
+      storageGb: 5,
       storageDurationMonths: 12,
-      freeMonthlyTxs: 50,
       launchpadDiscountPercent: 50,
       badge: "gold",
     },
@@ -139,7 +141,6 @@ export const TIERS: Tier[] = [
     perks: {
       storageGb: 1,
       storageDurationMonths: 12,
-      freeMonthlyTxs: 30,
       launchpadDiscountPercent: 25,
       badge: "blue",
     },
@@ -152,9 +153,8 @@ export const TIERS: Tier[] = [
     minLength: 5,
     maxLength: 5,
     perks: {
-      storageGb: 0.25,
-      storageDurationMonths: 12,
-      freeMonthlyTxs: 10,
+      storageGb: 0,
+      storageDurationMonths: 0,
       launchpadDiscountPercent: 0,
       badge: "standard",
     },
@@ -167,9 +167,8 @@ export const TIERS: Tier[] = [
     minLength: 6,
     maxLength: USERNAME_MAX_LENGTH,
     perks: {
-      storageGb: 0.1,
-      storageDurationMonths: 12,
-      freeMonthlyTxs: 0,
+      storageGb: 0,
+      storageDurationMonths: 0,
       launchpadDiscountPercent: 0,
       badge: "basic",
     },

@@ -75,13 +75,13 @@ flowchart TD
 
 | Tier | Length | Price (ICP / $ICPAY) | Storage Perks (icBucket) | Wallet & Platform Perks | $ICPAY Tokenomics Impact |
 |---|---|---|---|---|---|
-| **Gold Ultra** | 1–3 chars | **10 ICP** or **160,000 ICPAY** *(20% token discount)* | **1 GB for 1 Year** on-chain decentralized storage (renewable) | • Zero transfer fees for first 50 txs/mo<br>• Gold Verified Badge & #1 search rank<br>• 50% off Token Launcher (2.5 ICP)<br>• Full Analytics & CSV Export | 50% of $ICPAY burned; 50% to cycle reserve |
-| **Blue Premium** | 4 chars | **5 ICP** or **85,000 ICPAY** *(15% token discount)* | **1 GB for 1 Year** on-chain decentralized storage (renewable) | • Zero transfer fees for first 30 txs/mo<br>• Blue Verified Badge & high search rank<br>• 25% off Token Launcher<br>• Full Analytics & CSV Export | 50% of $ICPAY burned; 50% to cycle reserve |
-| **Standard** | 5 chars | **2 ICP** or **35,000 ICPAY** *(12.5% token discount)* | **250 MB for 1 Year** starter storage credit | • Verified Identity Badge<br>• Priority directory listing | 50% of $ICPAY burned |
-| **Basic / Alias** | 6–8 chars | **1 ICP** or **18,000 ICPAY** (or 1st free) | Optional storage add-on | • Unlimited alias forwarding to primary principal | 50% of $ICPAY burned |
+| **Gold Ultra** | 1–3 chars | **10 ICP** or **160,000 ICPAY** *(20% token discount)* | **5 GB for 1 Year** on-chain decentralized storage (renewable) | • Gold Verified Badge & #1 search rank<br>• 50% off Token Launcher (2.5 ICP)<br>• Full Analytics & CSV Export | 50% of $ICPAY burned; 50% to cycle reserve |
+| **Blue Premium** | 4 chars | **5 ICP** or **85,000 ICPAY** *(15% token discount)* | **1 GB for 1 Year** on-chain decentralized storage (renewable) | • Blue Verified Badge & high search rank<br>• 25% off Token Launcher<br>• Full Analytics & CSV Export | 50% of $ICPAY burned; 50% to cycle reserve |
+| **Standard** | 5 chars | **2 ICP** or **35,000 ICPAY** *(12.5% token discount)* | **None (0 GB)** — storage add-on available | • Verified Identity Badge<br>• Priority directory listing | 50% of $ICPAY burned |
+| **Basic / Alias** | 6–8 chars | **1 ICP** or **18,000 ICPAY** (or 1st free) | **None (0 GB)** — strictly handle alias | • Unlimited alias forwarding to primary principal | 50% of $ICPAY burned |
 
 > **Note on Cycle Economics & Server Load**:
-> 1 GB for 1 Year is strictly time-bounded (12 months), costing ~0.4 ICP in canister cycle burn per year. This eliminates infinite cycle obligations while leaving healthy revenue margins for the treasury. Current premium users with handles $\le 4$ chars automatically qualify to claim their 1 GB 1-Year allowance without re-paying.
+> Storage perks are strictly time-bounded (12 months): 5 GB for Gold Ultra costs ~2.0 ICP/yr and 1 GB for Blue Premium costs ~0.4 ICP/yr in canister cycle burn, leaving overwhelming revenue margins on 10 ICP and 5 ICP purchases. Basic & alias handles receive 0 storage, eliminating any micro-burn leaks. Current premium users with handles $\le 4$ chars automatically qualify to claim their respective 5 GB or 1 GB 1-Year allowance without re-paying.
 
 ---
 
