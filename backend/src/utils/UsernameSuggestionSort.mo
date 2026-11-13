@@ -6,12 +6,12 @@ import Types "../types";
 module {
   type BadgeTier = { #gold; #blue };
 
-  // Mirrors frontend/lib/verifed/premium-tick.ts — gold is 1-2 chars, blue is 3-4,
+  // Mirrors frontend/lib/verified/premiumTick.ts — gold is 1-3 chars, blue is 4,
   // free is 5+. Paid handles outrank free ones; within a paid band shorter wins.
   func premiumTier(name: Text): ?BadgeTier {
     let len = name.size();
     if (len == 0 or len >= Config.FREE_MIN_USERNAME_LENGTH) { null }
-    else if (len <= 2) { ?#gold }
+    else if (len <= 3) { ?#gold }
     else { ?#blue };
   };
 

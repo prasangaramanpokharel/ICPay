@@ -392,7 +392,11 @@
     "subaccountsTitle": "المسؤوليات الهيكلية المفهرسة",
     "subaccountsHint": "عقود الإيجار الخاصة بحساب ICP الخاص بك.",
     "shareSheetTitle": "ادفع @{name} على ICPay",
-    "shareSheetText": "أرسل لي برنامج المقارنات الدولية على @{name}"
+    "shareSheetText": "أرسل لي برنامج المقارنات الدولية على @{name}",
+    "handlesTitle": "المعرفات الخاصة بك",
+    "handlesHint": "تقوم جميع المعرفات بتوجيه المدفوعات مباشرة إلى حسابك الائتماني.",
+    "primaryHandle": "رئيسي",
+    "aliasHandle": "اسم مستعار"
   },
   "wallet": {
     "title": "محفظة",

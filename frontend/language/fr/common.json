@@ -361,7 +361,11 @@
     "shareSheetTitle": "Payer @{name} sur ICPay",
     "shareSheetText": "Envoyez-moi des ICP à @{name}",
     "subaccountsTitle": "Indexed subaccounts",
-    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account."
+    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
+    "handlesTitle": "Vos identifiants",
+    "handlesHint": "Tous les identifiants acheminent les paiements vers votre compte de garde.",
+    "primaryHandle": "Principal",
+    "aliasHandle": "Alias"
   },
   "wallet": {
     "title": "Portefeuille",

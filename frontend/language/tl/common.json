@@ -392,7 +392,11 @@
     "subaccountsTitle": "Mga na-index na subaccount",
     "subaccountsHint": "Mga subaccount na nakikita sa chain para sa iyong custodial ICP account.",
     "shareSheetTitle": "Magbayad @{name} sa ICPay",
-    "shareSheetText": "Padalhan ako ng ICP sa @{name}"
+    "shareSheetText": "Padalhan ako ng ICP sa @{name}",
+    "handlesTitle": "Iyong mga handle",
+    "handlesHint": "Direktang nagpapadala ng bayad ang lahat ng handle sa iyong custodial account.",
+    "primaryHandle": "Pangunahin",
+    "aliasHandle": "Alyas"
   },
   "wallet": {
     "title": "wallet",

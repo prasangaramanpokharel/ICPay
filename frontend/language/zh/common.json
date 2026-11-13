@@ -361,7 +361,11 @@
     "shareSheetTitle": "在 ICPay 上向 @{name} 付款",
     "shareSheetText": "通过 @{name} 向我转账 ICP",
     "subaccountsTitle": "Indexed subaccounts",
-    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account."
+    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
+    "handlesTitle": "您的用户名",
+    "handlesHint": "所有用户名都会直接将付款转至您的托管账户。",
+    "primaryHandle": "主要",
+    "aliasHandle": "别名"
   },
   "wallet": {
     "title": "钱包",

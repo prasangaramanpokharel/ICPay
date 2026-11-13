@@ -392,7 +392,11 @@
     "subaccountsTitle": "Dizinlenmiş subaccount'lar",
     "subaccountsHint": "Emanet ICP hesabınız için chain üzerinde görülen subaccount'lar.",
     "shareSheetTitle": "ICPay'de @{name} adlı kişiye öde",
-    "shareSheetText": "Bana @{name} adresinden ICP gönder"
+    "shareSheetText": "Bana @{name} adresinden ICP gönder",
+    "handlesTitle": "Kullanıcı Adlarınız",
+    "handlesHint": "Tüm kullanıcı adları ödemeleri doğrudan emanet hesabınıza yönlendirir.",
+    "primaryHandle": "Birincil",
+    "aliasHandle": "Takma Ad"
   },
   "wallet": {
     "title": "Cüzdan",

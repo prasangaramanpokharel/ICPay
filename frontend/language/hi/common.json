@@ -361,7 +361,11 @@
     "shareSheetTitle": "ICPay पर @{name} को भुगतान करें",
     "shareSheetText": "मुझे @{name} पर ICP भेजें",
     "subaccountsTitle": "Indexed subaccounts",
-    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account."
+    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
+    "handlesTitle": "आपके हैंडल",
+    "handlesHint": "सभी हैंडल सीधे आपके कस्टोडियल खाते में भुगतान भेजते हैं।",
+    "primaryHandle": "प्राथमिक",
+    "aliasHandle": "उपनाम"
   },
   "wallet": {
     "title": "वॉलेट",

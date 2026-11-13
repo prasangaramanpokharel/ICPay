@@ -361,7 +361,11 @@
     "shareSheetTitle": "ICPay で @{name} に支払う",
     "shareSheetText": "@{name} 宛てに ICP を送ってください",
     "subaccountsTitle": "Indexed subaccounts",
-    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account."
+    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
+    "handlesTitle": "保有ハンドル",
+    "handlesHint": "すべてのハンドル宛ての支払いは直接カストディ口座に届きます。",
+    "primaryHandle": "メイン",
+    "aliasHandle": "エイリアス"
   },
   "wallet": {
     "title": "ウォレット",

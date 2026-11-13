@@ -19,7 +19,7 @@ import { useTokenRegistry } from "@/lib/token/registry"
 import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap/utils"
 import type { DashboardData, UserPublic } from "@/services/types"
 import { getTransactions, getTransactionDetail } from "@/services/transactions/transactions"
-import { resolveUsername, searchUsers, hasClaimedProPerk, getProPerkStatus } from "@/services/profile/profile"
+import { resolveUsername, searchUsers, hasClaimedProPerk, getProPerkStatus, getUsernames } from "@/services/profile/profile"
 import { listBookmarks } from "@/services/bookmark/bookmark"
 import { USERNAME_MIN_LENGTH } from "@/lib/profile/username"
 import { checkUsername, getUsernameTreasury } from "@/services/buy/buy"
@@ -431,6 +431,11 @@ export function useUserSearch(search: string, limit = 10) {
 export function useOwnProfile() {
   const { identity } = useAuth()
   return useSWRImmutable(keyFor(identity, "profile"), () => resolveProfile(identity!))
+}
+
+export function useOwnUsernames() {
+  const { identity } = useAuth()
+  return useSWRImmutable(keyFor(identity, "my-usernames"), () => getUsernames(identity))
 }
 
 export function useBookmarks() {

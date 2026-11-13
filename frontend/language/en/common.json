@@ -392,7 +392,11 @@
     "subaccountsTitle": "Indexed subaccounts",
     "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
     "shareSheetTitle": "Pay @{name} on ICPay",
-    "shareSheetText": "Send me ICP at @{name}"
+    "shareSheetText": "Send me ICP at @{name}",
+    "handlesTitle": "Your handles",
+    "handlesHint": "All handles route payments directly to your custodial account.",
+    "primaryHandle": "Primary",
+    "aliasHandle": "Alias"
   },
   "wallet": {
     "title": "Wallet",

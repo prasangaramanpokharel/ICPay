@@ -392,7 +392,11 @@
     "subaccountsTitle": "Subaccount ที่จัดทำดัชนี",
     "subaccountsHint": "Subaccount บน chain สำหรับบัญชี ICP ที่ ICPay ดูแล",
     "shareSheetTitle": "จ่าย @{name} บน ICPay",
-    "shareSheetText": "ส่ง ICP ให้ฉันที่ @{name}"
+    "shareSheetText": "ส่ง ICP ให้ฉันที่ @{name}",
+    "handlesTitle": "ชื่อผู้ใช้ของคุณ",
+    "handlesHint": "ชื่อผู้ใช้ทั้งหมดจะส่งการชำระเงินไปยังบัญชีของคุณโดยตรง",
+    "primaryHandle": "หลัก",
+    "aliasHandle": "ชื่อแทน"
   },
   "wallet": {
     "title": "กระเป๋าเงิน",

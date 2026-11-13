@@ -392,7 +392,11 @@
     "subaccountsTitle": "Sub-akun yang diindeks",
     "subaccountsHint": "Sub-akun terlihat on-chain untuk akun ICP kustodian Anda.",
     "shareSheetTitle": "Bayar @{name} di ICPay",
-    "shareSheetText": "Kirimi saya ICP di @{name}"
+    "shareSheetText": "Kirimi saya ICP di @{name}",
+    "handlesTitle": "Handle Anda",
+    "handlesHint": "Semua handle meneruskan pembayaran langsung ke akun kustodian Anda.",
+    "primaryHandle": "Utama",
+    "aliasHandle": "Alias"
   },
   "wallet": {
     "title": "Dompet",

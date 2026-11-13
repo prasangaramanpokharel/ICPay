@@ -361,7 +361,11 @@
     "shareSheetTitle": "Pague @{name} no ICPay",
     "shareSheetText": "Me envie ICP em @{name}",
     "subaccountsTitle": "Indexed subaccounts",
-    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account."
+    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
+    "handlesTitle": "Seus nomes de usuário",
+    "handlesHint": "Todos os nomes encaminham pagamentos diretamente para sua conta de custódia.",
+    "primaryHandle": "Principal",
+    "aliasHandle": "Alias"
   },
   "wallet": {
     "title": "Carteira",

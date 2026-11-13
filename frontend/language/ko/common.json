@@ -361,7 +361,11 @@
     "shareSheetTitle": "ICPay에서 @{name}에게 송금",
     "shareSheetText": "@{name}으로 ICP를 보내주세요",
     "subaccountsTitle": "Indexed subaccounts",
-    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account."
+    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
+    "handlesTitle": "보유 핸들",
+    "handlesHint": "모든 핸들로 전송된 결제는 커스터디 계정으로 직접 입금됩니다.",
+    "primaryHandle": "기본",
+    "aliasHandle": "별칭"
   },
   "wallet": {
     "title": "지갑",

@@ -392,7 +392,11 @@
     "subaccountsTitle": "अनुक्रमित उप-खाताहरू",
     "subaccountsHint": "तपाईको हिरासतमा आईसीपी खाताको लागि अन-चेन हेर्न उप-खाताहरू।",
     "shareSheetTitle": "ICPay मा @{name} तिर्नुहोस्",
-    "shareSheetText": "मलाई @{name} मा ICP पठाउनुहोस्"
+    "shareSheetText": "मलाई @{name} मा ICP पठाउनुहोस्",
+    "handlesTitle": "तपाईंको ह्यान्डलहरू",
+    "handlesHint": "सबै ह्यान्डलहरूले तपाईंको कस्टोडियल खातामा सीधा भुक्तानी पठाउँछन्।",
+    "primaryHandle": "प्राथमिक",
+    "aliasHandle": "उपनाम"
   },
   "wallet": {
     "title": "वालेट",
