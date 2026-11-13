@@ -292,27 +292,6 @@ export interface WalletActor {
   buyIcpay: (icpAmount: bigint, recipient: [] | [Principal]) => Promise<IcpayPurchaseResult>
   claim_pro_perk: () => Promise<{ ok: boolean; err?: never } | { err: string; ok?: never }>
   has_claimed_pro_perk: () => Promise<boolean>
-  admin_get_pro_perk_stats: () => Promise<
-    | { ok: { totalClaims: bigint; claims: [Principal, bigint][] }; err?: never }
-    | { err: string; ok?: never }
-  >
-  admin_check_user_perk: (
-    target: Principal
-  ) => Promise<
-    | {
-        ok: {
-          eligible: boolean
-          claimed: boolean
-          claimedAt: [] | [bigint]
-          username: [] | [string]
-        }
-        err?: never
-      }
-    | { err: string; ok?: never }
-  >
-  admin_reset_user_perk: (
-    target: Principal
-  ) => Promise<{ ok: boolean; err?: never } | { err: string; ok?: never }>
 }
 
 export type IcpaySaleQuote = {

@@ -347,19 +347,6 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     err: IDL.Text,
   })
 
-  const AdminProPerkStats = IDL.Record({
-    totalClaims: IDL.Nat,
-    claims: IDL.Vec(IDL.Tuple(IDL.Principal, IDL.Nat64)),
-  })
-  const ApiResultAdminProPerkStats = IDL.Variant({ ok: AdminProPerkStats, err: IDL.Text })
-  const AdminUserCheck = IDL.Record({
-    eligible: IDL.Bool,
-    claimed: IDL.Bool,
-    claimedAt: IDL.Opt(IDL.Nat64),
-    username: IDL.Opt(IDL.Text),
-  })
-  const ApiResultAdminUserCheck = IDL.Variant({ ok: AdminUserCheck, err: IDL.Text })
-
   const ApiKeyPermissions = IDL.Record({
     read: IDL.Bool,
     write: IDL.Bool,
@@ -759,8 +746,5 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     buyIcpay: IDL.Func([IDL.Nat, IDL.Opt(IDL.Principal)], [ApiResultIcpayPurchase], []),
     claim_pro_perk: IDL.Func([], [ApiResultBool], []),
     has_claimed_pro_perk: IDL.Func([], [IDL.Bool], ["query"]),
-    admin_get_pro_perk_stats: IDL.Func([], [ApiResultAdminProPerkStats], ["query"]),
-    admin_check_user_perk: IDL.Func([IDL.Principal], [ApiResultAdminUserCheck], ["query"]),
-    admin_reset_user_perk: IDL.Func([IDL.Principal], [ApiResultBool], []),
   })
 }
