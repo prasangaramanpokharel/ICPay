@@ -73,10 +73,7 @@ export function PublicNavAuth() {
     try {
       await copyText(depositAddress)
       setCopied(true)
-      toast.add({
-        title: tDeposit("copyAddress"),
-        type: "info",
-      })
+      toast.success(tDeposit("copyAddress"))
       setTimeout(() => setCopied(false), 2000)
     } catch {
       toast.add({

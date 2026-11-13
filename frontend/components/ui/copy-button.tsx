@@ -101,10 +101,7 @@ export function CopyButton({
     try {
       await copyText(targetText)
       setCopied(true)
-      toast.add({
-        title: successMessage,
-        type: "info",
-      })
+      toast.success(successMessage)
       onCopySuccess?.()
       setTimeout(() => setCopied(false), 2000)
     } catch {
