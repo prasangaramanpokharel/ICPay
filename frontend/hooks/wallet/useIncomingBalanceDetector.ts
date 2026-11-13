@@ -5,14 +5,13 @@ import { Principal } from "@icp-sdk/core/principal"
 import { IcrcLedgerCanister } from "@icp-sdk/canisters/ledger/icrc"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useDepositAddress, useTokenHoldings, useRefreshWallet } from "@/hooks/wallet/useWalletData"
-import { custodialSubaccount } from "@/services/tokens"
+import { custodialSubaccount, ICP_LEDGER_ID, ICPAY_LEDGER_ID, PINNED_LEDGER_IDS } from "@/services/tokens"
 import { createAgent } from "@/services/icp"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { playSuccessChime } from "@/lib/ui/successChime"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 
-const POLL_INTERVAL_MS = 5000
-const ICP_LEDGER_ID = "ryjl3-tyaaa-aaaaa-aaaba-cai"
+const POLL_INTERVAL_MS = 4000
 
 export type BalanceCheckResult = {
   ledgerId: string
@@ -33,7 +32,7 @@ export function detectBalanceIncreases(
     if (prev !== undefined && current > prev) {
       const delta = current - prev
       const meta = metaMap.get(ledgerId) ?? {
-        symbol: ledgerId === ICP_LEDGER_ID ? "ICP" : "Tokens",
+        symbol: ledgerId === ICP_LEDGER_ID ? "ICP" : ledgerId === ICPAY_LEDGER_ID ? "ICPAY" : "Tokens",
         decimals: 8,
       }
       increases.push({
@@ -88,8 +87,13 @@ export function useIncomingBalanceDetector() {
         const metaMap = new Map<string, { symbol: string; decimals: number }>()
 
         metaMap.set(ICP_LEDGER_ID, { symbol: "ICP", decimals: 8 })
+        metaMap.set(ICPAY_LEDGER_ID, { symbol: "ICPAY", decimals: 8 })
+        metaMap.set("mxzaz-hqaaa-aaaar-qaada-cai", { symbol: "ckBTC", decimals: 8 })
+        metaMap.set("ss2fx-dyaaa-aaaar-qacoq-cai", { symbol: "ckETH", decimals: 18 })
+        metaMap.set("xevnm-gaaaa-aaaar-qafnq-cai", { symbol: "ckUSDC", decimals: 6 })
+        metaMap.set("cngnf-vqaaa-aaaar-qag4q-cai", { symbol: "ckUSDT", decimals: 6 })
 
-        const ledgerIdsSet = new Set<string>([ICP_LEDGER_ID])
+        const ledgerIdsSet = new Set<string>(PINNED_LEDGER_IDS)
         for (const h of currentHoldings) {
           ledgerIdsSet.add(h.ledgerId)
           metaMap.set(h.ledgerId, {
@@ -143,8 +147,9 @@ export function useIncomingBalanceDetector() {
             playSuccessChime()
             for (const inc of increases) {
               const formatted = formatTokenAmount(inc.delta, inc.decimals, 4)
-              toast.success(`Received +${formatted} ${inc.symbol}`, {
+              toast.success(`+${formatted} ${inc.symbol} Received successfully`, {
                 description: "Your balance has been updated.",
+                duration: 6000,
               })
             }
             void refreshWallet()
@@ -163,9 +168,22 @@ export function useIncomingBalanceDetector() {
       void poll()
     }, POLL_INTERVAL_MS)
 
+    const handleVisibilityChange = () => {
+      if (typeof document !== "undefined" && document.visibilityState === "visible") {
+        void poll()
+      }
+    }
+
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", handleVisibilityChange)
+    }
+
     return () => {
       isCancelled = true
       clearInterval(timer)
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", handleVisibilityChange)
+      }
       isPollingRef.current = false
     }
   }, [identity, custodian, refreshWallet])
