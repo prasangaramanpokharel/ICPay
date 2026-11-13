@@ -7,6 +7,14 @@ mixin (users: UserService.UserService, mwConfig: MiddlewareAuth.Config) {
     UserService.getProfile(users, MiddlewareAuth.effectiveCaller(mwConfig, caller));
   };
 
+  public shared query ({ caller }) func getUsernames() : async [Text] {
+    UserService.getUsernames(users, MiddlewareAuth.effectiveCaller(mwConfig, caller));
+  };
+
+  public shared query ({ caller }) func getMyUsernames() : async [Text] {
+    UserService.getUsernames(users, MiddlewareAuth.effectiveCaller(mwConfig, caller));
+  };
+
   public shared ({ caller }) func updateUsername(newUsername: Text) : async Types.ApiResult<Types.UserPublic> {
     UserService.updateUsername(users, MiddlewareAuth.effectiveCaller(mwConfig, caller), newUsername);
   };

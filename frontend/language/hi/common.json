@@ -322,7 +322,20 @@
       "invalidChars": "केवल अक्षर, अंक और अंडरस्कोर",
       "notFree": "मुफ़्त यूज़रनेम के लिए {min}+ अक्षर चाहिए। छोटे नाम खरीदे जा सकते हैं।"
     },
-    "brandProtectionLink": "आरक्षित ब्रांड नाम"
+    "brandProtectionLink": "आरक्षित ब्रांड नाम",
+    "perkAvailable": "ICPay Pro लाभ उपलब्ध है",
+    "perkActivated": "ICPay Pro लाभ सक्रिय हो गया!",
+    "perkReady": "@{handle} के लिए {gb} GB ऑन-चेन क्लाउड स्टोरेज (1 वर्ष) तैयार है",
+    "claimPerk": "{gb} GB स्टोरेज क्लेम करें",
+    "payWithIcp": "ICP से भुगतान करें",
+    "payWithIcpay": "$ICPAY से भुगतान करें",
+    "bundledPerks": "शामिल ICPay Pro लाभ:",
+    "cloudStoragePerk": "{gb} GB ऑन-चेन क्लाउड स्टोरेज (1 वर्ष)",
+    "verifiedIdentity": "सत्यापित पहचान हैंडल",
+    "savePercent": "20% की बचत करें",
+    "buyWithDiscount": "$ICPAY से खरीदें (20% छूट)",
+    "standardLedgerFee": "मानक नेटवर्क शुल्क",
+    "payWithIcpayNotice": "ट्रेजरी के लिए सीधा स्मार्ट अनुबंध निपटान अंतिम परीक्षण चरण में है। अपना नाम तुरंत सुरक्षित करने के लिए अभी ICP से भुगतान करें।"
   },
   "profile": {
     "title": "प्रोफ़ाइल",
@@ -348,7 +361,11 @@
     "shareSheetTitle": "ICPay पर @{name} को भुगतान करें",
     "shareSheetText": "मुझे @{name} पर ICP भेजें",
     "subaccountsTitle": "Indexed subaccounts",
-    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account."
+    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
+    "handlesTitle": "आपके हैंडल",
+    "handlesHint": "सभी हैंडल सीधे आपके कस्टोडियल खाते में भुगतान भेजते हैं।",
+    "primaryHandle": "प्राथमिक",
+    "aliasHandle": "उपनाम"
   },
   "wallet": {
     "title": "वॉलेट",

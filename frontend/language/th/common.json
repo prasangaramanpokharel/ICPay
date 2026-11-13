@@ -322,7 +322,20 @@
       "invalidChars": "ใช้ได้เฉพาะตัวอักษร ตัวเลข และ _",
       "notFree": "ชื่อฟรีต้อง {min}+ ตัวอักษร ชื่อสั้นกว่านั้นซื้อได้"
     },
-    "brandProtectionLink": "ชื่อแบรนด์ที่สงวนไว้"
+    "brandProtectionLink": "ชื่อแบรนด์ที่สงวนไว้",
+    "perkAvailable": "มีสิทธิพิเศษ ICPay Pro ให้ใช้งาน",
+    "perkActivated": "เปิดใช้งานสิทธิพิเศษ ICPay Pro แล้ว!",
+    "perkReady": "พื้นที่จัดเก็บข้อมูลบนคลาวด์ On-Chain {gb} GB (1 ปี) พร้อมสำหรับ @{handle}",
+    "claimPerk": "รับพื้นที่ {gb} GB",
+    "payWithIcp": "ชำระด้วย ICP",
+    "payWithIcpay": "ชำระด้วย $ICPAY",
+    "bundledPerks": "สิทธิพิเศษ ICPay Pro ที่รวมอยู่:",
+    "cloudStoragePerk": "พื้นที่จัดเก็บข้อมูลบนคลาวด์ On-Chain {gb} GB (1 ปี)",
+    "verifiedIdentity": "ชื่อประจำตัวที่ได้รับการยืนยัน",
+    "savePercent": "ประหยัด 20%",
+    "buyWithDiscount": "ซื้อด้วย $ICPAY (ลด 20%)",
+    "standardLedgerFee": "ค่าธรรมเนียมเครือข่ายมาตรฐาน",
+    "payWithIcpayNotice": "การชำระเงินด้วยสัญญาอัจฉริยะไปยังคลังโดยตรงอยู่ในขั้นตอนการทดสอบขั้นสุดท้าย ชำระด้วย ICP ตอนนี้เพื่อสำรองชื่อของคุณทันที"
   },
   "analytics": {
     "title": "Analytics",
@@ -379,7 +392,11 @@
     "subaccountsTitle": "Subaccount ที่จัดทำดัชนี",
     "subaccountsHint": "Subaccount บน chain สำหรับบัญชี ICP ที่ ICPay ดูแล",
     "shareSheetTitle": "จ่าย @{name} บน ICPay",
-    "shareSheetText": "ส่ง ICP ให้ฉันที่ @{name}"
+    "shareSheetText": "ส่ง ICP ให้ฉันที่ @{name}",
+    "handlesTitle": "ชื่อผู้ใช้ของคุณ",
+    "handlesHint": "ชื่อผู้ใช้ทั้งหมดจะส่งการชำระเงินไปยังบัญชีของคุณโดยตรง",
+    "primaryHandle": "หลัก",
+    "aliasHandle": "ชื่อแทน"
   },
   "wallet": {
     "title": "กระเป๋าเงิน",

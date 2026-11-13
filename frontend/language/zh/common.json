@@ -322,7 +322,20 @@
       "invalidChars": "仅限字母、数字和下划线",
       "notFree": "免费用户名需 {min} 个字符以上，更短的名称可以购买。"
     },
-    "brandProtectionLink": "已保留的品牌名称"
+    "brandProtectionLink": "已保留的品牌名称",
+    "perkAvailable": "ICPay Pro 权益可用",
+    "perkActivated": "ICPay Pro 权益已激活！",
+    "perkReady": "@{handle} 的 {gb} GB 链上云存储（1年）已就绪",
+    "claimPerk": "领取 {gb} GB 存储",
+    "payWithIcp": "使用 ICP 支付",
+    "payWithIcpay": "使用 $ICPAY 支付",
+    "bundledPerks": "包含的 ICPay Pro 权益：",
+    "cloudStoragePerk": "{gb} GB 链上云存储（1年）",
+    "verifiedIdentity": "已认证身份用户名",
+    "savePercent": "立省 20%",
+    "buyWithDiscount": "使用 $ICPAY 购买（省 20%）",
+    "standardLedgerFee": "标准账本手续费",
+    "payWithIcpayNotice": "直接向国库结算的智能合约正在最终测试中。请现在使用 ICP 结算以立即锁定您的用户名。"
   },
   "profile": {
     "title": "个人资料",
@@ -348,7 +361,11 @@
     "shareSheetTitle": "在 ICPay 上向 @{name} 付款",
     "shareSheetText": "通过 @{name} 向我转账 ICP",
     "subaccountsTitle": "Indexed subaccounts",
-    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account."
+    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
+    "handlesTitle": "您的用户名",
+    "handlesHint": "所有用户名都会直接将付款转至您的托管账户。",
+    "primaryHandle": "主要",
+    "aliasHandle": "别名"
   },
   "wallet": {
     "title": "钱包",

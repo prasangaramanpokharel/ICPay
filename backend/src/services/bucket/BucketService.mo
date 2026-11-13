@@ -12,6 +12,7 @@ module {
 
   public let createUploadSessionStore = Context.createUploadSessionStore;
   public let create = Context.create;
+  public let setProPerks = Context.setProPerks;
 
   public let getCycleStatus = Stats.getCycleStatus;
   public let getCloudStats = Stats.getCloudStats;

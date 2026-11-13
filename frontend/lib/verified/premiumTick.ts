@@ -1,6 +1,6 @@
 import { USERNAME_FREE_MIN_LENGTH, type Tier } from "@/lib/profile/username"
 
-const GOLD_MAX_LENGTH = 2
+const GOLD_MAX_LENGTH = 3
 
 export type BadgeTier = "gold" | "blue"
 

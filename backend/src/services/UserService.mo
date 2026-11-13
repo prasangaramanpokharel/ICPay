@@ -79,6 +79,10 @@ module {
     };
   };
 
+  public func getUsernames(service: UserService, caller: Principal): [Text] {
+    UserRepo.getUsernamesByPrincipal(service.usernames, service.users, caller);
+  };
+
   /** Claimed handles only — one query for ops (`npm run ci users:count`). */
   public func usernameCount(service: UserService): Nat {
     Map.size(service.usernames);

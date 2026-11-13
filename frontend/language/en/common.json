@@ -322,7 +322,20 @@
       "invalidChars": "Letters, numbers and underscore only",
       "notFree": "Free usernames need {min}+ characters. Shorter names can be bought."
     },
-    "brandProtectionLink": "Reserved brand names"
+    "brandProtectionLink": "Reserved brand names",
+    "perkAvailable": "ICPay Pro Perk Available",
+    "perkActivated": "ICPay Pro Perk Activated!",
+    "perkReady": "{gb} GB On-Chain Cloud Storage (1 Year) is ready for @{handle}",
+    "claimPerk": "Claim {gb} GB Storage",
+    "payWithIcp": "Pay with ICP",
+    "payWithIcpay": "Pay with $ICPAY",
+    "bundledPerks": "Bundled ICPay Pro Perks:",
+    "cloudStoragePerk": "{gb} GB On-Chain Cloud Storage (1 Year)",
+    "verifiedIdentity": "Verified Identity Handle",
+    "savePercent": "Save 20%",
+    "buyWithDiscount": "Buy with $ICPAY (-20% OFF)",
+    "standardLedgerFee": "Standard ledger fee",
+    "payWithIcpayNotice": "Direct on-chain smart contract settlement with 100% treasury routing is currently in final test phase. Settle with ICP now to lock in your handle immediately."
   },
   "analytics": {
     "title": "Analytics",
@@ -379,7 +392,11 @@
     "subaccountsTitle": "Indexed subaccounts",
     "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
     "shareSheetTitle": "Pay @{name} on ICPay",
-    "shareSheetText": "Send me ICP at @{name}"
+    "shareSheetText": "Send me ICP at @{name}",
+    "handlesTitle": "Your handles",
+    "handlesHint": "All handles route payments directly to your custodial account.",
+    "primaryHandle": "Primary",
+    "aliasHandle": "Alias"
   },
   "wallet": {
     "title": "Wallet",

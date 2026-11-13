@@ -322,7 +322,20 @@
       "invalidChars": "Mga titik, numero at underscore lamang",
       "notFree": "Ang mga libreng username ay nangangailangan ng {min}+ na character. Maaaring mabili ang mas maiikling pangalan."
     },
-    "brandProtectionLink": "Nakareserbang mga pangalan ng tatak"
+    "brandProtectionLink": "Nakareserbang mga pangalan ng tatak",
+    "perkAvailable": "Available ang ICPay Pro Perk",
+    "perkActivated": "Na-activate ang ICPay Pro Perk!",
+    "perkReady": "Handa na ang {gb} GB On-Chain Cloud Storage (1 Taon) para sa @{handle}",
+    "claimPerk": "Kunin ang {gb} GB Storage",
+    "payWithIcp": "Magbayad gamit ang ICP",
+    "payWithIcpay": "Magbayad gamit ang $ICPAY",
+    "bundledPerks": "Kasama sa ICPay Pro Perks:",
+    "cloudStoragePerk": "{gb} GB On-Chain Cloud Storage (1 Taon)",
+    "verifiedIdentity": "Beripikadong Identity Handle",
+    "savePercent": "Makatipid ng 20%",
+    "buyWithDiscount": "Bumili gamit ang $ICPAY (-20% OFF)",
+    "standardLedgerFee": "Karaniwang bayad sa ledger",
+    "payWithIcpayNotice": "Ang direktang smart contract settlement sa treasury ay nasa huling yugto ng pagsubok. Magbayad gamit ang ICP ngayon para ma-secure agad ang iyong handle."
   },
   "analytics": {
     "title": "Analytics",
@@ -379,7 +392,11 @@
     "subaccountsTitle": "Mga na-index na subaccount",
     "subaccountsHint": "Mga subaccount na nakikita sa chain para sa iyong custodial ICP account.",
     "shareSheetTitle": "Magbayad @{name} sa ICPay",
-    "shareSheetText": "Padalhan ako ng ICP sa @{name}"
+    "shareSheetText": "Padalhan ako ng ICP sa @{name}",
+    "handlesTitle": "Iyong mga handle",
+    "handlesHint": "Direktang nagpapadala ng bayad ang lahat ng handle sa iyong custodial account.",
+    "primaryHandle": "Pangunahin",
+    "aliasHandle": "Alyas"
   },
   "wallet": {
     "title": "wallet",

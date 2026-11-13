@@ -3,6 +3,7 @@ import BlobStore "../../blob/BlobStore";
 import RemoteBlobStore "../../blob/RemoteBlobStore";
 import Types "../../types";
 import TransferService "../TransferService";
+import ProPerkService "../ProPerkService";
 import UserStorage "../../storage/UserStorage";
 import BucketStorage "../../storage/BucketStorage";
 import RateLimitStorage "../../storage/RateLimitStorage";
@@ -30,6 +31,11 @@ module {
     manageLimits: RateLimitStorage.RateLimitMap;
     apiKeyLimits: RateLimitStorage.RateLimitMap;
     uploadSessions: UploadSessionStore;
+    var proPerks: ?ProPerkService.ProPerkService;
+  };
+
+  public func setProPerks(service: BucketService, pro: ProPerkService.ProPerkService) {
+    service.proPerks := ?pro;
   };
 
   public func create(
@@ -61,6 +67,7 @@ module {
       manageLimits;
       apiKeyLimits;
       uploadSessions;
+      var proPerks = null;
     }
   };
 };

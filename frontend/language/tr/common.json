@@ -322,7 +322,20 @@
       "invalidChars": "Yalnızca harf, rakam ve alt çizgi",
       "notFree": "Ücretsiz adlar {min}+ karakter gerektirir. Daha kısa adlar satın alınabilir."
     },
-    "brandProtectionLink": "Rezerve marka adları"
+    "brandProtectionLink": "Rezerve marka adları",
+    "perkAvailable": "ICPay Pro Avantajı Mevcut",
+    "perkActivated": "ICPay Pro Avantajı Etkinleştirildi!",
+    "perkReady": "@{handle} için {gb} GB Zincir İçi Bulut Depolama (1 Yıl) hazır",
+    "claimPerk": "{gb} GB Depolama Talep Et",
+    "payWithIcp": "ICP ile Öde",
+    "payWithIcpay": "$ICPAY ile Öde",
+    "bundledPerks": "Dahil Olan ICPay Pro Avantajları:",
+    "cloudStoragePerk": "{gb} GB Zincir İçi Bulut Depolama (1 Yıl)",
+    "verifiedIdentity": "Doğrulanmış Kimlik",
+    "savePercent": "%20 Tasarruf Edin",
+    "buyWithDiscount": "$ICPAY ile Satın Al (%20 İndirim)",
+    "standardLedgerFee": "Standart ağ ücreti",
+    "payWithIcpayNotice": "Hazineye doğrudan akıllı sözleşme ödemesi son test aşamasındadır. Kullanıcı adınızı hemen güvenceye almak için şimdi ICP ile ödeyin."
   },
   "analytics": {
     "title": "Analitik",
@@ -379,7 +392,11 @@
     "subaccountsTitle": "Dizinlenmiş subaccount'lar",
     "subaccountsHint": "Emanet ICP hesabınız için chain üzerinde görülen subaccount'lar.",
     "shareSheetTitle": "ICPay'de @{name} adlı kişiye öde",
-    "shareSheetText": "Bana @{name} adresinden ICP gönder"
+    "shareSheetText": "Bana @{name} adresinden ICP gönder",
+    "handlesTitle": "Kullanıcı Adlarınız",
+    "handlesHint": "Tüm kullanıcı adları ödemeleri doğrudan emanet hesabınıza yönlendirir.",
+    "primaryHandle": "Birincil",
+    "aliasHandle": "Takma Ad"
   },
   "wallet": {
     "title": "Cüzdan",
