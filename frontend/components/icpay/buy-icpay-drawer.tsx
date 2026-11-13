@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Principal } from "@icp-sdk/core/principal"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
   Field,
@@ -169,17 +170,18 @@ export function BuyIcpayDrawer({
             </Alert>
           ) : (
             <>
-              {balance !== undefined && (
-                <div className="flex items-center justify-between gap-3 rounded-2xl border border-border/50 bg-muted/40 px-4 py-3">
-                  <span className="text-xs font-medium text-muted-foreground">{tc("balance")}</span>
-                  <span className="text-sm font-semibold tabular-nums text-foreground">
-                    {formatAmount(balance)} ICP
-                  </span>
-                </div>
-              )}
-
               <Field className="gap-2">
-                <FieldLabel htmlFor="buy-icp">{t("pay")}</FieldLabel>
+                <div className="flex min-h-6 items-center justify-between gap-2">
+                  <FieldLabel htmlFor="buy-icp" className="shrink-0">{t("pay")}</FieldLabel>
+                  {balance !== undefined && (
+                    <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
+                      {tc("balance")}{" "}
+                      <span className="font-semibold text-foreground">
+                        {formatAmount(balance)} ICP
+                      </span>
+                    </Badge>
+                  )}
+                </div>
                 <Input
                   id="buy-icp"
                   size="xl"

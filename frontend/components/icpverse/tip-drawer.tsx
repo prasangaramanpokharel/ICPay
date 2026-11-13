@@ -1,14 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Drawer,
   DrawerContent,
@@ -21,12 +20,11 @@ import {
   memoByteLength,
   MEMO_MAX_BYTES,
   parseIcp,
+  formatAmount,
   E8S,
   ICP_FEE,
 } from "@/lib/wallet/utils"
 import { AmountInput } from "@/components/shared/amount-input"
-import { avatarUriFor } from "@/lib/profile/avatar"
-import { ICP_LOGO } from "@/lib/token/icon"
 import { primeSuccessChime } from "@/lib/ui/successChime"
 import { cn } from "@/lib/ui/utils"
 
@@ -93,67 +91,66 @@ export function TipDrawer({
     <Drawer open={open} onOpenChange={onOpenChange} showSwipeHandle>
       <DrawerContent>
         <DrawerHeader>
-          <div className="mb-1 flex justify-center">
-            <Avatar className="size-14">
-              <AvatarImage src={avatarUriFor(username)} alt="" />
-              <AvatarFallback className="bg-muted text-sm font-medium uppercase">
-                {username.slice(0, 2)}
-              </AvatarFallback>
-            </Avatar>
-          </div>
           <DrawerTitle className="text-center">@{username}</DrawerTitle>
           <DrawerDescription className="text-center">
             {t("subtitle")}
           </DrawerDescription>
         </DrawerHeader>
 
-        <div className="space-y-4 px-4">
-          <div className="grid grid-cols-2 gap-2.5">
-            {PRESETS.map((icp) => {
-              const value = icp * E8S
-              const active = selected === value
-              const tooBig = sendable !== undefined && value > sendable
-              return (
-                <Button
-                  key={icp.toString()}
-                  variant={active ? "default" : "outline"}
-                  disabled={tooBig}
-                  onClick={() => {
-                    setSelected(value)
-                    setError(null)
-                  }}
-                  className={cn(
-                    "h-14 rounded-2xl text-base font-semibold",
-                    active && "bg-primary/10 text-primary ring-1 ring-primary hover:bg-primary/15"
-                  )}
-                >
-                  <Image
-                    src={ICP_LOGO}
-                    alt=""
-                    width={40}
-                    height={40}
-                    className="size-5 object-contain"
-                  />
-                  {icp.toString()}
-                </Button>
-              )
-            })}
-            <Button
-              variant={selected === null ? "default" : "outline"}
-              onClick={() => {
-                setSelected(null)
-                setError(null)
-              }}
-              className={cn(
-                "h-14 flex-col gap-0 rounded-2xl text-xs font-semibold",
-                selected === null &&
-                  "bg-primary/10 text-primary ring-1 ring-primary hover:bg-primary/15"
+        <FieldGroup className="gap-4 px-4">
+          <Field className="gap-2">
+            <div className="flex min-h-6 items-center justify-between gap-2">
+              <FieldLabel className="shrink-0">{tc("amount")}</FieldLabel>
+              {balance !== undefined && (
+                <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
+                  {tc("balance")}{" "}
+                  <span className="font-semibold text-foreground">
+                    {formatAmount(balance)} ICP
+                  </span>
+                </Badge>
               )}
-            >
-              <span className="text-base leading-none">···</span>
-              {t("custom")}
-            </Button>
-          </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2.5">
+              {PRESETS.map((icp) => {
+                const value = icp * E8S
+                const active = selected === value
+                const tooBig = sendable !== undefined && value > sendable
+                return (
+                  <Button
+                    key={icp.toString()}
+                    variant={active ? "default" : "outline"}
+                    disabled={tooBig}
+                    onClick={() => {
+                      setSelected(value)
+                      setError(null)
+                    }}
+                    className={cn(
+                      "h-14 rounded-2xl text-base font-semibold",
+                      active && "bg-primary/10 text-primary ring-1 ring-primary hover:bg-primary/15"
+                    )}
+                  >
+                    {icp.toString()} ICP
+                  </Button>
+                )
+              })}
+              <Button
+                variant={selected === null ? "default" : "outline"}
+                onClick={() => {
+                  setSelected(null)
+                  setError(null)
+                }}
+                className={cn(
+                  "h-14 flex-col gap-0 rounded-2xl text-xs font-semibold",
+                  selected === null &&
+                    "bg-primary/10 text-primary ring-1 ring-primary hover:bg-primary/15"
+                )}
+              >
+                <span className="text-base leading-none">···</span>
+                {t("custom")}
+              </Button>
+            </div>
+          </Field>
 
           {selected === null && (
             <AmountInput
@@ -169,9 +166,9 @@ export function TipDrawer({
             />
           )}
 
-          <div className="space-y-2">
+          <Field className="gap-2">
             <div className="flex min-h-6 items-center justify-between gap-2">
-              <Label htmlFor="tip-message">{t("messageLabel")}</Label>
+              <FieldLabel htmlFor="tip-message">{t("messageLabel")}</FieldLabel>
               <span
                 className={cn(
                   "text-xs tabular-nums",
@@ -193,14 +190,14 @@ export function TipDrawer({
                 {t("memoTooLong", { max: messageBudget })}
               </p>
             )}
-          </div>
+          </Field>
 
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-        </div>
+        </FieldGroup>
 
         <DrawerFooter>
           <Button disabled={!canSend} onClick={handleSend}>

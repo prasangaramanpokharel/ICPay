@@ -8,6 +8,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -60,6 +61,7 @@ const SHINE_VARS = ["var(--primary)", "var(--chart-2)", "var(--chart-3)"]
 
 export function UsernamePurchaseView() {
   const t = useTranslations("buyUsername")
+  const tc = useTranslations("common")
   const router = useRouter()
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
@@ -126,7 +128,17 @@ export function UsernamePurchaseView() {
         <Card className="border-border/60 shadow-sm">
           <CardContent className="space-y-6 px-5 py-7">
             <div className="space-y-2">
-              <Label htmlFor="buy-username">{t("label")}</Label>
+              <div className="flex min-h-6 items-center justify-between gap-2">
+                <Label htmlFor="buy-username" className="shrink-0">{t("label")}</Label>
+                {balance !== undefined && (
+                  <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
+                    {tc("balance")}{" "}
+                    <span className="font-semibold text-foreground">
+                      {formatAmount(balance)} ICP
+                    </span>
+                  </Badge>
+                )}
+              </div>
               <div className="relative">
                 <span className="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-base text-muted-foreground">
                   @

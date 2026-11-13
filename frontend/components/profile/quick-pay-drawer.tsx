@@ -1,13 +1,12 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
+import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Select,
   SelectContent,
@@ -26,14 +25,13 @@ import {
 import { HugeiconsIcon } from "@hugeicons/react"
 import { LinkSquare02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
 import { AmountInput } from "@/components/shared/amount-input"
-import { avatarUriFor } from "@/lib/profile/avatar"
-import { ICP_LOGO } from "@/lib/token/icon"
 import { primeSuccessChime, playSuccessChime } from "@/lib/ui/successChime"
 import {
   E8S,
   ICP_FEE,
   copyText,
   explorerTxUrl,
+  formatAmount,
   formatE8s,
   parseIcp,
 } from "@/lib/wallet/utils"
@@ -82,19 +80,15 @@ export function QuickPayDrawer({
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState<Sent | null>(null)
 
-  // selected === null means the custom field is driving the amount.
   const amount = request ? request.amount : (selected ?? parseIcp(custom))
   const memo = request ? request.memo : PURPOSES.find((p) => p.key === purpose)?.memo
   const total = amount === null ? null : amount + ICP_FEE
-  // The fee is charged on top, so the most that can be sent is balance - fee.
   const sendable = balance === undefined ? undefined : balance > ICP_FEE ? balance - ICP_FEE : 0n
   const insufficient = total !== null && balance !== undefined && total > balance
   const canSend = amount !== null && amount > 0n && !insufficient && !loading
 
   const handleSend = async () => {
     if (amount === null) return
-    // Primed inside the tap: the transfer takes seconds, by which time the
-    // gesture that grants audio playback has expired.
     primeSuccessChime()
     setLoading(true)
     setError(null)
@@ -107,8 +101,6 @@ export function QuickPayDrawer({
     setSent({ amount, blockIndex: result.blockIndex })
   }
 
-  // The success view replaces the form in place rather than routing away, so
-  // the fields are cleared when the drawer closes instead of on send.
   const handleOpenChange = (next: boolean) => {
     onOpenChange(next)
     if (next) return
@@ -132,14 +124,6 @@ export function QuickPayDrawer({
         ) : (
           <>
             <DrawerHeader>
-              <div className="mb-1 flex justify-center">
-                <Avatar className="size-14">
-                  <AvatarImage src={avatarUriFor(username)} alt="" />
-                  <AvatarFallback className="bg-muted text-sm font-medium uppercase">
-                    {username.slice(0, 2)}
-                  </AvatarFallback>
-                </Avatar>
-              </div>
               <DrawerTitle className="text-center">{t("title", { name: username })}</DrawerTitle>
               <DrawerDescription className="text-center">
                 {request ? t("requestSubtitle", { name: username }) : t("subtitle")}
@@ -148,68 +132,79 @@ export function QuickPayDrawer({
 
             <FieldGroup className="gap-4 px-4">
               {request ? (
-                // Nothing to choose: the amount and the reason came in on the
-                // link, so the drawer only has to show what is about to happen.
                 <div className="space-y-3 rounded-2xl bg-muted/40 p-5 text-center">
                   <p className="text-4xl font-bold tracking-tight tabular-nums">
                     {formatE8s(request.amount)}
                   </p>
                   <p className="text-xs text-muted-foreground">ICP</p>
+                  {balance !== undefined && (
+                    <Badge variant="secondary" className="mx-auto mt-2 font-normal tabular-nums">
+                      {tc("balance")}{" "}
+                      <span className="font-semibold text-foreground">
+                        {formatAmount(balance)} ICP
+                      </span>
+                    </Badge>
+                  )}
                   {request.memo && (
                     <p className="border-t pt-3 text-sm">{request.memo}</p>
                   )}
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-2 gap-2.5">
-                    {PRESETS.map((icp) => {
-                      const value = icp * E8S
-                      const active = selected === value
-                      // Greyed out rather than hidden, so the row does not reflow
-                      // as the balance loads.
-                      const tooBig = sendable !== undefined && value > sendable
-                      return (
-                        <Button
-                          key={icp.toString()}
-                          variant={active ? "default" : "outline"}
-                          disabled={tooBig}
-                          onClick={() => {
-                            setSelected(value)
-                            setError(null)
-                          }}
-                          className={cn(
-                            "h-14 rounded-2xl text-base font-semibold",
-                            active &&
-                              "bg-primary/10 text-primary ring-1 ring-primary hover:bg-primary/15"
-                          )}
-                        >
-                          <Image
-                            src={ICP_LOGO}
-                            alt=""
-                            width={40}
-                            height={40}
-                            className="size-5 object-contain"
-                          />
-                          {icp.toString()}
-                        </Button>
-                      )
-                    })}
-                    <Button
-                      variant={selected === null ? "default" : "outline"}
-                      onClick={() => {
-                        setSelected(null)
-                        setError(null)
-                      }}
-                      className={cn(
-                        "h-14 flex-col gap-0 rounded-2xl text-xs font-semibold",
-                        selected === null &&
-                          "bg-primary/10 text-primary ring-1 ring-primary hover:bg-primary/15"
+                  <Field className="gap-2">
+                    <div className="flex min-h-6 items-center justify-between gap-2">
+                      <FieldLabel className="shrink-0">{tc("amount")}</FieldLabel>
+                      {balance !== undefined && (
+                        <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
+                          {tc("balance")}{" "}
+                          <span className="font-semibold text-foreground">
+                            {formatAmount(balance)} ICP
+                          </span>
+                        </Badge>
                       )}
-                    >
-                      <span className="text-base leading-none">···</span>
-                      {t("custom")}
-                    </Button>
-                  </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2.5">
+                      {PRESETS.map((icp) => {
+                        const value = icp * E8S
+                        const active = selected === value
+                        const tooBig = sendable !== undefined && value > sendable
+                        return (
+                          <Button
+                            key={icp.toString()}
+                            variant={active ? "default" : "outline"}
+                            disabled={tooBig}
+                            onClick={() => {
+                              setSelected(value)
+                              setError(null)
+                            }}
+                            className={cn(
+                              "h-14 rounded-2xl text-base font-semibold",
+                              active &&
+                                "bg-primary/10 text-primary ring-1 ring-primary hover:bg-primary/15"
+                            )}
+                          >
+                            {icp.toString()} ICP
+                          </Button>
+                        )
+                      })}
+                      <Button
+                        variant={selected === null ? "default" : "outline"}
+                        onClick={() => {
+                          setSelected(null)
+                          setError(null)
+                        }}
+                        className={cn(
+                          "h-14 flex-col gap-0 rounded-2xl text-xs font-semibold",
+                          selected === null &&
+                            "bg-primary/10 text-primary ring-1 ring-primary hover:bg-primary/15"
+                        )}
+                      >
+                        <span className="text-base leading-none">···</span>
+                        {t("custom")}
+                      </Button>
+                    </div>
+                  </Field>
 
                   {selected === null && (
                     <AmountInput
@@ -253,7 +248,7 @@ export function QuickPayDrawer({
               )}
             </FieldGroup>
 
-            <DrawerFooter className="pt-4">
+            <DrawerFooter>
               <Button disabled={!canSend} onClick={handleSend}>
                 {loading && <Spinner data-icon="inline-start" />}
                 <span>
@@ -261,8 +256,8 @@ export function QuickPayDrawer({
                     ? t("sending")
                     : insufficient
                       ? t("insufficient")
-                      : request
-                        ? t("confirmAmount", { amount: formatE8s(request.amount) })
+                      : amount !== null && amount > 0n
+                        ? t("confirmAmount", { amount: formatAmount(amount) })
                         : t("confirm")}
                 </span>
               </Button>
@@ -287,8 +282,6 @@ function PaySuccess({
 }) {
   const t = useTranslations("quickPay")
   const tc = useTranslations("common")
-  // Ref-guarded so the chime belongs to the payment, not to the render: a
-  // parent state change would otherwise replay it on-screen.
   const chimed = useRef(false)
   useEffect(() => {
     if (chimed.current) return
@@ -299,9 +292,6 @@ function PaySuccess({
   const [shared, setShared] = useState(false)
   const link = explorerTxUrl(blockIndex)
 
-  // Share sheet where the browser has one, copy everywhere else. Dismissing the
-  // sheet rejects with AbortError, which is a choice rather than a failure and
-  // must not fall through to a surprise copy.
   const handleShare = async () => {
     const payload = {
       title: t("shareSheetTitle"),
@@ -348,8 +338,6 @@ function PaySuccess({
         <Button className="flex-1" onClick={onDone}>
           {tc("done")}
         </Button>
-        {/* Square, so Done keeps the full width it had and the row does not read
-            as two competing actions. */}
         <Button
           variant="outline"
           onClick={handleShare}
