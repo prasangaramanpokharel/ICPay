@@ -21,21 +21,20 @@ flowchart TD
         PayICPAY["Option B: Pay with $ICPAY (Save 20%)"]
     end
 
-    subgraph TokenEngine ["Deflationary Token Mechanics"]
-        Burn["🔥 50% $ICPAY Permanently Burned (Blackhole)"]
-        Treasury["⚡ 50% $ICPAY to Canister Cycle Reserve"]
+    subgraph TreasuryEngine ["Protocol Treasury Reserves"]
+        Treasury["🏛️ 100% of Proceeds (ICP & $ICPAY) to ICPay Treasury"]
+        Cycles["⚡ Treasury Funds Canister Cycle Reserves & Growth"]
     end
 
     subgraph ProPass ["Bundled ICPay Pro Entitlements"]
-        Storage["📦 1 GB On-Chain icBucket Storage (1 Year)"]
+        Storage["📦 5 GB (Gold) / 1 GB (Blue) 1-Year icBucket Storage"]
         Badge["⭐ Gold / Blue Verified On-Chain Badge"]
-        Gas["⚡ 50 Monthly Zero-Gas Transfers"]
-        Launch["🚀 50% Discount on Token Launcher"]
+        Launch["🚀 50% / 25% Discount on Token Launcher"]
         Search["🔍 #1 Directory & Suggestion Ranking"]
     end
 
     Choose --> PaymentOptions
-    PayICPAY --> TokenEngine
+    PaymentOptions --> TreasuryEngine
     PaymentOptions --> ProPass
 ```
 
@@ -268,37 +267,20 @@ module {
     // 1. Availability check and key lock
     // 2. Validate token: must be ICP or ICPAY
     let isIcpay = ledgerId == Config.ICPAY_LEDGER_ID;
+    let targetLedger = if (isIcpay) { Config.ICPAY_LEDGER_ID } else { Config.ICP_LEDGER_CANISTER_ID };
     let price = if (isIcpay) {
       UsernameValidator.priceIcpayFor(name);
     } else {
       UsernameValidator.priceFor(name);
     };
 
-    if (isIcpay) {
-      // 50% Burn, 50% Treasury
-      let burnAmount = price / 2;
-      let treasuryAmount = price - burnAmount;
-
-      let burnDest = AccountHelper.defaultAccount(BLACKHOLE_PRINCIPAL);
-      let treasuryDest = AccountHelper.defaultAccount(treasury());
-
-      // Execute transfers
-      let burnRes = await TransferService.transferByAccountInternal(
-        service.transfers, caller, Config.ICPAY_LEDGER_ID, burnDest, burnAmount, ?("Burn username purchase: @" # name)
-      );
-      let treasuryRes = await TransferService.transferByAccountInternal(
-        service.transfers, caller, Config.ICPAY_LEDGER_ID, treasuryDest, treasuryAmount, ?("Treasury fee username purchase: @" # name)
-      );
-      // Confirm and register alias
-    } else {
-      // Settle standard ICP transfer
-      let destination = AccountHelper.defaultAccount(treasury());
-      let memo = saleMemo(name, price, Time.now());
-      let result = await TransferService.transferByAccountInternal(
-        service.transfers, caller, Config.ICP_LEDGER_CANISTER_ID, destination, price, ?memo
-      );
-      // Confirm and register alias
-    };
+    // 100% of proceeds (ICP or $ICPAY) go directly to the ICPay Treasury
+    let destination = AccountHelper.defaultAccount(treasury());
+    let memo = saleMemo(name, price, Time.now());
+    let result = await TransferService.transferByAccountInternal(
+      service.transfers, caller, targetLedger, destination, price, ?memo
+    );
+    // Confirm and register alias
   };
 };
 ```

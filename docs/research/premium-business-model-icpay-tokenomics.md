@@ -73,12 +73,12 @@ flowchart TD
 
 ### Proposed Tier Architecture:
 
-| Tier | Length | Price (ICP / $ICPAY) | Storage Perks (icBucket) | Wallet & Platform Perks | $ICPAY Tokenomics Impact |
+| Tier | Length | Price (ICP / $ICPAY) | Storage Perks (icBucket) | Wallet & Platform Perks | $ICPAY Treasury Impact |
 |---|---|---|---|---|---|
-| **Gold Ultra** | 1–3 chars | **10 ICP** or **160,000 ICPAY** *(20% token discount)* | **5 GB for 1 Year** on-chain decentralized storage (renewable) | • Gold Verified Badge & #1 search rank<br>• 50% off Token Launcher (2.5 ICP)<br>• Full Analytics & CSV Export | 50% of $ICPAY burned; 50% to cycle reserve |
-| **Blue Premium** | 4 chars | **5 ICP** or **85,000 ICPAY** *(15% token discount)* | **1 GB for 1 Year** on-chain decentralized storage (renewable) | • Blue Verified Badge & high search rank<br>• 25% off Token Launcher<br>• Full Analytics & CSV Export | 50% of $ICPAY burned; 50% to cycle reserve |
-| **Standard** | 5 chars | **2 ICP** or **35,000 ICPAY** *(12.5% token discount)* | **None (0 GB)** — storage add-on available | • Verified Identity Badge<br>• Priority directory listing | 50% of $ICPAY burned |
-| **Basic / Alias** | 6–8 chars | **1 ICP** or **18,000 ICPAY** (or 1st free) | **None (0 GB)** — strictly handle alias | • Unlimited alias forwarding to primary principal | 50% of $ICPAY burned |
+| **Gold Ultra** | 1–3 chars | **10 ICP** or **160,000 ICPAY** *(20% token discount)* | **5 GB for 1 Year** on-chain decentralized storage (renewable) | • Gold Verified Badge & #1 search rank<br>• 50% off Token Launcher (2.5 ICP)<br>• Full Analytics & CSV Export | 100% of $ICPAY goes directly to ICPay Treasury reserve |
+| **Blue Premium** | 4 chars | **5 ICP** or **85,000 ICPAY** *(15% token discount)* | **1 GB for 1 Year** on-chain decentralized storage (renewable) | • Blue Verified Badge & high search rank<br>• 25% off Token Launcher<br>• Full Analytics & CSV Export | 100% of $ICPAY goes directly to ICPay Treasury reserve |
+| **Standard** | 5 chars | **2 ICP** or **35,000 ICPAY** *(12.5% token discount)* | **None (0 GB)** — storage add-on available | • Verified Identity Badge<br>• Priority directory listing | 100% of $ICPAY goes directly to ICPay Treasury reserve |
+| **Basic / Alias** | 6–8 chars | **1 ICP** or **18,000 ICPAY** (or 1st free) | **None (0 GB)** — strictly handle alias | • Unlimited alias forwarding to primary principal | 100% of $ICPAY goes directly to ICPay Treasury reserve |
 
 > **Note on Cycle Economics & Server Load**:
 > Storage perks are strictly time-bounded (12 months): 5 GB for Gold Ultra costs ~2.0 ICP/yr and 1 GB for Blue Premium costs ~0.4 ICP/yr in canister cycle burn, leaving overwhelming revenue margins on 10 ICP and 5 ICP purchases. Basic & alias handles receive 0 storage, eliminating any micro-burn leaks. Current premium users with handles $\le 4$ chars automatically qualify to claim their respective 5 GB or 1 GB 1-Year allowance without re-paying.
@@ -92,9 +92,9 @@ To turn $ICPAY into a high-demand token with genuine economic velocity:
 1. **Dual Currency Payment with Discount**:
    - Buyers can pay in ICP or $ICPAY.
    - Paying in $ICPAY gives a **15%–20% discount**, encouraging users to buy $ICPAY on ICPSwap or presale.
-2. **Deflationary Burn Mechanics**:
-   - Every time a username is purchased with $ICPAY, **50% of the $ICPAY is burned** (transferred to the blackhole/minting address), decreasing total circulating supply.
-   - The remaining 50% goes to the treasury for canister cycle maintenance.
+2. **Protocol Treasury Accumulation**:
+   - Every time a username is purchased with $ICPAY (or ICP), **100% of the proceeds go directly to the ICPay Treasury** (`Config.TREASURY = ni5n2...`).
+   - The protocol retains 100% of the tokens, accumulating deep $ICPAY reserves to fund ongoing canister cycle burns, provide DEX liquidity, and finance ecosystem expansion.
 3. **VIP Staking / Holding Tiers ("Hold-to-Earn Perks")**:
    - Even users who do not purchase 1–3 char names can unlock **Gold/Blue badges and storage perks** by holding $\ge 100,000$ $ICPAY in their ICPay custodial wallet!
    - This creates massive lock-up pressure, reducing selling volume on ICPSwap.
