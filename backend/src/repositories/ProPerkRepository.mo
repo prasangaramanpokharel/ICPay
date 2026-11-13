@@ -21,7 +21,7 @@ module {
   };
 
   public func removeClaim(claims: ProPerkStorage.PerkClaimMap, user: Principal) {
-    ignore Map.remove(claims, Principal.compare, user);
+    Map.remove(claims, Principal.compare, user);
   };
 
   public func count(claims: ProPerkStorage.PerkClaimMap): Nat {
@@ -30,5 +30,24 @@ module {
 
   public func entries(claims: ProPerkStorage.PerkClaimMap): [(Principal, Nat64)] {
     Array.fromIter(Map.entries(claims));
+  };
+
+  public func hasFulfilled(buckets: ProPerkStorage.PerkBucketMap, user: Principal): Bool {
+    switch (Map.get(buckets, Principal.compare, user)) {
+      case (?_) { true };
+      case (null) { false };
+    };
+  };
+
+  public func getPerkBucketId(buckets: ProPerkStorage.PerkBucketMap, user: Principal): ?Text {
+    Map.get(buckets, Principal.compare, user);
+  };
+
+  public func recordFulfilled(buckets: ProPerkStorage.PerkBucketMap, user: Principal, bucketId: Text) {
+    Map.add(buckets, Principal.compare, user, bucketId);
+  };
+
+  public func removeFulfilled(buckets: ProPerkStorage.PerkBucketMap, user: Principal) {
+    Map.remove(buckets, Principal.compare, user);
   };
 };

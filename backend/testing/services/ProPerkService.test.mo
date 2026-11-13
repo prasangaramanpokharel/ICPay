@@ -10,7 +10,8 @@ let users = UserStorage.createUserMap();
 let usernames = UserStorage.createUsernameMap();
 let usersById = UserStorage.createUserIdMap();
 let claims = ProPerkStorage.createPerkClaimMap();
-let svc = ProPerkService.create(claims, users);
+let buckets = ProPerkStorage.createPerkBucketMap();
+let svc = ProPerkService.create(claims, buckets, users);
 
 let pUnknown = Principal.fromText("mk4xk-sqaaa-aaaaa-qadjq-cai");
 let pGold = Principal.fromText("aaaaa-aa");
@@ -66,5 +67,25 @@ switch (ProPerkService.claim(svc, pBlue)) {
   };
   case (#err(e)) { assert false };
 };
+
+// 7. Check capacity: Gold = 5 GB, Blue = 1 GB
+assert ProPerkService.perkCapacityGB(svc, pGold) == ?5;
+assert ProPerkService.perkCapacityGB(svc, pBlue) == ?1;
+assert ProPerkService.perkCapacityGB(svc, pBasic) == null;
+Debug.print("PASS: perk capacities correct for Gold and Blue");
+
+// 8. Fulfillment tracking
+assert ProPerkService.hasFulfilled(svc, pGold) == false;
+ProPerkService.recordFulfilled(svc, pGold, "b-test-bucket");
+assert ProPerkService.hasFulfilled(svc, pGold) == true;
+assert ProPerkService.getPerkBucketId(svc, pGold) == ?"b-test-bucket";
+Debug.print("PASS: perk fulfillment recorded and retrievable");
+
+let st = ProPerkService.getStatus(svc, pGold);
+assert st.claimed == true;
+assert st.fulfilled == true;
+assert st.storageGb == 5;
+assert st.bucketId == ?"b-test-bucket";
+Debug.print("PASS: getStatus returns complete pro perk state");
 
 Debug.print("ALL PRO PERK SERVICE TESTS PASSED");

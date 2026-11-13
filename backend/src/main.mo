@@ -146,6 +146,7 @@ persistent actor self {
   let communityReactionVotes = IcCommunityStorage.createReactionVoteMap();
   let communityReactionCounts = IcCommunityStorage.createReactionCountMap();
   let proPerkClaims = ProPerkStorage.createPerkClaimMap();
+  let proPerkBuckets = ProPerkStorage.createPerkBucketMap();
 
   // ICPay Cloud — metadata on backend; file bytes on the blob store canister.
   let bucketStore = BucketStorage.empty();
@@ -246,7 +247,8 @@ persistent actor self {
     bucketCreateLimits, bucketUploadLimits, bucketRenewLimits, bucketManageLimits, bucketApiKeyLimits,
     bucketUploadSessions,
   );
-  transient let proPerkService = ProPerkService.create(proPerkClaims, users);
+  transient let proPerkService = ProPerkService.create(proPerkClaims, proPerkBuckets, users);
+  BucketService.setProPerks(bucketService, proPerkService);
 
   // Chain-key symbols are compiled in, so seeding them costs no calls and runs
   // on every start rather than needing a migration. Reserving is idempotent.

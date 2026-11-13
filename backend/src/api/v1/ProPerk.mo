@@ -14,6 +14,11 @@ mixin (proPerks: ProPerkService.ProPerkService, mwConfig: MiddlewareAuth.Config)
     ProPerkService.hasClaimed(proPerks, effective);
   };
 
+  public shared query ({ caller }) func get_pro_perk_status(): async Types.ApiResult<ProPerkService.ProPerkStatus> {
+    let effective = MiddlewareAuth.effectiveCaller(mwConfig, caller);
+    #ok(ProPerkService.getStatus(proPerks, effective));
+  };
+
   public shared query ({ caller }) func admin_get_pro_perk_stats(): async Types.ApiResult<ProPerkService.AdminStats> {
     ProPerkService.adminGetStats(proPerks, caller);
   };

@@ -1,6 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -19,10 +20,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { BucketPriceLabel } from "@/components/bucket/bucket-price-label"
 import { ShineBorder } from "@/components/ui/shine-border"
 import { useBucketCycleStatus, useBucketPrice } from "@/hooks/bucket/useBucket"
-import { useLiveBalance } from "@/hooks/wallet/useWalletData"
+import { useLiveBalance, useProPerkStatus } from "@/hooks/wallet/useWalletData"
 import { CAPACITY_TIERS_GB, mapBucketError, validateBucketName } from "@/lib/bucket/bucket"
 import { calculateListPriceE8s, calculateYearlyListPriceE8s } from "@/lib/bucket/pricing"
-import { ICP_FEE } from "@/lib/wallet/utils"
+import { formatAmount, ICP_FEE } from "@/lib/wallet/utils"
 import { Mail01Icon } from "@hugeicons/core-free-icons"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { cn } from "@/lib/ui/utils"
@@ -40,17 +41,42 @@ export function BucketCreateForm({
   ) => Promise<string | null>
 }) {
   const t = useTranslations("bucket")
+  const searchParams = useSearchParams()
   const { cycleStatus } = useBucketCycleStatus()
   const balance = useLiveBalance()
+  const { status: proPerkStatus, isEligibleFreePerk } = useProPerkStatus()
+
+  const initialStorage = useMemo(() => {
+    const raw = searchParams.get("storage")
+    const parsed = raw ? Number(raw) : 1
+    return (CAPACITY_TIERS_GB as readonly number[]).includes(parsed) ? parsed : 1
+  }, [searchParams])
+
+  const initialPeriod = useMemo<BucketBillingPeriod>(() => {
+    return searchParams.get("storage") ? "yearly" : "monthly"
+  }, [searchParams])
+
+  const perkStorage = isEligibleFreePerk && proPerkStatus?.storageGb ? proPerkStatus.storageGb : null
+  const [userCapacityGB, setUserCapacityGB] = useState<number | null>(null)
+  const [userBillingPeriod, setUserBillingPeriod] = useState<BucketBillingPeriod | null>(null)
+
+  const capacityGB = userCapacityGB ?? perkStorage ?? initialStorage
+  const billingPeriod = userBillingPeriod ?? (perkStorage ? "yearly" : initialPeriod)
+  const setCapacityGB = setUserCapacityGB
+  const setBillingPeriod = setUserBillingPeriod
 
   const [name, setName] = useState("")
-  const [capacityGB, setCapacityGB] = useState<number>(1)
-  const [billingPeriod, setBillingPeriod] = useState<BucketBillingPeriod>("monthly")
   const [visibility, setVisibility] = useState<BucketVisibilityVariant>({ Public: null })
   const [alertEmail, setAlertEmail] = useState("")
   const [alertEmailError, setAlertEmailError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const isPerkApplied = Boolean(
+    isEligibleFreePerk &&
+      billingPeriod === "yearly" &&
+      capacityGB <= (proPerkStatus?.storageGb ?? 0)
+  )
 
   const { price, isLoading: priceLoading } = useBucketPrice(capacityGB, billingPeriod)
   const listPrice =
@@ -60,9 +86,9 @@ export function BucketCreateForm({
 
   const nameError = useMemo(() => validateBucketName(name), [name])
   const canCreate = cycleStatus?.canAcceptNewBuckets !== false
-  const totalCost = price !== null ? price + ICP_FEE : null
+  const totalCost = isPerkApplied ? 0n : price !== null ? price + ICP_FEE : null
   const insufficient =
-    totalCost !== null && balance !== undefined && balance < totalCost
+    !isPerkApplied && totalCost !== null && balance !== undefined && balance < totalCost
 
   const handleSubmit = async () => {
     if (nameError || !canCreate) return
@@ -267,7 +293,11 @@ export function BucketCreateForm({
                 <span className="text-xs font-semibold uppercase tracking-wider text-primary">
                   {capacityGB} GB · {billingPeriod === "yearly" ? "Annual Plan" : "Monthly Plan"}
                 </span>
-                {billingPeriod === "yearly" ? (
+                {isPerkApplied ? (
+                  <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold text-success">
+                    PRO PERK · 100% OFF
+                  </span>
+                ) : billingPeriod === "yearly" ? (
                   <span className="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold text-success">
                     2 MONTHS FREE
                   </span>
@@ -284,7 +314,17 @@ export function BucketCreateForm({
 
             <div className="flex items-baseline justify-between border-t border-border/50 pt-2.5">
               <span className="text-xs text-muted-foreground">{t("price")}</span>
-              {priceLoading || price === null ? (
+              {isPerkApplied ? (
+                <div className="flex items-baseline gap-2">
+                  <span className="text-xs text-muted-foreground line-through tabular-nums">
+                    {formatAmount(listPrice)} ICP
+                  </span>
+                  <span className="font-semibold tabular-nums text-success">
+                    0.00 ICP
+                  </span>
+                  <span className="text-xs text-muted-foreground">/ 1st year</span>
+                </div>
+              ) : priceLoading || price === null ? (
                 <span className="font-semibold tabular-nums text-foreground">…</span>
               ) : (
                 <BucketPriceLabel
@@ -315,7 +355,7 @@ export function BucketCreateForm({
             !canCreate ||
             Boolean(nameError) ||
             name.trim().length === 0 ||
-            priceLoading ||
+            (!isPerkApplied && priceLoading) ||
             insufficient
           }
           onClick={handleSubmit}
@@ -323,6 +363,8 @@ export function BucketCreateForm({
           {submitting && <Spinner data-icon="inline-start" />}
           {submitting
             ? t("creating")
+            : isPerkApplied
+            ? `Create Free Perk Bucket · ${capacityGB} GB (1 Year Included)`
             : insufficient
             ? t("insufficientBalance")
             : `${t("create")} · ${capacityGB} GB (${billingPeriod === "yearly" ? "Annual" : "Monthly"})`}

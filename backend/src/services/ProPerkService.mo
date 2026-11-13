@@ -12,14 +12,16 @@ import UsernameValidator "../validators/UsernameValidator";
 module {
   public type ProPerkService = {
     claims: ProPerkStorage.PerkClaimMap;
+    buckets: ProPerkStorage.PerkBucketMap;
     users: UserStorage.UserMap;
   };
 
   public func create(
     claims: ProPerkStorage.PerkClaimMap,
+    buckets: ProPerkStorage.PerkBucketMap,
     users: UserStorage.UserMap,
   ): ProPerkService {
-    { claims; users };
+    { claims; buckets; users };
   };
 
   public func isEligible(service: ProPerkService, user: Principal): Bool {
@@ -39,12 +41,65 @@ module {
     };
   };
 
+  public func perkCapacityGB(service: ProPerkService, user: Principal): ?Nat {
+    switch (UserRepo.getByPrincipal(service.users, user)) {
+      case (null) { null };
+      case (?u) {
+        switch (u.username) {
+          case (null) { null };
+          case (?name) {
+            switch (UsernameValidator.tierFor(name)) {
+              case (#ultra) { ?5 };
+              case (#premium) { ?1 };
+              case (_) { null };
+            };
+          };
+        };
+      };
+    };
+  };
+
   public func hasClaimed(service: ProPerkService, user: Principal): Bool {
     ProPerkRepo.hasClaimed(service.claims, user);
   };
 
+  public func hasFulfilled(service: ProPerkService, user: Principal): Bool {
+    ProPerkRepo.hasFulfilled(service.buckets, user);
+  };
+
+  public func getPerkBucketId(service: ProPerkService, user: Principal): ?Text {
+    ProPerkRepo.getPerkBucketId(service.buckets, user);
+  };
+
+  public func recordFulfilled(service: ProPerkService, user: Principal, bucketId: Text) {
+    ProPerkRepo.recordFulfilled(service.buckets, user, bucketId);
+  };
+
   public func getClaimTimestamp(service: ProPerkService, user: Principal): ?Nat64 {
     ProPerkRepo.getClaimTimestamp(service.claims, user);
+  };
+
+  public type ProPerkStatus = {
+    claimed: Bool;
+    fulfilled: Bool;
+    storageGb: Nat;
+    bucketId: ?Text;
+  };
+
+  public func getStatus(service: ProPerkService, user: Principal): ProPerkStatus {
+    let claimed = hasClaimed(service, user);
+    let fulfilled = hasFulfilled(service, user);
+    let storageGb = switch (perkCapacityGB(service, user)) {
+      case (?gb) gb;
+      case (null) 0;
+    };
+    let bucketId = getPerkBucketId(service, user);
+    {
+      claimed;
+      fulfilled;
+      storageGb;
+      bucketId;
+    };
   };
 
   public func claim(service: ProPerkService, caller: Principal): Types.ApiResult<Bool> {
@@ -71,7 +126,9 @@ module {
   public type AdminUserCheck = {
     eligible: Bool;
     claimed: Bool;
+    fulfilled: Bool;
     claimedAt: ?Nat64;
+    perkBucketId: ?Text;
     username: ?Text;
   };
 
@@ -98,7 +155,9 @@ module {
     #ok({
       eligible = isEligible(service, target);
       claimed = ProPerkRepo.hasClaimed(service.claims, target);
+      fulfilled = ProPerkRepo.hasFulfilled(service.buckets, target);
       claimedAt = ProPerkRepo.getClaimTimestamp(service.claims, target);
+      perkBucketId = ProPerkRepo.getPerkBucketId(service.buckets, target);
       username;
     });
   };
@@ -109,6 +168,7 @@ module {
       case (null) {};
     };
     ProPerkRepo.removeClaim(service.claims, target);
+    ProPerkRepo.removeFulfilled(service.buckets, target);
     #ok(true);
   };
 };

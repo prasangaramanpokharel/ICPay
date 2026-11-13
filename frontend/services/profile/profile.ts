@@ -55,3 +55,28 @@ export function hasClaimedProPerk(
   return query(identity, (actor) => actor.has_claimed_pro_perk())
 }
 
+export type ProPerkStatusData = {
+  claimed: boolean
+  fulfilled: boolean
+  storageGb: number
+  bucketId: string | null
+}
+
+export async function getProPerkStatus(
+  identity: Identity | undefined
+): Promise<ProPerkStatusData | null> {
+  return query(identity, async (actor) => {
+    if (!actor.get_pro_perk_status) return null
+    const res = await actor.get_pro_perk_status()
+    if ("ok" in res && res.ok) {
+      return {
+        claimed: res.ok.claimed,
+        fulfilled: res.ok.fulfilled,
+        storageGb: Number(res.ok.storageGb),
+        bucketId: res.ok.bucketId.length > 0 ? (res.ok.bucketId[0] ?? null) : null,
+      }
+    }
+    return null
+  })
+}
+

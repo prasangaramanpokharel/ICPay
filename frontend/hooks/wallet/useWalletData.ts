@@ -19,7 +19,7 @@ import { useTokenRegistry } from "@/lib/token/registry"
 import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap/utils"
 import type { DashboardData, UserPublic } from "@/services/types"
 import { getTransactions, getTransactionDetail } from "@/services/transactions/transactions"
-import { resolveUsername, searchUsers, hasClaimedProPerk } from "@/services/profile/profile"
+import { resolveUsername, searchUsers, hasClaimedProPerk, getProPerkStatus } from "@/services/profile/profile"
 import { listBookmarks } from "@/services/bookmark/bookmark"
 import { USERNAME_MIN_LENGTH } from "@/lib/profile/username"
 import { checkUsername, getUsernameTreasury } from "@/services/buy/buy"
@@ -691,5 +691,20 @@ export function useProPerkClaimed() {
     { revalidateOnFocus: false, dedupingInterval: 60_000 }
   )
   return { claimed: data === true, isLoading, refresh: mutate }
+}
+
+export function useProPerkStatus() {
+  const { identity } = useAuth()
+  const { data, isLoading, mutate } = useSWR(
+    identity ? ["pro-perk-status", identity.getPrincipal().toText()] : null,
+    () => getProPerkStatus(identity),
+    { revalidateOnFocus: false, dedupingInterval: 30_000 }
+  )
+  return {
+    status: data ?? null,
+    isEligibleFreePerk: Boolean(data?.claimed && !data?.fulfilled && (data?.storageGb ?? 0) > 0),
+    isLoading,
+    refresh: mutate,
+  }
 }
 

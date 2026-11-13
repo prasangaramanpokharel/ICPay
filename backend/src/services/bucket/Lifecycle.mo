@@ -12,6 +12,7 @@ import TransferService "../TransferService";
 import RateLimitService "../RateLimitService";
 import UserRepo "../../repositories/UserRepository";
 import BucketRepo "../../repositories/BucketRepository";
+import ProPerkService "../ProPerkService";
 import Memo "../../utils/Memo";
 import Context "Context";
 import Auth "Auth";
@@ -94,22 +95,40 @@ module {
       case (?_) {};
     };
 
-    let price = BillingService.calculatePriceForPeriod(capacityBytes, period);
-    let destination = AccountHelper.defaultAccount(Principal.fromText(Config.TREASURY));
-    let memo = ?Memo.bucketCreate(name, capacityGB);
+    let isFreePerk = switch (service.proPerks) {
+      case (null) false;
+      case (?pro) {
+        if (ProPerkService.hasClaimed(pro, caller) and not ProPerkService.hasFulfilled(pro, caller)) {
+          switch (ProPerkService.perkCapacityGB(pro, caller)) {
+            case (?maxGb) {
+              capacityGB <= maxGb and period == #Yearly;
+            };
+            case (null) false;
+          };
+        } else {
+          false;
+        };
+      };
+    };
 
-    switch (
-      await TransferService.transferByAccountInternal(
-        service.transfers,
-        caller,
-        Config.ICP_LEDGER_CANISTER_ID,
-        destination,
-        price,
-        memo,
-      )
-    ) {
-      case (#err(e)) { return #err(e) };
-      case (#ok(_)) {};
+    if (not isFreePerk) {
+      let price = BillingService.calculatePriceForPeriod(capacityBytes, period);
+      let destination = AccountHelper.defaultAccount(Principal.fromText(Config.TREASURY));
+      let memo = ?Memo.bucketCreate(name, capacityGB);
+
+      switch (
+        await TransferService.transferByAccountInternal(
+          service.transfers,
+          caller,
+          Config.ICP_LEDGER_CANISTER_ID,
+          destination,
+          price,
+          memo,
+        )
+      ) {
+        case (#err(e)) { return #err(e) };
+        case (#ok(_)) {};
+      };
     };
 
     let now = Time.now();
@@ -127,6 +146,12 @@ module {
       createdAt = now;
     };
     BucketRepo.save(service.store, service.names, bucket);
+    if (isFreePerk) {
+      switch (service.proPerks) {
+        case (?pro) ProPerkService.recordFulfilled(pro, caller, bucketId);
+        case (null) ();
+      };
+    };
     #ok(bucketId)
   };
 

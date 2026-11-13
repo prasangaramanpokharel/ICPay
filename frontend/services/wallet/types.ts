@@ -292,6 +292,14 @@ export interface WalletActor {
   buyIcpay: (icpAmount: bigint, recipient: [] | [Principal]) => Promise<IcpayPurchaseResult>
   claim_pro_perk: () => Promise<{ ok: boolean; err?: never } | { err: string; ok?: never }>
   has_claimed_pro_perk: () => Promise<boolean>
+  get_pro_perk_status: () => Promise<{ ok: ProPerkStatus; err?: never } | { err: string; ok?: never }>
+}
+
+export type ProPerkStatus = {
+  claimed: boolean
+  fulfilled: boolean
+  storageGb: bigint
+  bucketId: [] | [string]
 }
 
 export type IcpaySaleQuote = {

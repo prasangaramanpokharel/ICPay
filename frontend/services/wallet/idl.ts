@@ -746,5 +746,20 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     buyIcpay: IDL.Func([IDL.Nat, IDL.Opt(IDL.Principal)], [ApiResultIcpayPurchase], []),
     claim_pro_perk: IDL.Func([], [ApiResultBool], []),
     has_claimed_pro_perk: IDL.Func([], [IDL.Bool], ["query"]),
+    get_pro_perk_status: IDL.Func(
+      [],
+      [
+        IDL.Variant({
+          ok: IDL.Record({
+            claimed: IDL.Bool,
+            fulfilled: IDL.Bool,
+            storageGb: IDL.Nat,
+            bucketId: IDL.Opt(IDL.Text),
+          }),
+          err: IDL.Text,
+        }),
+      ],
+      ["query"]
+    ),
   })
 }
