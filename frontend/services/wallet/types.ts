@@ -36,6 +36,8 @@ export interface WalletActor {
   _internet_identity_sign_in_finish: () => Promise<{ ok: null } | { err: string }>
   register: (username: string) => Promise<AuthResult>
   getUser: () => Promise<[] | [UserPublic]>
+  getUsernames: () => Promise<string[]>
+  getMyUsernames: () => Promise<string[]>
   updateUsername: (newUsername: string) => Promise<ApiResult_2>
   checkUsername: (name: string) => Promise<boolean>
   searchUsers: (searchText: string) => Promise<UserPublic[]>
@@ -290,6 +292,16 @@ export interface WalletActor {
   getIcpayRate: () => Promise<bigint>
   getIcpaySale: () => Promise<IcpaySaleQuote>
   buyIcpay: (icpAmount: bigint, recipient: [] | [Principal]) => Promise<IcpayPurchaseResult>
+  claim_pro_perk: () => Promise<{ ok: boolean; err?: never } | { err: string; ok?: never }>
+  has_claimed_pro_perk: () => Promise<boolean>
+  get_pro_perk_status: () => Promise<{ ok: ProPerkStatus; err?: never } | { err: string; ok?: never }>
+}
+
+export type ProPerkStatus = {
+  claimed: boolean
+  fulfilled: boolean
+  storageGb: bigint
+  bucketId: [] | [string]
 }
 
 export type IcpaySaleQuote = {

@@ -322,7 +322,20 @@
       "invalidChars": "Только буквы, цифры и подчёркивание",
       "notFree": "Бесплатные имена — от {min} символов. Более короткие можно купить."
     },
-    "brandProtectionLink": "Зарезервированные бренды"
+    "brandProtectionLink": "Зарезервированные бренды",
+    "perkAvailable": "Доступен бонус ICPay Pro",
+    "perkActivated": "Бонус ICPay Pro активирован!",
+    "perkReady": "{gb} ГБ ончейн-облака (1 год) готово для @{handle}",
+    "claimPerk": "Получить {gb} ГБ хранилища",
+    "payWithIcp": "Оплатить с помощью ICP",
+    "payWithIcpay": "Оплатить с помощью $ICPAY",
+    "bundledPerks": "Включенные бонусы ICPay Pro:",
+    "cloudStoragePerk": "{gb} ГБ ончейн-облачного хранилища (1 год)",
+    "verifiedIdentity": "Верифицированный адрес",
+    "savePercent": "Скидка 20%",
+    "buyWithDiscount": "Купить за $ICPAY (скидка 20%)",
+    "standardLedgerFee": "Стандартная комиссия реестра",
+    "payWithIcpayNotice": "Прямой расчет через смарт-контракт в казначейство находится на финальном тестировании. Оплатите в ICP сейчас, чтобы мгновенно закрепить имя."
   },
   "profile": {
     "title": "Профиль",
@@ -348,7 +361,11 @@
     "shareSheetTitle": "Оплатить @{name} в ICPay",
     "shareSheetText": "Отправьте мне ICP на @{name}",
     "subaccountsTitle": "Indexed subaccounts",
-    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account."
+    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
+    "handlesTitle": "Ваши имена пользователей",
+    "handlesHint": "Все имена пользователей направляют платежи прямо на ваш кастодиальный счет.",
+    "primaryHandle": "Основной",
+    "aliasHandle": "Алиас"
   },
   "wallet": {
     "title": "Кошелёк",

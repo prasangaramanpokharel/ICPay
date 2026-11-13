@@ -6,7 +6,6 @@ import { Toast as ToastPrimitive } from "@base-ui/react/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Cancel01Icon,
-  Tick02Icon,
   InformationCircleIcon,
   Alert02Icon,
   Loading01Icon,
@@ -59,7 +58,7 @@ function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
     <ToastPrimitive.Viewport
       data-slot="toast-viewport"
       className={cn(
-        "pointer-events-none fixed right-4 bottom-4 z-50 w-[calc(100%-2rem)] max-w-sm outline-none",
+        "pointer-events-none fixed bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-[100] flex flex-col items-center w-full max-w-md px-4 outline-none",
         className
       )}
       {...props}
@@ -72,21 +71,17 @@ function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
     <ToastPrimitive.Root
       data-slot="toast"
       className={cn(
-        "group/toast pointer-events-auto absolute right-0 bottom-0 z-[calc(1000-var(--toast-index))] w-full origin-bottom rounded-2xl border border-border bg-background text-foreground shadow-none will-change-transform outline-none select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
-        "[--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--offset-y:calc(var(--toast-offset-y)*-1+calc(var(--toast-index)*var(--gap)*-1)+var(--toast-swipe-movement-y))] [--peek:0.75rem] [--scale:calc(max(0,1-(var(--toast-index)*0.1)))] [--shrink:calc(1-var(--scale))]",
-        "h-(--height) [transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--peek))-(var(--shrink)*var(--height))))_scale(var(--scale))] [transition:transform_500ms_cubic-bezier(0.22,1,0.36,1),opacity_500ms,height_150ms]",
+        "group/toast pointer-events-auto absolute bottom-0 z-[calc(1000-var(--toast-index))] w-auto min-w-[220px] max-w-[calc(100vw-2rem)] sm:max-w-md origin-bottom rounded-2xl border border-border/80 bg-card/95 text-card-foreground shadow-xl shadow-black/25 backdrop-blur-md will-change-transform outline-none select-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50",
+        "[--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--offset-y:calc(-1*var(--toast-offset-y)-calc(var(--toast-index)*var(--gap))+var(--toast-swipe-movement-y))] [--peek:0.75rem] [--scale:calc(max(0,1-(var(--toast-index)*0.08)))]",
+        "h-(--height) [transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)-(var(--toast-index)*var(--peek))))_scale(var(--scale))] [transition:transform_400ms_cubic-bezier(0.16,1,0.3,1),opacity_400ms,height_150ms]",
         "after:absolute after:top-full after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-['']",
         "data-expanded:h-(--toast-height) data-expanded:[transform:translateX(var(--toast-swipe-movement-x))_translateY(var(--offset-y))]",
         "data-limited:opacity-0 data-starting-style:[transform:translateY(150%)]",
         "[&[data-ending-style]:not([data-limited]):not([data-swipe-direction])]:[transform:translateY(150%)]",
         "data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+150%))]",
+        "data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))]",
         "data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]",
         "data-ending-style:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))]",
-        "data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))]",
-        "data-expanded:data-ending-style:data-[swipe-direction=down]:[transform:translateY(calc(var(--toast-swipe-movement-y)+150%))]",
-        "data-expanded:data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))]",
-        "data-expanded:data-ending-style:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))]",
-        "data-expanded:data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))]",
         className
       )}
       {...props}
@@ -99,7 +94,7 @@ function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
     <ToastPrimitive.Content
       data-slot="toast-content"
       className={cn(
-        "flex h-full items-center gap-3 overflow-hidden p-4 transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] data-behind:opacity-0 data-expanded:opacity-100",
+        "flex h-full items-center justify-between gap-3 overflow-hidden px-4 py-2.5 sm:py-3 transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] data-behind:opacity-0 data-expanded:opacity-100",
         className
       )}
       {...props}
@@ -111,7 +106,7 @@ function ToastTitle({ className, ...props }: ToastPrimitive.Title.Props) {
   return (
     <ToastPrimitive.Title
       data-slot="toast-title"
-      className={cn("text-sm font-medium", className)}
+      className={cn("text-sm font-medium tracking-tight text-foreground select-none", className)}
       {...props}
     />
   )
@@ -124,7 +119,7 @@ function ToastDescription({
   return (
     <ToastPrimitive.Description
       data-slot="toast-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-xs text-muted-foreground leading-normal select-none", className)}
       {...props}
     />
   )
@@ -132,7 +127,7 @@ function ToastDescription({
 
 function ToastAction({
   className,
-  render = <Button variant="outline" size="sm" />,
+  render = <Button variant="outline" size="xs" />,
   ...props
 }: ToastPrimitive.Action.Props) {
   return (
@@ -148,72 +143,91 @@ function ToastAction({
 function ToastClose({
   className,
   children,
-  render = <Button variant="ghost" size="icon-sm" />,
   ...props
 }: ToastPrimitive.Close.Props) {
   return (
-    <ToastPrimitive.Close
-      data-slot="toast-close"
-      aria-label="Close toast"
-      render={render}
-      className={cn(
-        "relative shrink-0 text-muted-foreground after:absolute after:-inset-2 after:content-[''] hover:text-foreground",
-        className
-      )}
-      {...props}
-    >
-      {children ?? (
-        <HugeiconsIcon icon={Cancel01Icon} aria-hidden="true" strokeWidth={2} />
-      )}
-    </ToastPrimitive.Close>
+    <div className="flex items-center shrink-0 pl-1">
+      <div className="h-4 sm:h-5 w-px bg-border/80 shrink-0 mr-2.5" />
+      <ToastPrimitive.Close
+        data-slot="toast-close"
+        aria-label="Close toast"
+        className={cn(
+          "inline-flex size-6 sm:size-7 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors cursor-pointer",
+          className
+        )}
+        {...props}
+      >
+        {children ?? (
+          <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" aria-hidden="true" strokeWidth={2.5} />
+        )}
+      </ToastPrimitive.Close>
+    </div>
   )
 }
 
-function ToastIcon({ type }: { type: string | undefined }) {
-  let icon: React.ReactNode = null
+export function ToastSuccessIcon({ className }: { className?: string } = {}) {
+  return (
+    <span
+      className={cn(
+        "flex size-6 items-center justify-center rounded-full bg-success text-success-foreground shrink-0 shadow-xs ring-2 ring-success/20",
+        className
+      )}
+    >
+      <svg
+        className="size-3.5"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={3}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M3.5 8.5L6.5 11.5L12.5 5" />
+      </svg>
+    </span>
+  )
+}
 
-  if (type === "success") {
-    icon = (
-      <span className="flex size-8 items-center justify-center rounded-full bg-success/10">
-        <span className="flex size-5 items-center justify-center rounded-full bg-success text-background">
-          <HugeiconsIcon icon={Tick02Icon} className="size-3" aria-hidden="true" strokeWidth={3} />
-        </span>
+function ToastIcon({ type, title }: { type: string | undefined; title?: React.ReactNode }) {
+  const isSuccess =
+    type === "success" ||
+    (typeof title === "string" && /copied|success|saved|created|updated/i.test(title))
+
+  if (isSuccess) {
+    return <ToastSuccessIcon />
+  }
+
+  if (type === "info") {
+    return (
+      <span className="flex size-6 items-center justify-center rounded-full bg-info/15 text-info shrink-0 ring-2 ring-info/20">
+        <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5" aria-hidden="true" strokeWidth={2.5} />
       </span>
     )
   }
 
-  if (type === "info") {
-    icon = <HugeiconsIcon icon={InformationCircleIcon} aria-hidden="true" strokeWidth={2} />
-  }
-
   if (type === "warning") {
-    icon = <HugeiconsIcon icon={Alert02Icon} aria-hidden="true" strokeWidth={2} />
+    return (
+      <span className="flex size-6 items-center justify-center rounded-full bg-warning/20 text-warning shrink-0 ring-2 ring-warning/20">
+        <HugeiconsIcon icon={Alert02Icon} className="size-3.5" aria-hidden="true" strokeWidth={2.5} />
+      </span>
+    )
   }
 
   if (type === "error") {
-    icon = (
-      <HugeiconsIcon icon={Cancel01Icon} className="text-destructive" aria-hidden="true" strokeWidth={2} />
+    return (
+      <span className="flex size-6 items-center justify-center rounded-full bg-destructive/15 text-destructive shrink-0 ring-2 ring-destructive/20">
+        <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" aria-hidden="true" strokeWidth={2.5} />
+      </span>
     )
   }
 
   if (type === "loading") {
-    icon = (
-      <HugeiconsIcon icon={Loading01Icon} className="animate-spin" aria-hidden="true" strokeWidth={2} />
+    return (
+      <HugeiconsIcon icon={Loading01Icon} className="size-4.5 animate-spin text-primary shrink-0" aria-hidden="true" strokeWidth={2.5} />
     )
   }
 
-  if (!icon) {
-    return null
-  }
-
-  return (
-    <span
-      data-slot="toast-icon"
-      className="shrink-0 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4"
-    >
-      {icon}
-    </span>
-  )
+  return null
 }
 
 function ToastList() {
@@ -222,8 +236,8 @@ function ToastList() {
   return toasts.map((toastItem) => (
     <Toast key={toastItem.id} toast={toastItem}>
       <ToastContent>
-        <ToastIcon type={toastItem.type} />
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
+        <ToastIcon type={toastItem.type} title={toastItem.title} />
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5 justify-center">
           <ToastTitle />
           <ToastDescription />
         </div>

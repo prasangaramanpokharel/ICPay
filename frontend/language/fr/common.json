@@ -322,7 +322,20 @@
       "invalidChars": "Lettres, chiffres et tiret bas uniquement",
       "notFree": "Les noms gratuits exigent {min}+ caractères. Les noms plus courts sont payants."
     },
-    "brandProtectionLink": "Noms de marque réservés"
+    "brandProtectionLink": "Noms de marque réservés",
+    "perkAvailable": "Avantage ICPay Pro disponible",
+    "perkActivated": "Avantage ICPay Pro activé !",
+    "perkReady": "{gb} Go de stockage cloud on-chain (1 an) prêt pour @{handle}",
+    "claimPerk": "Réclamer {gb} Go de stockage",
+    "payWithIcp": "Payer en ICP",
+    "payWithIcpay": "Payer en $ICPAY",
+    "bundledPerks": "Avantages inclus ICPay Pro :",
+    "cloudStoragePerk": "{gb} Go de stockage cloud on-chain (1 an)",
+    "verifiedIdentity": "Identifiant vérifié",
+    "savePercent": "Économisez 20%",
+    "buyWithDiscount": "Acheter avec $ICPAY (-20%)",
+    "standardLedgerFee": "Frais de réseau standard",
+    "payWithIcpayNotice": "Le règlement direct par contrat intelligent vers la trésorerie est en phase finale de test. Réglez en ICP maintenant pour réserver votre nom immédiatement."
   },
   "profile": {
     "title": "Profil",
@@ -348,7 +361,11 @@
     "shareSheetTitle": "Payer @{name} sur ICPay",
     "shareSheetText": "Envoyez-moi des ICP à @{name}",
     "subaccountsTitle": "Indexed subaccounts",
-    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account."
+    "subaccountsHint": "Subaccounts seen on-chain for your custodial ICP account.",
+    "handlesTitle": "Vos identifiants",
+    "handlesHint": "Tous les identifiants acheminent les paiements vers votre compte de garde.",
+    "primaryHandle": "Principal",
+    "aliasHandle": "Alias"
   },
   "wallet": {
     "title": "Portefeuille",

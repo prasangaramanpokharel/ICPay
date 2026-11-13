@@ -6,14 +6,24 @@ import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
+import { CopyButton } from "@/components/ui/copy-button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
+import { PremiumBadge } from "@/components/verified/premium-badge"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { UserIcon, Tick02Icon, Cancel01Icon, ShoppingBag01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import {
+  UserIcon,
+  Tick02Icon,
+  Cancel01Icon,
+  ShoppingBag01Icon,
+  ArrowRight01Icon,
+  LinkSquare02Icon,
+} from "@hugeicons/core-free-icons"
 import type { UserPublic } from "@/services/types"
 import Link from "next/link"
-import { useUsernameAvailability } from "@/hooks/wallet/useWalletData"
+import { useUsernameAvailability, useOwnUsernames } from "@/hooks/wallet/useWalletData"
 import {
   validateFreeUsername,
   USERNAME_MAX_LENGTH,
@@ -32,6 +42,14 @@ export function ProfileCard({ user, onUpdateUsername }: ProfileCardProps) {
   const [username, setUsername] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+
+  const { data: fetchedUsernames } = useOwnUsernames()
+  const handles =
+    fetchedUsernames && fetchedUsernames.length > 0
+      ? fetchedUsernames
+      : claimed
+        ? [claimed]
+        : []
 
   const trimmed = username.trim()
   const { available, isLoading: checking } = useUsernameAvailability(trimmed)
@@ -68,13 +86,51 @@ export function ProfileCard({ user, onUpdateUsername }: ProfileCardProps) {
           <Label className="text-xs text-muted-foreground">{t("userId")}</Label>
           <p className="font-mono text-xs text-muted-foreground">{user.id}</p>
         </div>
-        {claimed && (
-          <>
+        {handles.length > 0 && (
+          <div className="space-y-3">
             <Separator />
+            <div className="flex items-center justify-between">
+              <Label className="text-xs font-medium text-foreground">{t("handlesTitle")}</Label>
+              <span className="text-[11px] text-muted-foreground">{handles.length}</span>
+            </div>
+            <div className="space-y-1.5">
+              {handles.map((handle, idx) => {
+                const isPrimary = idx === 0
+                return (
+                  <div
+                    key={handle}
+                    className="flex items-center justify-between gap-3 rounded-lg border border-border/50 bg-muted/30 px-3 py-2 text-xs transition-colors hover:bg-muted/50"
+                  >
+                    <div className="flex min-w-0 items-center gap-1.5">
+                      <span className="truncate font-medium text-foreground">@{handle}</span>
+                      <PremiumBadge name={handle} className="size-3.5 shrink-0" />
+                      <Badge
+                        variant={isPrimary ? "default" : "secondary"}
+                        className="px-1.5 py-0 text-[10px] font-normal"
+                      >
+                        {isPrimary ? t("primaryHandle") : t("aliasHandle")}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <CopyButton text={`@${handle}`} size="icon-xs" variant="ghost" />
+                      <Button
+                        variant="ghost"
+                        size="icon-xs"
+                        nativeButton={false}
+                        render={<Link href={`/@${handle}`} aria-label={`View @${handle} profile`} />}
+                      >
+                        <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5 text-muted-foreground" />
+                      </Button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            <p className="text-[11px] text-muted-foreground">{t("handlesHint")}</p>
             <p className="text-xs text-muted-foreground">{t("permanentNote")}</p>
-          </>
+          </div>
         )}
-        {!claimed && (
+        {handles.length === 0 && (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="username">{t("choose")}</Label>

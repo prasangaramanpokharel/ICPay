@@ -170,4 +170,20 @@ switch (UserRepo.getByDepositAccountId(depositAccountIds, users, AccountHelper.t
 };
 Debug.print("PASS: reindexDepositAccounts populates lookup indexes");
 
+let p2Names = UserRepo.getUsernamesByPrincipal(usernames, users, p2);
+assert(p2Names.size() == 1);
+assert(p2Names[0] == "bob");
+Debug.print("PASS: getUsernamesByPrincipal returns primary handle");
+
+UserRepo.addAlias(usernames, user2, "bobby", now);
+let p2NamesWithAlias = UserRepo.getUsernamesByPrincipal(usernames, users, p2);
+assert(p2NamesWithAlias.size() == 2);
+assert(p2NamesWithAlias[0] == "bobby");
+assert(p2NamesWithAlias[1] == "bob");
+Debug.print("PASS: getUsernamesByPrincipal returns primary handle first and alias second");
+
+let unknownP = Principal.fromText("rno2w-sqaaa-aaaaa-aaacq-cai");
+assert(UserRepo.getUsernamesByPrincipal(usernames, users, unknownP).size() == 0);
+Debug.print("PASS: getUsernamesByPrincipal returns empty for unknown principal");
+
 Debug.print("ALL USER REPOSITORY TESTS PASSED");

@@ -497,6 +497,8 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     ),
     register: IDL.Func([IDL.Text], [AuthResult], []),
     getUser: IDL.Func([], [IDL.Opt(UserPublic)], ["query"]),
+    getUsernames: IDL.Func([], [IDL.Vec(IDL.Text)], ["query"]),
+    getMyUsernames: IDL.Func([], [IDL.Vec(IDL.Text)], ["query"]),
     updateUsername: IDL.Func([IDL.Text], [ApiResult_2], []),
     checkUsername: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
     searchUsers: IDL.Func([IDL.Text], [IDL.Vec(UserPublic)], ["query"]),
@@ -744,5 +746,22 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     getIcpayRate: IDL.Func([], [IDL.Nat], ["query"]),
     getIcpaySale: IDL.Func([], [IcpaySaleQuote], []),
     buyIcpay: IDL.Func([IDL.Nat, IDL.Opt(IDL.Principal)], [ApiResultIcpayPurchase], []),
+    claim_pro_perk: IDL.Func([], [ApiResultBool], []),
+    has_claimed_pro_perk: IDL.Func([], [IDL.Bool], ["query"]),
+    get_pro_perk_status: IDL.Func(
+      [],
+      [
+        IDL.Variant({
+          ok: IDL.Record({
+            claimed: IDL.Bool,
+            fulfilled: IDL.Bool,
+            storageGb: IDL.Nat,
+            bucketId: IDL.Opt(IDL.Text),
+          }),
+          err: IDL.Text,
+        }),
+      ],
+      ["query"]
+    ),
   })
 }

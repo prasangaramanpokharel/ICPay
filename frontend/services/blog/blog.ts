@@ -31,6 +31,15 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "changelog-2026-11-13",
+    title: "ICPay Changelog (Nov 13, 2026): Pro Username Shop, Free Storage Perks, Treasury Tokenomics & Multi-Handle Profiles",
+    description:
+      "Major platform updates for November 13, 2026: Launch of the ICPay Pro Shop with dual-currency pricing (ICP and $ICPAY -20%), 1-year free decentralized storage perks in icBucket, zero-cost perk bucket creation, Gold/Blue verified badge tier alignment, multi-handle profile management, and bottom-center toast notification ergonomics.",
+    publishedAt: "2026-11-13",
+    readingMinutes: 10,
+    category: "Product",
+  },
+  {
     slug: "icpay-changelog",
     title: "ICPay v1.7.0 Changelog: Introducing icCron Autonomous Scheduler, Dead Letter Queues & On-Chain Automation",
     description:

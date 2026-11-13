@@ -51,6 +51,9 @@ import BookmarkApi "api/v1/Bookmark";
 import SocialLinkApi "api/v1/SocialLink";
 import VerifiedApi "api/v1/Verified";
 import BucketApi "api/v1/Bucket";
+import ProPerkStorage "storage/ProPerkStorage";
+import ProPerkService "services/ProPerkService";
+import ProPerkApi "api/v1/ProPerk";
 import AnalyticsService "services/AnalyticsService";
 import AnalyticsApi "api/v1/Analytics";
 import LiveApi "api/v1/Live";
@@ -142,6 +145,8 @@ persistent actor self {
   // New stable maps — no migration; empty on first upgrade after deploy.
   let communityReactionVotes = IcCommunityStorage.createReactionVoteMap();
   let communityReactionCounts = IcCommunityStorage.createReactionCountMap();
+  let proPerkClaims = ProPerkStorage.createPerkClaimMap();
+  let proPerkBuckets = ProPerkStorage.createPerkBucketMap();
 
   // ICPay Cloud — metadata on backend; file bytes on the blob store canister.
   let bucketStore = BucketStorage.empty();
@@ -242,6 +247,8 @@ persistent actor self {
     bucketCreateLimits, bucketUploadLimits, bucketRenewLimits, bucketManageLimits, bucketApiKeyLimits,
     bucketUploadSessions,
   );
+  transient let proPerkService = ProPerkService.create(proPerkClaims, proPerkBuckets, users);
+  BucketService.setProPerks(bucketService, proPerkService);
 
   // Chain-key symbols are compiled in, so seeding them costs no calls and runs
   // on every start rather than needing a migration. Reserving is idempotent.
@@ -284,6 +291,7 @@ persistent actor self {
   include AnalyticsApi(analyticsService, mwConfig);
   include LiveApi(liveService, mwConfig);
   include IcCommunityApi(communityService, mwConfig);
+  include ProPerkApi(proPerkService, mwConfig);
   include CloudHttpApi(bucketService);
 
   include IdentityAttributes({

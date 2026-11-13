@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "@/components/ui/toast"
@@ -78,54 +78,56 @@ export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <AmountInput
-        id="amount"
-        label={tc("amount")}
-        value={amount}
-        onChange={(v) => {
-          setAmount(v)
-          setError(null)
-        }}
-        balance={balance}
-        maxE8s={maxSendable}
-      />
-
-      <div className="space-y-2">
-        <Label htmlFor="destination">{t("destination")}</Label>
-        <Input
-          id="destination"
-          placeholder={t("destinationPlaceholder")}
-          autoComplete="off"
-          spellCheck={false}
-          value={destination}
-          onChange={(e) => {
-            setDestination(e.target.value)
+    <form onSubmit={handleSubmit}>
+      <FieldGroup className="gap-5">
+        <AmountInput
+          id="amount"
+          label={tc("amount")}
+          value={amount}
+          onChange={(v) => {
+            setAmount(v)
             setError(null)
           }}
-          className="font-mono text-xs"
+          balance={balance}
+          maxE8s={maxSendable}
         />
-      </div>
 
-      <div className="space-y-1.5 rounded-2xl bg-muted/40 p-4">
-        <Row label={t("networkFee")} value={`${formatAmount(ICP_FEE)} ICP`} />
-        <Row
-          label={t("totalDeducted")}
-          value={total === null ? "—" : `${formatAmount(total)} ICP`}
-          emphasis
-        />
-      </div>
+        <Field className="gap-2">
+          <FieldLabel htmlFor="destination">{t("destination")}</FieldLabel>
+          <Input
+            id="destination"
+            placeholder={t("destinationPlaceholder")}
+            autoComplete="off"
+            spellCheck={false}
+            value={destination}
+            onChange={(e) => {
+              setDestination(e.target.value)
+              setError(null)
+            }}
+            className="font-mono text-xs"
+          />
+        </Field>
 
-      {error && (
-        <Alert variant="destructive">
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
+        <div className="space-y-1.5 rounded-2xl bg-muted/40 p-4">
+          <Row label={t("networkFee")} value={`${formatAmount(ICP_FEE)} ICP`} />
+          <Row
+            label={t("totalDeducted")}
+            value={total === null ? "—" : `${formatAmount(total)} ICP`}
+            emphasis
+          />
+        </div>
 
-      <Button type="submit" className="w-full" disabled={!canSubmit}>
-        {loading && <Spinner data-icon="inline-start" />}
-        <span>{loading ? t("sending") : t("submit")}</span>
-      </Button>
+        {error && (
+          <Alert variant="destructive">
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        <Button type="submit" className="w-full" disabled={!canSubmit}>
+          {loading && <Spinner data-icon="inline-start" />}
+          <span>{loading ? t("sending") : t("submit")}</span>
+        </Button>
+      </FieldGroup>
     </form>
   )
 }

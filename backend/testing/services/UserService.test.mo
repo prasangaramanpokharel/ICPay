@@ -159,4 +159,12 @@ let _u4 = UserRepo.create(users, usernames, usersById, "uid-4", p4, null, "Dave"
 assert(UserService.getVerifiedTier(svc, "uid-4") == null);
 Debug.print("PASS: getVerifiedTier returns null for a user with no handle");
 
+let p1Handles = UserService.getUsernames(svc, p1);
+assert(p1Handles.size() == 1);
+assert(p1Handles[0] == "alice");
+Debug.print("PASS: getUsernames returns user handle");
+
+assert(UserService.getUsernames(svc, p4).size() == 0);
+Debug.print("PASS: getUsernames returns empty array for user without handle");
+
 Debug.print("ALL USER SERVICE TESTS PASSED");
