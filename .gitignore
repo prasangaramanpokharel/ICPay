@@ -60,6 +60,8 @@ frontend/.agents/skills/vercel-react-best-practices
 !/docs/iccron/**
 !/docs/agents/
 !/docs/agents/**
+!/docs/plan/
+!/docs/plan/**
 !/docs/workflow.md
 
 # docs/bucket/ stays local (PDF exports, not committed)
