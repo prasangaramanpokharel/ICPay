@@ -43,6 +43,11 @@ module {
   public let PRICE_PREMIUM: Nat = 500_000_000; // 4 chars, 5 ICP
   public let PRICE_STANDARD: Nat = 200_000_000; // 5 chars, 2 ICP
   public let PRICE_BASIC: Nat = 100_000_000; // 6-8 chars, 1 ICP
+
+  public let PRICE_ULTRA_ICPAY: Nat = 16_000_000_000_000; // 1-3 chars, 160,000 ICPAY e8s (-20% discount from 200k)
+  public let PRICE_PREMIUM_ICPAY: Nat = 8_500_000_000_000; // 4 chars, 85,000 ICPAY e8s (-15% discount from 100k)
+  public let PRICE_STANDARD_ICPAY: Nat = 3_500_000_000_000; // 5 chars, 35,000 ICPAY e8s (-12.5% discount from 40k)
+  public let PRICE_BASIC_ICPAY: Nat = 1_800_000_000_000; // 6-8 chars, 18,000 ICPAY e8s (-10% discount from 20k)
   public let PAGE_SIZE: Nat = 20;
   // Every history read scans the whole transaction list, so an unbounded page
   // size lets one caller's request grow with total canister activity. 50 rows

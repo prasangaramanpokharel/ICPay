@@ -8,9 +8,14 @@ export function getUsernameTreasury(identity: Identity | undefined): Promise<str
 
 export function purchaseUsername(
   identity: Identity | undefined,
-  name: string
+  name: string,
+  currency: string = "ICP"
 ): Promise<Outcome<Purchase>> {
-  return call(identity, "Purchase failed", (actor) => actor.purchaseUsername(name))
+  return call(identity, "Purchase failed", (actor) =>
+    currency === "ICPAY" && typeof actor.purchaseUsernameWithCurrency === "function"
+      ? actor.purchaseUsernameWithCurrency(name, currency)
+      : actor.purchaseUsername(name)
+  )
 }
 
 export function getUsernamePrice(

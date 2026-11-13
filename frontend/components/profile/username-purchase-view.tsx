@@ -82,6 +82,7 @@ export function UsernamePurchaseView() {
 
   const [name, setName] = useState("")
   const [currency, setCurrency] = useState<CurrencyMode>("ICP")
+  const [purchasedCurrency, setPurchasedCurrency] = useState<CurrencyMode>("ICP")
   const [error, setError] = useState<string | null>(null)
   const [buying, setBuying] = useState(false)
   const [bought, setBought] = useState<Purchase | null>(null)
@@ -138,17 +139,11 @@ export function UsernamePurchaseView() {
 
   const handleBuy = async () => {
     if (!identity || !canBuy) return
-    if (currency === "ICPAY") {
-      toast.info(t("payWithIcpay"), {
-        description: t("payWithIcpayNotice"),
-      })
-      setCurrency("ICP")
-      return
-    }
     primeSuccessChime()
     setBuying(true)
     setError(null)
-    const result = await purchaseUsername(identity, trimmed)
+    setPurchasedCurrency(currency)
+    const result = await purchaseUsername(identity, trimmed, currency)
     setBuying(false)
     if ("err" in result) {
       setError(result.err)
@@ -167,6 +162,8 @@ export function UsernamePurchaseView() {
             recipient={`@${bought.username}`}
             blockIndex={bought.blockIndex}
             kind="purchase"
+            symbol={purchasedCurrency === "ICPAY" ? "$ICPAY" : "ICP"}
+            decimals={8}
             onDone={() => router.push("/profile")}
           />
         </div>
