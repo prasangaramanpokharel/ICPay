@@ -5,8 +5,10 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import { LinkSquare02Icon } from "@hugeicons/core-free-icons"
 import { Spinner } from "@/components/ui/spinner"
 import { useIcrcTokenHistory } from "@/hooks/ledger/useIcrcTokenHistory"
+import { useTransactions, useDashboard } from "@/hooks/wallet/useWalletData"
+import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { formatTokenAmount } from "@/lib/wallet/utils"
-import type { TokenHolding } from "@/services/tokens"
+import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
 import { cn } from "@/lib/ui/utils"
 
 export function TokenHistoryList({
@@ -17,8 +19,24 @@ export function TokenHistoryList({
   enabled?: boolean
 }) {
   const t = useTranslations("tokenHistory")
-  const { page, isLoading } = useIcrcTokenHistory(token.ledgerId, enabled)
+  const { page, isLoading: isIcrcLoading } = useIcrcTokenHistory(token.ledgerId, enabled)
+  const { items: allTxs, isLoading: isTxsLoading } = useTransactions(0, 50)
+  const { data: dashboardData, isLoading: isDashLoading } = useDashboard()
+
   const rows = page?.rows ?? []
+
+  const custodialTxs = (allTxs.length > 0 ? allTxs : (dashboardData?.recentTransactions ?? []))
+    .filter((tx) => {
+      if (token.ledgerId === ICP_LEDGER_ID) {
+        return !tx.ledgerId || tx.ledgerId === ICP_LEDGER_ID || tx.ledgerId === "ryjl3-tyaaa-aaaaa-aaaba-cai"
+      }
+      return tx.ledgerId === token.ledgerId
+    })
+
+  const isLoading =
+    (isIcrcLoading || isTxsLoading || isDashLoading) &&
+    custodialTxs.length === 0 &&
+    rows.length === 0
 
   if (isLoading) {
     return (
@@ -28,12 +46,16 @@ export function TokenHistoryList({
     )
   }
 
+  if (custodialTxs.length > 0) {
+    return <RecentTransactions transactions={custodialTxs} embedded />
+  }
+
   if (!rows.length) {
-    return <p className="py-4 text-center text-sm text-muted-foreground">{t("empty")}</p>
+    return <p className="py-6 text-center text-sm text-muted-foreground">{t("empty")}</p>
   }
 
   return (
-    <ul className="divide-y divide-border/40 overflow-hidden rounded-2xl border border-border/60 bg-card/40">
+    <ul className="divide-y divide-border/40 overflow-hidden">
       {rows.map((row) => {
         const isReceive = row.kind === "receive"
         return (
