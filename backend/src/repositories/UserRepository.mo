@@ -164,4 +164,43 @@ module {
     let ranked = Array.sort(List.toArray(results), UsernameSuggestionSort.compareUserPublic);
     if (ranked.size() <= limit) { ranked } else { Array.tabulate(limit, func(i) { ranked[i] }) };
   };
+
+  // Primary handle is first for UI display; retained aliases follow alphabetically.
+  public func getUsernamesByPrincipal(
+    usernames: UserStorage.UsernameMap,
+    users: UserStorage.UserMap,
+    p: Principal,
+  ): [Text] {
+    let userOpt = users.get(p);
+    let primary = switch (userOpt) {
+      case (?u) u.username;
+      case (null) null;
+    };
+    let normalizedPrimary = switch (primary) {
+      case (?name) ?UsernameValidator.normalize(name);
+      case (null) null;
+    };
+    let aliases = List.empty<Text>();
+    for ((name, owner) in usernames.entries()) {
+      if (owner == p) {
+        let isPrimary = switch (normalizedPrimary) {
+          case (?np) name == np;
+          case (null) false;
+        };
+        if (not isPrimary) {
+          aliases.add(name);
+        };
+      };
+    };
+    let sortedAliases = Array.sort(List.toArray(aliases), Text.compare);
+    switch (primary) {
+      case (?pName) {
+        let count = sortedAliases.size() + 1;
+        Array.tabulate(count, func(i) {
+          if (i == 0) pName else sortedAliases[i - 1]
+        });
+      };
+      case (null) sortedAliases;
+    };
+  };
 };

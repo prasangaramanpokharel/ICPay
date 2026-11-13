@@ -497,6 +497,8 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     ),
     register: IDL.Func([IDL.Text], [AuthResult], []),
     getUser: IDL.Func([], [IDL.Opt(UserPublic)], ["query"]),
+    getUsernames: IDL.Func([], [IDL.Vec(IDL.Text)], ["query"]),
+    getMyUsernames: IDL.Func([], [IDL.Vec(IDL.Text)], ["query"]),
     updateUsername: IDL.Func([IDL.Text], [ApiResult_2], []),
     checkUsername: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
     searchUsers: IDL.Func([IDL.Text], [IDL.Vec(UserPublic)], ["query"]),

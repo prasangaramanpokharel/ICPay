@@ -75,7 +75,7 @@ export function BucketCreateForm({
   const isPerkApplied = Boolean(
     isEligibleFreePerk &&
       billingPeriod === "yearly" &&
-      capacityGB <= (proPerkStatus?.storageGb ?? 0)
+      capacityGB === (proPerkStatus?.storageGb ?? 0)
   )
 
   const { price, isLoading: priceLoading } = useBucketPrice(capacityGB, billingPeriod)
@@ -151,6 +151,7 @@ export function BucketCreateForm({
           <div className="grid grid-cols-6 gap-1.5">
             {CAPACITY_TIERS_GB.map((gb) => {
               const active = capacityGB === gb
+              const isPerkTier = isEligibleFreePerk && gb === proPerkStatus?.storageGb
               return (
                 <Button
                   key={gb}
@@ -158,16 +159,41 @@ export function BucketCreateForm({
                   size="xs"
                   variant={active ? "default" : "outline"}
                   className={cn(
-                    "h-9 font-medium text-xs transition-all",
-                    active && "ring-1 ring-primary shadow-xs font-semibold"
+                    "relative h-9 font-medium text-xs transition-all",
+                    active && "ring-1 ring-primary shadow-xs font-semibold",
+                    isPerkTier && !active && "border-success/60 text-success"
                   )}
                   onClick={() => setCapacityGB(gb)}
                 >
                   {gb}G
+                  {isPerkTier && (
+                    <span className="absolute -top-2 left-1/2 -translate-x-1/2 rounded bg-success px-1 text-[8px] font-bold text-success-foreground">
+                      FREE
+                    </span>
+                  )}
                 </Button>
               )
             })}
           </div>
+          {isEligibleFreePerk && (capacityGB !== proPerkStatus?.storageGb || billingPeriod !== "yearly") && (
+            <div className="flex items-center justify-between rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-xs">
+              <span className="text-[11px] text-foreground">
+                Your Pro username includes {proPerkStatus?.storageGb} GB Annual for Free!
+              </span>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="h-auto px-2 py-0.5 text-[11px] font-semibold text-success hover:bg-success/20"
+                onClick={() => {
+                  if (proPerkStatus?.storageGb) setCapacityGB(proPerkStatus.storageGb)
+                  setBillingPeriod("yearly")
+                }}
+              >
+                Use {proPerkStatus?.storageGb} GB Free
+              </Button>
+            </div>
+          )}
         </Field>
 
         <Field className="space-y-2">

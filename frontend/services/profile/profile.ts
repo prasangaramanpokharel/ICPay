@@ -12,6 +12,12 @@ export function getProfile(
   })
 }
 
+export function getUsernames(
+  identity: Identity | undefined
+): Promise<string[]> {
+  return query(identity, (actor) => actor.getUsernames())
+}
+
 export function updateUsername(
   identity: Identity | undefined,
   username: string

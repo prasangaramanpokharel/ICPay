@@ -36,6 +36,8 @@ export interface WalletActor {
   _internet_identity_sign_in_finish: () => Promise<{ ok: null } | { err: string }>
   register: (username: string) => Promise<AuthResult>
   getUser: () => Promise<[] | [UserPublic]>
+  getUsernames: () => Promise<string[]>
+  getMyUsernames: () => Promise<string[]>
   updateUsername: (newUsername: string) => Promise<ApiResult_2>
   checkUsername: (name: string) => Promise<boolean>
   searchUsers: (searchText: string) => Promise<UserPublic[]>

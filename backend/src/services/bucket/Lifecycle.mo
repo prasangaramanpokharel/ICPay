@@ -101,7 +101,7 @@ module {
         if (ProPerkService.hasClaimed(pro, caller) and not ProPerkService.hasFulfilled(pro, caller)) {
           switch (ProPerkService.perkCapacityGB(pro, caller)) {
             case (?maxGb) {
-              capacityGB <= maxGb and period == #Yearly;
+              capacityGB == maxGb and period == #Yearly;
             };
             case (null) false;
           };
