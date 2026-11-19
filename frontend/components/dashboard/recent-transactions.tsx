@@ -44,7 +44,7 @@ const rowVariants = {
 export function RecentTransactions({ transactions, embedded }: RecentTransactionsProps) {
   const t = useTranslations("dashboard")
   const hasTransactions = transactions.length > 0
-  const visible = embedded ? transactions : transactions.slice(0, 3)
+  const visible = embedded ? transactions : transactions.slice(0, 5)
 
   return (
     <section className={embedded ? "space-y-0" : "space-y-2"}>
