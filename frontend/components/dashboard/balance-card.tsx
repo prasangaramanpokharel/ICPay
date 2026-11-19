@@ -57,7 +57,6 @@ export function BalanceCard({
     <div className="select-none px-1">
       <div className="flex min-w-0 items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
-          <span className="size-1.5 rounded-full bg-primary/70 shrink-0" />
           {username ? (
             <Button
               variant="ghost"
@@ -122,40 +121,38 @@ export function BalanceCard({
           </AnimatePresence>
         </Button>
 
-        <div className="mt-2.5 flex items-center gap-3">
+        <div className="mt-2.5 flex items-center justify-between gap-3">
           <button
             onClick={() => void onRefreshPrice()}
             title="Click to refresh price"
-            className="text-sm font-medium tabular-nums text-muted-foreground transition-opacity hover:opacity-70 active:opacity-40 cursor-pointer"
+            className="text-sm font-semibold tabular-nums text-success transition-opacity hover:opacity-70 active:opacity-40 cursor-pointer"
           >
             {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
           </button>
 
           {!hidden && price && (
-            <span className="text-muted-foreground/40 text-xs">·</span>
-          )}
-
-          {!hidden && price && (
-            <span className="text-xs font-medium tabular-nums text-muted-foreground/70">
-              {price.usd.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 4,
-              })} / ICP
-            </span>
-          )}
-
-          {!hidden && price && price.change24h !== 0 && (
-            <span
-              className={cn(
-                "text-[11px] font-semibold tabular-nums",
-                price.change24h > 0 ? "text-success" : "text-destructive"
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium tabular-nums text-muted-foreground/60">
+                {price.usd.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 4,
+                })}
+                {" "}ICP
+              </span>
+              {price.change24h !== 0 && (
+                <span
+                  className={cn(
+                    "text-[11px] font-semibold tabular-nums",
+                    price.change24h > 0 ? "text-success" : "text-destructive"
+                  )}
+                >
+                  {price.change24h > 0 ? "+" : ""}
+                  {price.change24h.toFixed(2)}%
+                </span>
               )}
-            >
-              {price.change24h > 0 ? "+" : ""}
-              {price.change24h.toFixed(2)}%
-            </span>
+            </div>
           )}
         </div>
       </div>

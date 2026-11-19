@@ -50,7 +50,7 @@ export function RecentTransactions({ transactions, embedded }: RecentTransaction
     <section className={embedded ? "space-y-0" : "space-y-2"}>
       {!embedded && (
         <div className="flex items-center justify-between px-1">
-          <h2 className="text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+          <h2 className="text-sm font-semibold text-foreground">
             {t("latestTransactions")}
           </h2>
           {hasTransactions && (
