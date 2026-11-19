@@ -8,7 +8,6 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   ArrowDown01Icon,
   ArrowUp01Icon,
-  Exchange01Icon,
   ViewIcon,
   ViewOffIcon,
 } from "@hugeicons/core-free-icons"
@@ -72,11 +71,26 @@ export function WalletBalanceCard({ balance, usdValue, price }: WalletBalanceCar
   return (
     <Card className="relative overflow-hidden rounded-2xl border border-border/60 bg-card p-5 text-card-foreground sm:p-6 gap-0">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <span className="size-2 rounded-full bg-primary" />
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            Internet Computer
-          </p>
+        <div className="flex items-baseline gap-2">
+          {loading ? (
+            <Skeleton className="h-10 w-44 rounded-lg" />
+          ) : (
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={hidden ? "hidden" : "visible"}
+                initial={{ opacity: 0, y: 3 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -3 }}
+                transition={{ duration: 0.15 }}
+                className="flex items-baseline gap-x-2"
+              >
+                <span className="text-[clamp(1.85rem,8vw,2.75rem)] font-bold leading-none tracking-tight tabular-nums text-foreground">
+                  {hidden ? "••••••" : <FormattedBalance value={formattedBalance} />}
+                </span>
+                <span className="text-sm font-semibold text-muted-foreground">ICP</span>
+              </motion.div>
+            </AnimatePresence>
+          )}
         </div>
 
         <div className="flex items-center gap-1.5">
@@ -101,16 +115,6 @@ export function WalletBalanceCard({ balance, usdValue, price }: WalletBalanceCar
             <span>{tCommon("send")}</span>
           </Button>
           <Button
-            variant="outline"
-            size="sm"
-            nativeButton={false}
-            render={<Link href="/trade" />}
-            className="hidden h-8 gap-1.5 rounded-full px-3 text-xs font-medium sm:inline-flex"
-          >
-            <HugeiconsIcon icon={Exchange01Icon} className="size-3.5" strokeWidth={1.75} />
-            <span>{tCommon("swap")}</span>
-          </Button>
-          <Button
             variant="ghost"
             size="icon-sm"
             onClick={() => setHidden((v) => !v)}
@@ -120,28 +124,6 @@ export function WalletBalanceCard({ balance, usdValue, price }: WalletBalanceCar
             <HugeiconsIcon icon={hidden ? ViewOffIcon : ViewIcon} className="size-4" strokeWidth={1.75} />
           </Button>
         </div>
-      </div>
-
-      <div className="mt-4 flex items-baseline justify-between gap-2">
-        {loading ? (
-          <Skeleton className="h-10 w-44 rounded-lg" />
-        ) : (
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={hidden ? "hidden" : "visible"}
-              initial={{ opacity: 0, y: 3 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -3 }}
-              transition={{ duration: 0.15 }}
-              className="flex flex-wrap items-baseline gap-x-2 gap-y-1"
-            >
-              <span className="text-[clamp(1.85rem,8vw,2.75rem)] font-bold leading-none tracking-tight tabular-nums text-foreground">
-                {hidden ? "••••••" : <FormattedBalance value={formattedBalance} />}
-              </span>
-              <span className="text-sm font-semibold text-muted-foreground">ICP</span>
-            </motion.div>
-          </AnimatePresence>
-        )}
       </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border/60 pt-3">
