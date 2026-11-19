@@ -107,8 +107,8 @@ export function MyCanisterRow({
         </TableCell>
         <TableCell className="text-right">
           {status?.kind === "ok" ? (
-            <span className="text-xs font-medium tabular-nums text-foreground">
-              {status.data.cyclesLabel}{" "}
+            <span className="text-xs tabular-nums">
+              <span className="font-bold text-foreground">{status.data.cyclesLabel}</span>{" "}
               <span className="text-[11px] font-normal text-muted-foreground">cycles</span>
             </span>
           ) : (

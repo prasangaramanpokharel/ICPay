@@ -2,9 +2,10 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { motion } from "motion/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  ArrowDataTransferHorizontalIcon,
+  Coins01Icon,
   ArrowDown01Icon,
   ArrowUp01Icon,
   Exchange01Icon,
@@ -12,9 +13,19 @@ import {
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.06, delayChildren: 0.08 } },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 380, damping: 28 } },
+}
+
 type DashboardAction = {
   href: string
-  labelKey: "common.send" | "common.receive" | "common.swap" | "transactions.type.transfer"
+  labelKey: "common.send" | "common.receive" | "common.swap" | "wallet.tokens"
   icon: typeof ArrowUp01Icon
 }
 
@@ -23,9 +34,9 @@ const actions: DashboardAction[] = [
   { href: "/deposit", labelKey: "common.receive", icon: ArrowDown01Icon },
   { href: "/trade", labelKey: "common.swap", icon: Exchange01Icon },
   {
-    href: "/withdraw",
-    labelKey: "transactions.type.transfer",
-    icon: ArrowDataTransferHorizontalIcon,
+    href: "/wallet",
+    labelKey: "wallet.tokens",
+    icon: Coins01Icon,
   },
 ]
 
@@ -34,25 +45,35 @@ export function DashboardActions() {
 
   return (
     <>
-      <div className="grid grid-cols-4 gap-2 md:hidden">
+      <motion.div
+        className="grid grid-cols-4 gap-2 md:hidden"
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+      >
         {actions.map((item) => (
-          <Button
-            key={item.href}
-            variant="ghost"
-            nativeButton={false}
-            render={<Link href={item.href} prefetch />}
-            aria-label={t(item.labelKey)}
-            className="h-auto flex-col gap-1.5 p-1 rounded-2xl transition-transform active:scale-95 hover:bg-transparent"
-          >
-            <span className="flex size-11 items-center justify-center rounded-full bg-muted text-foreground">
-              <HugeiconsIcon icon={item.icon} className="size-5 text-primary" strokeWidth={1.75} />
-            </span>
-            <span className="text-[11px] font-medium lowercase text-foreground">
-              {t(item.labelKey)}
-            </span>
-          </Button>
+          <motion.div key={item.href} variants={itemVariants}>
+            <Button
+              variant="ghost"
+              nativeButton={false}
+              render={<Link href={item.href} prefetch />}
+              aria-label={t(item.labelKey)}
+              className="h-auto w-full flex-col gap-1.5 p-1 rounded-2xl transition-transform hover:bg-transparent"
+            >
+              <motion.span
+                whileTap={{ scale: 0.86 }}
+                transition={{ type: "spring", stiffness: 500, damping: 22 }}
+                className="flex size-11 items-center justify-center rounded-full bg-muted text-foreground"
+              >
+                <HugeiconsIcon icon={item.icon} className="size-5 text-primary" strokeWidth={1.75} />
+              </motion.span>
+              <span className="text-[11px] font-medium lowercase text-foreground">
+                {t(item.labelKey)}
+              </span>
+            </Button>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       <Card className="hidden md:flex">
         <CardHeader className="border-b">

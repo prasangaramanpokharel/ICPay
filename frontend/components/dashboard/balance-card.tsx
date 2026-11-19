@@ -3,9 +3,8 @@
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
-import { Card } from "@/components/ui/card"
+import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { EyeIcon, ViewOffIcon } from "@hugeicons/core-free-icons"
 import { PremiumBadge } from "@/components/verified/premium-badge"
@@ -55,94 +54,109 @@ export function BalanceCard({
   }
 
   return (
-    <Card className="relative overflow-hidden rounded-3xl border-border/70 bg-card p-5 text-card-foreground select-none sm:p-6 gap-0">
+    <div className="select-none px-1">
       <div className="flex min-w-0 items-center justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-2.5">
+        <div className="flex min-w-0 items-center gap-2">
           {username ? (
             <Button
               variant="ghost"
               size="xs"
               onClick={() => void handleCopyUsername()}
               title="Click to copy username"
-              className="group -ml-2 h-7 gap-1.5 font-mono text-sm font-semibold tracking-tight text-foreground"
+              className="group -ml-1 h-6 gap-1 font-mono text-xs font-semibold tracking-tight text-muted-foreground hover:text-foreground"
             >
               <span className="truncate">{username}</span>
-              <PremiumBadge name={username} className="size-3.5" />
+              <PremiumBadge name={username} className="size-3" />
               <CopyIconIndicator copied={copied} iconClassName="size-3 text-muted-foreground group-hover:text-foreground" />
             </Button>
           ) : (
             <span className="font-mono text-xs font-medium tracking-tight text-muted-foreground">
-              ICPay Wallet
+              ICP Wallet
             </span>
           )}
         </div>
-      </div>
-
-      <div className="mt-6 flex items-baseline justify-between gap-2">
-        <Button
-          variant="ghost"
-          onClick={() => void onRefreshPrice()}
-          title="Click to refresh balance & price"
-          className="h-auto p-0 text-[clamp(1.85rem,8.5vw,2.85rem)] font-bold leading-none tracking-tight tabular-nums hover:bg-transparent hover:opacity-85 active:opacity-60 cursor-pointer text-foreground"
-        >
-          {hidden ? (
-            <span>••••••••</span>
-          ) : (
-            <span className="flex items-baseline">
-              <FormattedBalance value={balance} />
-              <span className="ml-1.5 text-xs sm:text-sm font-semibold text-muted-foreground">ICP</span>
-            </span>
-          )}
-        </Button>
 
         <Button
           variant="ghost"
           size="icon-xs"
           aria-label={hidden ? t("showBalance") : t("hideBalance")}
           onClick={onToggleHidden}
-          className="size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+          className="size-7 shrink-0 rounded-full text-muted-foreground/60 hover:bg-transparent hover:text-muted-foreground"
         >
-          <HugeiconsIcon icon={hidden ? ViewOffIcon : EyeIcon} className="size-4.5" strokeWidth={1.75} />
+          <HugeiconsIcon icon={hidden ? ViewOffIcon : EyeIcon} className="size-4" strokeWidth={1.75} />
         </Button>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border/60">
+      <div className="mt-5">
         <Button
-          variant="outline"
-          size="xs"
+          variant="ghost"
           onClick={() => void onRefreshPrice()}
           title="Click to refresh balance & price"
-          className="font-medium tabular-nums"
+          className="h-auto p-0 text-[clamp(2.4rem,10vw,3.2rem)] font-bold leading-none tracking-tight tabular-nums hover:bg-transparent hover:opacity-80 active:opacity-50 cursor-pointer text-foreground"
         >
-          {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
+          <AnimatePresence mode="wait" initial={false}>
+            {hidden ? (
+              <motion.span
+                key="hidden"
+                initial={{ opacity: 0, filter: "blur(4px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, filter: "blur(4px)" }}
+                transition={{ duration: 0.18 }}
+              >
+                ••••••••
+              </motion.span>
+            ) : (
+              <motion.span
+                key={balance}
+                initial={{ opacity: 0, y: 6, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, filter: "blur(4px)" }}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                className="flex items-baseline gap-2"
+              >
+                <FormattedBalance value={balance} />
+                <span className="text-sm font-semibold text-muted-foreground">ICP</span>
+              </motion.span>
+            )}
+          </AnimatePresence>
         </Button>
 
-        <div className="flex items-center gap-1.5 text-xs">
+        <div className="mt-2.5 flex items-center justify-between gap-3">
+          <button
+            onClick={() => void onRefreshPrice()}
+            title="Click to refresh price"
+            className="text-sm font-semibold tabular-nums text-success transition-opacity hover:opacity-70 active:opacity-40 cursor-pointer"
+          >
+            {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
+          </button>
+
           {!hidden && price && (
-            <span className="font-medium tabular-nums text-muted-foreground">
-              1 ICP = {price.usd.toLocaleString("en-US", {
-                style: "currency",
-                currency: "USD",
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 4,
-              })}
-            </span>
-          )}
-          {!hidden && price && price.change24h !== 0 && (
-            <Badge
-              variant={price.change24h > 0 ? "default" : "destructive"}
-              className={cn(
-                "tabular-nums text-[11px]",
-                price.change24h > 0 && "bg-success/15 text-success border-transparent hover:bg-success/20"
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-medium tabular-nums text-muted-foreground/60">
+                {price.usd.toLocaleString("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 4,
+                })}
+                {" "}ICP
+              </span>
+              {price.change24h !== 0 && (
+                <span
+                  className={cn(
+                    "text-[11px] font-semibold tabular-nums",
+                    price.change24h > 0 ? "text-success" : "text-destructive"
+                  )}
+                >
+                  {price.change24h > 0 ? "+" : ""}
+                  {price.change24h.toFixed(2)}%
+                </span>
               )}
-            >
-              {price.change24h > 0 ? "+" : ""}
-              {price.change24h.toFixed(2)}%
-            </Badge>
+            </div>
           )}
         </div>
       </div>
-    </Card>
+    </div>
   )
 }
 
