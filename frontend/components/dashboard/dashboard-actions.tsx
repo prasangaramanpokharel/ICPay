@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl"
 import { motion } from "motion/react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
-  ArrowDataTransferHorizontalIcon,
+  Coins01Icon,
   ArrowDown01Icon,
   ArrowUp01Icon,
   Exchange01Icon,
@@ -25,7 +25,7 @@ const itemVariants = {
 
 type DashboardAction = {
   href: string
-  labelKey: "common.send" | "common.receive" | "common.swap" | "transactions.type.transfer"
+  labelKey: "common.send" | "common.receive" | "common.swap" | "wallet.tokens"
   icon: typeof ArrowUp01Icon
 }
 
@@ -34,9 +34,9 @@ const actions: DashboardAction[] = [
   { href: "/deposit", labelKey: "common.receive", icon: ArrowDown01Icon },
   { href: "/trade", labelKey: "common.swap", icon: Exchange01Icon },
   {
-    href: "/withdraw",
-    labelKey: "transactions.type.transfer",
-    icon: ArrowDataTransferHorizontalIcon,
+    href: "/wallet",
+    labelKey: "wallet.tokens",
+    icon: Coins01Icon,
   },
 ]
 
