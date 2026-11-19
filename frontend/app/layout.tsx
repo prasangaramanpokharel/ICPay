@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono } from "next/font/google"
+import { Geist_Mono } from "next/font/google"
 import type { Metadata, Viewport } from "next"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
@@ -14,11 +14,6 @@ import { SiteAnalytics } from "@/components/analytics/site-analytics"
 import { IncomingBalanceNotifier } from "@/components/wallet/incoming-balance-notifier"
 import { Toaster } from "@/components/ui/toast"
 import { SITE_VERIFICATION } from "@/lib/public/site-verification"
-
-const fontSans = Geist({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
@@ -161,7 +156,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn("antialiased", fontMono.variable, fontSans.variable, "font-sans")}
+      className={cn("antialiased", fontMono.variable, "font-sans")}
     >
       <head>
         <link rel="preconnect" href="https://icp0.io" crossOrigin="anonymous" />
