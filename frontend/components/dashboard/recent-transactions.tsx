@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
-import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@/components/ui/item"
+import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from "@/components/ui/item"
 import { PremiumBadge } from "@/components/verified/premium-badge"
 import type { TransactionPublic } from "@/services/types"
 import {
@@ -44,37 +44,47 @@ const rowVariants = {
 export function RecentTransactions({ transactions, embedded }: RecentTransactionsProps) {
   const t = useTranslations("dashboard")
   const hasTransactions = transactions.length > 0
+  const visible = embedded ? transactions : transactions.slice(0, 3)
 
   return (
-    <section className={embedded ? "space-y-0" : "space-y-3"}>
+    <section className={embedded ? "space-y-0" : "space-y-2"}>
       {!embedded && (
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-balance">{t("latestTransactions")}</h2>
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+            {t("latestTransactions")}
+          </h2>
           {hasTransactions && (
             <Button
               variant="ghost"
               size="sm"
-              className="gap-1 text-xs"
+              className="gap-1 text-xs text-muted-foreground hover:text-foreground h-7 px-2"
               nativeButton={false}
               render={<Link href="/transactions" />}
             >
               {t("seeMore")}
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" strokeWidth={1.75} />
+              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3" strokeWidth={1.75} />
             </Button>
           )}
         </div>
       )}
 
       {hasTransactions ? (
-        <ItemGroup className={cn("gap-0 divide-y divide-border rounded-2xl border overflow-hidden", embedded && "rounded-none border-0")}>
-          <motion.div variants={listVariants} initial="hidden" animate="show">
-            {transactions.map((tx) => (
-              <motion.div key={tx.id} variants={rowVariants}>
-                <TransactionRow tx={tx} />
-              </motion.div>
-            ))}
-          </motion.div>
-        </ItemGroup>
+        <motion.div
+          className="overflow-hidden rounded-2xl bg-card/60"
+          variants={listVariants}
+          initial="hidden"
+          animate="show"
+        >
+          {visible.map((tx, i) => (
+            <motion.div
+              key={tx.id}
+              variants={rowVariants}
+              className={cn(i < visible.length - 1 && "border-b border-border/40")}
+            >
+              <TransactionRow tx={tx} />
+            </motion.div>
+          ))}
+        </motion.div>
       ) : (
         <Empty className={cn("rounded-2xl border border-dashed py-8", embedded && "border-0 rounded-none")}>
           <EmptyHeader>
@@ -105,41 +115,41 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
   return (
     <Item
       size="sm"
-      className="rounded-none border-0 px-4 py-2.5 transition-all hover:bg-muted/50 active:bg-muted/70 active:scale-[0.985] [content-visibility:auto] [contain-intrinsic-size:auto_64px]"
+      className="rounded-none border-0 px-3 py-3 transition-all hover:bg-muted/40 active:bg-muted/60 active:scale-[0.985] [content-visibility:auto] [contain-intrinsic-size:auto_60px]"
       render={<Link href={`/transactions?id=${encodeURIComponent(tx.id)}`} prefetch />}
     >
       <ItemMedia>
-        <Avatar className="size-10 shrink-0">
+        <Avatar className="size-9 shrink-0">
           <AvatarImage src={avatarUri} alt="" />
-          <AvatarFallback className="bg-muted text-xs">
+          <AvatarFallback className="bg-muted text-[11px] font-semibold">
             {counterparty.replace(/^@/, "").slice(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
       </ItemMedia>
 
-      <ItemContent className="min-w-0 flex-1 gap-0.5">
-        <ItemTitle className={cn("text-sm font-medium", !handle && "font-mono tracking-tight")}>
+      <ItemContent className="min-w-0 flex-1 gap-0">
+        <ItemTitle className={cn("text-[13px] font-semibold leading-snug", !handle && "font-mono text-xs tracking-tight")}>
           {handle ?? shortenCounterparty(counterparty)}
-          <PremiumBadge name={handle} className="size-3.5" />
+          <PremiumBadge name={handle} className="size-3" />
         </ItemTitle>
-        <ItemDescription className="text-xs text-muted-foreground">
+        <ItemDescription className="text-[11px] text-muted-foreground leading-snug">
           {t(`type.${txTypeKey(tx.txType)}`)} · {formatTime(tx.createdAt)}
         </ItemDescription>
         {memo && (
           <div className="mt-1 flex items-center">
-            <span className="inline-flex max-w-[220px] items-center gap-1 rounded-md border border-border/60 bg-muted/70 px-2 py-0.5 text-[11px] font-medium text-foreground/85">
-              <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0 text-muted-foreground" />
+            <span className="inline-flex max-w-[200px] items-center gap-1 rounded-md border border-border/50 bg-muted/50 px-1.5 py-px text-[10px] font-medium text-foreground/80">
+              <HugeiconsIcon icon={Message01Icon} className="size-2.5 shrink-0 text-muted-foreground" />
               <span className="truncate">{memo}</span>
             </span>
           </div>
         )}
       </ItemContent>
 
-      <ItemActions className="shrink-0 gap-2">
+      <ItemActions className="shrink-0 items-center gap-1.5">
         <div className="text-right">
           <p
             className={cn(
-              "font-mono text-sm font-semibold tabular-nums",
+              "font-mono text-[13px] font-semibold tabular-nums leading-snug",
               incoming ? "text-success" : "text-foreground"
             )}
           >
@@ -152,7 +162,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
             </Badge>
           )}
         </div>
-        <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-active:translate-x-1" strokeWidth={1.75} />
+        <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5 text-muted-foreground/50 transition-transform group-hover:translate-x-0.5 group-active:translate-x-1" strokeWidth={1.75} />
       </ItemActions>
     </Item>
   )
