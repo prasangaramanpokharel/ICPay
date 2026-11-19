@@ -138,10 +138,9 @@ export function WalletBalanceCard({ balance, usdValue, price }: WalletBalanceCar
             )}
             aria-label={tFiat("select")}
           >
-            <span className="truncate">
+            <span className="truncate font-semibold text-success">
               {hidden || fiat.formatted === null ? "••••" : `≈ ${fiat.symbol}${fiat.formatted}`}
             </span>
-            <span className="font-mono text-[10px] text-muted-foreground">{currency}</span>
             <HugeiconsIcon icon={ArrowDown01Icon} className="size-3.5 shrink-0 text-muted-foreground" strokeWidth={2} />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56 max-h-72 overflow-y-auto p-1">
