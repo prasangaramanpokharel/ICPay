@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useMemo } from "react"
 import { useTranslations } from "next-intl"
+import { motion } from "motion/react"
 import { avatarUriFor } from "@/lib/profile/avatar"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { InboxIcon, Message01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
@@ -28,6 +29,16 @@ import { cn } from "@/lib/ui/utils"
 type RecentTransactionsProps = {
   transactions: TransactionPublic[]
   embedded?: boolean
+}
+
+const listVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05, delayChildren: 0.05 } },
+}
+
+const rowVariants = {
+  hidden: { opacity: 0, x: -10 },
+  show: { opacity: 1, x: 0, transition: { type: "spring" as const, stiffness: 400, damping: 32 } },
 }
 
 export function RecentTransactions({ transactions, embedded }: RecentTransactionsProps) {
@@ -56,9 +67,13 @@ export function RecentTransactions({ transactions, embedded }: RecentTransaction
 
       {hasTransactions ? (
         <ItemGroup className={cn("gap-0 divide-y divide-border rounded-2xl border overflow-hidden", embedded && "rounded-none border-0")}>
-          {transactions.map((tx) => (
-            <TransactionRow key={tx.id} tx={tx} />
-          ))}
+          <motion.div variants={listVariants} initial="hidden" animate="show">
+            {transactions.map((tx) => (
+              <motion.div key={tx.id} variants={rowVariants}>
+                <TransactionRow tx={tx} />
+              </motion.div>
+            ))}
+          </motion.div>
         </ItemGroup>
       ) : (
         <Empty className={cn("rounded-2xl border border-dashed py-8", embedded && "border-0 rounded-none")}>
@@ -90,7 +105,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
   return (
     <Item
       size="sm"
-      className="rounded-none border-0 px-4 py-2.5 transition-colors hover:bg-muted/50 active:bg-muted/70 [content-visibility:auto] [contain-intrinsic-size:auto_64px]"
+      className="rounded-none border-0 px-4 py-2.5 transition-all hover:bg-muted/50 active:bg-muted/70 active:scale-[0.985] [content-visibility:auto] [contain-intrinsic-size:auto_64px]"
       render={<Link href={`/transactions?id=${encodeURIComponent(tx.id)}`} prefetch />}
     >
       <ItemMedia>
@@ -137,7 +152,7 @@ function TransactionRow({ tx }: { tx: TransactionPublic }) {
             </Badge>
           )}
         </div>
-        <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
+        <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-active:translate-x-1" strokeWidth={1.75} />
       </ItemActions>
     </Item>
   )

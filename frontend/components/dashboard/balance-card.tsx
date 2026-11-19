@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
+import { motion, AnimatePresence } from "motion/react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -55,7 +56,7 @@ export function BalanceCard({
   }
 
   return (
-    <Card className="relative overflow-hidden rounded-3xl border-border/70 bg-card p-5 text-card-foreground select-none sm:p-6 gap-0">
+    <Card className="relative overflow-hidden rounded-3xl border border-border/50 bg-card/95 p-5 text-card-foreground select-none shadow-sm sm:p-6 gap-0">
       <div className="flex min-w-0 items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2.5">
           {username ? (
@@ -85,14 +86,31 @@ export function BalanceCard({
           title="Click to refresh balance & price"
           className="h-auto p-0 text-[clamp(1.85rem,8.5vw,2.85rem)] font-bold leading-none tracking-tight tabular-nums hover:bg-transparent hover:opacity-85 active:opacity-60 cursor-pointer text-foreground"
         >
-          {hidden ? (
-            <span>••••••••</span>
-          ) : (
-            <span className="flex items-baseline">
-              <FormattedBalance value={balance} />
-              <span className="ml-1.5 text-xs sm:text-sm font-semibold text-muted-foreground">ICP</span>
-            </span>
-          )}
+          <AnimatePresence mode="wait" initial={false}>
+            {hidden ? (
+              <motion.span
+                key="hidden"
+                initial={{ opacity: 0, filter: "blur(4px)" }}
+                animate={{ opacity: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, filter: "blur(4px)" }}
+                transition={{ duration: 0.18 }}
+              >
+                ••••••••
+              </motion.span>
+            ) : (
+              <motion.span
+                key={balance}
+                initial={{ opacity: 0, y: 6, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, filter: "blur(4px)" }}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                className="flex items-baseline"
+              >
+                <FormattedBalance value={balance} />
+                <span className="ml-1.5 text-xs sm:text-sm font-semibold text-muted-foreground">ICP</span>
+              </motion.span>
+            )}
+          </AnimatePresence>
         </Button>
 
         <Button
@@ -112,7 +130,7 @@ export function BalanceCard({
           size="xs"
           onClick={() => void onRefreshPrice()}
           title="Click to refresh balance & price"
-          className="font-medium tabular-nums"
+          className="font-medium tabular-nums transition-transform active:scale-95"
         >
           {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
         </Button>
