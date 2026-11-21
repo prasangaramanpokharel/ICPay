@@ -54,8 +54,8 @@
       location.replace("/icpverse?id=" + encodeURIComponent(userSeg))
       return
     }
-  } else if (/^\/[A-Za-z0-9_]{1,8}$/.test(path)) {
-    var seg = path.slice(1).toLowerCase()
+  } else if (/^\/@?[A-Za-z0-9_]{1,8}$/.test(path)) {
+    var seg = path.slice(1).replace(/^@/, "").toLowerCase()
     var reserved =
       "home login wallet deposit withdraw transfer profile settings icpverse username terms privacy api admin icpay support help about static public assets images audio well sitemap robots manifest favicon icon og u index 404 video bucket launch token swap trade roadmap faq transparency transactions icfalcon courses charity academy contact topup icbucket channels governance"
     if ((" " + reserved + " ").indexOf(" " + seg + " ") === -1) {

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ICPay Business Checkout & Merchant Demo</title>
+  <style>
+    :root {
+      --bg: #090a0f;
+      --card: #11131a;
+      --card-border: #1e2230;
+      --foreground: #f3f4f6;
+      --muted: #9ca3af;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.1);
+      --accent: #6366f1;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--foreground);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 2rem 1rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1080px;
+    }
+
+    header {
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #fff 0%, #9ca3af 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: rgba(59, 130, 246, 0.1);
+      color: var(--primary);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 9999px;
+      padding: 0.2rem 0.75rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .grid-demo {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.75rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 860px) {
+      .grid-demo {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-desc {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+
+    input, select {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      color: var(--foreground);
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: 0.75rem;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--foreground);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    /* Payer view simulation */
+    .payer-checkout-preview {
+      background: #0d0f17;
+      border: 1px solid #232738;
+      border-radius: 1.25rem;
+      padding: 1.75rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .merchant-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin: 0 auto 0.75rem;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .amount-highlight {
+      font-size: 2.25rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin: 0.5rem 0 0.15rem;
+    }
+
+    .fiat-equiv {
+      font-size: 0.9rem;
+      color: var(--success);
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+    }
+
+    .qr-box {
+      background: #fff;
+      padding: 1rem;
+      border-radius: 1rem;
+      display: inline-block;
+      margin: 0.5rem 0 1rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .qr-svg {
+      width: 140px;
+      height: 140px;
+      display: block;
+    }
+
+    .order-meta-box {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+      text-align: left;
+      font-size: 0.8rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .order-meta-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.25rem;
+    }
+
+    .order-meta-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .order-meta-row .label {
+      color: var(--muted);
+    }
+
+    .order-meta-row .val {
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    /* Live Status Simulation Panel */
+    .status-panel {
+      margin-top: 1rem;
+      padding: 1rem;
+      border-radius: 0.85rem;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: all 0.3s;
+    }
+
+    .status-waiting {
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+      color: #93c5fd;
+    }
+
+    .status-success {
+      background: var(--success-bg);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--success);
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Code Snippet Box */
+    .code-box {
+      background: #08090d;
+      border: 1px solid var(--card-border);
+      border-radius: 0.75rem;
+      padding: 0.85rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #a5b4fc;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+      margin-top: 0.5rem;
+    }
+
+    /* Explainer Section */
+    .explainer-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .explainer-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .explainer-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 1rem;
+      padding: 1.25rem;
+    }
+
+    .explainer-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .explainer-card p {
+      font-size: 0.825rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <div class="badge-pill">⚡ Decentralized Merchant Gateway</div>
+      <h1>ICPay Merchant Payment Link Demo</h1>
+      <p>Demonstrating zero-leakage URL patterns, real-time client-side on-chain detection, and 0-cycle balance verification.</p>
+    </header>
+
+    <div class="grid-demo">
+      <!-- 1. Merchant Dashboard Side -->
+      <div class="card">
+        <div class="card-title">
+          <span>1. Merchant Link Generator</span>
+          <span style="font-size: 0.75rem; color: var(--success); font-family: var(--font-mono);">0% Fee</span>
+        </div>
+        <p class="card-desc">Generate an invoice link or point-of-sale checkout for your store.</p>
+
+        <div class="form-group">
+          <label>Merchant Username (@handle)</label>
+          <input type="text" id="merchantUser" value="cybercafe">
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+          <div class="form-group">
+            <label>Amount (ICP)</label>
+            <input type="number" step="0.01" id="payAmount" value="1.5">
+          </div>
+          <div class="form-group">
+            <label>Order Reference (Opaque ID)</label>
+            <input type="text" id="payRef" value="inv_88294">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Privacy Strategy (No URL Leakage)</label>
+          <select id="privacyMode" onchange="updateGeneratedLink()">
+            <option value="opaque">Opaque Ref ID (Standard: ?memo=inv_88294)</option>
+            <option value="hash">Client Hash Fragment (#note=Private+Order)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Generated Payment Link</label>
+          <div class="code-box" id="generatedLinkBox">https://icpay.app/@cybercafe?amount=1.5&memo=inv_88294</div>
+        </div>
+
+        <button class="btn btn-primary" onclick="simulatePaymentFlow()">
+          🔄 Refresh Demo & Reset Live Polling
+        </button>
+      </div>
+
+      <!-- 2. Customer Checkout Experience -->
+      <div class="card">
+        <div class="card-title">
+          <span>2. Live Payer Checkout Experience</span>
+          <span style="font-size: 0.75rem; color: var(--muted); font-family: var(--font-mono);">Instant L1 Finality</span>
+        </div>
+        <p class="card-desc">What the customer sees when opening the link or scanning the QR code.</p>
+
+        <div class="payer-checkout-preview">
+          <div class="merchant-avatar" id="avatarLetter">C</div>
+          <h2 id="merchantTitle" style="font-size: 1.15rem; font-weight: 700;">@cybercafe ✓</h2>
+          <div style="font-size: 0.75rem; color: var(--muted);">Verified ICPay Merchant</div>
+
+          <div class="amount-highlight" id="displayAmount">1.5000 ICP</div>
+          <div class="fiat-equiv" id="displayFiat">≈ $14.85 USD</div>
+
+          <div class="qr-box">
+            <!-- Simple QR representation -->
+            <svg class="qr-svg" viewBox="0 0 100 100">
+              <rect width="100" height="100" fill="#fff" />
+              <!-- Corners -->
+              <rect x="10" y="10" width="25" height="25" fill="#000" />
+              <rect x="15" y="15" width="15" height="15" fill="#fff" />
+              <rect x="18" y="18" width="9" height="9" fill="#000" />
+
+              <rect x="65" y="10" width="25" height="25" fill="#000" />
+              <rect x="70" y="15" width="15" height="15" fill="#fff" />
+              <rect x="73" y="18" width="9" height="9" fill="#000" />
+
+              <rect x="10" y="65" width="25" height="25" fill="#000" />
+              <rect x="15" y="70" width="15" height="15" fill="#fff" />
+              <rect x="18" y="73" width="9" height="9" fill="#000" />
+
+              <!-- Data dots -->
+              <rect x="45" y="15" width="8" height="8" fill="#000" />
+              <rect x="45" y="30" width="8" height="8" fill="#000" />
+              <rect x="25" y="45" width="8" height="8" fill="#000" />
+              <rect x="40" y="45" width="20" height="8" fill="#000" />
+              <rect x="70" y="45" width="15" height="8" fill="#000" />
+              <rect x="45" y="65" width="8" height="20" fill="#000" />
+              <rect x="65" y="65" width="15" height="8" fill="#000" />
+              <rect x="70" y="80" width="10" height="8" fill="#000" />
+            </svg>
+          </div>
+
+          <div class="order-meta-box">
+            <div class="order-meta-row">
+              <span class="label">Reference:</span>
+              <span class="val" id="displayRef">inv_88294</span>
+            </div>
+            <div class="order-meta-row">
+              <span class="label">Settlement:</span>
+              <span class="val" style="color: var(--primary);">Internet Computer L1</span>
+            </div>
+            <div class="order-meta-row">
+              <span class="label">Network Fee:</span>
+              <span class="val">0.0001 ICP (~$0.0009)</span>
+            </div>
+          </div>
+
+          <button class="btn btn-success" id="payActionBtn" onclick="triggerSimulatedSuccess()">
+            ⚡ Pay with Internet Identity (Passkey / FaceID)
+          </button>
+        </div>
+
+        <!-- Real-time balance detection simulation -->
+        <div id="liveDetectionBox" class="status-panel status-waiting">
+          <div class="spinner" id="statusSpinner"></div>
+          <div style="flex: 1;">
+            <div style="font-weight: 600;" id="statusHeader">Listening to IC Ledger...</div>
+            <div style="font-size: 0.75rem; opacity: 0.8;" id="statusSub">
+              Checking subaccount balance via boundary node query (0 cycles consumed)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Explainer on Free Query Calls & Security -->
+    <div class="explainer-grid">
+      <div class="explainer-card">
+        <h3>⚡ 0-Cycle Balance Check</h3>
+        <p>Query calls (e.g. <code>icrc1_balance_of</code>) execute across Internet Computer boundary nodes in ~200ms as read-only lookups. They <strong>never burn cycles</strong> from your canisters!</p>
+      </div>
+      <div class="explainer-card">
+        <h3>🔒 No URL Leakage</h3>
+        <p>By passing an opaque invoice reference (e.g. <code>inv_88294</code>) or a client hash fragment (<code>#note=...</code>), customer identity and order details never leak into browser logs or Referer headers.</p>
+      </div>
+      <div class="explainer-card">
+        <h3>🌐 Decentralized Gateway</h3>
+        <p>Merchants don't need Stripe, PayPal, or custodial servers. Funds settle directly into their custodial ICPay subaccount in 1–2 seconds with immutable on-chain proof.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let paymentStatus = "waiting";
+
+    function updateGeneratedLink() {
+      const user = document.getElementById("merchantUser").value.trim().toLowerCase();
+      const amount = document.getElementById("payAmount").value;
+      const ref = document.getElementById("payRef").value.trim();
+      const mode = document.getElementById("privacyMode").value;
+
+      let link = "https://icpay.app/@" + user + "?amount=" + amount;
+      if (mode === "opaque") {
+        link += "&memo=" + encodeURIComponent(ref);
+      } else {
+        link += "#note=" + encodeURIComponent("Private order details for " + ref);
+      }
+
+      document.getElementById("generatedLinkBox").textContent = link;
+      document.getElementById("merchantTitle").textContent = "@" + user + " ✓";
+      document.getElementById("avatarLetter").textContent = user.charAt(0).toUpperCase();
+      document.getElementById("displayAmount").textContent = parseFloat(amount).toFixed(4) + " ICP";
+      document.getElementById("displayFiat").textContent = "≈ $" + (parseFloat(amount) * 9.90).toFixed(2) + " USD";
+      document.getElementById("displayRef").textContent = ref;
+    }
+
+    function simulatePaymentFlow() {
+      paymentStatus = "waiting";
+      const box = document.getElementById("liveDetectionBox");
+      box.className = "status-panel status-waiting";
+      document.getElementById("statusSpinner").style.display = "block";
+      document.getElementById("statusHeader").textContent = "Listening to IC Ledger...";
+      document.getElementById("statusSub").textContent = "Checking subaccount balance via boundary node query (0 cycles consumed)";
+
+      const btn = document.getElementById("payActionBtn");
+      btn.disabled = false;
+      btn.textContent = "⚡ Pay with Internet Identity (Passkey / FaceID)";
+      btn.className = "btn btn-success";
+
+      updateGeneratedLink();
+    }
+
+    function triggerSimulatedSuccess() {
+      const btn = document.getElementById("payActionBtn");
+      btn.disabled = true;
+      btn.textContent = "Authenticating with Passkey...";
+
+      setTimeout(() => {
+        btn.textContent = "Payment Confirmed!";
+        btn.className = "btn btn-outline";
+
+        const box = document.getElementById("liveDetectionBox");
+        box.className = "status-panel status-success";
+        document.getElementById("statusSpinner").style.display = "none";
+
+        const blockNum = (18420000 + Math.floor(Math.random() * 50000)).toLocaleString();
+        document.getElementById("statusHeader").textContent = "Payment Detected on IC Ledger!";
+        document.getElementById("statusSub").textContent = "Confirmed in Block #" + blockNum + " (Receipt minted permanently on L1)";
+      }, 900);
+    }
+
+    // Initialize inputs
+    document.getElementById("merchantUser").addEventListener("input", updateGeneratedLink);
+    document.getElementById("payAmount").addEventListener("input", updateGeneratedLink);
+    document.getElementById("payRef").addEventListener("input", updateGeneratedLink);
+    updateGeneratedLink();
+  </script>
+</body>
+</html>

@@ -44,7 +44,7 @@ export function PublicProfile() {
   const t = useTranslations("publicProfile")
   const tc = useTranslations("common")
   const raw = useRewrittenLastSegment()
-  const username = raw.toLowerCase()
+  const username = raw.replace(/^@/, "").toLowerCase()
   const { identity, isAuthenticated, login } = useAuth()
   const balance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
