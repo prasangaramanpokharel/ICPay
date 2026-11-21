@@ -182,7 +182,7 @@ export function HomeOverviewCard({
                   title="Click to refresh balance & price"
                   className="h-auto p-0 text-base font-medium tabular-nums text-foreground/80 hover:bg-transparent hover:text-foreground"
                 >
-                  {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
+                  {hidden || !fiat.formatted ? "••••" : `${fiat.symbol}${fiat.formatted}`}
                 </Button>
               </div>
             </div>

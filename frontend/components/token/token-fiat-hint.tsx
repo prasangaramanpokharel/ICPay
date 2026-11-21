@@ -20,7 +20,7 @@ export function TokenFiatHint({ ledgerId, amount, decimals, className }: TokenFi
 
   return (
     <p className={className ?? "text-xs text-muted-foreground tabular-nums"}>
-      ≈ {fiat.symbol}
+      {fiat.symbol}
       {fiat.formatted} {fiat.currency}
     </p>
   )

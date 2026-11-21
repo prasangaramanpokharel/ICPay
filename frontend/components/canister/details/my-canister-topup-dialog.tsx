@@ -22,6 +22,7 @@ import { useAuth } from "@/components/auth/auth-provider"
 import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import { formatAmount, parseIcp } from "@/lib/wallet/utils"
 import { rememberCanister } from "@/lib/canister/savedCanisters"
+import { invalidateCanisterStatus } from "@/lib/swr/keys"
 import {
   estimateCyclesFromE8s,
   fetchCmcXdrPermyriad,
@@ -135,6 +136,7 @@ export function MyCanisterTopupDialog({
         cycles: formatCycles(result.cycles),
         amount: formatAmount(amountE8s),
       })
+      void invalidateCanisterStatus(canisterId)
       onDone?.()
     } catch (e) {
       toast.error(formatTopUpError(e) || tt("failed"))

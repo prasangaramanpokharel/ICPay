@@ -1,4 +1,5 @@
 import type { Identity } from "@icp-sdk/core/agent"
+import type { BucketBillingPeriod } from "@/services/bucket/types"
 
 export function bucketListKey(identity: Identity | undefined) {
   return identity ? (["bucket-list", identity.getPrincipal().toText()] as const) : null
@@ -34,17 +35,21 @@ export function bucketSearchKey(
     : null
 }
 
-export function bucketPriceKey(capacityGB: number) {
-  return ["bucket-price", String(capacityGB)] as const
+export function bucketPriceKey(capacityGB: number, period: BucketBillingPeriod = "monthly") {
+  return ["bucket-price", String(capacityGB), period] as const
 }
 
-export function bucketPricingTableKey() {
-  return ["bucket-pricing-table"] as const
+export function bucketPricingTableKey(period: BucketBillingPeriod = "monthly") {
+  return ["bucket-pricing-table", period] as const
 }
 
-export function bucketRenewQuoteKey(identity: Identity | undefined, bucketId: string) {
+export function bucketRenewQuoteKey(
+  identity: Identity | undefined,
+  bucketId: string,
+  period: BucketBillingPeriod = "monthly"
+) {
   return identity
-    ? (["bucket-renew-quote", bucketId, identity.getPrincipal().toText()] as const)
+    ? (["bucket-renew-quote", bucketId, period, identity.getPrincipal().toText()] as const)
     : null
 }
 

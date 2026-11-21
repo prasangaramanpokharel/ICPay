@@ -42,7 +42,7 @@ export function HeroSection() {
         refresh
       />
 
-      <div className="relative z-10 mx-auto max-w-4xl space-y-8">
+      <div className="relative z-10 mx-auto max-w-5xl space-y-8">
         <div className="flex justify-center">
           <div className="relative mx-auto flex w-full max-w-[200px] sm:max-w-[240px] items-center justify-center">
             <Image
@@ -50,9 +50,9 @@ export function HeroSection() {
               alt={t("imageAlt")}
               title={t("imageAlt")}
               width={240}
-              height={160}
+              height={240}
               priority
-              className="h-auto w-full max-w-[170px] sm:max-w-[210px] object-contain drop-shadow-2xl transition-transform duration-500 hover:scale-105"
+              className="h-auto w-full max-w-[170px] sm:max-w-[210px] object-contain transition-transform duration-500 hover:scale-105"
             />
           </div>
         </div>
@@ -162,6 +162,43 @@ export function HeroSection() {
           >
             {t("packages")}
           </Button>
+        </div>
+
+        <div className="mt-14 w-full border-t border-border/40 pt-10 sm:mt-16 sm:pt-12">
+          <div className="grid grid-cols-2 gap-8 text-left sm:grid-cols-4 md:gap-12">
+            <div>
+              <div className="tabular-nums text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl bg-linear-to-r from-primary via-primary/80 to-foreground bg-clip-text text-transparent">
+                3,460+
+              </div>
+              <div className="mt-2 text-xs text-muted-foreground sm:text-sm">
+                npm downloads
+              </div>
+            </div>
+            <div>
+              <div className="tabular-nums text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl text-foreground">
+                117+
+              </div>
+              <div className="mt-2 text-xs text-muted-foreground sm:text-sm">
+                Motoko packages
+              </div>
+            </div>
+            <div>
+              <div className="tabular-nums text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl text-foreground">
+                18+
+              </div>
+              <div className="mt-2 text-xs text-muted-foreground sm:text-sm">
+                CLI releases
+              </div>
+            </div>
+            <div>
+              <div className="tabular-nums text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl text-foreground">
+                100%
+              </div>
+              <div className="mt-2 text-xs text-muted-foreground sm:text-sm">
+                Layered architecture
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>

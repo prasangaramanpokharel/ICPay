@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { useAuth } from "@/components/auth/auth-provider"
+import { preloadBucketDetail } from "@/hooks/bucket/useBucket"
 import { updateBucket } from "@/services/bucket/bucket"
 import { toast } from "@/components/ui/toast"
 import { cn } from "@/lib/ui/utils"
@@ -74,7 +75,12 @@ export function BucketCard({
   const daysRemaining = Math.max(0, Math.ceil(msRemaining / (1000 * 60 * 60 * 24)))
 
   return (
-    <TableRow className="cursor-pointer">
+    <TableRow
+      className="cursor-pointer"
+      onMouseEnter={() => {
+        if (identity && bucket.id && !isTombstoned) void preloadBucketDetail(identity, bucket.id)
+      }}
+    >
       <TableCell>
         <Link
           href={`/bucket?id=${encodeURIComponent(bucket.id)}`}

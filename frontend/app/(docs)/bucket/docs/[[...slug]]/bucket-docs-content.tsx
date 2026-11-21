@@ -12,6 +12,7 @@ export async function BucketDocsContent({
   const doc = await loadBucketDoc(slug)
   if (!doc) notFound()
 
-  const navGroups = buildNavGroups(loadAllDocMeta())
-  return <BucketDocsShell doc={doc} navGroups={navGroups} />
+  const allDocs = loadAllDocMeta()
+  const navGroups = buildNavGroups(allDocs)
+  return <BucketDocsShell doc={doc} navGroups={navGroups} allDocs={allDocs} />
 }

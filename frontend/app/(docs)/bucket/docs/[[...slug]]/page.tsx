@@ -1,12 +1,15 @@
 import type { Metadata } from "next"
 import { Suspense } from "react"
 import { bucketDocSlugs, loadBucketDoc } from "@/lib/bucket/docs/load"
+import { PAGE_IMAGES, pageImageUrl } from "@/lib/public/page-images"
 import { BucketDocsContent } from "./bucket-docs-content"
 import { BucketDocsPageFallback } from "./bucket-docs-fallback"
 
 type PageProps = {
   params: Promise<{ slug?: string[] }>
 }
+
+export const dynamicParams = false
 
 export function generateStaticParams() {
   return bucketDocSlugs().map((slugParts) => ({
@@ -32,6 +35,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       url: `https://icpay.app${path}`,
       siteName: "ICPay",
       type: "article",
+      images: [
+        {
+          url: pageImageUrl(PAGE_IMAGES.icbucket.og),
+          width: 1254,
+          height: 1254,
+          alt: "ICBucket Documentation",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: doc.description,
+      images: [pageImageUrl(PAGE_IMAGES.icbucket.og)],
     },
   }
 }

@@ -41,9 +41,9 @@ export const metadata: Metadata = {
     siteName: "ICPay",
     images: [
       {
-        url: pageImageUrl(PAGE_IMAGES.iccron.hero),
-        width: 1920,
-        height: 1080,
+        url: pageImageUrl(PAGE_IMAGES.iccron.og),
+        width: 1254,
+        height: 1254,
         alt: "icCron - Decentralized Cron & Webhook Dispatcher",
       },
     ],
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
     title: "icCron - Autonomous On-Chain Cron & Webhook Dispatcher",
     description:
       "Schedule HTTP webhooks and canister smart contracts with sub-second precision. Zero servers, zero keeper bots, 60 free runs/month.",
-    images: [pageImageUrl(PAGE_IMAGES.iccron.hero)],
+    images: [pageImageUrl(PAGE_IMAGES.iccron.og)],
     creator: "@IcpayOfficial",
   },
   alternates: {

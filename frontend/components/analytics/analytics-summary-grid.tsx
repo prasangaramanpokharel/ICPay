@@ -2,13 +2,6 @@
 
 import { useTranslations } from "next-intl"
 import { Card } from "@/components/ui/card"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowDown01Icon,
-  ArrowUp01Icon,
-  ArrowUpRight01Icon,
-  Tick02Icon,
-} from "@hugeicons/core-free-icons"
 import type { AnalyticsSummary } from "@/services/types"
 import { formatAmount } from "@/lib/wallet/utils"
 
@@ -41,11 +34,8 @@ export function AnalyticsSummaryGrid({ summary }: AnalyticsSummaryGridProps) {
   return (
     <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
       <Card className="rounded-xl border border-border/50 bg-card p-4 transition-colors sm:p-5">
-        <div className="flex items-center justify-between">
+        <div>
           <span className="text-xs font-medium text-muted-foreground sm:text-sm">{t("received")}</span>
-          <span className="flex size-7 items-center justify-center rounded-lg bg-success/15 text-success">
-            <HugeiconsIcon icon={ArrowDown01Icon} className="size-4" />
-          </span>
         </div>
         <div className="mt-3">
           <p className="text-xl font-bold tracking-tight text-foreground tabular-nums sm:text-2xl">
@@ -60,11 +50,8 @@ export function AnalyticsSummaryGrid({ summary }: AnalyticsSummaryGridProps) {
       </Card>
 
       <Card className="rounded-xl border border-border/50 bg-card p-4 transition-colors sm:p-5">
-        <div className="flex items-center justify-between">
+        <div>
           <span className="text-xs font-medium text-muted-foreground sm:text-sm">{t("sent")}</span>
-          <span className="flex size-7 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-            <HugeiconsIcon icon={ArrowUp01Icon} className="size-4" />
-          </span>
         </div>
         <div className="mt-3">
           <p className="text-xl font-bold tracking-tight text-foreground tabular-nums sm:text-2xl">
@@ -79,11 +66,8 @@ export function AnalyticsSummaryGrid({ summary }: AnalyticsSummaryGridProps) {
       </Card>
 
       <Card className="rounded-xl border border-border/50 bg-card p-4 transition-colors sm:p-5">
-        <div className="flex items-center justify-between">
+        <div>
           <span className="text-xs font-medium text-muted-foreground sm:text-sm">{t("netFlow")}</span>
-          <span className="flex size-7 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-            <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
-          </span>
         </div>
         <div className="mt-3">
           <p className={`text-xl font-bold tracking-tight tabular-nums sm:text-2xl ${isNetPositive ? "text-success" : "text-destructive"}`}>
@@ -96,11 +80,8 @@ export function AnalyticsSummaryGrid({ summary }: AnalyticsSummaryGridProps) {
       </Card>
 
       <Card className="rounded-xl border border-border/50 bg-card p-4 transition-colors sm:p-5">
-        <div className="flex items-center justify-between">
+        <div>
           <span className="text-xs font-medium text-muted-foreground sm:text-sm">{t("successRate")}</span>
-          <span className="flex size-7 items-center justify-center rounded-lg bg-success/15 text-success">
-            <HugeiconsIcon icon={Tick02Icon} className="size-4" />
-          </span>
         </div>
         <div className="mt-3">
           <p className="text-xl font-bold tracking-tight text-foreground tabular-nums sm:text-2xl">

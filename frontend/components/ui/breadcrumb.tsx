@@ -1,4 +1,5 @@
 import * as React from "react"
+import Link from "next/link"
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 
@@ -45,6 +46,11 @@ function BreadcrumbLink({
   render,
   ...props
 }: useRender.ComponentProps<"a">) {
+  const defaultRender =
+    !render && typeof props.href === "string" && (props.href.startsWith("/") || props.href.startsWith("#"))
+      ? <Link href={props.href} />
+      : render
+
   return useRender({
     defaultTagName: "a",
     props: mergeProps<"a">(
@@ -53,7 +59,7 @@ function BreadcrumbLink({
       },
       props
     ),
-    render,
+    render: defaultRender,
     state: {
       slot: "breadcrumb-link",
     },

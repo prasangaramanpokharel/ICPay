@@ -27,6 +27,8 @@ frontend/.agents/skills/vercel-react-best-practices
 !/docs/command/**
 !/docs/demo/
 !/docs/demo/**
+!/docs/payment-link/
+!/docs/payment-link/**
 !/docs/learn/
 !/docs/learn/**
 !/docs/icFrame/

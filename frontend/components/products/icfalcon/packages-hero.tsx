@@ -48,7 +48,7 @@ export function PackagesHero() {
           >
             <div className="relative flex size-14 items-center justify-center overflow-hidden rounded-xl border border-border/40 bg-background/80 p-1 shadow-xs">
               <Image
-                src={PAGE_IMAGES.icfalcon.hero}
+                src={PAGE_IMAGES.icfalcon.logo}
                 alt="ICFalcon"
                 width={56}
                 height={56}
