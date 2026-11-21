@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
-import useSWR from "swr"
+import useSWR, { preload } from "swr"
 import type { Identity } from "@icp-sdk/core/agent"
 import {
   fetchCanisterStatus,
@@ -39,7 +39,7 @@ export function useCanisterStatus(
     },
     {
       revalidateOnFocus: false,
-      dedupingInterval: 10_000,
+      dedupingInterval: 30_000,
       keepPreviousData: true,
     }
   )
@@ -62,6 +62,17 @@ export function useCanisterStatus(
     refresh: () => void mutate(),
     isValidating,
   }
+}
+
+export function preloadCanisterStatus(identity: Identity, canisterId: string) {
+  const trimmed = canisterId.trim()
+  if (!trimmed) return
+  const principal = identity.getPrincipal().toText()
+  return preload(["canister-status", trimmed, principal], async () => {
+    const result = await fetchCanisterStatus(identity, trimmed)
+    if (result.isController) rememberCanister(principal, trimmed)
+    return result
+  })
 }
 
 export type { CanisterStatusView }

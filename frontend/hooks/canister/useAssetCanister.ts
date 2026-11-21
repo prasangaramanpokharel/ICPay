@@ -34,6 +34,7 @@ export function useAssetCanister(
     {
       revalidateOnFocus: false,
       dedupingInterval: 15_000,
+      keepPreviousData: true,
     }
   )
 

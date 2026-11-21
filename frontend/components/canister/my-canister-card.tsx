@@ -16,6 +16,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import type { MineRowStatus } from "@/hooks/canister/useMineStatusMap"
 import { projectAvatarUriFor } from "@/lib/profile/avatar"
+import { useAuth } from "@/components/auth/auth-provider"
+import { preloadCanisterStatus } from "@/hooks/canister/useCanisterStatus"
 import { cn } from "@/lib/ui/utils"
 
 export function MyCanisterCard({
@@ -35,14 +37,22 @@ export function MyCanisterCard({
 }) {
   const t = useTranslations("myCanisters")
   const ts = useTranslations("canisterStatus")
+  const { identity } = useAuth()
 
   const avatarUri = useMemo(
     () => projectAvatarUriFor(id || label),
     [id, label]
   )
 
+  const handlePreload = () => {
+    if (identity && id) void preloadCanisterStatus(identity, id)
+  }
+
   return (
-    <Card className="flex flex-col justify-between gap-3.5 rounded-xl border border-border/60 bg-card p-4 transition-all hover:border-border hover:shadow-xs group">
+    <Card
+      onMouseEnter={handlePreload}
+      className="flex flex-col justify-between gap-3.5 rounded-xl border border-border/60 bg-card p-4 transition-all hover:border-border hover:shadow-xs group"
+    >
       <CardContent className="p-0 space-y-3.5">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5 min-w-0">

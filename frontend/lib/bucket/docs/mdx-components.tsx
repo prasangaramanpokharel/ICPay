@@ -48,10 +48,10 @@ function MdxCodeTabs({ section }: CodeTabsProps) {
 
 function ApiMethodTable() {
   return (
-    <div className="my-6 overflow-hidden rounded-xl border bg-card">
+    <div className="my-6 overflow-hidden rounded-xl border border-border/60 bg-card">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b bg-muted/50 text-left">
+          <tr className="border-b border-border/60 bg-muted/50 text-left">
             <th className="px-4 py-3 font-medium">Method</th>
             <th className="px-4 py-3 font-medium">Type</th>
             <th className="px-4 py-3 font-medium">Auth</th>
@@ -60,7 +60,7 @@ function ApiMethodTable() {
         <tbody className="font-mono">
           {BUCKET_API_METHODS.map((row) => (
             <tr key={row.name} className="border-b border-border/40 last:border-0">
-              <td className="px-4 py-2.5 text-foreground/90">{row.name}</td>
+              <td className="px-4 py-2.5 text-foreground">{row.name}</td>
               <td className="px-4 py-2.5 text-muted-foreground">{row.kind}</td>
               <td className="px-4 py-2.5 font-sans text-muted-foreground">{row.auth}</td>
             </tr>
@@ -86,9 +86,9 @@ function DocCard({ href, title, description }: DocCardProps) {
   return (
     <Link
       href={href}
-      className="group flex flex-col rounded-xl border border-border/60 bg-card p-5 transition-colors hover:border-primary/40 hover:bg-muted/20"
+      className="group flex flex-col rounded-xl border border-border/60 bg-card p-5 transition-colors hover:border-border hover:bg-muted/30"
     >
-      <h3 className="font-semibold text-foreground group-hover:text-primary">{title}</h3>
+      <h3 className="font-semibold text-foreground group-hover:text-foreground">{title}</h3>
       <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{description}</p>
     </Link>
   )
@@ -107,7 +107,7 @@ function DocCardGrid({ items = [] }: { items?: DocCardProps[] }) {
 
 function Callout({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <div className="my-6 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3">
+    <div className="my-6 rounded-xl border border-border/60 bg-muted/30 px-4 py-3">
       {title ? <p className="mb-1 text-sm font-semibold text-foreground">{title}</p> : null}
       <div className="text-sm leading-relaxed text-muted-foreground">{children}</div>
     </div>
@@ -147,14 +147,35 @@ export const bucketMdxComponents = {
   h2: ({ children, id }: { children?: ReactNode; id?: string }) => (
     <h2
       id={id}
-      className="scroll-mt-28 border-b border-border/60 pb-3 text-2xl font-bold tracking-tight md:text-3xl"
+      className="group scroll-mt-20 border-b border-border/40 pb-2 text-xl font-semibold tracking-tight md:text-2xl text-foreground mt-10 mb-4 flex items-center justify-between"
     >
-      {children}
+      <span>{children}</span>
+      {id && (
+        <a
+          href={`#${id}`}
+          aria-label={`Link to ${children}`}
+          className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground text-sm font-normal ml-2"
+        >
+          #
+        </a>
+      )}
     </h2>
   ),
   h3: ({ children, id }: { children?: ReactNode; id?: string }) => (
-    <h3 id={id} className="scroll-mt-28 text-lg font-semibold tracking-tight">
-      {children}
+    <h3
+      id={id}
+      className="group scroll-mt-20 text-base font-semibold tracking-tight md:text-lg text-foreground mt-6 mb-2 flex items-center justify-between"
+    >
+      <span>{children}</span>
+      {id && (
+        <a
+          href={`#${id}`}
+          aria-label={`Link to ${children}`}
+          className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground text-xs font-normal ml-2"
+        >
+          #
+        </a>
+      )}
     </h3>
   ),
   p: ({ children }: { children?: ReactNode }) => (
@@ -167,12 +188,12 @@ export const bucketMdxComponents = {
   ),
   li: ({ children }: { children?: ReactNode }) => <li className="leading-relaxed">{children}</li>,
   table: ({ children }: { children?: ReactNode }) => (
-    <div className="my-6 overflow-x-auto rounded-xl border">
+    <div className="my-6 overflow-x-auto rounded-xl border border-border/60">
       <table className="w-full text-sm">{children}</table>
     </div>
   ),
   thead: ({ children }: { children?: ReactNode }) => (
-    <thead className="border-b bg-muted/50 text-left">{children}</thead>
+    <thead className="border-b border-border/60 bg-muted/50 text-left">{children}</thead>
   ),
   th: ({ children }: { children?: ReactNode }) => (
     <th className="px-4 py-3 font-medium text-foreground">{children}</th>
@@ -189,7 +210,7 @@ export const bucketMdxComponents = {
           href={resolved}
           target="_blank"
           rel="noopener noreferrer"
-          className="font-medium text-primary underline-offset-4 hover:underline"
+          className="font-medium text-foreground underline underline-offset-4 hover:text-muted-foreground"
         >
           {children}
         </a>
@@ -198,7 +219,7 @@ export const bucketMdxComponents = {
     return (
       <Link
         href={resolved}
-        className={cn("font-medium text-primary underline-offset-4 hover:underline")}
+        className={cn("font-medium text-foreground underline underline-offset-4 hover:text-muted-foreground")}
       >
         {children}
       </Link>

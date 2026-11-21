@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react"
 import { useTranslations } from "next-intl"
-import { mutate } from "swr"
+import { invalidateCanisterStatus } from "@/lib/swr/keys"
 import { toast } from "@/components/ui/sonner"
 
 import { SettingsSection } from "./settings-section"
@@ -58,7 +58,7 @@ export function CanisterVisibilityCard({
             selectedVisibility === "public" ? LogVisibility.Public : LogVisibility.Controllers,
         })
         toast.success(t("settingsSaved"))
-        void mutate(["canister-status", canisterId])
+        void invalidateCanisterStatus(canisterId)
         onRefresh()
       } catch (err) {
         toast.error(formatManageError(err))

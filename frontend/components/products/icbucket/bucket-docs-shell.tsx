@@ -1,64 +1,75 @@
-import { Suspense } from "react"
-import { BucketDocsChrome } from "@/components/products/icbucket/bucket-docs-chrome"
+"use client"
+
+import { useState } from "react"
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { DocsTopbar } from "@/components/docs/docs-topbar"
+import { DocsSearch } from "@/components/docs/docs-search"
+import { BucketDocsSidebar } from "@/components/products/icbucket/bucket-docs-sidebar"
 import { BucketDocsCopyMenu } from "@/components/products/icbucket/bucket-docs-copy-menu"
-import {
-  BucketDocsNav,
-  BucketDocsNavFallback,
-} from "@/components/products/icbucket/bucket-docs-sidebar"
 import { BucketDocsPageToc } from "@/components/products/icbucket/bucket-docs-page-toc"
 import { BucketDocsPagination } from "@/components/products/icbucket/bucket-docs-pagination"
-import type { BucketDocNavGroup, LoadedBucketDoc } from "@/lib/bucket/docs/types"
+import type { BucketDocMeta, BucketDocNavGroup, LoadedBucketDoc } from "@/lib/bucket/docs/types"
 
-type BucketDocsShellProps = {
+interface BucketDocsShellProps {
   doc: LoadedBucketDoc
   navGroups: BucketDocNavGroup[]
-  backHref?: string
+  allDocs: BucketDocMeta[]
 }
 
-export function BucketDocsShell({ doc, navGroups, backHref = "/icbucket" }: BucketDocsShellProps) {
+export function BucketDocsShell({ doc, navGroups, allDocs }: BucketDocsShellProps) {
+  const [searchOpen, setSearchOpen] = useState(false)
+
   return (
-    <div className="min-h-screen bg-background">
-      <BucketDocsChrome navGroups={navGroups} backHref={backHref} />
-
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 md:px-6 md:py-14 lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-12 xl:grid-cols-[16rem_minmax(0,1fr)_13rem] xl:gap-14">
-        <aside className="hidden lg:block">
-          <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-2">
-            <Suspense fallback={<BucketDocsNavFallback groups={navGroups} />}>
-              <BucketDocsNav groups={navGroups} />
-            </Suspense>
-          </div>
-        </aside>
-
-        <article className="min-w-0">
-          <header className="mb-8 space-y-4 border-b border-border/60 pb-6">
-            <div className="flex flex-wrap items-start justify-between gap-4">
-              <div className="space-y-2">
-                {doc.eyebrow ? (
-                  <p className="text-sm font-medium text-primary">{doc.eyebrow}</p>
-                ) : doc.slug ? (
-                  <p className="text-sm font-medium text-primary">{doc.group}</p>
-                ) : null}
-                <h1 className="text-3xl font-bold tracking-tight md:text-4xl">{doc.title}</h1>
-                {doc.description ? (
-                  <p className="max-w-3xl text-base leading-relaxed text-muted-foreground">
+    <SidebarProvider defaultOpen={true}>
+      <div className="flex min-h-screen w-full bg-background">
+        <BucketDocsSidebar
+          navGroups={navGroups}
+          onOpenSearch={() => setSearchOpen(true)}
+        />
+        <SidebarInset className="min-w-0 flex flex-col flex-1">
+          <DocsTopbar doc={doc} onOpenSearch={() => setSearchOpen(true)} />
+          <div className="flex-1 w-full flex justify-between min-w-0">
+            <main className="flex-1 min-w-0 px-4 py-8 md:px-8 md:py-10 max-w-4xl mx-auto xl:mx-0 xl:max-w-3xl">
+              <header className="mb-6 space-y-2">
+                <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+                  {doc.title}
+                </h1>
+                {doc.description && (
+                  <p className="text-base leading-relaxed text-muted-foreground">
                     {doc.description}
                   </p>
-                ) : null}
+                )}
+                <div className="pt-2">
+                  <BucketDocsCopyMenu markdown={doc.fullMarkdown} title={doc.title} />
+                </div>
+                <div className="border-b border-border/40 pt-4" />
+              </header>
+              <div className="min-w-0">{doc.content}</div>
+              <BucketDocsPagination currentSlug={doc.slug} navGroups={navGroups} />
+              <div className="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-border/40 pt-4 text-xs text-muted-foreground">
+                <a
+                  href="https://gitlab.com/prasangapokharel/icbucket"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-foreground underline underline-offset-4"
+                >
+                  Edit this page on GitLab
+                </a>
+                <span>Updated recently</span>
               </div>
-              <BucketDocsCopyMenu markdown={doc.fullMarkdown} title={doc.title} />
-            </div>
-          </header>
-          <div className="max-w-none">{doc.content}</div>
-          <BucketDocsPagination currentSlug={doc.slug} navGroups={navGroups} />
-          <div className="pb-16" />
-        </article>
-
-        <aside className="hidden xl:block">
-          <div className="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pl-2">
-            <BucketDocsPageToc headings={doc.headings} />
+              <div className="pb-16" />
+            </main>
+            <aside className="hidden xl:block w-56 shrink-0 px-4 py-10 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto">
+              <BucketDocsPageToc headings={doc.headings} />
+            </aside>
           </div>
-        </aside>
+          <DocsSearch
+            open={searchOpen}
+            onOpenChange={setSearchOpen}
+            allDocs={allDocs}
+          />
+        </SidebarInset>
       </div>
-    </div>
+    </SidebarProvider>
   )
 }

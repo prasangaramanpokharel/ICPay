@@ -2,7 +2,7 @@
 
 import { useOptimistic, useState, useTransition } from "react"
 import { useTranslations } from "next-intl"
-import { mutate } from "swr"
+import { invalidateCanisterStatus } from "@/lib/swr/keys"
 import { toast } from "@/components/ui/sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { MoreHorizontalIcon, Delete02Icon } from "@hugeicons/core-free-icons"
@@ -96,8 +96,7 @@ export function CanisterControllersCard({
       try {
         await addController(identity, canisterId, text)
         toast.success(t("addControllerSuccessTitle"))
-        void mutate(["canister-status", canisterId])
-        void mutate(["canister-audit-info", canisterId])
+        void invalidateCanisterStatus(canisterId)
         onRefresh()
       } catch (err) {
         toast.error(formatManageError(err))
@@ -115,8 +114,7 @@ export function CanisterControllersCard({
       try {
         await removeController(identity, canisterId, target)
         toast.success(t("controllerRemoved"))
-        void mutate(["canister-status", canisterId])
-        void mutate(["canister-audit-info", canisterId])
+        void invalidateCanisterStatus(canisterId)
         onRefresh()
       } catch (err) {
         toast.error(formatManageError(err))

@@ -30,11 +30,18 @@ export function useBucketApiKeys(bucketId: string | null, enabled = true) {
     keys: data ?? [],
     isLoading,
     refresh: mutate,
-    createKey: (
+    createKey: async (
       name: string,
       permissions: ApiKeyPermissions
-    ): Promise<Outcome<ApiKeyCreateResult>> =>
-      createApiKey(identity, bucketId!, name, permissions),
-    revokeKey: (keyId: string) => revokeApiKey(identity, bucketId!, keyId),
+    ): Promise<Outcome<ApiKeyCreateResult>> => {
+      const res = await createApiKey(identity, bucketId!, name, permissions)
+      if ("ok" in res) void mutate()
+      return res
+    },
+    revokeKey: async (keyId: string) => {
+      const res = await revokeApiKey(identity, bucketId!, keyId)
+      if ("ok" in res) void mutate()
+      return res
+    },
   }
 }
