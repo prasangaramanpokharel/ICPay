@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -164,12 +165,21 @@ export function MyCanisterTransferDialog({
               <div className="flex items-end justify-between gap-2">
                 <FieldLabel htmlFor="transfer-cycles">{t("transferAmount")}</FieldLabel>
                 {ledgerBal != null && (
-                  <p className="text-xs tabular-nums text-muted-foreground">
-                    {tw("availableCycles", {
-                      pretty: formatCycles(ledgerBal),
-                      tAmount: availableT ?? "0",
-                    })}
-                  </p>
+                  <div className="inline-flex items-center gap-1.5 text-xs tabular-nums text-muted-foreground">
+                    <Image
+                      src="/images/pages/canister/icon/tcycle.svg"
+                      alt="Cycles"
+                      width={14}
+                      height={14}
+                      className="size-3.5 shrink-0 rounded-full select-none"
+                    />
+                    <span>
+                      {tw("availableCycles", {
+                        pretty: formatCycles(ledgerBal),
+                        tAmount: availableT ?? "0",
+                      })}
+                    </span>
+                  </div>
                 )}
               </div>
               <div className="relative">
@@ -251,12 +261,21 @@ export function MyCanisterTransferDialog({
         title={t("transferSuccessTitle")}
         highlight={
           success ? (
-            <p className="mt-1 mb-2 text-3xl font-bold tracking-tight tabular-nums">
-              {success.cycles}{" "}
+            <div className="mt-1 mb-2 flex items-center justify-center gap-2">
+              <span className="text-3xl font-bold tracking-tight tabular-nums">
+                {success.cycles}
+              </span>
+              <Image
+                src="/images/pages/canister/icon/tcycle.svg"
+                alt="TC"
+                width={24}
+                height={24}
+                className="size-5 shrink-0 rounded-full select-none"
+              />
               <span className="text-lg font-semibold text-muted-foreground">
                 {tw("cyclesUnit")}
               </span>
-            </p>
+            </div>
           ) : null
         }
         monoId={success?.to}

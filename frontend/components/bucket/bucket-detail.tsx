@@ -48,6 +48,7 @@ import { BucketUploadControl } from "@/components/bucket/bucket-upload-control"
 import { BucketRenewDrawer } from "@/components/bucket/bucket-renew-drawer"
 import { BucketApiKeysModal } from "@/components/bucket/bucket-api-keys-modal"
 import { BucketConnectModal } from "@/components/bucket/bucket-connect-modal"
+import { OnboardBucketAgentButton } from "@/components/bucket/onboard-bucket-agent-button"
 import { BucketNotificationModal } from "@/components/bucket/bucket-notification-modal"
 import { BucketStatsHeader } from "@/components/bucket/bucket-stats-header"
 import {
@@ -392,6 +393,13 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
 
   const headerActions = (
     <div className="flex flex-wrap items-center justify-end gap-2">
+      {stats ? (
+        <OnboardBucketAgentButton
+          bucketId={bucketId}
+          bucketName={stats.name}
+          isPublic={Boolean(stats.visibility && "open" in stats.visibility)}
+        />
+      ) : null}
       <ButtonGroup>
         {stats ? (
           <Button

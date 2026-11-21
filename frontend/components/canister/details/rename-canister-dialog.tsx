@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { PencilEdit01Icon } from "@hugeicons/core-free-icons"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import {
   Dialog,
   DialogContent,
@@ -36,35 +36,33 @@ export function RenameCanisterDialog({
   const { identity } = useAuth()
   const principal = identity?.getPrincipal().toText() ?? null
   const [draftName, setDraftName] = useState(currentName)
-  const [saving, setSaving] = useState(false)
+  const [isPending, startTransition] = useTransition()
   const [prevOpen, setPrevOpen] = useState(open)
 
   if (open !== prevOpen) {
     setPrevOpen(open)
     if (open) {
       setDraftName(currentName)
-      setSaving(false)
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!principal) return
     const next = draftName.trim()
-    setSaving(true)
-    try {
-      updateSavedCanisterName(principal, canisterId, next)
-      if (identity) {
-        await updateCanisterNameOnCloud(identity, canisterId, next)
+    startTransition(async () => {
+      try {
+        updateSavedCanisterName(principal, canisterId, next)
+        if (identity) {
+          await updateCanisterNameOnCloud(identity, canisterId, next)
+        }
+        toast.success("Canister name updated")
+        onSuccess?.(next)
+        onOpenChange(false)
+      } catch {
+        toast.error("Failed to update canister name")
       }
-      toast.success("Canister name updated")
-      onSuccess?.(next)
-      onOpenChange(false)
-    } catch {
-      toast.error("Failed to update canister name")
-    } finally {
-      setSaving(false)
-    }
+    })
   }
 
   return (
@@ -91,7 +89,7 @@ export function RenameCanisterDialog({
                 placeholder="e.g. backend"
                 maxLength={64}
                 autoFocus
-                disabled={saving}
+                disabled={isPending}
               />
             </Field>
           </FieldGroup>
@@ -101,12 +99,12 @@ export function RenameCanisterDialog({
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
-              disabled={saving}
+              disabled={isPending}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={saving}>
-              {saving ? <Spinner data-icon="inline-start" /> : null}
+            <Button type="submit" disabled={isPending}>
+              {isPending ? <Spinner data-icon="inline-start" /> : null}
               <span>Save</span>
             </Button>
           </DialogFooter>

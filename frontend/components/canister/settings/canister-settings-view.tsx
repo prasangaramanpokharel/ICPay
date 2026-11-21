@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { CanisterControllersCard } from "./canister-controllers-card"
 import { CanisterResourcesCard } from "./canister-resources-card"
@@ -13,31 +12,41 @@ export function CanisterSettingsView({
   data,
   isController,
   onRefresh,
+  activeSection = "controllers",
+  onSectionChange,
 }: {
   canisterId: string
   data: CanisterStatusView
   isController: boolean
   onRefresh: () => void
+  activeSection?: string
+  onSectionChange?: (section: string) => void
 }) {
-  const [activeTab, setActiveTab] = useState("controllers")
+  const tab = activeSection === "danger" ? "lifecycle" : activeSection
+
+  const handleTabChange = (val: string) => {
+    onSectionChange?.(val)
+  }
 
   return (
     <div className="flex flex-col gap-5">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col gap-4">
-        <TabsList>
-          <TabsTrigger value="controllers" className="cursor-pointer">
-            Controllers
-          </TabsTrigger>
-          <TabsTrigger value="resources" className="cursor-pointer">
-            Resources
-          </TabsTrigger>
-          <TabsTrigger value="visibility" className="cursor-pointer">
-            Visibility
-          </TabsTrigger>
-          <TabsTrigger value="danger" className="cursor-pointer text-destructive data-active:text-destructive">
-            Lifecycle
-          </TabsTrigger>
-        </TabsList>
+      <Tabs value={tab} onValueChange={handleTabChange} className="flex flex-col gap-4">
+        <div className="md:hidden">
+          <TabsList className="w-full justify-start overflow-x-auto">
+            <TabsTrigger value="controllers" className="cursor-pointer text-xs">
+              Controllers
+            </TabsTrigger>
+            <TabsTrigger value="resources" className="cursor-pointer text-xs">
+              Resources
+            </TabsTrigger>
+            <TabsTrigger value="visibility" className="cursor-pointer text-xs">
+              Visibility
+            </TabsTrigger>
+            <TabsTrigger value="lifecycle" className="cursor-pointer text-xs text-destructive data-active:text-destructive">
+              Lifecycle
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="controllers" className="flex flex-col gap-4">
           <CanisterControllersCard
@@ -66,7 +75,7 @@ export function CanisterSettingsView({
           />
         </TabsContent>
 
-        <TabsContent value="danger" className="flex flex-col gap-4">
+        <TabsContent value="lifecycle" className="flex flex-col gap-4">
           <CanisterLifecycleCard
             canisterId={canisterId}
             runStatus={data.runStatus}

@@ -1,7 +1,7 @@
 "use client"
 
-import { Suspense, useState } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { Suspense, useState, useCallback } from "react"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
@@ -23,26 +23,48 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { LaunchForm } from "@/components/launch/launch-form"
 import { TokenCard } from "@/components/launch/token-card"
-import { LaunchDetail } from "@/app/(app)/launch/[id]/launch-detail"
+import { LaunchTokenDrawer } from "@/components/launch/launch-token-drawer"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useMyTokens } from "@/hooks/token/useLaunchData"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import { launchToken, type LaunchInput } from "@/services/launch/launch"
+import type { TokenPublic } from "@/services/types"
 
 function LaunchPageContent() {
   const t = useTranslations("launch")
-  const router = useRouter()
   const searchParams = useSearchParams()
-  const launchId = searchParams.get("id")
+  const queryId = searchParams.get("id") || searchParams.get("token") || searchParams.get("ledgerId")
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
   const { tokens, isLoading, refresh } = useMyTokens()
   const [showForm, setShowForm] = useState(false)
+  const [selectedTokenId, setSelectedTokenId] = useState<string | null | false>(null)
 
-  if (launchId) {
-    return <LaunchDetail id={launchId} />
-  }
+  const effectiveId = selectedTokenId === false ? null : (selectedTokenId ?? queryId ?? null)
+
+  const handleSelectToken = useCallback((token: TokenPublic) => {
+    setSelectedTokenId(token.id)
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href)
+      url.searchParams.set("id", token.id)
+      window.history.replaceState(null, "", url.toString())
+    }
+  }, [])
+
+  const handleDrawerOpenChange = useCallback((open: boolean) => {
+    if (!open) {
+      setSelectedTokenId(false)
+      if (typeof window !== "undefined") {
+        const url = new URL(window.location.href)
+        url.searchParams.delete("id")
+        url.searchParams.delete("token")
+        url.searchParams.delete("ledgerId")
+        const nextUrl = url.pathname + (url.search ? url.search : "")
+        window.history.replaceState(null, "", nextUrl)
+      }
+    }
+  }, [])
 
   const handleLaunch = async (input: LaunchInput): Promise<string | null> => {
     const result = await launchToken(identity, input)
@@ -50,7 +72,8 @@ function LaunchPageContent() {
 
     refreshWallet()
     await refresh()
-    router.push(`/token?id=${encodeURIComponent(result.ok.id)}`)
+    setShowForm(false)
+    handleSelectToken(result.ok)
     return null
   }
 
@@ -130,12 +153,22 @@ function LaunchPageContent() {
             </div>
             <Card className="divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/60">
               {tokens.map((token) => (
-                <TokenCard key={token.id} token={token} />
+                <TokenCard
+                  key={token.id}
+                  token={token}
+                  onSelect={handleSelectToken}
+                />
               ))}
             </Card>
           </div>
         )}
       </div>
+
+      <LaunchTokenDrawer
+        open={Boolean(effectiveId)}
+        onOpenChange={handleDrawerOpenChange}
+        tokenId={effectiveId}
+      />
     </AppPage>
   )
 }

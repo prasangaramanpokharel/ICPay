@@ -1,15 +1,33 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { toast } from "@/components/ui/toast"
+import useSWR from "swr"
+import { toast } from "@/components/ui/sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
-import { Camera01Icon, RefreshIcon } from "@hugeicons/core-free-icons"
+import {
+  Camera01Icon,
+  Download01Icon,
+  InformationCircleIcon,
+  Delete02Icon,
+  RotateLeft01Icon,
+} from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
-import { ButtonGroup } from "@/components/ui/button-group"
-import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,8 +38,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { CanisterStatusPanel } from "@/components/canister/details/canister-status-panel"
-import { CanisterIdField } from "@/components/canister/canister-id-field"
+import { CopyButton } from "@/components/ui/copy-button"
+import { Skeleton } from "@/components/ui/skeleton"
+import { SnapshotDownloadDialog } from "@/components/canister/details/snapshot-download-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useCanisterStatus } from "@/hooks/canister/useCanisterStatus"
 import { rememberCanister } from "@/lib/canister/savedCanisters"
@@ -32,33 +51,27 @@ import {
   listSnapshots,
   loadSnapshot,
   takeSnapshot,
-  type SnapshotView,
 } from "@/services/canister/management"
 
 export function SnapshotsCard({
   canisterId: fixedCanisterId,
-  embedded = false,
   isController: propIsController,
 }: {
   canisterId?: string
   embedded?: boolean
   isController?: boolean
 } = {}) {
-  const t = useTranslations("canisterSnapshots")
-  const { identity, isAuthenticated, isLoading, login } = useAuth()
+  const t = useTranslations("myCanisters")
+  const ts = useTranslations("canisterSnapshots")
+  const { identity, isAuthenticated } = useAuth()
   const searchParams = useSearchParams()
-  const [canisterId, setCanisterId] = useState(
-    () => fixedCanisterId ?? searchParams.get("id")?.trim() ?? ""
-  )
-  const [connecting, setConnecting] = useState(false)
-  const [busy, setBusy] = useState(false)
-  const [rows, setRows] = useState<SnapshotView[] | null>(null)
-  const [confirm, setConfirm] = useState<
-    null | { kind: "load" | "delete"; id: string }
-  >(null)
+  const canisterId = fixedCanisterId ?? searchParams.get("id")?.trim() ?? ""
+  const trimmed = canisterId.trim()
 
-  const effectiveId = fixedCanisterId ?? canisterId
-  const trimmed = effectiveId.trim()
+  const [busy, setBusy] = useState(false)
+  const [downloadSnapshotId, setDownloadSnapshotId] = useState<string | null>(null)
+  const [confirm, setConfirm] = useState<null | { kind: "load" | "delete"; id: string }>(null)
+
   const parsedOk = useMemo(() => {
     try {
       if (!trimmed) return false
@@ -82,50 +95,26 @@ export function SnapshotsCard({
         ? status.data.isController
         : null
 
-  const refreshList = async () => {
-    if (!identity || !parsedOk) return
-    if (canControl === false) {
-      toast.error("Your Internet Identity is not a controller of this canister.")
-      return
-    }
-    setBusy(true)
-    try {
-      const list = await listSnapshots(identity, trimmed)
-      setRows(list)
-    } catch (e) {
-      toast.error(formatManageError(e))
-      setRows(null)
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  // Auto load snapshots when fixed canister ID is provided and user is controller
-  useEffect(() => {
-    if (!fixedCanisterId || !identity || !isAuthenticated || !parsedOk || canControl === false) return
-    let cancelled = false
-    void (async () => {
-      try {
-        const list = await listSnapshots(identity, trimmed)
-        if (!cancelled) setRows(list)
-      } catch {
-        // Silent failure on initial background load to avoid unsolicited toast errors
-        if (!cancelled) setRows(null)
-      }
-    })()
-    return () => {
-      cancelled = true
-    }
-  }, [fixedCanisterId, identity, isAuthenticated, parsedOk, trimmed, canControl])
+  const {
+    data: rows,
+    isLoading: loading,
+    mutate: mutateRows,
+  } = useSWR(
+    identity && isAuthenticated && parsedOk && canControl !== false
+      ? ["canister-snapshots", trimmed]
+      : null,
+    () => listSnapshots(identity!, trimmed),
+    { revalidateOnFocus: false }
+  )
 
   const onTake = async () => {
-    if (!identity) return
+    if (!identity || !parsedOk) return
     setBusy(true)
     try {
       const snap = await takeSnapshot(identity, trimmed)
-      toast.success(t("toastTaken"))
+      toast.success(ts("toastTaken"))
       rememberCanister(identity.getPrincipal().toText(), trimmed)
-      setRows((prev) => [snap, ...(prev ?? [])])
+      void mutateRows((prev) => [snap, ...(prev ?? [])], false)
       status.refresh()
     } catch (e) {
       toast.error(formatManageError(e))
@@ -142,12 +131,13 @@ export function SnapshotsCard({
     try {
       if (kind === "load") {
         await loadSnapshot(identity, trimmed, id)
-        toast.success(t("toastLoaded"))
+        toast.success(ts("toastLoaded"))
+        void mutateRows()
         status.refresh()
       } else {
         await deleteSnapshot(identity, trimmed, id)
-        toast.success(t("toastDeleted"))
-        setRows((prev) => (prev ?? []).filter((r) => r.id !== id))
+        toast.success(ts("toastDeleted"))
+        void mutateRows((prev) => (prev ?? []).filter((r) => r.id !== id), false)
         status.refresh()
       }
     } catch (e) {
@@ -157,214 +147,181 @@ export function SnapshotsCard({
     }
   }
 
-  const content = (
-    <Card className="gap-0 border-border/60 bg-card/60 backdrop-blur-xs">
-      <CardHeader className="border-b border-border/40 pb-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <CardTitle className="text-base font-semibold">{t("formTitle")}</CardTitle>
-            <CardDescription className="text-xs">{t("formHint")}</CardDescription>
-          </div>
-          {isAuthenticated && parsedOk && (
+  return (
+    <>
+      <Card className="rounded-xl border border-border/40 bg-card p-6 gap-4">
+        <CardHeader className="flex flex-col gap-4 border-b border-border/40 pb-4 sm:flex-row sm:items-center sm:justify-between p-0">
+          <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-8 gap-1.5 text-xs"
-                disabled={busy || canControl === false}
-                onClick={() => void refreshList()}
-              >
-                {busy && rows === null ? (
-                  <Spinner data-icon="inline-start" />
-                ) : (
-                  <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
-                )}
-                <span>{busy && rows === null ? t("loading") : t("list")}</span>
-              </Button>
-              <Button
-                size="sm"
-                className="h-8 gap-1.5 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
-                disabled={!parsedOk || busy || status.kind !== "ok" || canControl === false}
-                onClick={() => void onTake()}
-              >
-                {busy ? (
-                  <Spinner data-icon="inline-start" />
-                ) : (
-                  <HugeiconsIcon icon={Camera01Icon} className="size-3.5" />
-                )}
-                <span>{t("take")}</span>
-              </Button>
+              <HugeiconsIcon icon={Camera01Icon} className="size-4 text-muted-foreground" strokeWidth={1.5} />
+              <CardTitle className="text-base font-semibold text-foreground">
+                {t("snapshotsTitle")}
+              </CardTitle>
+              <HoverCard>
+                <HoverCardTrigger className="cursor-help inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
+                  <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5 text-muted-foreground/70" />
+                </HoverCardTrigger>
+                <HoverCardContent className="w-80 space-y-2 text-xs">
+                  <p className="font-semibold text-foreground">Canister State Snapshots</p>
+                  <p className="text-muted-foreground">
+                    A snapshot freezes the exact state of your canister, capturing the compiled WASM binary, heap memory, and 64-bit stable memory. Restoring overwrites current state.
+                  </p>
+                </HoverCardContent>
+              </HoverCard>
+            </div>
+            <CardDescription className="text-xs">
+              {t("snapshotsDesc")}
+            </CardDescription>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              size="sm"
+              disabled={!parsedOk || busy || canControl === false}
+              onClick={() => void onTake()}
+              className="h-8 gap-1.5 text-xs cursor-pointer"
+            >
+              <HugeiconsIcon icon={Camera01Icon} className="size-3.5" />
+              <span>{t("takeSnapshot")}</span>
+            </Button>
+          </div>
+        </CardHeader>
+
+        <CardContent className="space-y-4 p-0">
+          {canControl === false && isAuthenticated && (
+            <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center space-y-2">
+              <HugeiconsIcon icon={InformationCircleIcon} className="size-5 text-muted-foreground mx-auto" />
+              <p className="text-xs font-medium text-foreground">{t("controllersOnly")}</p>
+              <p className="text-xs text-muted-foreground max-w-md mx-auto">
+                {t("restrictedBody")}
+              </p>
             </div>
           )}
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-5 pt-5">
-        {!fixedCanisterId && (
-          <CanisterIdField
-            id="snap-canister"
-            value={canisterId}
-            onChange={(v) => {
-              setCanisterId(v)
-              setRows(null)
-            }}
-            principal={isAuthenticated ? identity?.getPrincipal().toText() : null}
-          />
-        )}
 
-        {canControl === false && isAuthenticated && (
-          <div className="rounded-xl border border-border/60 bg-muted/20 p-4 text-xs text-muted-foreground space-y-1">
-            <p className="font-semibold text-foreground">Controller access required</p>
-            <p>
-              Your Internet Identity is not a controller of this canister. To list, create, or restore snapshots, add your principal as a controller under the Settings tab.
-            </p>
-          </div>
-        )}
+          {canControl !== false && (
+            <div className="rounded-lg border border-border/40 overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-b border-border/40 hover:bg-transparent">
+                    <TableHead className="font-mono text-xs">{t("colSnapshotId")}</TableHead>
+                    <TableHead className="text-xs">{t("colSize")}</TableHead>
+                    <TableHead className="text-xs">{t("colTaken")}</TableHead>
+                    <TableHead className="text-right text-xs pr-4">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {loading ? (
+                    Array.from({ length: 3 }).map((_, i) => (
+                      <TableRow key={i} className="border-b border-border/40">
+                        <TableCell><Skeleton className="h-4 w-36" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                        <TableCell><Skeleton className="h-4 w-28" /></TableCell>
+                        <TableCell className="text-right pr-4"><Skeleton className="h-7 w-20 ml-auto" /></TableCell>
+                      </TableRow>
+                    ))
+                  ) : !rows || rows.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-32 text-center text-xs text-muted-foreground">
+                        {t("noSnapshots")}
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    rows.map((row) => (
+                      <TableRow key={row.id} className="border-b border-border/40 hover:bg-muted/30">
+                        <TableCell className="font-mono text-xs py-3">
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-medium text-foreground">{row.id}</span>
+                            <CopyButton value={row.id} size="icon-xs" variant="ghost" />
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-xs font-mono tabular-nums text-muted-foreground">
+                          {row.totalSizeLabel}
+                        </TableCell>
+                        <TableCell className="text-xs text-muted-foreground">
+                          {row.takenAtLabel}
+                        </TableCell>
+                        <TableCell className="text-right pr-4 py-2">
+                          <div className="flex items-center justify-end gap-1.5">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              disabled={busy}
+                              onClick={() => setConfirm({ kind: "load", id: row.id })}
+                              className="h-7 text-xs cursor-pointer gap-1"
+                            >
+                              <HugeiconsIcon icon={RotateLeft01Icon} className="size-3" />
+                              <span>{t("restore")}</span>
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              disabled={busy}
+                              onClick={() => setDownloadSnapshotId(row.id)}
+                              className="h-7 text-xs cursor-pointer gap-1"
+                            >
+                              <HugeiconsIcon icon={Download01Icon} className="size-3" />
+                              <span>{t("download")}</span>
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              disabled={busy}
+                              onClick={() => setConfirm({ kind: "delete", id: row.id })}
+                              className="h-7 text-xs cursor-pointer gap-1"
+                            >
+                              <HugeiconsIcon icon={Delete02Icon} className="size-3" />
+                              <span>{t("clear")}</span>
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-        {!isAuthenticated ? (
-          <Button
-            size="lg"
-            className="w-full"
-            disabled={isLoading || connecting}
-            onClick={() => {
-              setConnecting(true)
-              void login().finally(() => setConnecting(false))
-            }}
-          >
-            {connecting || isLoading ? t("connecting") : t("signIn")}
-          </Button>
-        ) : null}
+      {downloadSnapshotId && (
+        <SnapshotDownloadDialog
+          open={Boolean(downloadSnapshotId)}
+          onOpenChange={(open) => !open && setDownloadSnapshotId(null)}
+          canisterId={trimmed}
+          snapshotId={downloadSnapshotId}
+        />
+      )}
 
-        {canControl !== false && rows && (
-          <div className="space-y-3">
-            <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Available Snapshots ({rows.length})
-            </h4>
-            {rows.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-border/60 p-6 text-center text-xs text-muted-foreground">
-                {t("empty")}
-              </div>
-            ) : (
-              <ul className="space-y-3">
-                {rows.map((row) => (
-                  <li
-                    key={row.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-border/60 bg-muted/20 p-3.5"
-                  >
-                    <div>
-                      <p className="break-all font-mono text-[11px] font-medium text-foreground">{row.id}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {row.totalSizeLabel} · {row.takenAtLabel}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-2 shrink-0">
-                      <Button
-                        size="xs"
-                        variant="outline"
-                        disabled={busy}
-                        onClick={() => setConfirm({ kind: "load", id: row.id })}
-                      >
-                        {t("load")}
-                      </Button>
-                      <Button
-                        size="xs"
-                        variant="destructive"
-                        disabled={busy}
-                        onClick={() => setConfirm({ kind: "delete", id: row.id })}
-                      >
-                        {t("delete")}
-                      </Button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
-
-        <p className="text-xs leading-relaxed text-muted-foreground">{t("disclaimer")}</p>
-      </CardContent>
-    </Card>
-  )
-
-  if (embedded) {
-    return (
-      <div className="space-y-4">
-        {content}
-        <AlertDialog open={confirm != null} onOpenChange={(o) => !o && setConfirm(null)}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>
-                {confirm?.kind === "load" ? t("loadTitle") : t("deleteTitle")}
-              </AlertDialogTitle>
-              <AlertDialogDescription>
-                {confirm?.kind === "load" ? t("loadBody") : t("deleteBody")}
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-              <AlertDialogAction
-                variant={confirm?.kind === "delete" ? "destructive" : "default"}
-                onClick={() => void onConfirm()}
-              >
-                {confirm?.kind === "load" ? t("load") : t("delete")}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </div>
-    )
-  }
-
-  return (
-    <div className="flex w-full flex-col gap-8 lg:gap-10">
-      <header className="flex flex-col gap-3 text-center lg:text-left">
-        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-primary">
-          {t("eyebrow")}
-        </p>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-          {t("title")}
-        </h1>
-        <p className="mx-auto max-w-2xl text-sm leading-relaxed text-muted-foreground md:text-base lg:mx-0">
-          {t("subtitle")}
-        </p>
-      </header>
-
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,22rem)]">
-        {content}
-
-        <Card className="gap-0 lg:sticky lg:top-20">
-          <CardHeader className="border-b pb-3">
-            <CardTitle className="text-base">{t("statusTitle")}</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-4">
-            <CanisterStatusPanel state={status} compact />
-          </CardContent>
-        </Card>
-      </div>
-
-      <AlertDialog open={confirm != null} onOpenChange={(o) => !o && setConfirm(null)}>
-        <AlertDialogContent>
+      <AlertDialog
+        open={confirm != null}
+        onOpenChange={(open) => !open && setConfirm(null)}
+      >
+        <AlertDialogContent size="sm">
           <AlertDialogHeader>
             <AlertDialogTitle>
-              {confirm?.kind === "load" ? t("loadTitle") : t("deleteTitle")}
+              {confirm?.kind === "load" ? t("restoreConfirmTitle") : ts("deleteTitle")}
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              {confirm?.kind === "load" ? t("loadBody") : t("deleteBody")}
+            <AlertDialogDescription className="text-xs text-muted-foreground">
+              {confirm?.kind === "load" ? t("restoreConfirmBody") : ts("deleteBody")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <ButtonGroup>
-              <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-              <AlertDialogAction
-                variant={confirm?.kind === "delete" ? "destructive" : "default"}
-                onClick={() => void onConfirm()}
-              >
-                <span>{confirm?.kind === "load" ? t("load") : t("delete")}</span>
-              </AlertDialogAction>
-            </ButtonGroup>
+            <AlertDialogCancel disabled={busy}>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              disabled={busy}
+              onClick={() => void onConfirm()}
+            >
+              {busy ? "Processing…" : confirm?.kind === "load" ? t("restore") : t("clear")}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </>
   )
 }

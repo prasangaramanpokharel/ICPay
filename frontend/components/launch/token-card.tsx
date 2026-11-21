@@ -1,5 +1,6 @@
 "use client"
 
+import type { MouseEvent } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
@@ -22,18 +23,32 @@ const STATUS_VARIANT = {
   failed: "destructive",
 } as const
 
-export function TokenCard({ token }: { token: TokenPublic }) {
+export function TokenCard({
+  token,
+  onSelect,
+}: {
+  token: TokenPublic
+  onSelect?: (token: TokenPublic) => void
+}) {
   const t = useTranslations("launch")
   const status = statusOf(token)
   const [logo] = token.logo
   const [ledgerId] = token.ledgerId
   const [cyclesFunded] = token.cyclesFunded
 
+  const handleClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    if (onSelect && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey && e.button === 0) {
+      e.preventDefault()
+      onSelect(token)
+    }
+  }
+
   return (
     <Link
-      href={`/token?id=${token.id}`}
+      href={`/token?id=${encodeURIComponent(token.id)}`}
+      onClick={handleClick}
       prefetch
-      className="group flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40"
+      className="group flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-muted/40 cursor-pointer"
     >
       <div className="flex min-w-0 items-center gap-3">
         <span className="flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted">

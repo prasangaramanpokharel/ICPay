@@ -77,9 +77,6 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
         </Alert>
       )}
 
-      {/* The reason is shown, not summarised. A creator who paid and got nothing
-          needs the actual trap message to hand to support, and the payment block
-          below is what makes the charge traceable. */}
       {status === "failed" && (
         <Alert variant="destructive">
           <HugeiconsIcon icon={Alert02Icon} className="size-4" strokeWidth={1.75} />
@@ -107,8 +104,6 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
         <Row label={t("createdLabel")} value={formatTime(token.createdAt)} />
         {creatorPrincipal && <Row label="Creator" value={creatorPrincipal} mono copyable />}
         {ledgerId && <Row label={t("ledgerLabel")} value={ledgerId} mono copyable />}
-        {/* Published so a holder can hash the deployed wasm themselves. Without
-            it "we deploy the audited code" is a claim, not a check. */}
         {moduleHash && <Row label={t("moduleHashLabel")} value={toHex(moduleHash)} mono copyable />}
       </div>
 

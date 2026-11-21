@@ -1,13 +1,11 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import Link from "next/link"
 import useSWR from "swr"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   ArrowDown01Icon,
-  ArrowRight01Icon,
   ConnectIcon,
   InformationCircleIcon,
   Link01Icon,
@@ -26,14 +24,6 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import {
   Tabs,
   TabsContent,
   TabsList,
@@ -45,12 +35,15 @@ import { CopyButton } from "@/components/ui/copy-button"
 
 import { MyCanisterControls } from "@/components/canister/details/my-canister-controls"
 import { SubnetCountryFlags } from "@/components/canister/subnet-country-flags"
-import { CanisterSnapshotsGuide } from "@/components/canister/details/canister-snapshots-guide"
 import { SnapshotsCard } from "@/components/canister/details/snapshots-card"
 import { CanisterLogsCard } from "@/components/canister/details/canister-logs-card"
+import { CanisterRadialChart } from "@/components/canister/details/canister-radial-chart"
 import { CanisterSettingsView } from "@/components/canister/settings"
 import { ConnectControllerDialog } from "@/components/canister/connect-controller-dialog"
 import { RenameCanisterDialog } from "@/components/canister/details/rename-canister-dialog"
+import { CanisterAuditLogCard } from "@/components/canister/details/canister-audit-log-card"
+import { AssetExplorerCard } from "@/components/canister/details/asset-explorer-card"
+import { CanisterVisitMenu } from "@/components/canister/details/canister-visit-menu"
 
 import { useAuth } from "@/components/auth/auth-provider"
 import type { CanisterStatusState } from "@/hooks/canister/useCanisterStatus"
@@ -66,7 +59,14 @@ function shortHash(hash: string): string {
   return `${h.slice(0, 8)}…${h.slice(-8)}`
 }
 
-export type CanisterDetailTab = "overview" | "logs" | "settings" | "snapshots"
+function runwayTone(days: number | null): string {
+  if (days === null) return "text-muted-foreground font-medium"
+  if (days < 7) return "text-destructive font-semibold"
+  if (days < 30) return "text-amber-500 font-medium"
+  return "text-foreground font-medium"
+}
+
+export type CanisterDetailTab = "overview" | "logs" | "settings" | "snapshots" | "audit" | "assets"
 
 export function MyCanisterDetails({
   canisterId,
@@ -75,7 +75,9 @@ export function MyCanisterDetails({
   status,
   onRefresh,
   defaultTab = "overview",
+  activeSection = "controllers",
   onTabChange,
+  onSectionChange,
 }: {
   canisterId: string
   localName: string
@@ -84,19 +86,23 @@ export function MyCanisterDetails({
   onCopyId?: () => void
   onRefresh: () => void
   defaultTab?: CanisterDetailTab
+  activeSection?: string
   onTabChange?: (tab: CanisterDetailTab) => void
+  onSectionChange?: (section: string) => void
 }) {
   const t = useTranslations("myCanisters")
   const { identity } = useAuth()
   const principal = identity?.getPrincipal().toText() ?? null
-  const [activeTab, setActiveTab] = useState<string>(defaultTab)
+  const [internalTab, setInternalTab] = useState<string>(defaultTab)
   const [technicalOpen, setTechnicalOpen] = useState(true)
   const [connectOpen, setConnectOpen] = useState(false)
   const [renameOpen, setRenameOpen] = useState(false)
   const [overrideName, setOverrideName] = useState<string | null>(null)
 
+  const activeTab = onTabChange ? defaultTab : internalTab
+
   const handleTabSelect = (tab: string) => {
-    setActiveTab(tab)
+    if (!onTabChange) setInternalTab(tab)
     onTabChange?.(tab as CanisterDetailTab)
   }
 
@@ -117,6 +123,30 @@ export function MyCanisterDetails({
       return { number: match[1], unit: match[2] }
     }
     return { number: status.data.cyclesLabel, unit: "" }
+  }, [status])
+
+  const daysLeft = useMemo(() => {
+    if (
+      status.kind !== "ok" ||
+      !status.data.idleCyclesBurnedPerDay ||
+      status.data.idleCyclesBurnedPerDay === 0n
+    ) {
+      return null
+    }
+    const days = Number(status.data.cycles / status.data.idleCyclesBurnedPerDay)
+    return days > 0 ? days : null
+  }, [status])
+
+  const reserveFormatted = useMemo(() => {
+    if (status.kind !== "ok") return null
+    if (
+      status.data.freezingThresholdSeconds &&
+      status.data.freezingThresholdSeconds >= 86400n
+    ) {
+      const days = Number(status.data.freezingThresholdSeconds / 86400n)
+      return `${status.data.freezingThreshold} (${days}d)`
+    }
+    return status.data.freezingThreshold || null
   }, [status])
 
   const moduleHash =
@@ -147,37 +177,8 @@ export function MyCanisterDetails({
     }
   }, [status, meta])
 
-  const formatMetricDisplay = (val: string | undefined) => {
-    if (status.kind !== "ok") {
-      return <p className="text-xl font-bold tracking-tight text-foreground tabular-nums">—</p>
-    }
-    if (val && val !== "—") {
-      return <p className="text-xl font-bold tracking-tight text-foreground tabular-nums">{val}</p>
-    }
-    if (!isController) {
-      return <p className="text-xs font-medium text-muted-foreground pt-1">Requires controller</p>
-    }
-    return <p className="text-xl font-bold tracking-tight text-foreground tabular-nums">—</p>
-  }
-
   return (
     <div className="space-y-5">
-      <Breadcrumb className="mb-1">
-        <BreadcrumbList className="text-xs">
-          <BreadcrumbItem>
-            <BreadcrumbLink render={<Link href="/canister" />}>Canisters</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator>
-            <HugeiconsIcon icon={ArrowRight01Icon} className="size-3" strokeWidth={1.75} />
-          </BreadcrumbSeparator>
-          <BreadcrumbItem>
-            <BreadcrumbPage className="truncate max-w-[200px] sm:max-w-none">
-              {displayName}
-            </BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </Breadcrumb>
-
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
@@ -211,10 +212,10 @@ export function MyCanisterDetails({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           {status.kind === "ok" ? (
             <>
-              <div className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground">
+              <div className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground mr-0.5">
                 <span
                   className={cn(
                     "size-2 rounded-full shrink-0",
@@ -228,12 +229,15 @@ export function MyCanisterDetails({
                 <span className="capitalize">{runStatus ?? "Unknown"}</span>
               </div>
 
+              <CanisterVisitMenu canisterId={canisterId} />
+
               <MyCanisterControls
                 canisterId={canisterId}
                 status={status}
                 onRefresh={onRefresh}
                 onConnect={() => setConnectOpen(true)}
                 onSelectTab={handleTabSelect}
+                topupVariant={activeTab === "assets" || activeTab === "settings" ? "outline" : "default"}
               />
             </>
           ) : status.kind === "loading" ? (
@@ -241,17 +245,19 @@ export function MyCanisterDetails({
               <Skeleton className="h-8 w-24 rounded-lg" />
             </div>
           ) : (
-            <div className="flex items-center gap-3">
-              <div className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+            <div className="flex items-center gap-2.5">
+              <div className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground mr-0.5">
                 <span className="size-2 rounded-full shrink-0 bg-muted-foreground/60" />
                 <span>{status.kind === "denied" ? "Connected" : "Unavailable"}</span>
               </div>
+              <CanisterVisitMenu canisterId={canisterId} />
               <MyCanisterControls
                 canisterId={canisterId}
                 status={status}
                 onRefresh={onRefresh}
                 onConnect={() => setConnectOpen(true)}
                 onSelectTab={handleTabSelect}
+                topupVariant={activeTab === "assets" || activeTab === "settings" ? "outline" : "default"}
               />
             </div>
           )}
@@ -259,149 +265,114 @@ export function MyCanisterDetails({
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabSelect} className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="overview" className="cursor-pointer">
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="logs" className="cursor-pointer">
-            Logs
-          </TabsTrigger>
-          <TabsTrigger value="settings" className="cursor-pointer">
-            Settings
-          </TabsTrigger>
-          <TabsTrigger value="snapshots" className="cursor-pointer">
-            Snapshots
-          </TabsTrigger>
-        </TabsList>
+        <div className="md:hidden">
+          <TabsList className="w-full justify-start overflow-x-auto">
+            <TabsTrigger value="overview" className="cursor-pointer text-xs">
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="logs" className="cursor-pointer text-xs">
+              Logs
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="cursor-pointer text-xs">
+              Settings
+            </TabsTrigger>
+            <TabsTrigger value="snapshots" className="cursor-pointer text-xs">
+              Snapshots
+            </TabsTrigger>
+            <TabsTrigger value="audit" className="cursor-pointer text-xs">
+              Audit
+            </TabsTrigger>
+            <TabsTrigger value="assets" className="cursor-pointer text-xs">
+              Assets
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="overview" className="space-y-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <div className="space-y-0.5">
-                <CardTitle className="text-xs font-medium text-muted-foreground">Cycles Balance</CardTitle>
-                <CardDescription className="text-xs">
-                  Fuel for canister execution and persistent storage
-                </CardDescription>
+          <Card className="overflow-hidden py-0 gap-0">
+            <CardHeader className="flex flex-row items-center justify-between px-5 py-3.5 border-b border-border/40">
+              <div className="flex items-center justify-between w-full">
+                <div className="space-y-0.5">
+                  <CardTitle className="text-sm font-semibold text-foreground">Cycles Balance & Memory</CardTitle>
+                  <CardDescription className="text-xs">
+                    {t("fuelSubtitle")}
+                  </CardDescription>
+                </div>
+                <HoverCard>
+                  <HoverCardTrigger className="cursor-help inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+                    <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5 text-muted-foreground/70" />
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-80 space-y-2 text-xs">
+                    <p className="font-semibold text-foreground">Canister Execution & Fuel</p>
+                    <p className="text-muted-foreground">
+                      {t("fuelDescription")}
+                    </p>
+                  </HoverCardContent>
+                </HoverCard>
               </div>
-              <HoverCard>
-                <HoverCardTrigger className="cursor-help inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
-                  <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5 text-muted-foreground/70" />
-                </HoverCardTrigger>
-                <HoverCardContent className="w-80 space-y-2 text-xs">
-                  <p className="font-semibold text-foreground">Canister Cycles Balance</p>
-                  <p className="text-muted-foreground">
-                    Cycles represent computation and memory fuel on the Internet Computer. 1 Trillion cycles (1 T) is pegged to 1 XDR (~$1.35 USD). Canisters consume cycles continuously for message execution and storage.
-                  </p>
-                </HoverCardContent>
-              </HoverCard>
             </CardHeader>
-            <CardContent className="space-y-3">
-              {status.kind === "ok" ? (
-                <div className="flex items-baseline gap-2">
-                  <span className="text-4xl font-bold tracking-tight text-foreground tabular-nums sm:text-5xl">
-                    {cyclesParts.number}
-                  </span>
-                  {cyclesParts.unit ? (
-                    <span className="text-xl font-medium text-muted-foreground sm:text-2xl">
-                      {cyclesParts.unit}
-                    </span>
-                  ) : null}
+
+            <CardContent className="p-5 sm:p-6">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+                <div className="space-y-2 shrink-0">
+                  {status.kind === "ok" ? (
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-semibold tracking-tight text-foreground tabular-nums sm:text-5xl">
+                        {cyclesParts.number}
+                      </span>
+                      {cyclesParts.unit ? (
+                        <span className="text-xl font-medium text-muted-foreground sm:text-2xl">
+                          {cyclesParts.unit}
+                        </span>
+                      ) : null}
+                    </div>
+                  ) : status.kind === "loading" ? (
+                    <Skeleton className="h-12 w-48 rounded-lg" />
+                  ) : (
+                    <div className="space-y-1">
+                      <p className="text-2xl font-semibold text-muted-foreground">—</p>
+                      <p className="text-xs text-muted-foreground">
+                        {status.kind === "denied"
+                          ? "Private on-chain · Only controllers can query live cycles and memory."
+                          : "Unable to retrieve status from canister."}
+                      </p>
+                    </div>
+                  )}
+
+                  {status.kind === "ok" && (
+                    <p className="text-xs text-muted-foreground tabular-nums flex flex-wrap items-center gap-1.5 pt-0.5">
+                      <span>Burns {status.data.idleBurnLabel.replace(" / day", "/day")}</span>
+                      {daysLeft !== null && (
+                        <>
+                          <span className="text-border">·</span>
+                          <span className={runwayTone(daysLeft)}>
+                            {t("daysLeft", { days: daysLeft.toLocaleString() })}
+                          </span>
+                          <span>{t("runwayIdleBurn")}</span>
+                        </>
+                      )}
+                    </p>
+                  )}
                 </div>
-              ) : status.kind === "loading" ? (
-                <Skeleton className="h-12 w-48 rounded-lg" />
-              ) : (
-                <div className="space-y-1">
-                  <p className="text-2xl font-semibold text-muted-foreground">—</p>
-                  <p className="text-xs text-muted-foreground">
-                    {status.kind === "denied"
-                      ? "Private on-chain · Only controllers can query live cycles and memory."
-                      : "Unable to retrieve status from canister."}
-                  </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-1 max-w-sm">
+                  <div className="rounded-lg border border-border/40 bg-muted/20 p-3 space-y-1">
+                    <p className="text-xs text-muted-foreground font-medium">{t("stableMemoryTitle")}</p>
+                    <p className="text-base font-semibold text-foreground font-mono tabular-nums">
+                      {status.kind === "ok" ? status.data.stableMemory : "—"}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground/70 truncate">{t("stableMemorySubtitle")}</p>
+                  </div>
+                  <div className="rounded-lg border border-border/40 bg-muted/20 p-3 space-y-1">
+                    <p className="text-xs text-muted-foreground font-medium">{t("snapshotsTitle")}</p>
+                    <p className="text-base font-semibold text-foreground font-mono tabular-nums">
+                      {status.kind === "ok" ? status.data.snapshotsSize : "—"}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground/70 truncate">{t("snapshotsSubtitle")}</p>
+                  </div>
                 </div>
-              )}
 
-              <div className="border-t border-border/40 pt-3 text-xs text-muted-foreground/80">
-                {status.kind === "ok" && isController ? (
-                  <>
-                    Live from <span className="font-mono text-muted-foreground">canister_status</span> · visible because you&apos;re a controller
-                  </>
-                ) : status.kind === "ok" && !isController ? (
-                  <>
-                    Live from <span className="font-mono text-muted-foreground">canister_status</span> · read-only view
-                  </>
-                ) : (
-                  <>
-                    Anyone can permissionlessly top up cycles to keep this canister running.
-                  </>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="grid grid-cols-2 divide-y p-5 md:grid-cols-4 md:divide-y-0 md:divide-x divide-border/40 gap-y-4 md:gap-y-0">
-              <div className="md:px-4 first:pl-0 space-y-1">
-                <HoverCard>
-                  <HoverCardTrigger className="cursor-help inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                    <span>Memory</span>
-                    <HugeiconsIcon icon={InformationCircleIcon} className="size-3 text-muted-foreground/70" />
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-72 space-y-1.5 text-xs">
-                    <p className="font-semibold text-foreground">Total Memory Size</p>
-                    <p className="text-muted-foreground">
-                      Aggregate memory footprint consumed by this canister across 32-bit WASM heap, 64-bit stable memory, snapshots, and runtime state.
-                    </p>
-                  </HoverCardContent>
-                </HoverCard>
-                {formatMetricDisplay(status.kind === "ok" ? status.data.memoryLabel : undefined)}
-              </div>
-
-              <div className="md:px-4 space-y-1 pt-3 md:pt-0">
-                <HoverCard>
-                  <HoverCardTrigger className="cursor-help inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                    <span>Wasm memory</span>
-                    <HugeiconsIcon icon={InformationCircleIcon} className="size-3 text-muted-foreground/70" />
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-72 space-y-1.5 text-xs">
-                    <p className="font-semibold text-foreground">Wasm Heap Memory</p>
-                    <p className="text-muted-foreground">
-                      32-bit WebAssembly linear heap occupied by the canister runtime code and heap allocations. Protocol limit is 4 GiB.
-                    </p>
-                  </HoverCardContent>
-                </HoverCard>
-                {formatMetricDisplay(status.kind === "ok" ? status.data.wasmMemory : undefined)}
-              </div>
-
-              <div className="md:px-4 space-y-1 pt-3 md:pt-0">
-                <HoverCard>
-                  <HoverCardTrigger className="cursor-help inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                    <span>Stable memory</span>
-                    <HugeiconsIcon icon={InformationCircleIcon} className="size-3 text-muted-foreground/70" />
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-72 space-y-1.5 text-xs">
-                    <p className="font-semibold text-foreground">Persistent Stable Memory</p>
-                    <p className="text-muted-foreground">
-                      64-bit persistent storage on the Internet Computer. Survives canister code upgrades and can scale up to 400 GiB.
-                    </p>
-                  </HoverCardContent>
-                </HoverCard>
-                {formatMetricDisplay(status.kind === "ok" ? status.data.stableMemory : undefined)}
-              </div>
-
-              <div className="md:px-4 last:pr-0 space-y-1 pt-3 md:pt-0">
-                <HoverCard>
-                  <HoverCardTrigger className="cursor-help inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-                    <span>Reserved cycles</span>
-                    <HugeiconsIcon icon={InformationCircleIcon} className="size-3 text-muted-foreground/70" />
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-72 space-y-1.5 text-xs">
-                    <p className="font-semibold text-foreground">Reserved Cycles</p>
-                    <p className="text-muted-foreground">
-                      Cycles held in reserve by the subnet to allocate storage space and resource limits for this canister.
-                    </p>
-                  </HoverCardContent>
-                </HoverCard>
-                {formatMetricDisplay(status.kind === "ok" ? status.data.reservedLabel : undefined)}
+                <CanisterRadialChart status={status.kind === "ok" ? status.data : undefined} />
               </div>
             </CardContent>
           </Card>
@@ -504,7 +475,7 @@ export function MyCanisterDetails({
                     <dt className="text-muted-foreground">Freezing Threshold</dt>
                     <dd className="font-medium text-foreground">
                       {status.kind === "ok" && status.data.freezingThreshold !== "—"
-                        ? status.data.freezingThreshold
+                        ? reserveFormatted || status.data.freezingThreshold
                         : !isController
                           ? "Requires controller"
                           : "—"}
@@ -650,10 +621,12 @@ export function MyCanisterDetails({
         <TabsContent value="settings" className="space-y-4">
           {settingsData ? (
             <CanisterSettingsView
-              key={`${canisterId}-${settingsData.version}`}
+              key={canisterId}
               canisterId={canisterId}
               data={settingsData}
               isController={isController}
+              activeSection={activeSection}
+              onSectionChange={onSectionChange}
               onRefresh={onRefresh}
             />
           ) : status.kind === "loading" ? (
@@ -707,8 +680,15 @@ export function MyCanisterDetails({
         </TabsContent>
 
         <TabsContent value="snapshots" className="space-y-4">
-          <CanisterSnapshotsGuide />
           <SnapshotsCard canisterId={canisterId} embedded isController={isController} />
+        </TabsContent>
+
+        <TabsContent value="audit" className="space-y-4">
+          <CanisterAuditLogCard canisterId={canisterId} />
+        </TabsContent>
+
+        <TabsContent value="assets" className="space-y-4">
+          <AssetExplorerCard canisterId={canisterId} isController={Boolean(isController)} />
         </TabsContent>
       </Tabs>
 

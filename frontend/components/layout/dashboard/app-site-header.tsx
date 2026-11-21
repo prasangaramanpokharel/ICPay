@@ -4,6 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useSearchParams } from "next/navigation"
+import useSWR from "swr"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { CrownIcon } from "@hugeicons/core-free-icons"
@@ -19,11 +20,76 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { resolveAppPageTitle } from "@/lib/navigation/app-sidebar-nav"
+import { useAuth } from "@/components/auth/auth-provider"
+import {
+  subscribeSavedCanisters,
+  getSavedCanisterName,
+  shortCanisterId,
+} from "@/lib/canister/savedCanisters"
+import { fetchCanisterIndexMeta } from "@/services/canister/controlledCanisters"
 import { cn } from "@/lib/ui/utils"
 
 function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
   const searchParams = useSearchParams()
   const t = useTranslations()
+  const { identity } = useAuth()
+  const principal = identity?.getPrincipal().toText() ?? ""
+  const canisterId = searchParams.get("id")
+
+  const savedCanisterName = React.useSyncExternalStore(
+    subscribeSavedCanisters,
+    () => (canisterId && principal ? getSavedCanisterName(principal, canisterId) : ""),
+    () => ""
+  )
+
+  const { data: indexMeta } = useSWR(
+    canisterId ? (["canister-index-meta", canisterId] as const) : null,
+    ([, id]) => fetchCanisterIndexMeta(id),
+    { revalidateOnFocus: false, dedupingInterval: 120_000 }
+  )
+
+  if (pathname.startsWith("/canister")) {
+    if (pathname === "/canister/create") {
+      return (
+        <Breadcrumb className="flex-1 min-w-0">
+          <BreadcrumbList className="text-xs sm:text-sm">
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/canister" className="text-muted-foreground hover:text-foreground">
+                {t("settings.items.canisters")}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="font-medium text-foreground">
+                {t("canisterCreate.title")}
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      )
+    }
+
+    if (canisterId) {
+      const displayName = savedCanisterName || indexMeta?.name || shortCanisterId(canisterId)
+      return (
+        <Breadcrumb className="flex-1 min-w-0">
+          <BreadcrumbList className="text-xs sm:text-sm">
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/canister" className="text-muted-foreground hover:text-foreground">
+                {t("settings.items.canisters")}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="font-medium text-foreground truncate max-w-40 sm:max-w-xs">
+                {displayName}
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      )
+    }
+  }
 
   if (pathname.startsWith("/cron")) {
     if (pathname === "/cron/api") {

@@ -1,5 +1,6 @@
 # Local tooling and operating-system files
 .agents/
+.agent/
 .loopgoal/
 .opencode/
 .cursor/
@@ -62,6 +63,10 @@ frontend/.agents/skills/vercel-react-best-practices
 !/docs/agents/**
 !/docs/plan/
 !/docs/plan/**
+!/docs/report/
+!/docs/report/**
+!/docs/frame-work-feature/
+!/docs/frame-work-feature/**
 !/docs/workflow.md
 
 # docs/bucket/ stays local (PDF exports, not committed)
