@@ -5,13 +5,12 @@ audited**.
 
 ## Reporting a vulnerability
 
-Report at [GitLab issues](https://gitlab.com/prasangapokharel/icpay/-/issues).
+Please report vulnerabilities privately via **GitHub Security Advisories**:
+👉 [Submit a confidential advisory](https://github.com/prasangaramanpokharel/ICPay/security/advisories/new)
 
-There is no private disclosure channel and no bug bounty. **An issue is public
-the moment you file it.** If your finding would let someone drain or freeze user
-funds, please weigh that before posting a working exploit — a description of the
-class of bug and the affected file is enough to start, and details can follow
-once a fix is deployed.
+Private vulnerability reporting is enabled for this repository. Reports submitted through this channel remain confidential between you and the maintainer until a fix is released.
+
+If you are unable to use GitHub Advisories, you can contact the maintainer directly through https://icpay.app/contact.
 
 Expect a response within a few days. This is a solo project, not a staffed
 security team.
