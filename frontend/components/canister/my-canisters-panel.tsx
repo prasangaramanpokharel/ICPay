@@ -7,7 +7,9 @@ import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Add01Icon,
   ConnectIcon,
+  Grid2X2Icon,
   Link01Icon,
+  ListViewIcon,
   Package01Icon,
 } from "@hugeicons/core-free-icons"
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -18,7 +20,9 @@ import { CopyButton } from "@/components/ui/copy-button"
 import { Table, TableBody } from "@/components/ui/table"
 import { LinkCanisterDialog } from "@/components/canister/link-canister-dialog"
 import { ConnectControllerDialog } from "@/components/canister/connect-controller-dialog"
+import { OnboardAgentButton } from "@/components/canister/onboard-agent-button"
 import { MyCanisterRow } from "@/components/canister/my-canister-row"
+import { MyCanisterCard } from "@/components/canister/my-canister-card"
 import { MyCanisterTopupDialog } from "@/components/canister/my-canister-topup-dialog"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -29,6 +33,7 @@ import {
   useSyncCloudCanisters,
 } from "@/hooks/canister/useSavedCanisters"
 import { displayCanisterLabel } from "@/lib/canister/savedCanisters"
+import { cn } from "@/lib/ui/utils"
 
 function EmptyBlock({
   message,
@@ -68,6 +73,7 @@ export function MyCanistersPanel() {
   const [linkOpen, setLinkOpen] = useState(false)
   const [connectOpen, setConnectOpen] = useState(false)
   const [connectCanisterId, setConnectCanisterId] = useState<string | null>(null)
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
 
   const knownCanisters = useMemo(
     () => mine.ids.map((id) => ({ id, name: nameById.get(id) })),
@@ -100,6 +106,7 @@ export function MyCanistersPanel() {
       description={t("subtitle")}
       actions={
         <div className="flex items-center gap-2">
+          <OnboardAgentButton principal={principal} />
           <Button
             type="button"
             variant="outline"
@@ -156,30 +163,86 @@ export function MyCanistersPanel() {
       </Alert>
 
       <div className="space-y-3">
-        <h2 className="text-base font-semibold text-foreground">Projects</h2>
-        <Card className="min-w-0 overflow-hidden p-0">
-          <CardContent className="p-0">
-            {mine.isLoading ? (
-              <div className="p-2">
-                <EmptyBlock message={t("loading")} loading />
-              </div>
-            ) : mine.ids.length === 0 ? (
-              <div className="p-2">
-                <EmptyBlock
-                  message={t("empty")}
-                  actions={
-                    <div className="flex flex-wrap justify-center gap-2">
-                      <Button type="button" variant="outline" onClick={openLink}>
-                        {t("link")}
-                      </Button>
-                      <Button nativeButton={false} render={<Link href="/canister/create" />}>
-                        {t("create")}
-                      </Button>
-                    </div>
-                  }
+        <div className="flex items-center justify-between">
+          <h2 className="text-base font-semibold text-foreground">Projects</h2>
+          <div className="flex items-center gap-0.5 rounded-lg border border-border/60 bg-muted/30 p-0.5">
+            <button
+              type="button"
+              onClick={() => setViewMode("grid")}
+              className={cn(
+                "flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors cursor-pointer hover:text-foreground",
+                viewMode === "grid" && "bg-background text-foreground shadow-xs",
+              )}
+              title="Grid view"
+              aria-label="Grid view"
+            >
+              <HugeiconsIcon icon={Grid2X2Icon} className="size-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("list")}
+              className={cn(
+                "flex size-7 items-center justify-center rounded-md text-muted-foreground transition-colors cursor-pointer hover:text-foreground",
+                viewMode === "list" && "bg-background text-foreground shadow-xs",
+              )}
+              title="List view"
+              aria-label="List view"
+            >
+              <HugeiconsIcon icon={ListViewIcon} className="size-3.5" />
+            </button>
+          </div>
+        </div>
+
+        {mine.isLoading ? (
+          <Card className="min-w-0 overflow-hidden p-0">
+            <CardContent className="p-2">
+              <EmptyBlock message={t("loading")} loading />
+            </CardContent>
+          </Card>
+        ) : mine.ids.length === 0 ? (
+          <Card className="min-w-0 overflow-hidden p-0">
+            <CardContent className="p-2">
+              <EmptyBlock
+                message={t("empty")}
+                actions={
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <Button type="button" variant="outline" onClick={openLink}>
+                      {t("link")}
+                    </Button>
+                    <Button nativeButton={false} render={<Link href="/canister/create" />}>
+                      {t("create")}
+                    </Button>
+                  </div>
+                }
+              />
+            </CardContent>
+          </Card>
+        ) : viewMode === "grid" ? (
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+            {mine.ids.map((id) => {
+              const row = mine.metaById.get(id)
+              const savedName = nameById.get(id) ?? ""
+              const label =
+                savedName || row?.name || displayCanisterLabel({ id, name: "" })
+              return (
+                <MyCanisterCard
+                  key={id}
+                  id={id}
+                  label={label}
+                  status={previews.map[id]}
+                  statusLoading={previews.isLoading}
+                  onTopUp={() => {
+                    setTopUpTarget(id)
+                    setTopUpOpen(true)
+                  }}
+                  onConnect={() => handleOpenConnect(id)}
                 />
-              </div>
-            ) : (
+              )
+            })}
+          </div>
+        ) : (
+          <Card className="min-w-0 overflow-hidden p-0">
+            <CardContent className="p-0">
               <Table>
                 <TableBody>
                   {mine.ids.map((id) => {
@@ -205,9 +268,9 @@ export function MyCanistersPanel() {
                   })}
                 </TableBody>
               </Table>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       <LinkCanisterDialog

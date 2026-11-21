@@ -2,6 +2,13 @@
 
 import { useTranslations } from "next-intl"
 import { Card } from "@/components/ui/card"
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  ArrowDown01Icon,
+  ArrowUp01Icon,
+  ArrowUpRight01Icon,
+  Tick02Icon,
+} from "@hugeicons/core-free-icons"
 import type { AnalyticsSummary } from "@/services/types"
 import { formatAmount } from "@/lib/wallet/utils"
 
@@ -12,28 +19,101 @@ type AnalyticsSummaryGridProps = {
 export function AnalyticsSummaryGrid({ summary }: AnalyticsSummaryGridProps) {
   const t = useTranslations("analytics")
 
-  const items = [
-    { label: t("received"), value: `${formatAmount(summary.totalReceivedE8s)} ICP` },
-    { label: t("sent"), value: `${formatAmount(summary.totalSentE8s)} ICP` },
-    { label: t("tips"), value: String(summary.tipCount) },
-    { label: t("transfers"), value: String(summary.transferCount) },
-    { label: t("deposits"), value: String(summary.depositCount) },
-    { label: t("withdrawals"), value: String(summary.withdrawCount) },
-    { label: t("completed"), value: String(summary.completedCount) },
-    { label: t("failed"), value: String(summary.failedCount) },
-    { label: t("counterparties"), value: String(summary.uniqueCounterparties) },
-    { label: t("swapsIn"), value: String(summary.swapInCount) },
-    { label: t("swapsOut"), value: String(summary.swapOutCount) },
-  ]
+  const netDiffE8s = summary.totalReceivedE8s - summary.totalSentE8s
+  const isNetPositive = netDiffE8s >= 0n
+  const netDisplay = isNetPositive
+    ? `+${formatAmount(netDiffE8s)} ICP`
+    : `-${formatAmount(-netDiffE8s)} ICP`
+
+  const totalOps = Number(summary.completedCount + summary.failedCount)
+  const successRate = totalOps > 0
+    ? `${Math.round((Number(summary.completedCount) / totalOps) * 100)}%`
+    : "100%"
+
+  const depositCount = Number(summary.depositCount)
+  const tipCount = Number(summary.tipCount)
+  const transferCount = Number(summary.transferCount)
+  const withdrawCount = Number(summary.withdrawCount)
+  const counterpartiesCount = Number(summary.uniqueCounterparties)
+  const completedCount = Number(summary.completedCount)
+  const failedCount = Number(summary.failedCount)
 
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-      {items.map((item) => (
-        <Card key={item.label} className="rounded-xl border bg-muted/30 px-3 py-2.5 gap-0">
-          <p className="text-[11px] text-muted-foreground">{item.label}</p>
-          <p className="pt-0.5 text-sm font-semibold tabular-nums tracking-tight">{item.value}</p>
-        </Card>
-      ))}
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <Card className="rounded-xl border border-border/50 bg-card p-4 transition-colors sm:p-5">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium text-muted-foreground sm:text-sm">{t("received")}</span>
+          <span className="flex size-7 items-center justify-center rounded-lg bg-success/15 text-success">
+            <HugeiconsIcon icon={ArrowDown01Icon} className="size-4" />
+          </span>
+        </div>
+        <div className="mt-3">
+          <p className="text-xl font-bold tracking-tight text-foreground tabular-nums sm:text-2xl">
+            {formatAmount(summary.totalReceivedE8s)}{" "}
+            <span className="text-xs font-normal text-muted-foreground sm:text-sm">ICP</span>
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {depositCount} {t("deposits").toLowerCase()}
+            {tipCount > 0 ? ` · ${tipCount} ${t("tips").toLowerCase()}` : ""}
+          </p>
+        </div>
+      </Card>
+
+      <Card className="rounded-xl border border-border/50 bg-card p-4 transition-colors sm:p-5">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium text-muted-foreground sm:text-sm">{t("sent")}</span>
+          <span className="flex size-7 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+            <HugeiconsIcon icon={ArrowUp01Icon} className="size-4" />
+          </span>
+        </div>
+        <div className="mt-3">
+          <p className="text-xl font-bold tracking-tight text-foreground tabular-nums sm:text-2xl">
+            {formatAmount(summary.totalSentE8s)}{" "}
+            <span className="text-xs font-normal text-muted-foreground sm:text-sm">ICP</span>
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {transferCount} {t("transfers").toLowerCase()}
+            {withdrawCount > 0 ? ` · ${withdrawCount} ${t("withdrawals").toLowerCase()}` : ""}
+          </p>
+        </div>
+      </Card>
+
+      <Card className="rounded-xl border border-border/50 bg-card p-4 transition-colors sm:p-5">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium text-muted-foreground sm:text-sm">{t("netFlow")}</span>
+          <span className="flex size-7 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+            <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
+          </span>
+        </div>
+        <div className="mt-3">
+          <p className={`text-xl font-bold tracking-tight tabular-nums sm:text-2xl ${isNetPositive ? "text-success" : "text-destructive"}`}>
+            {netDisplay}
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {counterpartiesCount} {t("counterparties").toLowerCase()}
+          </p>
+        </div>
+      </Card>
+
+      <Card className="rounded-xl border border-border/50 bg-card p-4 transition-colors sm:p-5">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-medium text-muted-foreground sm:text-sm">{t("successRate")}</span>
+          <span className="flex size-7 items-center justify-center rounded-lg bg-success/15 text-success">
+            <HugeiconsIcon icon={Tick02Icon} className="size-4" />
+          </span>
+        </div>
+        <div className="mt-3">
+          <p className="text-xl font-bold tracking-tight text-foreground tabular-nums sm:text-2xl">
+            {successRate}
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            <span>{completedCount} {t("completed").toLowerCase()}</span>
+            {failedCount > 0 ? (
+              <span className="text-destructive"> · {failedCount} {t("failed").toLowerCase()}</span>
+            ) : null}
+          </p>
+        </div>
+      </Card>
     </div>
   )
 }

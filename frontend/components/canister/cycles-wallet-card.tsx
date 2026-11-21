@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { toast } from "@/components/ui/toast"
 import { HugeiconsIcon } from "@hugeicons/react"
@@ -368,9 +369,20 @@ export function CyclesWalletCard() {
           {cyclesBal == null && isAuthenticated ? (
             <Skeleton className="mt-1.5 h-7 w-28" />
           ) : (
-            <p className="mt-1 text-xl font-semibold tabular-nums">
-              {cyclesBal != null ? formatCycles(cyclesBal) : "—"}
-            </p>
+            <div className="mt-1 flex items-center gap-1.5">
+              <span className="text-xl font-semibold tabular-nums">
+                {cyclesBal != null ? formatCycles(cyclesBal) : "—"}
+              </span>
+              {cyclesBal != null && (
+                <Image
+                  src="/images/pages/canister/icon/tcycle.svg"
+                  alt="Cycles"
+                  width={20}
+                  height={20}
+                  className="size-5 shrink-0 rounded-full select-none"
+                />
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -381,12 +393,21 @@ export function CyclesWalletCard() {
         title={lastOk?.kind === "withdraw" ? t("successWithdrawTitle") : t("successMintTitle")}
         highlight={
           lastOk ? (
-            <p className="mt-1 mb-2 text-3xl font-bold tracking-tight tabular-nums text-foreground">
-              {lastOk.cycles}{" "}
+            <div className="mt-1 mb-2 flex items-center justify-center gap-2">
+              <span className="text-3xl font-bold tracking-tight tabular-nums text-foreground">
+                {lastOk.cycles}
+              </span>
+              <Image
+                src="/images/pages/canister/icon/tcycle.svg"
+                alt="TC"
+                width={24}
+                height={24}
+                className="size-5 shrink-0 rounded-full select-none"
+              />
               <span className="text-lg font-semibold text-muted-foreground">
                 {t("cyclesUnit")}
               </span>
-            </p>
+            </div>
           ) : null
         }
         monoId={lastOk?.kind === "withdraw" ? lastOk.canister : null}

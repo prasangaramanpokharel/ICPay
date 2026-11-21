@@ -1,10 +1,9 @@
 "use client"
 
 import { useEffect, useMemo, useState } from "react"
+import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { FuelStationIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import {
@@ -156,7 +155,13 @@ export function MyCanisterTopupDialog({
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="gap-1.5">
             <DialogTitle className="flex items-center gap-2">
-              <HugeiconsIcon icon={FuelStationIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+              <Image
+                src="/images/pages/canister/icon/tcycle.svg"
+                alt="Cycles"
+                width={20}
+                height={20}
+                className="size-5 shrink-0 rounded-full select-none"
+              />
               <span>{t("topUpTitle")}</span>
             </DialogTitle>
             <DialogDescription>
@@ -182,9 +187,18 @@ export function MyCanisterTopupDialog({
                 <p className="text-xs font-medium text-muted-foreground">
                   {t("topUpEstimateLabel")}
                 </p>
-                <p className="mt-1 text-2xl font-bold tracking-tight tabular-nums text-foreground sm:text-3xl">
-                  ≈ {formatCycles(estimated)}
-                </p>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="text-2xl font-bold tracking-tight tabular-nums text-foreground sm:text-3xl">
+                    ≈ {formatCycles(estimated)}
+                  </span>
+                  <Image
+                    src="/images/pages/canister/icon/tcycle.svg"
+                    alt="TC"
+                    width={24}
+                    height={24}
+                    className="size-5 sm:size-6 shrink-0 rounded-full select-none"
+                  />
+                </div>
                 <p className="mt-1 text-[11px] text-muted-foreground">{t("topUpEstimateHint")}</p>
               </div>
             ) : null}
@@ -230,12 +244,21 @@ export function MyCanisterTopupDialog({
         title={tt("successTitle")}
         highlight={
           success ? (
-            <p className="mt-1 mb-2 text-3xl font-bold tracking-tight tabular-nums">
-              {success.cycles}{" "}
+            <div className="mt-1 mb-2 flex items-center justify-center gap-2">
+              <span className="text-3xl font-bold tracking-tight tabular-nums">
+                {success.cycles}
+              </span>
+              <Image
+                src="/images/pages/canister/icon/tcycle.svg"
+                alt="TC"
+                width={24}
+                height={24}
+                className="size-5 shrink-0 rounded-full select-none"
+              />
               <span className="text-lg font-semibold text-muted-foreground">
                 {tt("cyclesUnit")}
               </span>
-            </p>
+            </div>
           ) : null
         }
         monoId={canisterId}
