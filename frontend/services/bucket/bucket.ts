@@ -109,10 +109,11 @@ export function listBuckets(identity: Identity | undefined): Promise<BucketPubli
 export function getBucketStats(
   identity: Identity | undefined,
   bucketId: string
-): Promise<BucketStats> {
+): Promise<BucketStats | null> {
   return query(identity, async (actor) => {
     const res = (await actor.getBucketStats(bucketId)) as Outcome<BucketStats>
-    return unwrap(res)
+    if ("err" in res) return null
+    return res.ok
   })
 }
 
@@ -120,16 +121,18 @@ export function getRenewQuote(
   identity: Identity | undefined,
   bucketId: string,
   period: BucketBillingPeriod = "monthly"
-): Promise<BucketRenewQuote> {
+): Promise<BucketRenewQuote | null> {
   const periodVariant: BucketBillingPeriodVariant =
     period === "yearly" ? { Yearly: null } : { Monthly: null }
   return query(identity, async (actor) => {
     if (period === "yearly" && actor.getRenewQuotePlan) {
       const res = (await actor.getRenewQuotePlan(bucketId, periodVariant)) as Outcome<BucketRenewQuote>
-      return unwrap(res)
+      if ("err" in res) return null
+      return res.ok
     }
     const res = (await actor.getRenewQuote(bucketId)) as Outcome<BucketRenewQuote>
-    return unwrap(res)
+    if ("err" in res) return null
+    return res.ok
   })
 }
 
@@ -162,7 +165,10 @@ export function listFiles(
       BigInt(pageSize),
       apiKey ? [apiKey] : []
     )) as Outcome<FileListPage>
-    return unwrap(res)
+    if ("err" in res) {
+      return { items: [], folders: [], total: 0n, page: BigInt(page), pageSize: BigInt(pageSize) }
+    }
+    return res.ok
   })
 }
 
@@ -182,7 +188,10 @@ export function listFolder(
       BigInt(pageSize),
       apiKey ? [apiKey] : []
     )) as Outcome<FileListPage>
-    return unwrap(res)
+    if ("err" in res) {
+      return { items: [], folders: [], total: 0n, page: BigInt(page), pageSize: BigInt(pageSize) }
+    }
+    return res.ok
   })
 }
 
@@ -202,7 +211,10 @@ export function searchFiles(
       BigInt(pageSize),
       apiKey ? [apiKey] : []
     )) as Outcome<FileListPage>
-    return unwrap(res)
+    if ("err" in res) {
+      return { items: [], folders: [], total: 0n, page: BigInt(page), pageSize: BigInt(pageSize) }
+    }
+    return res.ok
   })
 }
 
@@ -369,7 +381,8 @@ export function listApiKeys(
 ): Promise<ApiKeyPublic[]> {
   return query(identity, async (actor) => {
     const res = (await actor.listApiKeys(bucketId)) as Outcome<ApiKeyPublic[]>
-    return unwrap(res)
+    if ("err" in res) return []
+    return res.ok
   })
 }
 

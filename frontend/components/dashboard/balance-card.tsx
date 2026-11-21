@@ -127,7 +127,7 @@ export function BalanceCard({
             title="Click to refresh price"
             className="text-sm font-semibold tabular-nums text-success transition-opacity hover:opacity-70 active:opacity-40 cursor-pointer"
           >
-            {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
+            {hidden || !fiat.formatted ? "••••" : `${fiat.symbol}${fiat.formatted}`}
           </button>
 
           {!hidden && price && (

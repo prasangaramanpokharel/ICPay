@@ -54,7 +54,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
         <Breadcrumb className="flex-1 min-w-0">
           <BreadcrumbList className="text-xs sm:text-sm">
             <BreadcrumbItem>
-              <BreadcrumbLink href="/canister" className="text-muted-foreground hover:text-foreground">
+              <BreadcrumbLink render={<Link href="/canister" />} className="text-muted-foreground hover:text-foreground">
                 {t("settings.items.canisters")}
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -75,7 +75,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
         <Breadcrumb className="flex-1 min-w-0">
           <BreadcrumbList className="text-xs sm:text-sm">
             <BreadcrumbItem>
-              <BreadcrumbLink href="/canister" className="text-muted-foreground hover:text-foreground">
+              <BreadcrumbLink render={<Link href="/canister" />} className="text-muted-foreground hover:text-foreground">
                 {t("settings.items.canisters")}
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -97,7 +97,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
         <Breadcrumb className="flex-1 min-w-0">
           <BreadcrumbList className="text-xs sm:text-sm">
             <BreadcrumbItem>
-              <BreadcrumbLink href="/cron" className="text-muted-foreground hover:text-foreground">
+              <BreadcrumbLink render={<Link href="/cron" />} className="text-muted-foreground hover:text-foreground">
                 icCron
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -118,7 +118,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
         <Breadcrumb className="flex-1 min-w-0">
           <BreadcrumbList className="text-xs sm:text-sm">
             <BreadcrumbItem>
-              <BreadcrumbLink href="/cron" className="text-muted-foreground hover:text-foreground">
+              <BreadcrumbLink render={<Link href="/cron" />} className="text-muted-foreground hover:text-foreground">
                 icCron
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -127,7 +127,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
               <>
                 <BreadcrumbItem>
                   <BreadcrumbLink
-                    href={`/cron?id=${encodeURIComponent(projectName)}`}
+                    render={<Link href={`/cron?id=${encodeURIComponent(projectName)}`} />}
                     className="text-muted-foreground hover:text-foreground truncate max-w-32"
                   >
                     {decodeURIComponent(projectName)}
@@ -152,7 +152,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
         <Breadcrumb className="flex-1 min-w-0">
           <BreadcrumbList className="text-xs sm:text-sm">
             <BreadcrumbItem>
-              <BreadcrumbLink href="/cron" className="text-muted-foreground hover:text-foreground">
+              <BreadcrumbLink render={<Link href="/cron" />} className="text-muted-foreground hover:text-foreground">
                 icCron
               </BreadcrumbLink>
             </BreadcrumbItem>

@@ -131,17 +131,13 @@ export function WalletBalanceCard({ balance, usdValue, price }: WalletBalanceCar
           <DropdownMenuTrigger
             disabled={loading}
             className={cn(
-              "inline-flex w-fit max-w-full items-center gap-1.5 self-start rounded-full border border-border/60 bg-muted/50 px-3 py-1 text-xs font-medium tabular-nums cursor-pointer",
-              "text-foreground outline-none transition-colors",
-              "hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring",
+              "text-xs font-semibold tabular-nums text-success cursor-pointer outline-none transition-opacity",
+              "hover:opacity-80 focus-visible:ring-2 focus-visible:ring-ring rounded-sm",
               "disabled:pointer-events-none disabled:opacity-60"
             )}
             aria-label={tFiat("select")}
           >
-            <span className="truncate font-semibold text-success">
-              {hidden || fiat.formatted === null ? "••••" : `≈ ${fiat.symbol}${fiat.formatted}`}
-            </span>
-            <HugeiconsIcon icon={ArrowDown01Icon} className="size-3.5 shrink-0 text-muted-foreground" strokeWidth={2} />
+            {hidden || fiat.formatted === null ? "••••" : `${fiat.symbol}${fiat.formatted}`}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-56 max-h-72 overflow-y-auto p-1">
             <DropdownMenuGroup>
