@@ -1,24 +1,42 @@
 <p align="center">
-  <img src="docs/demo/logo.png" alt="ICPay — send ICP by username" width="480">
+  <img src="docs/demo/logo.png" alt="ICPay — Decentralized Finance, Storage & Canister Portal" width="480">
 </p>
 
 <h1 align="center">ICPay</h1>
 
 <p align="center">
-  Send ICP by username instead of a 63-character principal.
+  <b>Instant username payments, on-chain S3-compatible cloud storage, and native Internet Computer canister management.</b>
 </p>
 
 <p align="center">
-  <a href="https://icpay.app">icpay.app</a> ·
-  <a href="https://63dke-waaaa-aaaan-q6mvq-cai.icp0.io">on-chain</a> ·
-  <a href="https://icpay.app/transparency">transparency</a> ·
-  <a href="https://www.npmjs.com/package/icpay-bucket">icpay-bucket</a> ·
-  <a href="https://www.npmjs.com/package/create-icfalcon">create-icfalcon</a>
+  <a href="https://github.com/prasangaramanpokharel/ICPay/actions/workflows/ci.yml"><img src="https://github.com/prasangaramanpokharel/ICPay/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/prasangaramanpokharel/ICPay/actions/workflows/codeql.yml"><img src="https://github.com/prasangaramanpokharel/ICPay/actions/workflows/codeql.yml/badge.svg" alt="CodeQL"></a>
+  <a href="https://github.com/prasangaramanpokharel/ICPay/releases"><img src="https://img.shields.io/github/v/tag/prasangaramanpokharel/ICPay?label=release&color=blue" alt="Release"></a>
+  <a href="https://internetcomputer.org"><img src="https://img.shields.io/badge/Internet%20Computer-Mainnet-purple.svg" alt="Internet Computer"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT"></a>
 </p>
 
-ICPay is a custodial wallet on the [Internet Computer](https://internetcomputer.org).
-You sign in with Internet Identity — no password, no seed phrase — claim a
-handle, and people pay you at `@yourname`.
+<p align="center">
+  <a href="https://icpay.app"><b>icpay.app (Production)</b></a> ·
+  <a href="https://63dke-waaaa-aaaan-q6mvq-cai.icp0.io"><b>On-Chain Canister</b></a> ·
+  <a href="https://icpay.app/transparency"><b>Transparency</b></a> ·
+  <a href="https://icpay.app/bucket/docs"><b>Documentation</b></a> ·
+  <a href="https://www.npmjs.com/package/icpay-bucket"><b>icpay-bucket SDK</b></a>
+</p>
+
+---
+
+## Overview
+
+**ICPay** is a decentralized financial and cloud infrastructure portal built 100% on the [Internet Computer](https://internetcomputer.org). You sign in using **Internet Identity** (FaceID, TouchID, YubiKey passkeys) — no passwords, no seed phrases, and no private key handling.
+
+* **Instant Username Payments**: Send and receive ICP / ICRC tokens in 1–2 seconds via simple `@username` handles instead of 63-character principal strings.
+* **Merchant Payment Links**: Decentralized checkout gateway (`icpay.app/@merchant?amount=1.5&ref=inv_9842`) with zero gateway fees, privacy protection, and automated `return_url` redirects.
+* **icBucket (On-Chain Cloud Storage)**: 100% on-chain, S3-compatible decentralized object storage with fine-grained API keys and zero egress fees.
+* **Canister Management**: Live cycles runway monitoring, controller operations, automated Wasm snapshots, and 1-click onboarding for AI coding agents.
+* **Global Reach**: Native localization across 17 languages.
+
+---
 
 ## Screenshots
 
@@ -28,90 +46,101 @@ handle, and people pay you at `@yourname`.
     <td width="50%"><img src="docs/demo/tip.png" alt="Public profile for @nakamotk with a Tip button"></td>
   </tr>
   <tr>
-    <td align="center"><b>Wallet</b><br>Balance, and every transfer with its memo.</td>
-    <td align="center"><b>Tip anyone</b><br>A public page per handle, showing its on-chain principal.</td>
+    <td align="center"><b>Wallet Dashboard</b><br>Live balances, instant send/receive, and memo-indexed history.</td>
+    <td align="center"><b>Public Handles & Pay Links</b><br>Public payment terminal per handle with verified on-chain routing.</td>
   </tr>
   <tr>
     <td width="50%"><img src="docs/demo/icverse.png" alt="ICPverse directory listing usernames"></td>
     <td width="50%"><img src="docs/demo/buyusername.png" alt="Buy a username, priced by length"></td>
   </tr>
   <tr>
-    <td align="center"><b>ICPverse</b><br>Find people by handle instead of principal.</td>
-    <td align="center"><b>Short handles</b><br>Claim 5–8 characters free, or buy a shorter one.</td>
+    <td align="center"><b>ICPverse Directory</b><br>Search and discover community handles on-chain.</td>
+    <td align="center"><b>Handle Registry</b><br>Claim 5–8 character handles for free, or register premium short names.</td>
   </tr>
 </table>
 
-## Read this before you use it
+---
 
-ICPay is **custodial**. Your ICP sits in a subaccount of the backend canister
-derived from your principal, so the canister's code — not your signature alone —
-is what authorises a spend.
+## Verified Mainnet Canisters
 
-It has **not been audited**. One principal controls the canister and can upgrade
-it. Nothing here is a guarantee, and there is no insurance and no recourse.
+All operations execute directly against verified canisters on the Internet Computer mainnet:
 
-The [Transparency page](https://icpay.app/transparency) states exactly
-what the operator can and cannot do, with the addresses to verify each claim
-against the chain yourself.
+| Canister | Canister ID | Explorer |
+|---|---|---|
+| **Backend (Custodial & Service Layer)** | `6vbhm-nqaaa-aaaan-q6muq-cai` | [ICP Dashboard](https://dashboard.internetcomputer.org/canister/6vbhm-nqaaa-aaaan-q6muq-cai) |
+| **Frontend (Certified Asset Canister)** | `63dke-waaaa-aaaan-q6mvq-cai` | [ICP Dashboard](https://dashboard.internetcomputer.org/canister/63dke-waaaa-aaaan-q6mvq-cai) |
+| **Blob Store (icBucket On-Chain Storage)** | `fly6t-piaaa-aaaan-q6oga-cai` | [ICP Dashboard](https://dashboard.internetcomputer.org/canister/fly6t-piaaa-aaaan-q6oga-cai) |
+| **ICP Ledger (Official DFINITY Ledger)** | `ryjl3-tyaaa-aaaaa-aaaba-cai` | [ICP Dashboard](https://dashboard.internetcomputer.org/canister/ryjl3-tyaaa-aaaaa-aaaba-cai) |
 
-## Canisters
+---
 
-| | |
-|---|---|
-| Backend | `6vbhm-nqaaa-aaaan-q6muq-cai` |
-| Frontend assets | `63dke-waaaa-aaaan-q6mvq-cai` |
-| ICP ledger | `ryjl3-tyaaa-aaaaa-aaaba-cai` |
+## Developer Packages & SDKs
 
-## Packages
-
-| Package | Install | Registry & Source | Description |
+| Package | Install | Registry | Description |
 |---|---|---|---|
-| [`icpay-bucket`](https://www.npmjs.com/package/icpay-bucket) | `npm i icpay-bucket` | [![npm](https://img.shields.io/npm/v/icpay-bucket.svg)](https://www.npmjs.com/package/icpay-bucket) · [GitHub Package](https://github.com/prasangaramanpokharel/ICPay/pkgs/npm/icpay-bucket) | ICPay Bucket SDK — full on-chain file storage API for the Internet Computer |
-| [`create-icfalcon`](https://www.npmjs.com/package/create-icfalcon) | `npm create icfalcon@latest` | [![npm](https://img.shields.io/npm/v/create-icfalcon.svg)](https://www.npmjs.com/package/create-icfalcon) · [GitHub Package](https://github.com/prasangaramanpokharel/ICPay/pkgs/npm/create-icfalcon) | Scaffold an IcFalcon Internet Computer app in one command |
+| [`icpay-bucket`](https://www.npmjs.com/package/icpay-bucket) | `npm i icpay-bucket` | [![npm](https://img.shields.io/npm/v/icpay-bucket.svg)](https://www.npmjs.com/package/icpay-bucket) | Full TypeScript SDK for icBucket on-chain decentralized storage. |
+| [`create-icfalcon`](https://www.npmjs.com/package/create-icfalcon) | `npm create icfalcon@latest` | [![npm](https://img.shields.io/npm/v/create-icfalcon.svg)](https://www.npmjs.com/package/create-icfalcon) | CLI tool to scaffold modern full-stack Internet Computer apps in seconds. |
 
+---
 
-## Layout
+## Custody Model & Transparency
+
+* **Custodial Account Derivation**: ICPay is a custodial wallet. Your funds reside in a subaccount of the backend canister derived deterministically from your authenticated Internet Identity principal.
+* **Non-Extractable by Operator**: Fund movement functions in `TransferService.mo` and `WithdrawService.mo` require the authenticated `caller` matching the derived subaccount. No administrative endpoint exists to move user funds.
+* **Audit Status**: ICPay has **not been independently audited**. A single controller principal manages upgrades.
+* **Full Transparency**: Review the [Transparency Page](https://icpay.app/transparency) for complete on-chain audit parameters and operational boundaries.
+
+---
+
+## Architecture & Layout
 
 ```
-backend/    Motoko canister — api → services → repositories → storage
-frontend/   Next.js App Router, static export
+backend/
+├── src/
+│   ├── api/v1/         # Thin Candid handlers (delegates caller + parameters)
+│   ├── services/       # Core business logic, ledger calls & validation orchestration
+│   ├── repositories/   # Data lookup and persistence layers
+│   └── storage/        # Stable memory data structures
+└── blob_store/         # icBucket on-chain chunked storage canister
+
+frontend/
+├── app/                # Next.js App Router (static export with on-chain shell fallback)
+├── components/         # Modular feature components & shadcn UI primitives
+├── hooks/              # SWR data fetching and canister query hooks
+├── services/           # @dfinity/agent actor interfaces and ledger communication
+└── public/             # Static certified assets and onchain-shell.js router
 ```
 
-The layering is enforced by convention: API modules take a `caller` and delegate;
-services hold the business rules; repositories own the data structures. Fund
-movement lives in `backend/src/services/TransferService.mo` and
-`WithdrawService.mo` — both derive the source account from the caller, which is
-the property that makes "no admin can move your funds" true rather than merely
-claimed.
+---
 
-## Develop
+## Bug Reports & Feedback
 
-```bash
-# backend
-cd backend
-dfx start --background
-dfx deploy
-bash scripts/run-tests.sh
+We welcome bug reports, feature suggestions, and pull requests!
 
-# frontend
-cd frontend
-npm install
-npm run dev
-```
+* 🐛 **Found a Bug?** [**Create a Bug Report**](https://github.com/prasangaramanpokharel/ICPay/issues/new?template=bug_report.md&labels=bug)
+* 💡 **Have an Idea?** [**Submit a Feature Request**](https://github.com/prasangaramanpokharel/ICPay/issues/new?template=feature_request.md&labels=enhancement)
+* 💬 **Questions or General Support?** [**Contact Us**](https://icpay.app/contact) or open an issue.
+
+---
+
+## Security Policy & Vulnerability Disclosure
+
+Security is our highest priority. If you discover a security vulnerability or exploit:
+
+👉 **Please report it privately via [GitHub Security Advisories](https://github.com/prasangaramanpokharel/ICPay/security/advisories/new).**
+
+Do **NOT** report critical security vulnerabilities in public issues. Reports submitted through our private advisory channel remain encrypted and confidential until an authorized patch is tested and deployed. 
+
+Review our full [SECURITY.md](SECURITY.md) for scope and disclosure timelines.
+
+---
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). The short version: open an issue before
-writing anything that touches fund movement, username ownership or stored state.
+Please review [CONTRIBUTING.md](CONTRIBUTING.md) before submitting code. All contributions must pass static verification (`npm run ci backend:test` and `npm run ci:verify`).
 
-## Security
-
-Report vulnerabilities at
-[GitLab issues](https://gitlab.com/prasangapokharel/icpay/-/issues). There is no
-bug bounty and no private disclosure channel — **an issue is public**, so if a
-finding would put user funds at immediate risk, please weigh that before filing.
-Full policy in [SECURITY.md](SECURITY.md).
+---
 
 ## License
 
-[MIT](LICENSE)
+This project is licensed under the [MIT License](LICENSE).
