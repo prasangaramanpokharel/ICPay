@@ -203,7 +203,8 @@ Once added as a controller, the canister will automatically appear and be manage
             />
           }
         >
-          <span>{copied ? t("onboardAgentCopied") : t("onboardAgentTitle")}</span>
+          <span className="hidden sm:inline">{copied ? t("onboardAgentCopied") : t("onboardAgentTitle")}</span>
+          {copied && <span className="sm:hidden">{t("onboardAgentCopied")}</span>}
           <div className="flex items-center gap-1.5 shrink-0">
             <ClaudeCodeIcon className="size-3.5 shrink-0" />
             <CursorIcon className="size-3.5 shrink-0" />

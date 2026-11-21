@@ -151,6 +151,12 @@ export function SocialLinksEditor({
               {isOpen && (
                 <div className="mt-2 space-y-1.5">
                   <Input
+                    type="url"
+                    inputMode="url"
+                    autoComplete="off"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck={false}
                     autoFocus
                     value={url}
                     onChange={(e) => { setUrl(e.target.value); setError(null) }}
