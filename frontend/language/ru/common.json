@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "Благотворительность",
           "description": "Официальные QR-коды государственной помощи при бедствиях."
+        },
+        "downloads": {
+          "title": "Загрузки",
+          "description": "Приложения для macOS, Windows и Linux."
         }
       },
       "sectionMore": "Ещё",
@@ -1481,7 +1485,8 @@
         "terms": "Условия",
         "privacy": "Конфиденциальность",
         "transparency": "Прозрачность",
-        "charity": "Благотворительность"
+        "charity": "Благотворительность",
+        "downloads": "Загрузки"
       },
       "community": {
         "github": "GitLab",

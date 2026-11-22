@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "Kawanggawa",
           "description": "Opisyal na QR code ng gobyerno para sa tulong sa kalamidad."
+        },
+        "downloads": {
+          "title": "Mga Download",
+          "description": "Mga desktop app para sa macOS, Windows, at Linux."
         }
       },
       "sectionMore": "Higit pa",
@@ -1481,7 +1485,8 @@
         "terms": "Mga Tuntunin",
         "privacy": "Privacy",
         "transparency": "Transparency",
-        "charity": "Kawanggawa"
+        "charity": "Kawanggawa",
+        "downloads": "Mga Download"
       },
       "community": {
         "github": "GitLab",

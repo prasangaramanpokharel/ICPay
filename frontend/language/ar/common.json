@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "الخيرية",
           "description": "رموز QR الرسمية لصندوق الإغاثة الحكومي."
+        },
+        "downloads": {
+          "title": "التنزيلات",
+          "description": "تطبيقات سطح المكتب لنظام التشغيل macOS و Windows و Linux."
         }
       },
       "sectionMore": "المزيد",
@@ -1481,7 +1485,8 @@
         "terms": "الشروط",
         "privacy": "الخصوصية",
         "transparency": "الشفافية",
-        "charity": "الخيرية"
+        "charity": "الخيرية",
+        "downloads": "التنزيلات"
       },
       "community": {
         "github": "GitLab",

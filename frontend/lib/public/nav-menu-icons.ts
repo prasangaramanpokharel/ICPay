@@ -3,6 +3,7 @@ import {
   BookOpen02Icon,
   CloudIcon,
   DashboardSquare01Icon,
+  Download01Icon,
   FavouriteIcon,
   ChartIncreaseIcon,
   File01Icon,
@@ -23,6 +24,7 @@ import {
 } from "@hugeicons/core-free-icons"
 
 export const NAV_MENU_ICONS: Record<string, IconSvgElement> = {
+  "/downloads": Download01Icon,
   "/charity": FavouriteIcon,
   "/market": ChartIncreaseIcon,
   "/blog": News01Icon,

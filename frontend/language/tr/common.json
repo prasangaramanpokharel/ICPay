@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "Yardım",
           "description": "Resmi devlet afet yardımı QR kodları."
+        },
+        "downloads": {
+          "title": "İndirmeler",
+          "description": "macOS, Windows ve Linux için masaüstü uygulamaları."
         }
       },
       "sectionMore": "Daha fazla",
@@ -1481,7 +1485,8 @@
         "terms": "Koşullar",
         "privacy": "Gizlilik",
         "transparency": "Şeffaflık",
-        "charity": "Yardım"
+        "charity": "Yardım",
+        "downloads": "İndirmeler"
       },
       "community": {
         "github": "GitLab",

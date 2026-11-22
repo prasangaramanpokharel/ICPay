@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "Charité",
           "description": "Codes QR officiels pour l'aide humanitaire gouvernementale."
+        },
+        "downloads": {
+          "title": "Téléchargements",
+          "description": "Applications de bureau pour macOS, Windows et Linux."
         }
       },
       "sectionMore": "Plus",
@@ -1481,7 +1485,8 @@
         "terms": "Conditions",
         "privacy": "Confidentialité",
         "transparency": "Transparence",
-        "charity": "Charité"
+        "charity": "Charité",
+        "downloads": "Téléchargements"
       },
       "community": {
         "github": "GitLab",

@@ -55,5 +55,13 @@ export const PAGE_IMAGES = {
     linux: page("downloads/linux-tux.svg"),
     fedora: page("downloads/fedora.svg"),
     macos: page("downloads/apple.svg"),
+    devicon: {
+      apple: page("downloads/devicon/apple.svg"),
+      windows: page("downloads/devicon/windows.svg"),
+      linux: page("downloads/devicon/linux.svg"),
+      ubuntu: page("downloads/devicon/ubuntu.svg"),
+      debian: page("downloads/devicon/debian.svg"),
+      fedora: page("downloads/devicon/fedora.svg"),
+    },
   },
 } as const

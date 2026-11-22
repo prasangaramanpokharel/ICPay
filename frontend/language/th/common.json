@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "การกุศล",
           "description": "คิวอาร์โค้ดช่วยเหลือภัยพิบัติอย่างเป็นทางการของรัฐบาล"
+        },
+        "downloads": {
+          "title": "ดาวน์โหลด",
+          "description": "แอปเดสก์ท็อปสำหรับ macOS, Windows และ Linux"
         }
       },
       "sectionMore": "เพิ่มเติม",
@@ -1481,7 +1485,8 @@
         "terms": "ข้อกำหนด",
         "privacy": "ความเป็นส่วนตัว",
         "transparency": "ความโปร่งใส",
-        "charity": "การกุศล"
+        "charity": "การกุศล",
+        "downloads": "ดาวน์โหลด"
       },
       "community": {
         "github": "GitLab",

@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "Amal",
           "description": "Kode QR bantuan bencana resmi pemerintah."
+        },
+        "downloads": {
+          "title": "Unduhan",
+          "description": "Aplikasi desktop untuk macOS, Windows, dan Linux."
         }
       },
       "sectionMore": "Lainnya",
@@ -1481,7 +1485,8 @@
         "terms": "Ketentuan",
         "privacy": "Privasi",
         "transparency": "Transparansi",
-        "charity": "Amal"
+        "charity": "Amal",
+        "downloads": "Unduhan"
       },
       "community": {
         "github": "GitLab",

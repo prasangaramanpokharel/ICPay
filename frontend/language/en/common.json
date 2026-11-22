@@ -1485,6 +1485,10 @@
         "charity": {
           "title": "Charity",
           "description": "Official government disaster relief QR codes."
+        },
+        "downloads": {
+          "title": "Downloads",
+          "description": "Desktop apps for macOS, Windows, and Linux."
         }
       },
       "sectionMore": "More"
@@ -1522,7 +1526,8 @@
         "terms": "Terms",
         "privacy": "Privacy",
         "transparency": "Transparency",
-        "charity": "Charity"
+        "charity": "Charity",
+        "downloads": "Downloads"
       },
       "community": {
         "github": "GitLab",

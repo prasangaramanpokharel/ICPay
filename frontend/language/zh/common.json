@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "慈善",
           "description": "政府官方救灾捐赠二维码。"
+        },
+        "downloads": {
+          "title": "下载",
+          "description": "适用于 macOS、Windows 和 Linux 的桌面客户端。"
         }
       },
       "sectionMore": "更多",
@@ -1481,7 +1485,8 @@
         "terms": "服务条款",
         "privacy": "隐私",
         "transparency": "透明度",
-        "charity": "慈善"
+        "charity": "慈善",
+        "downloads": "下载"
       },
       "community": {
         "github": "GitLab",
