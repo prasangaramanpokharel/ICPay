@@ -45,6 +45,8 @@ frontend/.agents/skills/vercel-react-best-practices
 !/docs/dailyTask/**
 !/docs/demo/
 !/docs/demo/**
+!/docs/desktop/
+!/docs/desktop/**
 !/docs/frame-work-feature/
 !/docs/frame-work-feature/**
 !/docs/future/
@@ -170,7 +172,7 @@ node_modules/
 # Desktop wallet build outputs (CI copies artifacts here locally)
 /downloads/
 frontend/public/downloads/
-desktop/
+/desktop/
 .cursor
 # Desktop wallet
 desktop/wallet/node_modules/
