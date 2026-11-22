@@ -4,7 +4,7 @@ Companion to [`here.md`](here.md), which holds the decisions. This file is the
 code, one section per file, in the order of the build.
 
 **Everything here is `mo:core` 2.5.0.** This project has zero `mo:base` imports in
-`src/`. The vendored reference docs and `docs/dashabord.dfninyty/token/*` still use
+`src/`. The vendored reference docs and `docs/research/dfinity-dashboard/token/*` still use
 `mo:base` and `ExperimentalCycles` — do not copy those imports.
 
 Three constants were marked VERIFY in earlier drafts. Two are now settled: the CMC

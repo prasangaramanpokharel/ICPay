@@ -14,6 +14,7 @@ import {
   chainFromIiSuccess,
   parseHexKey,
   redirectToNativeCallback,
+  getNativeAuthTargets,
   type IiSuccess,
 } from "@/lib/auth/nativeDelegation"
 
@@ -97,6 +98,7 @@ export function NativeAuthView() {
               kind: "authorize-client",
               sessionPublicKey: sessionKeyBytes,
               maxTimeToLive: NATIVE_AUTH_TTL,
+              targets: getNativeAuthTargets(),
               ...(derivationOrigin ? { derivationOrigin } : {}),
             },
             event.origin

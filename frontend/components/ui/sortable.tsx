@@ -27,6 +27,7 @@ import {
 } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { cn } from "@/lib/ui/utils"
+import { Spinner } from "@/components/ui/spinner"
 
 type UseSortableReturn = ReturnType<typeof useSortable>
 
@@ -35,6 +36,7 @@ interface SortableItemContextValue {
   listeners: UseSortableReturn["listeners"]
   setActivatorNodeRef: UseSortableReturn["setActivatorNodeRef"]
   isDragging: boolean
+  isMoving?: boolean
 }
 
 const SortableItemContext = React.createContext<SortableItemContextValue | null>(null)
@@ -140,6 +142,8 @@ function Sortable<T>({
 interface SortableItemProps extends React.ComponentProps<"div"> {
   value: UniqueIdentifier
   asHandle?: boolean
+  isMoving?: boolean
+  isDropTarget?: boolean
 }
 
 function SortableItem({
@@ -147,6 +151,8 @@ function SortableItem({
   className,
   style,
   asHandle = false,
+  isMoving = false,
+  isDropTarget = false,
   children,
   ...props
 }: SortableItemProps) {
@@ -163,7 +169,7 @@ function SortableItem({
   const itemStyle: React.CSSProperties = {
     transform: CSS.Translate.toString(transform),
     transition,
-    zIndex: isDragging ? 2 : undefined,
+    zIndex: isDragging ? 10 : undefined,
     opacity: isDragging ? 0.6 : 1,
     ...style,
   }
@@ -182,6 +188,7 @@ function SortableItem({
         listeners,
         setActivatorNodeRef,
         isDragging,
+        isMoving,
       }}
     >
       <div
@@ -189,20 +196,36 @@ function SortableItem({
         style={itemStyle}
         data-slot="sortable-item"
         data-dragging={isDragging ? "" : undefined}
-        className={cn(isDragging && "relative", className)}
+        className={cn(
+          "group relative transition-all duration-200",
+          isDragging && "shadow-md",
+          isDropTarget && "border-2 border-dashed border-primary/90 bg-primary/10 shadow-xs",
+          className
+        )}
         {...handleProps}
         {...props}
       >
         {children}
+        {isMoving ? (
+          <div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-[inherit] bg-background/50 backdrop-blur-xs">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-card px-2.5 py-1 text-xs font-medium text-primary shadow-xs animate-pulse">
+              <Spinner className="size-3.5 text-primary" />
+              <span>Moving...</span>
+            </span>
+          </div>
+        ) : null}
       </div>
     </SortableItemContext.Provider>
   )
 }
 
-type SortableItemHandleProps = React.ComponentProps<"button">
+interface SortableItemHandleProps extends React.ComponentProps<"button"> {
+  hoverOnly?: boolean
+}
 
 function SortableItemHandle({
   className,
+  hoverOnly = true,
   children,
   ...props
 }: SortableItemHandleProps) {
@@ -215,7 +238,8 @@ function SortableItemHandle({
       data-slot="sortable-item-handle"
       data-dragging={isDragging ? "" : undefined}
       className={cn(
-        "inline-flex shrink-0 cursor-grab items-center justify-center border-0 bg-transparent p-0 text-muted-foreground select-none transition-colors hover:text-foreground active:cursor-grabbing focus-visible:outline-hidden touch-none",
+        "inline-flex shrink-0 cursor-grab items-center justify-center border-0 bg-transparent p-0 text-muted-foreground select-none transition-all hover:text-foreground active:cursor-grabbing focus-visible:outline-hidden touch-none",
+        hoverOnly && "opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-within:opacity-100 group-data-dragging:opacity-100",
         className
       )}
       {...attributes}
@@ -246,7 +270,7 @@ function SortableOverlay({
   return (
     <DragOverlay
       dropAnimation={dropAnimation}
-      className={cn("cursor-grabbing", className)}
+      className={cn("cursor-grabbing shadow-xl scale-[1.02] transition-transform", className)}
       {...props}
     >
       {children}

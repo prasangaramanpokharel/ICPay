@@ -60,6 +60,10 @@ module {
     txs.find(func(tx) { tx.id == id });
   };
 
+  public func getByUserAndId(byUser: TxStorage.TxByUser, userId: Types.UserId, id: Types.TxId): ?Types.Transaction {
+    userView(byUser, userId).find(func(tx) { tx.id == id });
+  };
+
   // Walks the user's own list newest-first and stops once the page is filled,
   // so the cost is bounded by (offset + limit) rather than by anyone else's
   // transaction volume.

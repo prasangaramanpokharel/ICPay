@@ -74,7 +74,7 @@
 
 - [ ] **Cross-Post to Developer Channels**:
   - Syndicate thread to Dev.to and LinkedIn: *"Why Centralized S3 is a Single Point of Failure for Web3 Apps"*.
-  - Link directly to [docs/problem&solution/1.md](file:///Users/prasangaramanpokharel/Desktop/icpay/docs/problem&solution/1.md).
+  - Link directly to [docs/problem-solution/1.md](file:///Users/prasangaramanpokharel/Desktop/icpay/docs/problem-solution/1.md).
 - [ ] **Community Builder Discussions**:
   - Engage on DFINITY Developer Forum under `#storage` and `#canisters`.
 

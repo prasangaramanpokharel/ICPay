@@ -71,11 +71,13 @@ function emptySettings(): CmcDid.CanisterSettings {
     wasm_memory_threshold: [],
     environment_variables: [],
     controllers: [],
+    minimum_incoming_canister_call_cycles: [],
     reserved_cycles_limit: [],
     log_visibility: [],
     log_memory_limit: [],
     snapshot_visibility: [],
     wasm_memory_limit: [],
+    status_visibility: [],
     memory_allocation: [],
     compute_allocation: [],
   }
