@@ -4,6 +4,7 @@ import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Search01Icon } from "@hugeicons/core-free-icons"
+import { Button } from "@/components/ui/button"
 import {
   InputGroup,
   InputGroupAddon,
@@ -156,9 +157,11 @@ export function MarketOverview() {
 
         <div className="mb-3 flex gap-1.5">
           {(["all", "up", "down"] as const).map((key) => (
-            <button
+            <Button
               key={key}
               type="button"
+              variant={change === key ? "default" : "secondary"}
+              size="sm"
               onClick={() => {
                 setChange(key)
                 setPage(1)
@@ -169,14 +172,14 @@ export function MarketOverview() {
                 }
               }}
               className={cn(
-                "rounded-full px-3.5 py-1 text-xs font-medium transition-all",
+                "rounded-full px-3.5 py-1 text-xs font-medium h-7 transition-all",
                 change === key
                   ? "bg-primary text-primary-foreground shadow-xs"
                   : "bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground"
               )}
             >
               {key === "all" ? t("filterAll") : key === "up" ? t("filterGainers") : t("filterLosers")}
-            </button>
+            </Button>
           ))}
         </div>
 

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ChartHistogramIcon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/ui/utils"
 import {
   Table,
   TableBody,
@@ -133,14 +134,15 @@ function SortHead({
 }) {
   return (
     <TableHead>
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={onClick}
-        className={active ? "font-semibold text-foreground" : "text-muted-foreground"}
+        className={cn("-ml-3 h-8 px-3 font-medium", active ? "font-semibold text-foreground" : "text-muted-foreground")}
       >
         {label}
         {active ? (sortAsc ? " ↑" : " ↓") : ""}
-      </button>
+      </Button>
     </TableHead>
   )
 }

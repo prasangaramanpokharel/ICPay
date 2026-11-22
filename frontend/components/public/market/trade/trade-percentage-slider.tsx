@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/ui/utils"
 
 const PERCENT_STEPS = [0, 25, 50, 75, 100] as const
@@ -70,18 +71,20 @@ export function TradePercentageSlider({
 
       <div className="flex justify-between px-0.5 text-[10px] font-medium text-muted-foreground">
         {PERCENT_STEPS.map((step) => (
-          <button
+          <Button
             key={step}
             type="button"
+            variant="ghost"
+            size="sm"
             disabled={disabled}
             onClick={() => onChange(step)}
             className={cn(
-              "transition-colors hover:text-foreground active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50",
+              "h-auto p-0 text-[10px] hover:bg-transparent transition-colors hover:text-foreground active:scale-95 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50",
               clampedValue === step ? "font-bold text-foreground" : "text-muted-foreground"
             )}
           >
             {step}%
-          </button>
+          </Button>
         ))}
       </div>
     </div>

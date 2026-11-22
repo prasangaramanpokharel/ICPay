@@ -6,6 +6,8 @@ import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
 import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/ui/utils"
 import {
   Table,
   TableBody,
@@ -141,40 +143,46 @@ export function MarketRankingDetail({ type }: { type: RankingType }) {
                     onClick={() => onSort("price")}
                   />
                   <TableHead>
-                    <button
-                      type="button"
-                      onClick={() => onSort("change")}
-                      className={sortKey === "change" ? "font-semibold text-foreground" : "text-muted-foreground"}
-                    >
-                      {t("colChange")}
-                      {sortKey === "change" ? (sortAsc ? " ↑" : " ↓") : ""}
-                    </button>
-                    {" "}
-                    <InfoTooltip content="Percentage change in token price over the last 24 hours" />
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onSort("change")}
+                        className={cn("-ml-3 h-8 px-3", sortKey === "change" ? "font-semibold text-foreground" : "text-muted-foreground")}
+                      >
+                        {t("colChange")}
+                        {sortKey === "change" ? (sortAsc ? " ↑" : " ↓") : ""}
+                      </Button>
+                      <InfoTooltip content="Percentage change in token price over the last 24 hours" />
+                    </div>
                   </TableHead>
                   <TableHead>
-                    <button
-                      type="button"
-                      onClick={() => onSort("volume")}
-                      className={sortKey === "volume" ? "font-semibold text-foreground" : "text-muted-foreground"}
-                    >
-                      {t("colVolume")}
-                      {sortKey === "volume" ? (sortAsc ? " ↑" : " ↓") : ""}
-                    </button>
-                    {" "}
-                    <InfoTooltip content="Total trading volume in USD over the last 24 hours" />
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onSort("volume")}
+                        className={cn("-ml-3 h-8 px-3", sortKey === "volume" ? "font-semibold text-foreground" : "text-muted-foreground")}
+                      >
+                        {t("colVolume")}
+                        {sortKey === "volume" ? (sortAsc ? " ↑" : " ↓") : ""}
+                      </Button>
+                      <InfoTooltip content="Total trading volume in USD over the last 24 hours" />
+                    </div>
                   </TableHead>
                   <TableHead>
-                    <button
-                      type="button"
-                      onClick={() => onSort("tvl")}
-                      className={sortKey === "tvl" ? "font-semibold text-foreground" : "text-muted-foreground"}
-                    >
-                      {t("colTvl")}
-                      {sortKey === "tvl" ? (sortAsc ? " ↑" : " ↓") : ""}
-                    </button>
-                    {" "}
-                    <InfoTooltip content="Total Value Locked - the total value of assets in the liquidity pool" />
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onSort("tvl")}
+                        className={cn("-ml-3 h-8 px-3", sortKey === "tvl" ? "font-semibold text-foreground" : "text-muted-foreground")}
+                      >
+                        {t("colTvl")}
+                        {sortKey === "tvl" ? (sortAsc ? " ↑" : " ↓") : ""}
+                      </Button>
+                      <InfoTooltip content="Total Value Locked - the total value of assets in the liquidity pool" />
+                    </div>
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -254,14 +262,15 @@ function SortHead({
 }) {
   return (
     <TableHead>
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={onClick}
-        className={active ? "font-semibold text-foreground" : "text-muted-foreground"}
+        className={cn("-ml-3 h-8 px-3 font-medium", active ? "font-semibold text-foreground" : "text-muted-foreground")}
       >
         {label}
         {active ? (sortAsc ? " ↑" : " ↓") : ""}
-      </button>
+      </Button>
     </TableHead>
   )
 }

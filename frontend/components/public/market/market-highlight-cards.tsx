@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { Card } from "@/components/ui/card"
 import { ShineBorder } from "@/components/ui/shine-border"
@@ -56,7 +57,7 @@ function FeedCard({
         <ShineBorder
           borderWidth={1}
           duration={14}
-          shineColor={["#3b82f6", "#8b5cf6", "#10b981"]}
+          shineColor={["var(--primary)", "var(--accent)", "var(--success)"]}
           className="opacity-35 dark:opacity-45"
         />
       )}
@@ -152,8 +153,7 @@ function RankBadge({ rank }: { rank: number }) {
   const src = marketRankImage(rank)
   if (!src) return null
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
+    <Image
       src={src}
       alt=""
       className="size-8 shrink-0 object-contain"

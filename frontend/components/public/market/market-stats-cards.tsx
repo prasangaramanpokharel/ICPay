@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl"
 import { Card } from "@/components/ui/card"
-import { formatUsd, formatPct } from "@/lib/market/format"
+import { formatUsd, formatPct, changeClass } from "@/lib/market/format"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/ui/utils"
 import type { MarketStats } from "@/services/market/marketStats"
@@ -76,7 +76,7 @@ export function MarketStatsCards({ stats, loading }: { stats: MarketStats | null
                 <span
                   className={cn(
                     "text-sm font-medium tabular-nums",
-                    card.change > 0 ? "text-emerald-500" : card.change < 0 ? "text-red-500" : "text-muted-foreground"
+                    changeClass(card.change)
                   )}
                 >
                   {card.change > 0 ? "↑" : card.change < 0 ? "↓" : ""}
