@@ -2133,6 +2133,87 @@
           }
         }
       }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "Novo",
+        "version": "Desktop v1.0.0",
+        "platforms": "· macOS, Windows e Linux"
+      },
+      "hero": {
+        "title": "Baixar ICPay Desktop",
+        "description": "A carteira custodial de ICP criada nativamente para o seu computador. Rápida, segura e autenticada exclusivamente via Internet Identity."
+      },
+      "primary": {
+        "downloadMac": "Baixar para Mac",
+        "downloadWindows": "Baixar para Windows",
+        "downloadLinux": "Baixar para Linux",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 e 11 (64 bits) · 84 MB",
+        "linuxSubtitle": "Tarball x64 · 98 MB",
+        "releaseHashes": "Hashes de lançamento"
+      },
+      "dropdown": {
+        "ariaLabel": "Selecionar plataforma",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64 bits)",
+        "windowsPortable": "Windows Portátil",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Pacote universal para máquinas Apple Silicon e Intel.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Arquitetura Intel",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Portátil",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "Instalador de 64 bits e arquivo executável portátil.",
+          "installerTitle": "Instalador",
+          "installerSub": "Pacote NSIS · EXE",
+          "portableTitle": "Arquivo Portátil",
+          "portableSub": "Binário x64 · ZIP",
+          "archTitle": "Arquitetura",
+          "archSub": "x86_64 Verificado",
+          "supportedBadge": "Suportado"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Arquivo de distribuição para Ubuntu, Debian, Fedora e Arch.",
+          "tarballTitle": "Tarball de distribuição",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "Compatível com RPM",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "Compatível com DEB"
+        }
+      },
+      "hashes": {
+        "title": "Integridade Criptográfica (SHA-256)",
+        "description": "Verifique os hashes no terminal para assegurar arquivos genuínos e inalterados.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Copiar",
+        "copied": "Copiado",
+        "toastSuccess": "Hash SHA-256 copiado para a área de transferência",
+        "toastError": "Falha ao copiar hash"
+      },
+      "features": {
+        "custodyTitle": "Arquitetura Custodial",
+        "custodyDesc": "Autenticado exclusivamente via Internet Identity. Nenhuma frase semente, chave ou senha é armazenada localmente.",
+        "perfTitle": "Desempenho Nativo",
+        "perfDesc": "Renderização acelerada por hardware e criptografia com Electron 33 e mínimo uso de memória.",
+        "edgeTitle": "Entrega Cloudflare Edge",
+        "edgeDesc": "Armazenamento global de objetos R2 com cache de borda em mais de 330 locais sem estrangulamento."
+      }
     }
   },
   "trade": {

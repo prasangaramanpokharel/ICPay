@@ -2133,6 +2133,87 @@
           }
         }
       }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "Baru",
+        "version": "Desktop v1.0.0",
+        "platforms": "· macOS, Windows & Linux"
+      },
+      "hero": {
+        "title": "Unduh ICPay Desktop",
+        "description": "Dompet kustodian ICP yang dirancang khusus untuk desktop Anda. Cepat, aman, dan diautentikasi secara eksklusif melalui Internet Identity."
+      },
+      "primary": {
+        "downloadMac": "Unduh untuk Mac",
+        "downloadWindows": "Unduh untuk Windows",
+        "downloadLinux": "Unduh untuk Linux",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 & 11 (64-bit) · 84 MB",
+        "linuxSubtitle": "x64 Tarball · 98 MB",
+        "releaseHashes": "Hash Rilis"
+      },
+      "dropdown": {
+        "ariaLabel": "Pilih platform desktop",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64-bit)",
+        "windowsPortable": "Windows Portabel",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Paket universal untuk perangkat Apple Silicon dan Intel.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Arsitektur Intel",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Portabel",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "Penginstal 64-bit dan arsip executable portabel.",
+          "installerTitle": "Penginstal Setup",
+          "installerSub": "Paket NSIS · EXE",
+          "portableTitle": "Arsip Portabel",
+          "portableSub": "Biner x64 · ZIP",
+          "archTitle": "Arsitektur",
+          "archSub": "x86_64 Terverifikasi",
+          "supportedBadge": "Didukung"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Arsip distribusi untuk Ubuntu, Debian, Fedora, Arch.",
+          "tarballTitle": "Tarball Distribusi",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "Kompatibel RPM",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "Kompatibel DEB"
+        }
+      },
+      "hashes": {
+        "title": "Integritas Kriptografi (SHA-256)",
+        "description": "Verifikasi checksum langsung di terminal untuk memastikan biner asli dan tidak dimodifikasi.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Salin",
+        "copied": "Disalin",
+        "toastSuccess": "Hash SHA-256 berhasil disalin ke papan klip",
+        "toastError": "Gagal menyalin hash"
+      },
+      "features": {
+        "custodyTitle": "Arsitektur Kustodian",
+        "custodyDesc": "Diautentikasi secara eksklusif melalui Internet Identity. Tidak ada frasa pemulihan atau kata sandi yang disimpan secara lokal.",
+        "perfTitle": "Performa Asli",
+        "perfDesc": "Akselerasi perangkat keras dan kriptografi didukung oleh Electron 33 dengan penggunaan memori yang minimal.",
+        "edgeTitle": "Pengiriman Cloudflare Edge",
+        "edgeDesc": "Penyimpanan objek global R2 dengan caching multi-wilayah di lebih dari 330 lokasi."
+      }
     }
   },
   "trade": {

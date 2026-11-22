@@ -2133,6 +2133,87 @@
           }
         }
       }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "جديد",
+        "version": "سطح المكتب v1.0.0",
+        "platforms": "· macOS و Windows و Linux"
+      },
+      "hero": {
+        "title": "تحميل ICPay لسطح المكتب",
+        "description": "محفظة ICP الحفظية المصممة خصيصاً لجهازك المكتبي. سريعة، آمنة، ومصادق عليها حصرياً عبر Internet Identity."
+      },
+      "primary": {
+        "downloadMac": "تحميل لأجهزة Mac",
+        "downloadWindows": "تحميل لأجهزة Windows",
+        "downloadLinux": "تحميل لأجهزة Linux",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 ميجابايت",
+        "windowsSubtitle": "Windows 10 و 11 (64 بت) · 84 ميجابايت",
+        "linuxSubtitle": "حزمة x64 · 98 ميجابايت",
+        "releaseHashes": "تجزئات الإصدار"
+      },
+      "dropdown": {
+        "ariaLabel": "اختر نظام التشغيل",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64 بت)",
+        "windowsPortable": "Windows محمول",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "حزمة شاملة لأجهزة Apple Silicon و Intel.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "معمارية Intel",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "نسخة محمولة Silicon",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "برنامج تثبيت 64 بت وأرشيف ملف تنفيذي محمول.",
+          "installerTitle": "برنامج التثبيت",
+          "installerSub": "حزمة NSIS · EXE",
+          "portableTitle": "أرشيف محمول",
+          "portableSub": "ثنائي x64 · ZIP",
+          "archTitle": "المعمارية",
+          "archSub": "x86_64 موثق",
+          "supportedBadge": "مدعوم"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "أرشيف توزيعات Ubuntu و Debian و Fedora و Arch.",
+          "tarballTitle": "حزمة التوزيع Tarball",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "متوافق مع RPM",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "متوافق مع DEB"
+        }
+      },
+      "hashes": {
+        "title": "السلامة التشفيرية (SHA-256)",
+        "description": "تحقق من التجزئات مباشرة في الطرفية لضمان ملفات أصلية وغير معدلة.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "نسخ",
+        "copied": "تم النسخ",
+        "toastSuccess": "تم نسخ تجزئة SHA-256 إلى الحافظة",
+        "toastError": "فشل نسخ التجزئة"
+      },
+      "features": {
+        "custodyTitle": "بنية حفظية آمنة",
+        "custodyDesc": "مصادقة حصرية عبر Internet Identity. لا يتم تخزين عبارات الاسترداد أو المفاتيح محلياً على الإطلاق.",
+        "perfTitle": "أداء أصلي فائق",
+        "perfDesc": "معالجة رسومية وتشفير معزز بالعتاد مدعوم بمحرك Electron 33 مع استهلاك منخفض للذاكرة.",
+        "edgeTitle": "توزيع عالمي عبر Cloudflare Edge",
+        "edgeDesc": "تخزين كائنات R2 عالمي مع تخزين مؤقت على شبكة موزعة تضم أكثر من 330 موقعاً."
+      }
     }
   },
   "trade": {

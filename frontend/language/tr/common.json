@@ -2133,6 +2133,87 @@
           }
         }
       }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "Yeni",
+        "version": "Masaüstü v1.0.0",
+        "platforms": "· macOS, Windows ve Linux"
+      },
+      "hero": {
+        "title": "ICPay Masaüstünü İndir",
+        "description": "Masaüstünüz için yerel olarak geliştirilmiş emanet ICP cüzdanı. Hızlı, güvenli ve yalnızca Internet Identity ile doğrulanmış."
+      },
+      "primary": {
+        "downloadMac": "Mac için İndir",
+        "downloadWindows": "Windows için İndir",
+        "downloadLinux": "Linux için İndir",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 ve 11 (64 bit) · 84 MB",
+        "linuxSubtitle": "x64 Tarball · 98 MB",
+        "releaseHashes": "Sürüm Karmaları"
+      },
+      "dropdown": {
+        "ariaLabel": "Masaüstü platformu seçin",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64 bit)",
+        "windowsPortable": "Windows Taşınabilir",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Apple Silicon ve Intel cihazları için evrensel paket.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Intel Mimarisi",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Taşınabilir",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "64 bit kurulum yükleyicisi ve taşınabilir çalıştırılabilir arşiv.",
+          "installerTitle": "Kurulum Yükleyicisi",
+          "installerSub": "NSIS Paketi · EXE",
+          "portableTitle": "Taşınabilir Arşiv",
+          "portableSub": "x64 İkili · ZIP",
+          "archTitle": "Mimari",
+          "archSub": "x86_64 Doğrulandı",
+          "supportedBadge": "Destekleniyor"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Ubuntu, Debian, Fedora, Arch için dağıtım arşivi.",
+          "tarballTitle": "Dağıtım Tarball",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "RPM Uyumlu",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "DEB Uyumlu"
+        }
+      },
+      "hashes": {
+        "title": "Kriptografik Bütünlük (SHA-256)",
+        "description": "Orijinal ve değiştirilmemiş ikili dosyaları sağlamak için doğrudan terminalinizde doğrulayın.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Kopyala",
+        "copied": "Kopyalandı",
+        "toastSuccess": "SHA-256 karması panoya kopyalandı",
+        "toastError": "Karma kopyalanamadı"
+      },
+      "features": {
+        "custodyTitle": "Emanet Mimarisi",
+        "custodyDesc": "Yalnızca Internet Identity ile doğrulanır. Hiçbir tohum cümlesi veya parola yerel olarak saklanmaz.",
+        "perfTitle": "Yerel Performans",
+        "perfDesc": "Minimum bellek kullanımıyla Electron 33 tarafından desteklenen donanım hızlandırmalı işleme.",
+        "edgeTitle": "Cloudflare Edge Dağıtımı",
+        "edgeDesc": "330'dan fazla konumda çok bölgeli uç önbelleğe alma ile küresel R2 nesne depolaması."
+      }
     }
   },
   "trade": {

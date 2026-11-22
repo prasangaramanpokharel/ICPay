@@ -3,6 +3,7 @@
 import { useState, useSyncExternalStore } from "react"
 import Image from "next/image"
 import { motion } from "motion/react"
+import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Download01Icon,
@@ -32,7 +33,7 @@ import { cn } from "@/lib/ui/utils"
 interface ChecksumItem {
   id: string
   name: string
-  os: string
+  osKey: "dropdown.macArm64" | "dropdown.macX64" | "dropdown.windowsX64" | "dropdown.linuxX64"
   hash: string
 }
 
@@ -40,25 +41,25 @@ const CHECKSUMS: ChecksumItem[] = [
   {
     id: "mac-arm64",
     name: "ICPay-1.0.0-mac-arm64.dmg",
-    os: "macOS Apple Silicon",
+    osKey: "dropdown.macArm64",
     hash: "41cd9b9b10707b1385e6fbe099cf8b8cf055d593c98ac545868fbd49bf0559e8",
   },
   {
     id: "mac-x64",
     name: "ICPay-1.0.0-mac-x64.dmg",
-    os: "macOS Intel",
+    osKey: "dropdown.macX64",
     hash: "c880a003212b62749c3dc8917c3f9cdbdb974b480f1810eb0275d365be147025",
   },
   {
     id: "windows-x64",
     name: "ICPay-1.0.0-windows-x64.exe",
-    os: "Windows 64-bit",
+    osKey: "dropdown.windowsX64",
     hash: "bee6bd06b90c4b01b44af238e71e0b357800b46a07d6e6da2f117a20d63ec664",
   },
   {
     id: "linux-x64",
     name: "ICPay-1.0.0-linux-x64.tar.gz",
-    os: "Linux 64-bit",
+    osKey: "dropdown.linuxX64",
     hash: "5a30cdd36528c23f6b892d5c63d037fe5633c1f99f8ae832f76ed63be7503d0c",
   },
 ]
@@ -74,6 +75,7 @@ function getDetectedOs(): "mac" | "windows" | "linux" {
 }
 
 export function DownloadsView() {
+  const t = useTranslations("publicSite.downloadsPage")
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const detectedOs = useSyncExternalStore(emptySubscribe, getDetectedOs, () => "mac")
 
@@ -83,35 +85,35 @@ export function DownloadsView() {
         await navigator.clipboard.writeText(item.hash)
       }
       setCopiedId(item.id)
-      toast.success("SHA-256 hash copied to clipboard", {
-        description: `${item.name} (${item.os})`,
+      toast.success(t("hashes.toastSuccess"), {
+        description: `${item.name} (${t(item.osKey)})`,
       })
       setTimeout(() => {
         setCopiedId(null)
       }, 2000)
     } catch {
-      toast.error("Failed to copy hash")
+      toast.error(t("hashes.toastError"))
     }
   }
 
   const primaryDownload =
     detectedOs === "windows"
       ? {
-          title: "Download for Windows",
-          subtitle: "Windows 10 & 11 (64-bit) · 84 MB",
+          title: t("primary.downloadWindows"),
+          subtitle: t("primary.windowsSubtitle"),
           href: DESKTOP_DOWNLOADS.windows,
           icon: PAGE_IMAGES.downloads.windows,
         }
       : detectedOs === "linux"
         ? {
-            title: "Download for Linux",
-            subtitle: "x64 Tarball · 98 MB",
+            title: t("primary.downloadLinux"),
+            subtitle: t("primary.linuxSubtitle"),
             href: DESKTOP_DOWNLOADS.linux,
             icon: PAGE_IMAGES.downloads.linux,
           }
         : {
-            title: "Download for Mac",
-            subtitle: "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+            title: t("primary.downloadMac"),
+            subtitle: t("primary.macSubtitle"),
             href: DESKTOP_DOWNLOADS.macosArm64,
             icon: PAGE_IMAGES.downloads.macos,
           }
@@ -136,14 +138,14 @@ export function DownloadsView() {
               className="group inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 py-1 pl-1.5 pr-2 text-xs font-medium text-foreground shadow-xs backdrop-blur-xs transition-all duration-200 hover:border-border hover:bg-card hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <span className="rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-semibold text-primary dark:bg-primary/20">
-                New
+                {t("badge.new")}
               </span>
               <AnimatedShinyText className="inline-flex items-center gap-1.5 text-xs">
                 <span className="font-medium text-foreground">
-                  Desktop v1.0.0
+                  {t("badge.version")}
                 </span>
                 <span className="hidden text-muted-foreground sm:inline">
-                  · macOS, Windows & Linux
+                  {t("badge.platforms")}
                 </span>
               </AnimatedShinyText>
               <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground transition-transform duration-200 group-hover:translate-x-0.5">
@@ -153,12 +155,11 @@ export function DownloadsView() {
           </motion.div>
 
           <h1 className="text-4xl font-extrabold tracking-tight bg-linear-to-b from-foreground via-foreground/95 to-foreground/50 bg-clip-text text-transparent sm:text-5xl md:text-6xl">
-            Download ICPay Desktop
+            {t("hero.title")}
           </h1>
 
           <p className="text-base text-muted-foreground md:text-lg max-w-2xl mx-auto leading-relaxed">
-            The custodial ICP wallet built natively for your desktop. Fast, secure, and authenticated
-            exclusively via Internet Identity.
+            {t("hero.description")}
           </p>
 
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -202,7 +203,7 @@ export function DownloadsView() {
                       size="icon"
                       variant="ghost"
                       className="size-11 rounded-full cursor-pointer hover:bg-muted"
-                      aria-label="Select desktop platform"
+                      aria-label={t("dropdown.ariaLabel")}
                     >
                       <HugeiconsIcon icon={ArrowDown01Icon} className="size-4" />
                     </Button>
@@ -227,7 +228,7 @@ export function DownloadsView() {
                         height={16}
                         className="size-4 object-contain dark:invert"
                       />
-                      <span className="font-medium">Mac (Apple Silicon)</span>
+                      <span className="font-medium">{t("dropdown.macArm64")}</span>
                     </div>
                     <span className="text-[11px] text-muted-foreground">.dmg</span>
                   </DropdownMenuItem>
@@ -250,7 +251,7 @@ export function DownloadsView() {
                         height={16}
                         className="size-4 object-contain dark:invert"
                       />
-                      <span className="font-medium">Mac (Intel)</span>
+                      <span className="font-medium">{t("dropdown.macX64")}</span>
                     </div>
                     <span className="text-[11px] text-muted-foreground">.dmg</span>
                   </DropdownMenuItem>
@@ -273,7 +274,7 @@ export function DownloadsView() {
                         height={16}
                         className="size-4 object-contain"
                       />
-                      <span className="font-medium">Windows (64-bit)</span>
+                      <span className="font-medium">{t("dropdown.windowsX64")}</span>
                     </div>
                     <span className="text-[11px] text-muted-foreground">.exe</span>
                   </DropdownMenuItem>
@@ -296,7 +297,7 @@ export function DownloadsView() {
                         height={16}
                         className="size-4 object-contain"
                       />
-                      <span className="font-medium">Windows Portable</span>
+                      <span className="font-medium">{t("dropdown.windowsPortable")}</span>
                     </div>
                     <span className="text-[11px] text-muted-foreground">.zip</span>
                   </DropdownMenuItem>
@@ -319,7 +320,7 @@ export function DownloadsView() {
                         height={16}
                         className="size-4 object-contain"
                       />
-                      <span className="font-medium">Linux (x64)</span>
+                      <span className="font-medium">{t("dropdown.linuxX64")}</span>
                     </div>
                     <span className="text-[11px] text-muted-foreground">.tar.gz</span>
                   </DropdownMenuItem>
@@ -332,7 +333,7 @@ export function DownloadsView() {
             <span>{primaryDownload.subtitle}</span>
             <span>•</span>
             <a href="#hashes" className="underline hover:text-foreground transition-colors">
-              Release Hashes
+              {t("primary.releaseHashes")}
             </a>
           </div>
         </motion.div>
@@ -358,21 +359,21 @@ export function DownloadsView() {
                       className="size-5.5 object-contain dark:invert"
                     />
                   </div>
-                  <Badge variant="secondary">macOS 12.0+</Badge>
+                  <Badge variant="secondary">{t("cards.macos.badge")}</Badge>
                 </div>
 
                 <div>
-                  <h2 className="text-xl font-bold tracking-tight text-foreground">macOS</h2>
+                  <h2 className="text-xl font-bold tracking-tight text-foreground">{t("cards.macos.title")}</h2>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Universal package for Apple Silicon and Intel machines.
+                    {t("cards.macos.description")}
                   </p>
                 </div>
 
                 <div className="divide-y divide-border/60 pt-2 text-sm">
                   <div className="flex items-center justify-between py-2.5">
                     <div className="space-y-0.5">
-                      <p className="font-medium text-foreground">Apple Silicon</p>
-                      <p className="text-[11px] text-muted-foreground">M1 / M2 / M3 / M4 · DMG</p>
+                      <p className="font-medium text-foreground">{t("cards.macos.arm64Title")}</p>
+                      <p className="text-[11px] text-muted-foreground">{t("cards.macos.arm64Sub")}</p>
                     </div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button
@@ -396,8 +397,8 @@ export function DownloadsView() {
 
                   <div className="flex items-center justify-between py-2.5">
                     <div className="space-y-0.5">
-                      <p className="font-medium text-foreground">Intel Architecture</p>
-                      <p className="text-[11px] text-muted-foreground">x86_64 · DMG</p>
+                      <p className="font-medium text-foreground">{t("cards.macos.intelTitle")}</p>
+                      <p className="text-[11px] text-muted-foreground">{t("cards.macos.intelSub")}</p>
                     </div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button
@@ -421,8 +422,8 @@ export function DownloadsView() {
 
                   <div className="flex items-center justify-between py-2.5">
                     <div className="space-y-0.5">
-                      <p className="font-medium text-foreground">Silicon Portable</p>
-                      <p className="text-[11px] text-muted-foreground">ARM64 · ZIP</p>
+                      <p className="font-medium text-foreground">{t("cards.macos.portableTitle")}</p>
+                      <p className="text-[11px] text-muted-foreground">{t("cards.macos.portableSub")}</p>
                     </div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button
@@ -468,21 +469,21 @@ export function DownloadsView() {
                       className="size-5.5 object-contain"
                     />
                   </div>
-                  <Badge variant="secondary">Windows 10 / 11</Badge>
+                  <Badge variant="secondary">{t("cards.windows.badge")}</Badge>
                 </div>
 
                 <div>
-                  <h2 className="text-xl font-bold tracking-tight text-foreground">Windows</h2>
+                  <h2 className="text-xl font-bold tracking-tight text-foreground">{t("cards.windows.title")}</h2>
                   <p className="text-xs text-muted-foreground mt-1">
-                    64-bit setup installer and portable executable archive.
+                    {t("cards.windows.description")}
                   </p>
                 </div>
 
                 <div className="divide-y divide-border/60 pt-2 text-sm">
                   <div className="flex items-center justify-between py-2.5">
                     <div className="space-y-0.5">
-                      <p className="font-medium text-foreground">Setup Installer</p>
-                      <p className="text-[11px] text-muted-foreground">NSIS Package · EXE</p>
+                      <p className="font-medium text-foreground">{t("cards.windows.installerTitle")}</p>
+                      <p className="text-[11px] text-muted-foreground">{t("cards.windows.installerSub")}</p>
                     </div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button
@@ -506,8 +507,8 @@ export function DownloadsView() {
 
                   <div className="flex items-center justify-between py-2.5">
                     <div className="space-y-0.5">
-                      <p className="font-medium text-foreground">Portable Archive</p>
-                      <p className="text-[11px] text-muted-foreground">x64 Binary · ZIP</p>
+                      <p className="font-medium text-foreground">{t("cards.windows.portableTitle")}</p>
+                      <p className="text-[11px] text-muted-foreground">{t("cards.windows.portableSub")}</p>
                     </div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button
@@ -531,11 +532,11 @@ export function DownloadsView() {
 
                   <div className="flex items-center justify-between py-2.5">
                     <div className="space-y-0.5">
-                      <p className="font-medium text-foreground">Architecture</p>
-                      <p className="text-[11px] text-muted-foreground">x86_64 Verified</p>
+                      <p className="font-medium text-foreground">{t("cards.windows.archTitle")}</p>
+                      <p className="text-[11px] text-muted-foreground">{t("cards.windows.archSub")}</p>
                     </div>
                     <Badge variant="outline" className="text-[11px]">
-                      Supported
+                      {t("cards.windows.supportedBadge")}
                     </Badge>
                   </div>
                 </div>
@@ -563,21 +564,21 @@ export function DownloadsView() {
                       className="size-5.5 object-contain"
                     />
                   </div>
-                  <Badge variant="secondary">GLIBC 2.31+</Badge>
+                  <Badge variant="secondary">{t("cards.linux.badge")}</Badge>
                 </div>
 
                 <div>
-                  <h2 className="text-xl font-bold tracking-tight text-foreground">Linux</h2>
+                  <h2 className="text-xl font-bold tracking-tight text-foreground">{t("cards.linux.title")}</h2>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Distribution archive for Ubuntu, Debian, Fedora, Arch.
+                    {t("cards.linux.description")}
                   </p>
                 </div>
 
                 <div className="divide-y divide-border/60 pt-2 text-sm">
                   <div className="flex items-center justify-between py-2.5">
                     <div className="space-y-0.5">
-                      <p className="font-medium text-foreground">Distribution Tarball</p>
-                      <p className="text-[11px] text-muted-foreground">x86_64 · TAR.GZ</p>
+                      <p className="font-medium text-foreground">{t("cards.linux.tarballTitle")}</p>
+                      <p className="text-[11px] text-muted-foreground">{t("cards.linux.tarballSub")}</p>
                     </div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button
@@ -601,8 +602,8 @@ export function DownloadsView() {
 
                   <div className="flex items-center justify-between py-2.5">
                     <div className="space-y-0.5">
-                      <p className="font-medium text-foreground">Fedora / RHEL</p>
-                      <p className="text-[11px] text-muted-foreground">RPM Compatible</p>
+                      <p className="font-medium text-foreground">{t("cards.linux.fedoraTitle")}</p>
+                      <p className="text-[11px] text-muted-foreground">{t("cards.linux.fedoraSub")}</p>
                     </div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button
@@ -626,8 +627,8 @@ export function DownloadsView() {
 
                   <div className="flex items-center justify-between py-2.5">
                     <div className="space-y-0.5">
-                      <p className="font-medium text-foreground">Debian / Ubuntu</p>
-                      <p className="text-[11px] text-muted-foreground">DEB Compatible</p>
+                      <p className="font-medium text-foreground">{t("cards.linux.debianTitle")}</p>
+                      <p className="text-[11px] text-muted-foreground">{t("cards.linux.debianSub")}</p>
                     </div>
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Button
@@ -667,11 +668,11 @@ export function DownloadsView() {
               <div className="flex items-center gap-2">
                 <HugeiconsIcon icon={SecurityCheckIcon} className="size-5 text-primary" />
                 <h2 className="text-xl font-bold tracking-tight text-foreground">
-                  Cryptographic Integrity (SHA-256)
+                  {t("hashes.title")}
                 </h2>
               </div>
               <p className="text-sm text-muted-foreground">
-                Verify checksums directly in your terminal to ensure genuine, tamper-free binaries.
+                {t("hashes.description")}
               </p>
             </div>
 
@@ -689,7 +690,7 @@ export function DownloadsView() {
               }
             >
               <HugeiconsIcon icon={File01Icon} className="size-4" />
-              <span>SHA256SUMS.txt</span>
+              <span>{t("hashes.viewAll")}</span>
               <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5 opacity-70" />
             </Button>
           </div>
@@ -707,7 +708,7 @@ export function DownloadsView() {
                       <div className="flex items-center gap-2">
                         <span className="font-semibold text-foreground">{item.name}</span>
                         <Badge variant="outline" className="text-[10px] py-0 px-1.5">
-                          {item.os}
+                          {t(item.osKey)}
                         </Badge>
                       </div>
                       <code className="block font-mono text-muted-foreground break-all text-[11px]">
@@ -723,7 +724,7 @@ export function DownloadsView() {
                         className="gap-1.5 rounded-full px-3.5 h-8 text-xs font-medium self-start sm:self-auto shrink-0 cursor-pointer border-border/80 bg-card hover:bg-muted text-foreground transition-all duration-150"
                       >
                         <CopyIconIndicator copied={isCopied} iconClassName="size-3.5" />
-                        <span>{isCopied ? "Copied" : "Copy"}</span>
+                        <span>{isCopied ? t("hashes.copied") : t("hashes.copy")}</span>
                       </Button>
                     </motion.div>
                   </div>
@@ -746,10 +747,10 @@ export function DownloadsView() {
                 <HugeiconsIcon icon={SecurityCheckIcon} className="size-5 text-primary" />
               </div>
               <h3 className="text-base font-semibold text-foreground">
-                Custodial Architecture
+                {t("features.custodyTitle")}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Authenticated exclusively via Internet Identity. No seed phrases, unencrypted keys, or passwords are ever stored locally.
+                {t("features.custodyDesc")}
               </p>
             </Card>
           </motion.div>
@@ -760,10 +761,10 @@ export function DownloadsView() {
                 <HugeiconsIcon icon={CpuIcon} className="size-5 text-primary" />
               </div>
               <h3 className="text-base font-semibold text-foreground">
-                Native Performance
+                {t("features.perfTitle")}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Hardware-accelerated rendering and cryptography powered by Electron 33 with minimal memory usage.
+                {t("features.perfDesc")}
               </p>
             </Card>
           </motion.div>
@@ -774,10 +775,10 @@ export function DownloadsView() {
                 <HugeiconsIcon icon={Download01Icon} className="size-5 text-primary" />
               </div>
               <h3 className="text-base font-semibold text-foreground">
-                Cloudflare Edge Delivery
+                {t("features.edgeTitle")}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Global R2 object storage with multi-region edge caching across 330+ locations and zero egress throttling.
+                {t("features.edgeDesc")}
               </p>
             </Card>
           </motion.div>
