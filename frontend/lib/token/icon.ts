@@ -2,7 +2,7 @@ import { ICP_LEDGER_ID, ICPAY_LEDGER_ID } from "@/services/tokens"
 import type { TokenMarket } from "@/lib/token/registry"
 import { ICPAY_TOKEN_ICON } from "@/lib/ui/brand-images"
 
-export const ICP_LOGO = "/images/logo/icp/icp_logo.014fd35c.svg"
+export const ICP_LOGO = "/images/logo/icp/icp.svg"
 
 export function resolveTokenIcon(
   ledgerId: string,

@@ -1,9 +1,26 @@
 import { Delegation, DelegationChain } from "@icp-sdk/core/identity"
 import { Principal } from "@icp-sdk/core/principal"
+import { WALLET_CANISTER_ID, TRADE_CANISTER_ID } from "@/services/icp"
+import { ICP_LEDGER_ID, ICPAY_LEDGER_ID, PINNED_LEDGER_IDS } from "@/services/tokens"
+import { BLOB_STORE_CANISTER_ID } from "@/lib/ic/constants"
 
 export const NATIVE_AUTH_TTL = 2_592_000_000_000_000n
 export const NATIVE_AUTH_POPUP_W = 432
 export const NATIVE_AUTH_POPUP_H = 620
+
+export function getNativeAuthTargets(): string[] {
+  const targets = new Set<string>([
+    WALLET_CANISTER_ID,
+    BLOB_STORE_CANISTER_ID,
+    ICP_LEDGER_ID,
+    ICPAY_LEDGER_ID,
+    ...PINNED_LEDGER_IDS,
+  ])
+  if (TRADE_CANISTER_ID) {
+    targets.add(TRADE_CANISTER_ID)
+  }
+  return [...targets]
+}
 
 export type IiDelegation = {
   signature: unknown

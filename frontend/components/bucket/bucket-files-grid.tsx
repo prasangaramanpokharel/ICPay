@@ -7,6 +7,7 @@ import { MotionList, MotionListItem } from "@/components/ui/motion-list"
 import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
+import { Spinner } from "@/components/ui/spinner"
 import {
   BucketFileIcon,
   BucketFolderIcon,
@@ -40,6 +41,7 @@ export function BucketFilesGrid({
   onDeleteFile,
   onDeleteFolder,
   onDropFilesIntoFolder,
+  movingToFolder,
 }: {
   bucketId?: string
   bucketName?: string
@@ -57,6 +59,7 @@ export function BucketFilesGrid({
   onDeleteFile?: (path: string) => void
   onDeleteFolder?: (name: string) => void
   onDropFilesIntoFolder?: (paths: string[], folderName: string) => void
+  movingToFolder?: string | null
 }) {
   const [dragOverFolder, setDragOverFolder] = useState<string | null>(null)
 
@@ -77,6 +80,7 @@ export function BucketFilesGrid({
               ? "—"
               : formatFileSize(totals.bytes)
           const isOver = dragOverFolder === entry.name
+          const isMoving = movingToFolder === entry.name
 
           return (
             <MotionListItem key={key}>
@@ -117,7 +121,7 @@ export function BucketFilesGrid({
               className={cn(
                 "group relative flex flex-col justify-between overflow-hidden border-border/80 bg-card/60 p-3.5 transition-all duration-150 hover:border-border hover:bg-card hover:shadow-xs",
                 isSelected && "border-primary bg-primary/5",
-                isOver && "border-primary/50 bg-primary/10 ring-2 ring-primary/80"
+                isOver && "border-2 border-dashed border-primary/90 bg-primary/10 shadow-xs"
               )}
             >
               <div className="flex items-start justify-between gap-2">
@@ -144,6 +148,12 @@ export function BucketFilesGrid({
                 <p className="max-w-full truncate text-center text-sm font-semibold text-foreground">
                   {entry.name}
                 </p>
+                {isMoving ? (
+                  <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/15 px-2 py-0.5 text-[9px] font-medium text-primary animate-pulse">
+                    <Spinner className="size-2.5" />
+                    <span>Moving...</span>
+                  </span>
+                ) : null}
               </div>
 
               <div className="flex items-center justify-between border-t border-border/40 pt-2 text-[11px] text-muted-foreground">
@@ -215,7 +225,7 @@ export function BucketFilesGrid({
                 {canWrite ? (
                   <>
                     <span
-                      className="cursor-grab text-muted-foreground/50 transition-colors hover:text-foreground active:cursor-grabbing"
+                      className="cursor-grab opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-active:opacity-100 text-muted-foreground/50 hover:text-foreground active:cursor-grabbing"
                       title="Drag to move"
                     >
                       <HugeiconsIcon icon={GripVerticalIcon} className="size-3.5 shrink-0" strokeWidth={1.75} />
