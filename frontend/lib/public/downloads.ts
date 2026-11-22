@@ -1,10 +1,20 @@
 export const DESKTOP_DOWNLOADS = {
   windows:
-    "https://gitlab.com/-/project/87350466/uploads/c8943cf470ce12e0ba16d532f0fc0a60/icpay-wallet-windows.zip",
+    "https://pub-5369792e75cb4166977efcd4cf9ea210.r2.dev/downloads/window/ICPay-1.0.0-windows-x64.exe",
+  windowsZip:
+    "https://pub-5369792e75cb4166977efcd4cf9ea210.r2.dev/downloads/window/icpay-wallet-windows.zip",
+  macosArm64:
+    "https://pub-5369792e75cb4166977efcd4cf9ea210.r2.dev/downloads/mac/ICPay-1.0.0-mac-arm64.dmg",
+  macosArm64Zip:
+    "https://pub-5369792e75cb4166977efcd4cf9ea210.r2.dev/downloads/mac/ICPay-1.0.0-mac-arm64.zip",
+  macosX64:
+    "https://pub-5369792e75cb4166977efcd4cf9ea210.r2.dev/downloads/mac/ICPay-1.0.0-mac-x64.dmg",
   linux:
-    "https://gitlab.com/-/project/87350466/uploads/1540d4e061db752ce25fed49fbd0ee61/icpay-wallet-linux.zip",
+    "https://pub-5369792e75cb4166977efcd4cf9ea210.r2.dev/downloads/linux/ICPay-1.0.0-linux-x64.tar.gz",
   linuxRpm:
-    "https://gitlab.com/-/project/87350466/uploads/1540d4e061db752ce25fed49fbd0ee61/icpay-wallet-linux.zip",
+    "https://pub-5369792e75cb4166977efcd4cf9ea210.r2.dev/downloads/linux/ICPay-1.0.0-linux-x64.tar.gz",
   linuxDeb:
-    "https://gitlab.com/-/project/87350466/uploads/1540d4e061db752ce25fed49fbd0ee61/icpay-wallet-linux.zip",
+    "https://pub-5369792e75cb4166977efcd4cf9ea210.r2.dev/downloads/linux/ICPay-1.0.0-linux-x64.tar.gz",
+  checksums:
+    "https://pub-5369792e75cb4166977efcd4cf9ea210.r2.dev/downloads/SHA256SUMS.txt",
 } as const

@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "기부",
           "description": "정부 공식 재난 구호 QR 코드."
+        },
+        "downloads": {
+          "title": "다운로드",
+          "description": "macOS, Windows 및 Linux용 데스크톱 앱."
         }
       },
       "sectionMore": "더보기",
@@ -1481,7 +1485,8 @@
         "terms": "이용약관",
         "privacy": "개인정보",
         "transparency": "투명성",
-        "charity": "기부"
+        "charity": "기부",
+        "downloads": "다운로드"
       },
       "community": {
         "github": "GitLab",

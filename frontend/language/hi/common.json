@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "चैरिटी",
           "description": "आधिकारिक सरकारी आपदा राहत QR कोड।"
+        },
+        "downloads": {
+          "title": "डाउनलोड",
+          "description": "macOS, Windows और Linux के लिए डेस्कटॉप ऐप्स।"
         }
       },
       "sectionMore": "और",
@@ -1481,7 +1485,8 @@
         "terms": "शर्तें",
         "privacy": "गोपनीयता",
         "transparency": "पारदर्शिता",
-        "charity": "चैरिटी"
+        "charity": "चैरिटी",
+        "downloads": "डाउनलोड"
       },
       "community": {
         "github": "GitLab",

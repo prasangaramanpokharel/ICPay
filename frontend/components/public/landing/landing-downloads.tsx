@@ -1,7 +1,10 @@
 "use client"
 
 import Image from "next/image"
+import Link from "next/link"
 import { useTranslations } from "next-intl"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { LANDING_MEDIA } from "@/lib/public/landing-media"
@@ -25,7 +28,7 @@ const PLATFORM_META: Record<
   macos: {
     icon: PAGE_IMAGES.downloads.macos,
     iconClassName: "dark:invert",
-    comingSoon: true,
+    href: DESKTOP_DOWNLOADS.macosArm64,
   },
 }
 
@@ -136,6 +139,18 @@ export function LandingDownloads() {
                 </Button>
               </div>
             </Card>
+
+            <div className="pt-2">
+              <Button
+                variant="link"
+                className="px-0 text-sm font-semibold text-primary gap-1.5"
+                nativeButton={false}
+                render={<Link href="/downloads" />}
+              >
+                <span>View all desktop downloads & checksums</span>
+                <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+              </Button>
+            </div>
           </div>
         </div>
 

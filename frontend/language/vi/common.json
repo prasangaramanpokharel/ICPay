@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "Từ thiện",
           "description": "Mã QR cứu trợ thiên tai chính thức của chính phủ."
+        },
+        "downloads": {
+          "title": "Tải xuống",
+          "description": "Ứng dụng máy tính để bàn cho macOS, Windows và Linux."
         }
       },
       "sectionMore": "Thêm",
@@ -1481,7 +1485,8 @@
         "terms": "Điều khoản",
         "privacy": "Quyền riêng tư",
         "transparency": "Minh bạch",
-        "charity": "Từ thiện"
+        "charity": "Từ thiện",
+        "downloads": "Tải xuống"
       },
       "community": {
         "github": "GitLab",

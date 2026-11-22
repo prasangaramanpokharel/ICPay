@@ -37,6 +37,7 @@ export const PUBLIC_RESOURCE_MENU_DEFS: NavMenuItemDef[] = [
 ]
 
 export const PUBLIC_LEGAL_MENU_DEFS: NavMenuItemDef[] = [
+  { id: "downloads", href: "/downloads" },
   { id: "charity", href: "/charity" },
   { id: "about", href: "/about" },
   { id: "faq", href: "/faq" },

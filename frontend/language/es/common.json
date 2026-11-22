@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "Caridad",
           "description": "Códigos QR oficiales de ayuda humanitaria gubernamental."
+        },
+        "downloads": {
+          "title": "Descargas",
+          "description": "Aplicaciones de escritorio para macOS, Windows y Linux."
         }
       },
       "sectionMore": "Más",
@@ -1481,7 +1485,8 @@
         "terms": "Términos",
         "privacy": "Privacidad",
         "transparency": "Transparencia",
-        "charity": "Caridad"
+        "charity": "Caridad",
+        "downloads": "Descargas"
       },
       "community": {
         "github": "GitLab",

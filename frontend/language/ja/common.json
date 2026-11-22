@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "チャリティ",
           "description": "政府公式の災害救援QRコード。"
+        },
+        "downloads": {
+          "title": "ダウンロード",
+          "description": "macOS、Windows、Linux 向けデスクトップアプリ。"
         }
       },
       "sectionMore": "その他",
@@ -1481,7 +1485,8 @@
         "terms": "利用規約",
         "privacy": "プライバシー",
         "transparency": "透明性",
-        "charity": "チャリティ"
+        "charity": "チャリティ",
+        "downloads": "ダウンロード"
       },
       "community": {
         "github": "GitLab",

@@ -1415,6 +1415,10 @@
         "charity": {
           "title": "Wohltätigkeit",
           "description": "Offizielle staatliche Katastrophenhilfe-QR-Codes."
+        },
+        "downloads": {
+          "title": "Downloads",
+          "description": "Desktop-Apps für macOS, Windows und Linux."
         }
       },
       "sectionMore": "Mehr",
@@ -1481,7 +1485,8 @@
         "terms": "Nutzungsbedingungen",
         "privacy": "Datenschutz",
         "transparency": "Transparenz",
-        "charity": "Wohltätigkeit"
+        "charity": "Wohltätigkeit",
+        "downloads": "Downloads"
       },
       "community": {
         "github": "GitLab",
