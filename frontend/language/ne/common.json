@@ -2133,6 +2133,87 @@
           }
         }
       }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "नयाँ",
+        "version": "डेस्कटप v1.0.0",
+        "platforms": "· macOS, Windows र Linux"
+      },
+      "hero": {
+        "title": "ICPay डेस्कटप डाउनलोड गर्नुहोस्",
+        "description": "तपाईंको डेस्कटपको लागि विशेष रूपमा निर्मित कस्टोडियल ICP वालेट। छिटो, सुरक्षित र Internet Identity मार्फत मात्र प्रमाणीकृत।"
+      },
+      "primary": {
+        "downloadMac": "Mac को लागि डाउनलोड",
+        "downloadWindows": "Windows को लागि डाउनलोड",
+        "downloadLinux": "Linux को लागि डाउनलोड",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 र 11 (64-बिट) · 84 MB",
+        "linuxSubtitle": "x64 टारबल · 98 MB",
+        "releaseHashes": "रिलिज ह्यासहरू"
+      },
+      "dropdown": {
+        "ariaLabel": "डेस्कटप प्लेटफर्म छान्नुहोस्",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64-बिट)",
+        "windowsPortable": "Windows पोर्टेबल",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Apple Silicon र Intel मेसिनहरूको लागि विश्वव्यापी प्याकेज।",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Intel आर्किटेक्चर",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon पोर्टेबल",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "६४-बिट सेटअप इन्स्टलर र पोर्टेबल निष्पादन योग्य संग्रह।",
+          "installerTitle": "सेटअप इन्स्टलर",
+          "installerSub": "NSIS प्याकेज · EXE",
+          "portableTitle": "पोर्टेबल संग्रह",
+          "portableSub": "x64 बाइनरी · ZIP",
+          "archTitle": "आर्किटेक्चर",
+          "archSub": "x86_64 प्रमाणित",
+          "supportedBadge": "समर्थित"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Ubuntu, Debian, Fedora, Arch को लागि वितरण संग्रह।",
+          "tarballTitle": "वितरण टारबल",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "RPM मिल्दो",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "DEB मिल्दो"
+        }
+      },
+      "hashes": {
+        "title": "क्रिप्टोग्राफिक शुद्धता (SHA-256)",
+        "description": "सक्कल बाइनरी सुनिश्चित गर्न आफ्नो टर्मिनलमा सिधै चेकसम प्रमाणित गर्नुहोस्।",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "कपी गर्नुहोस्",
+        "copied": "कपी भयो",
+        "toastSuccess": "SHA-256 ह्यास क्लिपबोर्डमा कपी भयो",
+        "toastError": "ह्यास कपी गर्न असफल"
+      },
+      "features": {
+        "custodyTitle": "कस्टोडियल संरचना",
+        "custodyDesc": "केवल Internet Identity द्वारा प्रमाणीकृत। कुनै पनि सिड वाक्यांश वा पासवर्ड स्थानीय रूपमा सुरक्षित हुँदैन।",
+        "perfTitle": "नेटिभ कार्यक्षमता",
+        "perfDesc": "न्यूनतम मेमोरी खपतको साथ Electron 33 द्वारा सञ्चालित द्रुत र सुरक्षित कार्यक्षमता।",
+        "edgeTitle": "Cloudflare Edge वितरण",
+        "edgeDesc": "विश्वभर ३३० भन्दा बढी स्थानहरूमा क्यासिङसहितको उच्च गतिको R2 भण्डारण।"
+      }
     }
   },
   "trade": {

@@ -2133,6 +2133,87 @@
           }
         }
       }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "신규",
+        "version": "데스크톱 v1.0.0",
+        "platforms": "· macOS, Windows 및 Linux"
+      },
+      "hero": {
+        "title": "ICPay 데스크톱 다운로드",
+        "description": "데스크톱 환경에 최적화된 수탁형 ICP 지갑입니다. 빠르고 안전하며 Internet Identity로만 인증됩니다."
+      },
+      "primary": {
+        "downloadMac": "Mac용 다운로드",
+        "downloadWindows": "Windows용 다운로드",
+        "downloadLinux": "Linux용 다운로드",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 및 11 (64비트) · 84 MB",
+        "linuxSubtitle": "x64 Tarball · 98 MB",
+        "releaseHashes": "릴리스 해시"
+      },
+      "dropdown": {
+        "ariaLabel": "데스크톱 플랫폼 선택",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64비트)",
+        "windowsPortable": "Windows 포터블",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Apple Silicon 및 Intel 기기를 위한 유니버설 패키지입니다.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Intel 아키텍처",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon 포터블",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "64비트 설치 프로그램 및 포터블 실행 파일 아카이브입니다.",
+          "installerTitle": "설치 프로그램",
+          "installerSub": "NSIS 패키지 · EXE",
+          "portableTitle": "포터블 아카이브",
+          "portableSub": "x64 바이너리 · ZIP",
+          "archTitle": "아키텍처",
+          "archSub": "x86_64 검증됨",
+          "supportedBadge": "지원됨"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Ubuntu, Debian, Fedora, Arch 배포판 아카이브입니다.",
+          "tarballTitle": "배포용 Tarball",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "RPM 호환",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "DEB 호환"
+        }
+      },
+      "hashes": {
+        "title": "암호화 무결성 검증 (SHA-256)",
+        "description": "터미널에서 직접 체크섬을 검증하여 변조되지 않은 정품 바이너리를 확인하세요.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "복사",
+        "copied": "복사됨",
+        "toastSuccess": "SHA-256 해시가 클립보드에 복사되었습니다",
+        "toastError": "해시 복사에 실패했습니다"
+      },
+      "features": {
+        "custodyTitle": "수탁형 아키텍처",
+        "custodyDesc": "Internet Identity로만 안전하게 인증됩니다. 시드 구문, 암호화되지 않은 키, 비밀번호는 로컬에 일절 저장되지 않습니다.",
+        "perfTitle": "네이티브 성능",
+        "perfDesc": "최소한의 메모리 점유율과 Electron 33 기반의 하드웨어 가속 렌더링 및 암호화를 제공합니다.",
+        "edgeTitle": "Cloudflare Edge 엣지 전송",
+        "edgeDesc": "330개 이상의 글로벌 엣지 캐싱과 대역폭 제한 없는 Cloudflare R2 분산 객체 스토리지를 사용합니다."
+      }
     }
   },
   "trade": {

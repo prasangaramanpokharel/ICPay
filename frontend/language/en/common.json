@@ -2172,6 +2172,87 @@
           }
         }
       }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "New",
+        "version": "Desktop v1.0.0",
+        "platforms": "· macOS, Windows & Linux"
+      },
+      "hero": {
+        "title": "Download ICPay Desktop",
+        "description": "The custodial ICP wallet built natively for your desktop. Fast, secure, and authenticated exclusively via Internet Identity."
+      },
+      "primary": {
+        "downloadMac": "Download for Mac",
+        "downloadWindows": "Download for Windows",
+        "downloadLinux": "Download for Linux",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 & 11 (64-bit) · 84 MB",
+        "linuxSubtitle": "x64 Tarball · 98 MB",
+        "releaseHashes": "Release Hashes"
+      },
+      "dropdown": {
+        "ariaLabel": "Select desktop platform",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64-bit)",
+        "windowsPortable": "Windows Portable",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Universal package for Apple Silicon and Intel machines.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Intel Architecture",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Portable",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "64-bit setup installer and portable executable archive.",
+          "installerTitle": "Setup Installer",
+          "installerSub": "NSIS Package · EXE",
+          "portableTitle": "Portable Archive",
+          "portableSub": "x64 Binary · ZIP",
+          "archTitle": "Architecture",
+          "archSub": "x86_64 Verified",
+          "supportedBadge": "Supported"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Distribution archive for Ubuntu, Debian, Fedora, Arch.",
+          "tarballTitle": "Distribution Tarball",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "RPM Compatible",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "DEB Compatible"
+        }
+      },
+      "hashes": {
+        "title": "Cryptographic Integrity (SHA-256)",
+        "description": "Verify checksums directly in your terminal to ensure genuine, tamper-free binaries.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Copy",
+        "copied": "Copied",
+        "toastSuccess": "SHA-256 hash copied to clipboard",
+        "toastError": "Failed to copy hash"
+      },
+      "features": {
+        "custodyTitle": "Custodial Architecture",
+        "custodyDesc": "Authenticated exclusively via Internet Identity. No seed phrases, unencrypted keys, or passwords are ever stored locally.",
+        "perfTitle": "Native Performance",
+        "perfDesc": "Hardware-accelerated rendering and cryptography powered by Electron 33 with minimal memory usage.",
+        "edgeTitle": "Cloudflare Edge Delivery",
+        "edgeDesc": "Global R2 object storage with multi-region edge caching across 330+ locations and zero egress throttling."
+      }
     }
   },
   "cyclesTopUp": {

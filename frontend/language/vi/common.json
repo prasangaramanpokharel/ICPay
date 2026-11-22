@@ -2133,6 +2133,87 @@
           }
         }
       }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "Mới",
+        "version": "Desktop v1.0.0",
+        "platforms": "· macOS, Windows & Linux"
+      },
+      "hero": {
+        "title": "Tải xuống ICPay Desktop",
+        "description": "Ví lưu ký ICP được xây dựng riêng cho máy tính để bàn của bạn. Nhanh chóng, an toàn và được xác thực độc quyền qua Internet Identity."
+      },
+      "primary": {
+        "downloadMac": "Tải cho Mac",
+        "downloadWindows": "Tải cho Windows",
+        "downloadLinux": "Tải cho Linux",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 & 11 (64-bit) · 84 MB",
+        "linuxSubtitle": "x64 Tarball · 98 MB",
+        "releaseHashes": "Mã băm phát hành"
+      },
+      "dropdown": {
+        "ariaLabel": "Chọn nền tảng máy tính",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64-bit)",
+        "windowsPortable": "Windows Portable",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Gói phổ quát cho các thiết bị Apple Silicon và Intel.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Kiến trúc Intel",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Portable",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "Trình cài đặt 64-bit và tệp thực thi di động.",
+          "installerTitle": "Trình cài đặt",
+          "installerSub": "Gói NSIS · EXE",
+          "portableTitle": "Tệp di động",
+          "portableSub": "Nhị phân x64 · ZIP",
+          "archTitle": "Kiến trúc",
+          "archSub": "x86_64 Đã xác minh",
+          "supportedBadge": "Được hỗ trợ"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Bản phân phối cho Ubuntu, Debian, Fedora, Arch.",
+          "tarballTitle": "Tarball phân phối",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "Tương thích RPM",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "Tương thích DEB"
+        }
+      },
+      "hashes": {
+        "title": "Tính toàn vẹn mã hóa (SHA-256)",
+        "description": "Xác minh mã băm trực tiếp trong terminal để đảm bảo tệp chính hãng và an toàn.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Sao chép",
+        "copied": "Đã sao chép",
+        "toastSuccess": "Đã sao chép mã băm SHA-256 vào bộ nhớ tạm",
+        "toastError": "Sao chép mã băm thất bại"
+      },
+      "features": {
+        "custodyTitle": "Kiến trúc lưu ký",
+        "custodyDesc": "Xác thực độc quyền qua Internet Identity. Không lưu cụm từ hạt giống, khóa hoặc mật khẩu trên máy cục bộ.",
+        "perfTitle": "Hiệu năng gốc",
+        "perfDesc": "Đồ họa tăng tốc phần cứng và mã hóa được hỗ trợ bởi Electron 33 với mức sử dụng bộ nhớ tối thiểu.",
+        "edgeTitle": "Phân phối Cloudflare Edge",
+        "edgeDesc": "Lưu trữ đối tượng R2 toàn cầu với bộ nhớ đệm biên trên hơn 330 địa điểm."
+      }
     }
   },
   "trade": {

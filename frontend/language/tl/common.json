@@ -2133,6 +2133,87 @@
           }
         }
       }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "Bago",
+        "version": "Desktop v1.0.0",
+        "platforms": "· macOS, Windows at Linux"
+      },
+      "hero": {
+        "title": "I-download ang ICPay Desktop",
+        "description": "Ang custodial ICP wallet na binuo para sa iyong desktop. Mabilis, ligtas, at eksklusibong napatotohanan sa pamamagitan ng Internet Identity."
+      },
+      "primary": {
+        "downloadMac": "I-download para sa Mac",
+        "downloadWindows": "I-download para sa Windows",
+        "downloadLinux": "I-download para sa Linux",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 at 11 (64-bit) · 84 MB",
+        "linuxSubtitle": "x64 Tarball · 98 MB",
+        "releaseHashes": "Mga Release Hash"
+      },
+      "dropdown": {
+        "ariaLabel": "Pumili ng desktop platform",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64-bit)",
+        "windowsPortable": "Windows Portable",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Pangkalahatang package para sa mga aparatong Apple Silicon at Intel.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Arkitektura ng Intel",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Portable",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "64-bit setup installer at portable executable archive.",
+          "installerTitle": "Setup Installer",
+          "installerSub": "NSIS Package · EXE",
+          "portableTitle": "Portable Archive",
+          "portableSub": "x64 Binary · ZIP",
+          "archTitle": "Arkitektura",
+          "archSub": "x86_64 Na-verify",
+          "supportedBadge": "Suportado"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Distribution archive para sa Ubuntu, Debian, Fedora, Arch.",
+          "tarballTitle": "Distribution Tarball",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "Tugma sa RPM",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "Tugma sa DEB"
+        }
+      },
+      "hashes": {
+        "title": "Cryptographic Integrity (SHA-256)",
+        "description": "I-verify ang mga checksum nang direkta sa iyong terminal upang matiyak ang tunay na binary.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Kopyahin",
+        "copied": "Nakopya",
+        "toastSuccess": "Nakopya ang SHA-256 hash sa clipboard",
+        "toastError": "Nabigong kopyahin ang hash"
+      },
+      "features": {
+        "custodyTitle": "Custodial Architecture",
+        "custodyDesc": "Eksklusibong napatotohanan sa pamamagitan ng Internet Identity. Walang mga seed phrase o password na naiimbak nang lokal.",
+        "perfTitle": "Native Performance",
+        "perfDesc": "Pinapagana ng Electron 33 na may hardware-accelerated rendering at mababang paggamit ng memory.",
+        "edgeTitle": "Cloudflare Edge Delivery",
+        "edgeDesc": "Global R2 object storage na may multi-region caching sa higit 330 lokasyon."
+      }
     }
   },
   "trade": {
