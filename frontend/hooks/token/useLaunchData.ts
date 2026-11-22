@@ -11,6 +11,7 @@ import {
   isLaunchReady,
   getMyTokens,
   getTokenById,
+  getTokenByLedger,
 } from "@/services/launch/launch"
 import { normalizeSymbol, validateSymbol } from "@/lib/token/launch"
 
@@ -80,7 +81,12 @@ export function useToken(id: string | null) {
 
   const { data, error, isLoading, mutate } = useSWR(
     id ? keyFor(identity, "token", id) : null,
-    () => getTokenById(identity, id!),
+    async () => {
+      if (!id) return null
+      const token = await getTokenById(identity, id)
+      if (token) return token
+      return getTokenByLedger(identity, id)
+    },
     {
       ...QUERY,
       keepPreviousData: true,

@@ -65,4 +65,8 @@ Debug.print("PASS: memo carries the handle, the amount and the date");
 assert (UsernameSaleService.saleMemo("alice", Config.PRICE_STANDARD, 20_454 * DAY) == "@alice 2ICP 2026-01-01");
 Debug.print("PASS: memo prices a 5-char name at 2 ICP");
 
+assert (UsernameSaleService.saleMemoWithCurrency("btc", Config.PRICE_ULTRA_ICPAY, 20_454 * DAY, #ICPAY) == "@btc 160000ICPAY 2026-01-01");
+assert (UsernameSaleService.saleMemoWithCurrency("btc", Config.PRICE_ULTRA_ICPAY, 20_454 * DAY, #ICPAY).size() <= Config.MEMO_MAX_BYTES);
+Debug.print("PASS: ICPAY sale memo fits ledger limit and carries ICPAY symbol");
+
 Debug.print("ALL DATETIME TESTS PASSED");

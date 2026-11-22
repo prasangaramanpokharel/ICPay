@@ -102,6 +102,12 @@ assert (UsernameValidator.priceFor("alicex") == Config.PRICE_BASIC);
 assert (UsernameValidator.priceFor("abcdefgh") == Config.PRICE_BASIC);
 Debug.print("PASS: 6-8 chars price at 1 ICP");
 
+assert (UsernameValidator.priceForCurrency("btc", #ICPAY) == Config.PRICE_ULTRA_ICPAY);
+assert (UsernameValidator.priceForCurrency("alex", #ICPAY) == Config.PRICE_PREMIUM_ICPAY);
+assert (UsernameValidator.priceForCurrency("alice", #ICPAY) == Config.PRICE_STANDARD_ICPAY);
+assert (UsernameValidator.priceForCurrency("alicex", #ICPAY) == Config.PRICE_BASIC_ICPAY);
+Debug.print("PASS: ICPAY prices match discounted tiers");
+
 // Prices must strictly decrease as the name gets longer, otherwise a buyer
 // could pay less for scarcer inventory.
 assert (Config.PRICE_ULTRA_PREMIUM > Config.PRICE_PREMIUM);

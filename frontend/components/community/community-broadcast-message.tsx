@@ -113,18 +113,12 @@ export function BroadcastMessage({
 
   const copyMessageText = async () => {
     await navigator.clipboard.writeText(message.text)
-    toast.add({
-      title: "Message copied to clipboard",
-      type: "info",
-    })
+    toast.success("Message copied to clipboard")
   }
 
   const copyMessageLink = async () => {
     await navigator.clipboard.writeText(channelMessageUrl(channelSlug, message.id))
-    toast.add({
-      title: "Link copied to clipboard",
-      type: "info",
-    })
+    toast.success("Link copied to clipboard")
   }
 
   const handleDelete = () => {

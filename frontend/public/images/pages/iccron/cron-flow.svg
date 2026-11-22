@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 240" width="800" height="240" fill="none">
+  <defs>
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#ec4899" />
+      <stop offset="50%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <linearGradient id="nodeBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1f2937" />
+      <stop offset="100%" stop-color="#111827" />
+    </linearGradient>
+  </defs>
+
+  <line x1="80" y1="120" x2="720" y2="120" stroke="url(#lineGrad)" stroke-width="3" stroke-dasharray="6 6" />
+
+  <!-- Step 1: Definition -->
+  <g transform="translate(80, 70)">
+    <circle cx="0" cy="50" r="36" fill="url(#nodeBg)" stroke="#ec4899" stroke-width="2" />
+    <text x="0" y="55" text-anchor="middle" fill="#f472b6" font-family="monospace" font-size="14" font-weight="bold">01</text>
+    <text x="0" y="110" text-anchor="middle" fill="#ffffff" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">Define Schedule</text>
+    <text x="0" y="128" text-anchor="middle" fill="#9ca3af" font-family="monospace" font-size="10">Cron / Webhook</text>
+  </g>
+
+  <!-- Step 2: Bitmask Compilation -->
+  <g transform="translate(280, 70)">
+    <circle cx="0" cy="50" r="36" fill="url(#nodeBg)" stroke="#8b5cf6" stroke-width="2" />
+    <text x="0" y="55" text-anchor="middle" fill="#a78bfa" font-family="monospace" font-size="14" font-weight="bold">02</text>
+    <text x="0" y="110" text-anchor="middle" fill="#ffffff" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">Compile Bitmask</text>
+    <text x="0" y="128" text-anchor="middle" fill="#9ca3af" font-family="monospace" font-size="10">O(1) Time Math</text>
+  </g>
+
+  <!-- Step 3: Canister Timer Tick -->
+  <g transform="translate(480, 70)">
+    <circle cx="0" cy="50" r="36" fill="url(#nodeBg)" stroke="#3b82f6" stroke-width="2" />
+    <text x="0" y="55" text-anchor="middle" fill="#60a5fa" font-family="monospace" font-size="14" font-weight="bold">03</text>
+    <text x="0" y="110" text-anchor="middle" fill="#ffffff" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">Autonomous Tick</text>
+    <text x="0" y="128" text-anchor="middle" fill="#9ca3af" font-family="monospace" font-size="10">Zero Server Bots</text>
+  </g>
+
+  <!-- Step 4: Dispatch & Audit -->
+  <g transform="translate(680, 70)">
+    <circle cx="0" cy="50" r="36" fill="url(#nodeBg)" stroke="#10b981" stroke-width="2" />
+    <text x="0" y="55" text-anchor="middle" fill="#34d399" font-family="monospace" font-size="14" font-weight="bold">04</text>
+    <text x="0" y="110" text-anchor="middle" fill="#ffffff" font-family="system-ui, sans-serif" font-size="12" font-weight="bold">Execute &amp; Log</text>
+    <text x="0" y="128" text-anchor="middle" fill="#9ca3af" font-family="monospace" font-size="10">Auto-Retry &amp; DLQ</text>
+  </g>
+</svg>

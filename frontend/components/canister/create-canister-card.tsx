@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react"
+import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { InformationCircleIcon } from "@hugeicons/core-free-icons"
@@ -290,9 +291,20 @@ export function CreateCanisterCard() {
                     {loadingMeta && rate == null ? (
                       <Skeleton className="mt-1.5 h-7 w-36" />
                     ) : (
-                      <p className="mt-1 text-2xl font-semibold tracking-tight tabular-nums">
-                        {estimatedCycles != null ? `≈ ${formatCycles(estimatedCycles)}` : "—"}
-                      </p>
+                      <div className="mt-1 flex items-center gap-1.5">
+                        <span className="text-2xl font-semibold tracking-tight tabular-nums">
+                          {estimatedCycles != null ? `≈ ${formatCycles(estimatedCycles)}` : "—"}
+                        </span>
+                        {estimatedCycles != null && (
+                          <Image
+                            src="/images/pages/canister/icon/tcycle.svg"
+                            alt="Cycles"
+                            width={20}
+                            height={20}
+                            className="size-5 shrink-0 rounded-full select-none"
+                          />
+                        )}
+                      </div>
                     )}
                   </div>
                   {rate != null && (

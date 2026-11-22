@@ -1,24 +1,34 @@
 "use client"
 
-import { useState } from "react"
-import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { EyeIcon, FloppyDiskIcon } from "@hugeicons/core-free-icons"
+import { useState, useTransition } from "react"
+import { useTranslations } from "next-intl"
+import { invalidateCanisterStatus } from "@/lib/swr/keys"
+import { toast } from "@/components/ui/sonner"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { SettingsSection } from "./settings-section"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Spinner } from "@/components/ui/spinner"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { useAuth } from "@/components/auth/auth-provider"
 import {
   LogVisibility,
   updateCanisterSettings,
   formatManageError,
 } from "@/services/canister/management"
+import { cn } from "@/lib/ui/utils"
 
 export function CanisterVisibilityCard({
   canisterId,
-  initialLogVisibility,
+  initialLogVisibility = "controllers",
   isController,
   onRefresh,
 }: {
@@ -27,96 +37,121 @@ export function CanisterVisibilityCard({
   isController: boolean
   onRefresh: () => void
 }) {
+  const t = useTranslations("myCanisters")
   const { identity } = useAuth()
-  const [logPublic, setLogPublic] = useState(initialLogVisibility === "public")
-  const [saving, setSaving] = useState(false)
+  const [selectedVisibility, setSelectedVisibility] = useState<"controllers" | "public">(
+    initialLogVisibility
+  )
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [isPending, startTransition] = useTransition()
 
-  const handleSave = async () => {
+  const isDirty = selectedVisibility !== initialLogVisibility
+
+  const handleSave = () => {
     if (!identity || !canisterId) return
-    setSaving(true)
-    try {
-      await updateCanisterSettings(identity, canisterId, {
-        logVisibility: logPublic ? LogVisibility.Public : LogVisibility.Controllers,
-      })
-      toast.success("Canister log visibility updated")
-      onRefresh()
-    } catch (err) {
-      toast.error(formatManageError(err))
-    } finally {
-      setSaving(false)
+    setConfirmOpen(false)
+
+    startTransition(async () => {
+      try {
+        await updateCanisterSettings(identity, canisterId, {
+          logVisibility:
+            selectedVisibility === "public" ? LogVisibility.Public : LogVisibility.Controllers,
+        })
+        toast.success(t("settingsSaved"))
+        void invalidateCanisterStatus(canisterId)
+        onRefresh()
+      } catch (err) {
+        toast.error(formatManageError(err))
+      }
+    })
+  }
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!isDirty || isPending || !isController) return
+    if (selectedVisibility === "public") {
+      setConfirmOpen(true)
+    } else {
+      handleSave()
     }
   }
 
   return (
-    <Card className="rounded-2xl border border-border/40 bg-card/40">
-      <CardHeader>
-        <div className="flex items-center gap-2 text-foreground font-semibold">
-          <HugeiconsIcon icon={EyeIcon} className="size-4 text-primary" strokeWidth={1.75} />
-          <CardTitle className="text-base">Canister Visibility & Logs</CardTitle>
-        </div>
-        <CardDescription className="text-xs">
-          Determine who can inspect execution logs, error backtraces, and runtime telemetry.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        <div className="flex flex-col gap-3 rounded-xl border border-border/40 bg-muted/20 p-4">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-sm font-medium text-foreground">Log Inspection Policy</p>
-              <p className="text-xs text-muted-foreground">
-                {logPublic
-                  ? "Logs are publicly queryable by any caller on the Internet Computer network."
-                  : "Logs are private and only queryable by authorized canister controllers."}
-              </p>
-            </div>
-            <Badge variant={logPublic ? "default" : "secondary"} className="shrink-0">
-              {logPublic ? "Public Access" : "Controllers Only"}
-            </Badge>
-          </div>
-
-          {isController && (
-            <div className="flex items-center gap-2.5 pt-2">
+    <>
+      <form onSubmit={handleSubmit}>
+        <SettingsSection
+          title={t("visibilityTitle")}
+          description={t("visibilitySubtitle")}
+          footer={
+            isController ? (
               <Button
-                type="button"
-                variant={!logPublic ? "default" : "outline"}
+                type="submit"
+                disabled={!isDirty || isPending}
                 size="sm"
-                onClick={() => setLogPublic(false)}
-                className="text-xs"
+                className="cursor-pointer"
               >
-                Controllers Only (Private)
+                <span>{isPending ? "Saving…" : t("save")}</span>
               </Button>
-              <Button
-                type="button"
-                variant={logPublic ? "default" : "outline"}
-                size="sm"
-                onClick={() => setLogPublic(true)}
-                className="text-xs"
-              >
-                Public Access
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {!isController && (
-          <div className="rounded-xl border border-border/40 bg-muted/20 p-3 text-xs text-muted-foreground">
-            Read-only view · Only authorized controllers can change log visibility.
-          </div>
-        )}
-
-        {isController && (
-          <div className="flex justify-end pt-1">
-            <Button type="button" size="sm" disabled={saving} onClick={handleSave}>
-              {saving ? (
-                <Spinner data-icon="inline-start" />
-              ) : (
-                <HugeiconsIcon icon={FloppyDiskIcon} data-icon="inline-start" />
+            ) : null
+          }
+        >
+          <RadioGroup
+            value={selectedVisibility}
+            onValueChange={(val) => setSelectedVisibility(val as "controllers" | "public")}
+            disabled={!isController || isPending}
+            className="gap-3"
+          >
+            <label
+              htmlFor="vis-ctrl"
+              className={cn(
+                "flex items-start gap-3 rounded-lg border p-3.5 transition-colors cursor-pointer",
+                selectedVisibility === "controllers"
+                  ? "border-border bg-accent/30 text-foreground"
+                  : "border-border/40 hover:bg-muted/20 text-muted-foreground"
               )}
-              <span>{saving ? "Saving…" : "Save Visibility"}</span>
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+            >
+              <RadioGroupItem value="controllers" id="vis-ctrl" className="mt-0.5" />
+              <div className="space-y-0.5">
+                <p className="text-xs font-medium text-foreground">{t("optControllersTitle")}</p>
+                <p className="text-[11px] text-muted-foreground">{t("optControllersDesc")}</p>
+              </div>
+            </label>
+
+            <label
+              htmlFor="vis-pub"
+              className={cn(
+                "flex items-start gap-3 rounded-lg border p-3.5 transition-colors cursor-pointer",
+                selectedVisibility === "public"
+                  ? "border-border bg-accent/30 text-foreground"
+                  : "border-border/40 hover:bg-muted/20 text-muted-foreground"
+              )}
+            >
+              <RadioGroupItem value="public" id="vis-pub" className="mt-0.5" />
+              <div className="space-y-0.5">
+                <p className="text-xs font-medium text-foreground">{t("optPublicTitle")}</p>
+                <p className="text-[11px] text-muted-foreground">{t("optPublicDesc")}</p>
+              </div>
+            </label>
+          </RadioGroup>
+        </SettingsSection>
+      </form>
+
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("save")}</AlertDialogTitle>
+            <AlertDialogDescription className="text-xs text-muted-foreground">
+              {t("publicVisibilityConfirm")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isPending}>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction disabled={isPending} onClick={handleSave}>
+              {t("save")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }

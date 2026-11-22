@@ -98,6 +98,7 @@ export function BucketFilesPanel({
     | null
   >(null)
   const [deleting, setDeleting] = useState(false)
+  const [movingToFolder, setMovingToFolder] = useState<string | null>(null)
   const [query, setQuery] = useState("")
   const [debouncedQuery, setDebouncedQuery] = useState("")
   const [sort, setSortState] = useState<FileSortKey>(() => {
@@ -342,57 +343,62 @@ export function BucketFilesPanel({
 
     if (operations.length === 0) return
 
-    const movedPathsSet = new Set(operations.map((op) => stripLeadingSlash(op.source)))
-    pruneSelection(
-      operations.flatMap((op) => {
-        const s = stripLeadingSlash(op.source)
-        return [`file:${op.source}`, `file:/${s}`, `file:${s}`]
-      })
-    )
-    if (previewFile && movedPathsSet.has(stripLeadingSlash(previewFile.path))) {
-      setPreviewFile(null)
-    }
+    setMovingToFolder(targetFolderName)
+    try {
+      const movedPathsSet = new Set(operations.map((op) => stripLeadingSlash(op.source)))
+      pruneSelection(
+        operations.flatMap((op) => {
+          const s = stripLeadingSlash(op.source)
+          return [`file:${op.source}`, `file:/${s}`, `file:${s}`]
+        })
+      )
+      if (previewFile && movedPathsSet.has(stripLeadingSlash(previewFile.path))) {
+        setPreviewFile(null)
+      }
 
-    await refreshFiles(
-      (current: FileListPage | undefined) => {
-        if (!current) return current
-        const items = current.items.filter((f) => !movedPathsSet.has(stripLeadingSlash(f.path)))
-        const nextTotal =
-          current.total >= BigInt(movedPathsSet.size)
-            ? current.total - BigInt(movedPathsSet.size)
-            : 0n
-        return { ...current, items, total: nextTotal }
-      },
-      { revalidate: false }
-    )
+      await refreshFiles(
+        (current: FileListPage | undefined) => {
+          if (!current) return current
+          const items = current.items.filter((f) => !movedPathsSet.has(stripLeadingSlash(f.path)))
+          const nextTotal =
+            current.total >= BigInt(movedPathsSet.size)
+              ? current.total - BigInt(movedPathsSet.size)
+              : 0n
+          return { ...current, items, total: nextTotal }
+        },
+        { revalidate: false }
+      )
 
-    let err: string | null = null
-    if (onBulkMoveFiles && operations.length > 1) {
-      err = await onBulkMoveFiles(operations)
-    } else if (onMoveFile && operations.length === 1) {
-      err = await onMoveFile(operations[0].source, operations[0].destination)
-    } else if (onMoveFile) {
-      for (const op of operations) {
-        const itemErr = await onMoveFile(op.source, op.destination)
-        if (itemErr) {
-          err = itemErr
-          break
+      let err: string | null = null
+      if (onBulkMoveFiles && operations.length > 1) {
+        err = await onBulkMoveFiles(operations)
+      } else if (onMoveFile && operations.length === 1) {
+        err = await onMoveFile(operations[0].source, operations[0].destination)
+      } else if (onMoveFile) {
+        for (const op of operations) {
+          const itemErr = await onMoveFile(op.source, op.destination)
+          if (itemErr) {
+            err = itemErr
+            break
+          }
         }
       }
-    }
 
-    if (err) {
-      toast.error(err)
-      await refreshFiles()
-    } else {
-      const label =
-        operations.length === 1
-          ? `Moved ${operations[0].source.split("/").pop()} to ${targetFolderName}`
-          : `Moved ${operations.length} items to ${targetFolderName}`
-      toast.success(label)
-      await refreshFiles()
-      void refreshStats()
-      void refreshAllFiles()
+      if (err) {
+        toast.error(err)
+        await refreshFiles()
+      } else {
+        const label =
+          operations.length === 1
+            ? `Moved ${operations[0].source.split("/").pop()} to ${targetFolderName}`
+            : `Moved ${operations.length} items to ${targetFolderName}`
+        toast.success(label)
+        await refreshFiles()
+        void refreshStats()
+        void refreshAllFiles()
+      }
+    } finally {
+      setMovingToFolder(null)
     }
   }
 
@@ -681,6 +687,7 @@ export function BucketFilesPanel({
             setDeleteTarget({ type: "folder", name })
           }}
           onDropFilesIntoFolder={handleDropFilesIntoFolder}
+          movingToFolder={movingToFolder}
         />
       ) : (
         <BucketFilesTable
@@ -707,6 +714,7 @@ export function BucketFilesPanel({
             setDeleteTarget({ type: "folder", name })
           }}
           onDropFilesIntoFolder={handleDropFilesIntoFolder}
+          movingToFolder={movingToFolder}
         />
       )}
 

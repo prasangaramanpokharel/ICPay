@@ -265,7 +265,7 @@ export function TokenDetailDrawer({
                       <BtcWithdrawalList ledgerId={token.ledgerId} />
                     ) : null}
 
-                    <div className="rounded-2xl border border-border/60 bg-muted/15 p-4">
+                    <div className="rounded-2xl border border-border/60 bg-muted/15 overflow-hidden">
                       <TokenHistoryList key={token.ledgerId} token={token} />
                     </div>
                   </TabsContent>

@@ -13,8 +13,7 @@ import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 import { PremiumBadge } from "@/components/verified/premium-badge"
 import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { copyText } from "@/lib/wallet/utils"
-import { useTokenHoldings } from "@/hooks/wallet/useWalletData"
-import { useTokenPrices } from "@/hooks/market/useTokenPrices"
+import { useTokenHoldings, useTokenPrices } from "@/hooks/wallet/useWalletData"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { ViewOffIcon, ViewIcon } from "@hugeicons/core-free-icons"
 import { cn } from "@/lib/ui/utils"
@@ -183,7 +182,7 @@ export function HomeOverviewCard({
                   title="Click to refresh balance & price"
                   className="h-auto p-0 text-base font-medium tabular-nums text-foreground/80 hover:bg-transparent hover:text-foreground"
                 >
-                  {hidden || !fiat.formatted ? "••••" : `≈ ${fiat.symbol} ${fiat.formatted}`}
+                  {hidden || !fiat.formatted ? "••••" : `${fiat.symbol}${fiat.formatted}`}
                 </Button>
               </div>
             </div>

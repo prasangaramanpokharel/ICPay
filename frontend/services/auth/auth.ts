@@ -1,10 +1,11 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { AuthClient, type OpenIdProvider } from "@icp-sdk/auth/client"
-import { getIdentityProvider, getDerivationOrigin } from "@/services/icp"
+import { getIdentityProvider, getDerivationOrigin, getHost } from "@/services/icp"
 import { getWalletActor, clearActorCache } from "@/services/wallet"
 import {
   DELEGATION_TTL,
   POPUP_FEATURES,
+  II_BACKEND_CANISTER_ID,
 } from "@/lib/auth/config"
 import {
   prefersRedirectTransport,
@@ -31,10 +32,14 @@ function wantsRedirectTransport(options?: LoginOptions): boolean {
 
 function clientOptions(options?: LoginOptions) {
   const redirect = wantsRedirectTransport(options)
+  const host = getHost()
   return {
-    identityProvider: getIdentityProvider(),
+    identityProvider: {
+      authorizeUrl: getIdentityProvider(),
+      canisterId: II_BACKEND_CANISTER_ID,
+    },
+    agentOptions: { host },
     derivationOrigin: getDerivationOrigin(),
-    idleOptions: { disableIdle: true, disableDefaultIdleCallback: true },
     windowOpenerFeatures: POPUP_FEATURES,
     transport: redirect ? ("redirect" as const) : ("window" as const),
     ...(options?.openIdProvider ? { openIdProvider: options.openIdProvider } : {}),
@@ -109,7 +114,7 @@ export async function login(options?: LoginOptions): Promise<Identity | null> {
     .catch((e) => {
       if (wantsRedirectTransport(options)) clearRedirectPending()
       console.error("II login error:", e)
-      if (e instanceof Error && /popup|blocked/i.test(e.message)) {
+      if (e instanceof Error && /popup|blocked|could not be opened/i.test(e.message)) {
         throw new PopupBlockedError()
       }
       return null
@@ -119,6 +124,7 @@ export async function login(options?: LoginOptions): Promise<Identity | null> {
 export async function logout(): Promise<void> {
   const authClient = await createAuthClient()
   await authClient.signOut({ returnTo: "/login" })
+  authClient.dispose()
 
   clientPromise = null
   readyClient = null

@@ -40,26 +40,30 @@ export function BucketDocsPageToc({
 
   return (
     <nav className={cn("space-y-3", className)} aria-label="On this page">
-      <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+      <p className="text-xs font-semibold text-muted-foreground">
         On this page
       </p>
-      <div className="space-y-0.5 border-l border-border/60">
-        {headings.map((heading) => (
-          <a
-            key={heading.id}
-            href={`#${heading.id}`}
-            className={cn(
-              "block border-l-2 py-1 text-sm transition-colors -ml-px",
-              heading.level === 3 && "pl-6",
-              heading.level === 2 && "pl-3",
-              activeId === heading.id
-                ? "border-primary font-medium text-primary"
-                : "border-transparent text-muted-foreground hover:text-foreground"
-            )}
-          >
-            {heading.text}
-          </a>
-        ))}
+      <div className="space-y-1 border-l border-border/60">
+        {headings.map((heading) => {
+          const isActive = activeId === heading.id
+
+          return (
+            <a
+              key={heading.id}
+              href={`#${heading.id}`}
+              className={cn(
+                "block border-l-2 py-1 text-xs transition-colors -ml-px",
+                heading.level === 3 && "pl-5",
+                heading.level === 2 && "pl-3",
+                isActive
+                  ? "border-foreground font-medium text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {heading.text}
+            </a>
+          )
+        })}
       </div>
     </nav>
   )

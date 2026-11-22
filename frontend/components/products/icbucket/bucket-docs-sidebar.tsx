@@ -1,140 +1,141 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { useTranslations } from "next-intl"
+import { HugeiconsIcon } from "@hugeicons/react"
+import { Search01Icon } from "@hugeicons/core-free-icons"
+import { Gitlab } from "@dev.icons/react"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+} from "@/components/ui/sidebar"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
 import { docHref } from "@/lib/bucket/docs/nav"
 import type { BucketDocNavGroup } from "@/lib/bucket/docs/types"
-import { cn } from "@/lib/ui/utils"
 
-function NavLink({ slug, title, active }: { slug: string; title: string; active: boolean }) {
-  return (
-    <Link
-      href={docHref(slug)}
-      className={cn(
-        "block rounded-md px-2.5 py-1.5 text-sm transition-colors",
-        active
-          ? "bg-primary/10 font-medium text-primary"
-          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
-      )}
-    >
-      {title}
-    </Link>
-  )
+interface BucketDocsSidebarProps {
+  navGroups: BucketDocNavGroup[]
+  onOpenSearch: () => void
 }
 
-function BucketDocsNavTree({
-  groups,
-  pathname,
-  className,
-}: {
-  groups: BucketDocNavGroup[]
-  pathname: string | null
-  className?: string
-}) {
-  const t = useTranslations("bucket")
-
-  return (
-    <nav className={cn("space-y-6", className)} aria-label="Documentation">
-      <div className="space-y-1 px-2">
-        <Link
-          href="/bucket/docs"
-          className={cn(
-            "text-sm font-semibold transition-colors",
-            pathname === "/bucket/docs" ? "text-primary" : "text-foreground hover:text-primary"
-          )}
-        >
-          ICBucket
-        </Link>
-        <p className="text-xs text-muted-foreground">{t("docsSubtitle")}</p>
-      </div>
-      {groups.map((group) => (
-        <div key={group.label} className="space-y-1.5">
-          <p className="px-2.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {group.label}
-          </p>
-          <div className="space-y-0.5">
-            {group.items.map((item) => (
-              <NavLink
-                key={item.slug}
-                slug={item.slug}
-                title={item.title}
-                active={pathname === docHref(item.slug)}
-              />
-            ))}
-          </div>
-        </div>
-      ))}
-    </nav>
-  )
-}
-
-export function BucketDocsNavFallback({
-  groups,
-  className,
-}: {
-  groups: BucketDocNavGroup[]
-  className?: string
-}) {
-  return <BucketDocsNavTree groups={groups} pathname={null} className={className} />
-}
-
-export function BucketDocsNav({
-  groups,
-  className,
-}: {
-  groups: BucketDocNavGroup[]
-  className?: string
-}) {
+export function BucketDocsSidebar({ navGroups, onOpenSearch }: BucketDocsSidebarProps) {
   const pathname = usePathname()
-  return <BucketDocsNavTree groups={groups} pathname={pathname} className={className} />
-}
 
-function BucketDocsMobileChips({
-  groups,
-  pathname,
-}: {
-  groups: BucketDocNavGroup[]
-  pathname: string | null
-}) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-1 lg:hidden">
-      <Link
-        href="/bucket/docs"
-        className={cn(
-          "shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium transition-colors",
-          pathname === "/bucket/docs"
-            ? "border-primary bg-primary/10 text-primary"
-            : "border-border/60 text-muted-foreground hover:text-foreground"
-        )}
-      >
-        Home
-      </Link>
-      {groups.flatMap((group) =>
-        group.items.map((item) => (
+    <Sidebar className="border-r border-border/40 bg-sidebar">
+      <SidebarHeader className="gap-3 p-3">
+        <div className="flex items-center justify-between px-1">
           <Link
-            key={item.slug}
-            href={docHref(item.slug)}
-            className={cn(
-              "shrink-0 rounded-full border px-4 py-1.5 text-xs font-medium transition-colors",
-              pathname === docHref(item.slug)
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border/60 text-muted-foreground hover:text-foreground"
-            )}
+            href="/bucket/docs"
+            className="flex items-center gap-2.5 font-semibold text-sm text-foreground hover:opacity-90 transition-opacity"
           >
-            {item.title}
+            <div className="flex size-7 items-center justify-center rounded-lg border border-border/60 bg-card overflow-hidden">
+              <Image
+                src="/images/logo/icbucket/icbucket.png"
+                alt="ICBucket"
+                width={28}
+                height={28}
+                className="size-5 object-contain"
+              />
+            </div>
+            <span>ICBucket</span>
+            <span className="rounded border border-border/60 bg-muted/40 px-1.5 py-0.5 font-mono text-[10px] font-medium text-muted-foreground">
+              v1.0
+            </span>
           </Link>
-        ))
-      )}
-    </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={onOpenSearch}
+          className="flex h-9 w-full items-center gap-2 rounded-lg border border-border/60 bg-muted/30 px-2.5 text-xs text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground cursor-pointer"
+        >
+          <HugeiconsIcon icon={Search01Icon} className="size-3.5" />
+          <span>Search docs...</span>
+          <kbd className="pointer-events-none ml-auto inline-flex h-4 items-center rounded border border-border/70 bg-background px-1 font-mono text-[10px] text-muted-foreground">
+            ⌘K
+          </kbd>
+        </button>
+      </SidebarHeader>
+
+      <SidebarContent className="px-2">
+        {navGroups.map((group) => (
+          <SidebarGroup key={group.label} className="p-0 py-2">
+            <SidebarGroupLabel className="h-7 px-2 text-xs font-semibold text-muted-foreground/80">
+              {group.label}
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu className="gap-0.5">
+                {group.items.map((item) => {
+                  const href = docHref(item.slug)
+                  const isActive = pathname === href
+
+                  return (
+                    <SidebarMenuItem key={item.slug}>
+                      <SidebarMenuButton
+                        render={<Link href={href} />}
+                        isActive={isActive}
+                        aria-current={isActive ? "page" : undefined}
+                        className="h-9 rounded-lg px-2.5 text-sm font-normal text-muted-foreground transition-colors hover:bg-muted hover:text-foreground data-[active=true]:bg-accent data-[active=true]:font-medium data-[active=true]:text-accent-foreground"
+                      >
+                        <span className="truncate">{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
+      </SidebarContent>
+
+      <SidebarFooter className="p-3">
+        <Separator className="mb-2" />
+        <div className="flex items-center justify-between gap-1">
+          <Button
+            variant="ghost"
+            size="xs"
+            render={<Link href="/icbucket" />}
+            className="text-xs text-muted-foreground hover:text-foreground"
+          >
+            Pricing
+          </Button>
+          <Button
+            variant="ghost"
+            size="xs"
+            render={
+              <Link
+                href="https://gitlab.com/prasangapokharel/icbucket"
+                target="_blank"
+                rel="noopener noreferrer"
+              />
+            }
+            className="text-xs text-muted-foreground hover:text-foreground gap-1.5"
+          >
+            <Gitlab size={13} />
+            <span>GitLab</span>
+          </Button>
+          <Button
+            size="xs"
+            render={<Link href="/bucket" />}
+            className="text-xs font-medium cursor-pointer"
+          >
+            New bucket
+          </Button>
+        </div>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
   )
-}
-
-export function BucketDocsMobileNavFallback({ groups }: { groups: BucketDocNavGroup[] }) {
-  return <BucketDocsMobileChips groups={groups} pathname={null} />
-}
-
-export function BucketDocsMobileNav({ groups }: { groups: BucketDocNavGroup[] }) {
-  const pathname = usePathname()
-  return <BucketDocsMobileChips groups={groups} pathname={pathname} />
 }

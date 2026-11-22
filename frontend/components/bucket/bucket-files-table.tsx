@@ -7,6 +7,7 @@ import { GripVerticalIcon } from "@hugeicons/core-free-icons"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Spinner } from "@/components/ui/spinner"
 import {
   Table,
   TableBody,
@@ -70,6 +71,7 @@ export function BucketFilesTable({
   onDeleteFile,
   onDeleteFolder,
   onDropFilesIntoFolder,
+  movingToFolder,
 }: {
   bucketId?: string
   bucketName?: string
@@ -89,6 +91,7 @@ export function BucketFilesTable({
   onDeleteFile?: (path: string) => void
   onDeleteFolder?: (name: string) => void
   onDropFilesIntoFolder?: (paths: string[], folderName: string) => void
+  movingToFolder?: string | null
 }) {
   const t = useTranslations("bucket")
   const [dragOverFolder, setDragOverFolder] = useState<string | null>(null)
@@ -125,13 +128,14 @@ export function BucketFilesTable({
                   ? "—"
                   : formatFileSize(totals.bytes)
               const isOver = dragOverFolder === entry.name
+              const isMoving = movingToFolder === entry.name
 
               return (
                 <TableRow
                   key={key}
                   className={cn(
                     "group cursor-pointer border-border/40 transition-all hover:bg-muted/40 [content-visibility:auto] [contain-intrinsic-size:auto_52px]",
-                    isOver && "border-primary/50 bg-primary/10 ring-2 ring-primary/80"
+                    isOver && "border-2 border-dashed border-primary/90 bg-primary/10 shadow-xs"
                   )}
                   data-state={selected.has(key) ? "selected" : undefined}
                   onClick={() => onOpenFolder(entry.name)}
@@ -182,7 +186,12 @@ export function BucketFilesTable({
                         <span className="truncate text-sm font-medium text-foreground">
                           {entry.name}
                         </span>
-                        {totals.count > 0 ? (
+                        {isMoving ? (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-primary/15 px-1.5 py-0.5 text-[9px] font-medium text-primary animate-pulse">
+                            <Spinner className="size-2.5" />
+                            <span>Moving...</span>
+                          </span>
+                        ) : totals.count > 0 ? (
                           <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground tabular-nums">
                             {totals.count} {totals.count === 1 ? "item" : "items"}
                           </span>
@@ -276,7 +285,7 @@ export function BucketFilesTable({
                   <div className="flex min-w-0 items-center gap-2.5">
                     {canWrite ? (
                       <span
-                        className="inline-flex shrink-0 cursor-grab text-muted-foreground/50 transition-colors hover:text-foreground active:cursor-grabbing"
+                        className="inline-flex shrink-0 cursor-grab opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-active:opacity-100 group-focus-within:opacity-100 text-muted-foreground/50 hover:text-foreground active:cursor-grabbing"
                         title="Drag to move"
                       >
                         <HugeiconsIcon icon={GripVerticalIcon} className="size-4 shrink-0" strokeWidth={1.75} />

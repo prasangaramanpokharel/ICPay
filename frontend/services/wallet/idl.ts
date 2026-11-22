@@ -497,13 +497,18 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     ),
     register: IDL.Func([IDL.Text], [AuthResult], []),
     getUser: IDL.Func([], [IDL.Opt(UserPublic)], ["query"]),
+    getUsernames: IDL.Func([], [IDL.Vec(IDL.Text)], ["query"]),
+    getMyUsernames: IDL.Func([], [IDL.Vec(IDL.Text)], ["query"]),
     updateUsername: IDL.Func([IDL.Text], [ApiResult_2], []),
+    setPrimaryUsername: IDL.Func([IDL.Text], [ApiResult_2], []),
     checkUsername: IDL.Func([IDL.Text], [IDL.Bool], ["query"]),
     searchUsers: IDL.Func([IDL.Text], [IDL.Vec(UserPublic)], ["query"]),
     resolveUsername: IDL.Func([IDL.Text], [IDL.Opt(IDL.Principal)], ["query"]),
     getUsernamePrice: IDL.Func([IDL.Text], [IDL.Nat], ["query"]),
+    getUsernamePriceWithCurrency: IDL.Func([IDL.Text, IDL.Text], [IDL.Nat], ["query"]),
     getUsernameTreasury: IDL.Func([], [IDL.Principal], ["query"]),
     purchaseUsername: IDL.Func([IDL.Text], [ApiResult_9], []),
+    purchaseUsernameWithCurrency: IDL.Func([IDL.Text, IDL.Text], [ApiResult_9], []),
     getDashboard: IDL.Func([IDL.Text], [ApiResult_8], ["query"]),
     getDepositAddress: IDL.Func([], [IDL.Record({ owner: IDL.Principal, subaccount: IDL.Opt(IDL.Vec(IDL.Nat8)) })], ["query"]),
     getDepositAccountIdentifier: IDL.Func([], [IDL.Text], ["query"]),
@@ -744,5 +749,22 @@ export const walletIdl: IDL.InterfaceFactory = ({ IDL }) => {
     getIcpayRate: IDL.Func([], [IDL.Nat], ["query"]),
     getIcpaySale: IDL.Func([], [IcpaySaleQuote], []),
     buyIcpay: IDL.Func([IDL.Nat, IDL.Opt(IDL.Principal)], [ApiResultIcpayPurchase], []),
+    claim_pro_perk: IDL.Func([], [ApiResultBool], []),
+    has_claimed_pro_perk: IDL.Func([], [IDL.Bool], ["query"]),
+    get_pro_perk_status: IDL.Func(
+      [],
+      [
+        IDL.Variant({
+          ok: IDL.Record({
+            claimed: IDL.Bool,
+            fulfilled: IDL.Bool,
+            storageGb: IDL.Nat,
+            bucketId: IDL.Opt(IDL.Text),
+          }),
+          err: IDL.Text,
+        }),
+      ],
+      ["query"]
+    ),
   })
 }

@@ -1,5 +1,5 @@
 import Principal "mo:core/Principal";
-import List "mo:core/List";
+import Array "mo:core/Array";
 import Types "../types";
 import Config "../config/Config";
 import UserRepo "../repositories/UserRepository";
@@ -26,11 +26,10 @@ module {
         let offset = page * limit;
         let txs = TxRepo.getByUser(service.byUser, user.id, limit, offset);
         let total = TxRepo.getUserTxCount(service.byUser, user.id);
-        let items = List.map<Types.Transaction, Types.TransactionPublic>(
-          List.fromArray(txs),
-          func(tx) { Types.txToPublic(tx) }
-        );
-        #ok({ items = List.toArray(items); total; page; pageSize = limit });
+        let items = Array.tabulate<Types.TransactionPublic>(txs.size(), func(i) {
+          Types.txToPublic(txs[i])
+        });
+        #ok({ items; total; page; pageSize = limit });
       };
       case (null) { #err("User not found") };
     };
@@ -39,11 +38,8 @@ module {
   public func getDetail(service: TransactionService, caller: Principal, txId: Types.TxId): Types.ApiResult<Types.TransactionPublic> {
     switch (UserRepo.getByPrincipal(service.users, caller)) {
       case (?user) {
-        switch (TxRepo.getById(service.txs, txId)) {
+        switch (TxRepo.getByUserAndId(service.byUser, user.id, txId)) {
           case (?tx) {
-            if (tx.userId != user.id) {
-              return #err("Transaction not found");
-            };
             #ok(Types.txToPublic(tx));
           };
           case (null) { #err("Transaction not found") };

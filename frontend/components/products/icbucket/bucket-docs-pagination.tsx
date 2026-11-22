@@ -11,7 +11,6 @@ type BucketDocsPaginationProps = {
 }
 
 export function BucketDocsPagination({ currentSlug, navGroups }: BucketDocsPaginationProps) {
-  // Flatten all navigation items in sidebar display order
   const allItems = navGroups.flatMap((group) => group.items)
   const currentIndex = allItems.findIndex((item) => item.slug === currentSlug)
 
@@ -27,14 +26,14 @@ export function BucketDocsPagination({ currentSlug, navGroups }: BucketDocsPagin
   return (
     <nav
       aria-label="Documentation pagination"
-      className="mt-12 flex flex-col sm:flex-row items-stretch justify-between gap-4 border-t border-border/60 pt-6"
+      className="mt-12 flex flex-col sm:flex-row items-stretch justify-between gap-4 border-t border-border/40 pt-6"
     >
       {prevItem && prevHref ? (
         <Link
           href={prevHref}
-          className="group flex flex-1 flex-col items-start rounded-xl border border-border/60 bg-card/60 p-4 transition-all hover:border-primary/40 hover:bg-card/90 active:scale-[0.99]"
+          className="group flex flex-1 flex-col items-start rounded-xl border border-border/60 bg-card p-4 transition-all hover:border-border hover:bg-muted/30"
         >
-          <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground group-hover:text-primary transition-colors">
+          <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
             <HugeiconsIcon
               icon={ArrowLeft01Icon}
               className="size-3.5 transition-transform group-hover:-translate-x-0.5"
@@ -42,7 +41,7 @@ export function BucketDocsPagination({ currentSlug, navGroups }: BucketDocsPagin
             />
             Previous
           </span>
-          <span className="mt-1.5 font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
+          <span className="mt-1.5 font-semibold text-sm text-foreground">
             {prevItem.title}
           </span>
         </Link>
@@ -53,9 +52,9 @@ export function BucketDocsPagination({ currentSlug, navGroups }: BucketDocsPagin
       {nextItem && nextHref ? (
         <Link
           href={nextHref}
-          className="group flex flex-1 flex-col items-end text-right rounded-xl border border-border/60 bg-card/60 p-4 transition-all hover:border-primary/40 hover:bg-card/90 active:scale-[0.99]"
+          className="group flex flex-1 flex-col items-end text-right rounded-xl border border-border/60 bg-card p-4 transition-all hover:border-border hover:bg-muted/30"
         >
-          <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground group-hover:text-primary transition-colors">
+          <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
             Next
             <HugeiconsIcon
               icon={ArrowRight01Icon}
@@ -63,7 +62,7 @@ export function BucketDocsPagination({ currentSlug, navGroups }: BucketDocsPagin
               strokeWidth={1.75}
             />
           </span>
-          <span className="mt-1.5 font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
+          <span className="mt-1.5 font-semibold text-sm text-foreground">
             {nextItem.title}
           </span>
         </Link>

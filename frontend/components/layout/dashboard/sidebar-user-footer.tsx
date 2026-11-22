@@ -2,6 +2,7 @@
 
 import { useMemo } from "react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   CloudIcon,
@@ -46,6 +47,8 @@ export type NavUserProps = {
 
 export function NavUser({ user }: NavUserProps) {
   const router = useRouter()
+  const t = useTranslations("settings")
+  const tCommon = useTranslations("common")
   const { identity, logout } = useAuth()
   const { data } = useDashboard()
   const { isMobile } = useSidebar()
@@ -120,21 +123,21 @@ export function NavUser({ user }: NavUserProps) {
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => router.push("/profile")}>
                 <HugeiconsIcon icon={UserCircleIcon} className="size-4" />
-                Account
+                {tCommon("account")}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/bucket")}>
                 <HugeiconsIcon icon={CloudIcon} className="size-4" />
-                Bucket
+                {t("items.bucket")}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/wallet")}>
                 <HugeiconsIcon icon={Coins01Icon} className="size-4" />
-                Tokens
+                {t("items.tokens")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => void logout()}>
               <HugeiconsIcon icon={Logout01Icon} className="size-4" />
-              Log out
+              {t("signOut")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

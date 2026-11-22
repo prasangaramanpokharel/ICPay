@@ -44,8 +44,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: pageImageUrl(PAGE_IMAGES.icbucket.og),
-        width: 1920,
-        height: 1080,
+        width: 1254,
+        height: 1254,
         alt: "ICBucket - On-Chain Cloud Storage",
       },
     ],

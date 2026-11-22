@@ -1,0 +1,257 @@
+# ICPay Mainnet System & Infrastructure Audit Report
+
+- **Audit Date/Time**: Fri, 16 Oct 2026 12:53:04 UTC (2026-10-16T12:53:04Z)
+- **Target Network**: Mainnet (`ic`)
+- **Generated via**: Operations CLI (`npm run ci <command>`)
+
+---
+
+## 1. Executive Summary Table
+
+| Canister | Canister ID | Status | Cycles Balance | Daily Idle Burn | 30d Reserve | Runway | Memory (Billed) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **`backend`** | `6vbhm-nqaaa-aaaan-q6muq-cai` | Running | **33.30 T** | ~60.94 B/day | 1.83 T | **516 days** | 2.19 GB |
+| **`trade`** | `gomfy-saaaa-aaaan-q6onq-cai` | Running | **0.85 T** | ~2.01 B/day | 0.06 T | **393 days** | 3.2 MB |
+| **`frontend`** | `63dke-waaaa-aaaan-q6mvq-cai` | Running | **3.40 T** | ~2.67 B/day | 0.08 T | **1,240 days** | 8.8 MB |
+| **`blob store`** | `fly6t-piaaa-aaaan-q6oga-cai` | Running | **1.60 T** | ~1.92 B/day | 0.06 T | **803 days** | 39.4 MB |
+| **`cns`** | `6jtj7-4qaaa-aaaan-q6tta-cai` | Running | **0.68 T** | ~1.14 B/day | 0.03 T | **571 days** | 2.1 MB |
+| **`notifier`** | `2hvuh-xiaaa-aaaan-q6uua-cai` | Running | **0.49 T** | ~1.01 B/day | 0.03 T | **457 days** | 1.8 MB |
+| **TOTAL** | — | **ALL NOMINAL** | **~40.32 T** | **~69.69 B/day** | **2.09 T** | **> 1 year avg** | **~2.24 GB** |
+
+---
+
+## 2. Key Metric Rollups
+
+### A. Users & Identity
+- **Claimed Usernames (@handles)**: `273`
+- **Query Cost**: 0 cycles (free query `getUsernameCount` on backend)
+
+### B. ICPay Cloud (icBucket) Stats
+- **Total Buckets**: `8` (8 active, 0 expired)
+- **Files Stored**: `92`
+- **Logical Storage Used**: `1.2 MB`
+- **Capacity Tiers Sold**: `7.45 GB` (0% utilized)
+- **Gross Revenue**: `~4.00 ICP` (treasury list prices)
+- **Backend Idle Burn**: `0.061 T/day`
+- **Storage Burn**: `0.000 T/day`
+- **Total Runway**: `~529 days` (HEALTHY, no top-up required)
+
+### C. On-Chain Data Plane (icp_blob_store) Audit
+- **Canister ID**: `fly6t-piaaa-aaaan-q6oga-cai`
+- **Module Hash**: `0x206c3e85ceb8e2189bad0652b570817d3dc699c067dea4168a5738fd9796477b`
+- **Total Files**: `92` files
+- **Physical Storage Used**: `1.95 MB` (0.0019 GB)
+- **Hard Capacity Limit**: `372.53 GB` (400 GB subnet maximum)
+- **Free Storage Remaining**: `372.53 GB` (99.9995% free)
+- **Utilization**: `0.0005%`
+- **Sharding Threshold**: `300 GB` (75% trigger before Shard 2)
+- **Headroom Before Shard**: `300.00 GB` remaining
+- **Sharding Health Status**: `[HEALTHY & OPTIMAL]`
+
+### D. Lifecycle Notifier Plane (icpay_notifier)
+- **Canister ID**: `2hvuh-xiaaa-aaaan-q6uua-cai`
+- **Autonomous Sweep Timer**: `ACTIVE` (Daily 24h cron loop)
+- **Bucket Subscriptions**: `3` bucket owners registered
+- **Total Emails Dispatched**: `0`
+
+### E. Premium Username Purchases Audit
+- **Total Paid Username Sales**: `20` purchases
+- **Free Claimed Handles**: `253` handles (out of 273 total)
+- **Total ICP Revenue from Handles**: `115.00 ICP`
+- **Tiers Breakdown**:
+  - **Ultra Premium (1–3 chars, 10 ICP)**: 8 handles (`@9`, `@7`, `@vip`, `@pos`, `@buy`, `@ba`, `@1`, `@BOB`) → `80.00 ICP`
+  - **Premium (4 chars, 5 ICP)**: 5 handles (`@tuco`, `@king`, `@cash`, `@john`, `@Frog`) → `25.00 ICP`
+  - **Standard (5 chars, 2 ICP)**: 3 handles (`@vault`, `@Tommy`, `@trump`) → `6.00 ICP`
+  - **Basic (6–8 chars, 1 ICP)**: 4 handles (`@ethereum`, `@Phelipe`, `@openai`, `@elonmusk`) → `4.00 ICP`
+
+| # | Block Index | Handle | Tier | Price Paid | Purchase Date |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| 1 | `38753137` | `@9` | Ultra Premium (1 char) | **10.00 ICP** | 2026-10-02 |
+| 2 | `38630560` | `@tuco` | Premium (4 chars) | **5.00 ICP** | 2026-09-26 |
+| 3 | `38628280` | `@7` | Ultra Premium (1 char) | **10.00 ICP** | 2026-09-26 |
+| 4 | `38627232` | `@vip` | Ultra Premium (3 chars) | **10.00 ICP** | 2026-09-26 |
+| 5 | `38626900` | `@king` | Premium (4 chars) | **5.00 ICP** | 2026-09-26 |
+| 6 | `38626464` | `@cash` | Premium (4 chars) | **5.00 ICP** | 2026-09-26 |
+| 7 | `38613642` | `@vault` | Standard (5 chars) | **2.00 ICP** | 2026-09-26 |
+| 8 | `38613596` | `@pos` | Ultra Premium (3 chars) | **10.00 ICP** | 2026-09-26 |
+| 9 | `38613411` | `@buy` | Ultra Premium (3 chars) | **10.00 ICP** | 2026-09-26 |
+| 10 | `37836395` | `@Tommy` | Standard (5 chars) | **2.00 ICP** | 2026-08-16 |
+| 11 | `37816065` | `@john` | Premium (4 chars) | **5.00 ICP** | 2026-08-15 |
+| 12 | `37789571` | `@ba` | Ultra Premium (2 chars) | **10.00 ICP** | 2026-08-12 |
+| 13 | `37775484` | `@ethereum` | Basic (8 chars) | **1.00 ICP** | 2026-08-11 |
+| 14 | `37727944` | `@1` | Ultra Premium (1 char) | **10.00 ICP** | 2026-08-08 |
+| 15 | `37723013` | `@Phelipe` | Basic (7 chars) | **1.00 ICP** | 2026-08-07 |
+| 16 | `37712338` | `@openai` | Basic (6 chars) | **1.00 ICP** | 2026-08-06 |
+| 17 | `37698463` | `@trump` | Standard (5 chars) | **2.00 ICP** | 2026-08-05 |
+| 18 | `37698085` | `@BOB` | Ultra Premium (3 chars) | **10.00 ICP** | 2026-08-05 |
+| 19 | `37684196` | `@Frog` | Premium (4 chars) | **5.00 ICP** | 2026-08-04 |
+| 20 | `37664079` | `@elonmusk` | Basic (8 chars) | **1.00 ICP** | 2026-08-02 |
+
+---
+
+## 3. Raw Execution Outputs
+
+### `npm run ci canister:list`
+```text
+backend        icp_wallet_backend     6vbhm-nqaaa-aaaan-q6muq-cai
+trade          icpay_trade            gomfy-saaaa-aaaan-q6onq-cai
+frontend       icp_wallet_frontend    63dke-waaaa-aaaan-q6mvq-cai
+blob store     icp_blob_store         fly6t-piaaa-aaaan-q6oga-cai
+cns            cnsmangment            6jtj7-4qaaa-aaaan-q6tta-cai
+notifier       icpay_notifier         2hvuh-xiaaa-aaaan-q6uua-cai
+```
+
+### `npm run ci users:count`
+```text
+Usernames: 273
+```
+
+### `npm run ci bucket:stats`
+```text
+=== ICPay Cloud — bucket stats ===
+
+Buckets   8 total  (8 active, 0 expired)
+Files     92
+Storage   1.2 MB used / 7.45 GB sold (0% full)
+          0.00 GB used / 8.00 GB capacity tiers sold
+Revenue   ~4.00 ICP at create/renew list prices (treasury, not cycles)
+
+=== Memory (canisters) ===
+
+Backend   2.19 GB billed  (1.2 MB logical metadata)
+Blob      39.4 MB billed  (1.9 MB logical in 92 files)
+
+Note: backend ghost stable pages and blob IC overhead inflate billed memory vs logical bytes.
+      CI/tests never upload to mainnet. SDK/live-test scripts need BUCKET_LIVE_TEST=1.
+      Reinstall is never an option — budget idle burn.
+
+=== Cycles ===
+
+Balance   33,298,087,637,751  (33.298T)
+Status    HEALTHY
+Logical storage burn  0.000T/day  (metadata bytes only — often ~0)
+Backend idle burn     0.061T/day  (real memory rent)
+Blob store idle burn  0.002T/day
+Total burn            0.063T/day  (~529 days runway)
+
+=== Top up ===
+
+Runway OK   ~529 days at total burn — no top-up needed now
+```
+
+### `npm run ci blob:status`
+```text
+=== ICP BLOB STORE LIVE STORAGE STATUS ===
+
+• Canister ID:      fly6t-piaaa-aaaan-q6oga-cai
+• Total Capacity:   372.53 GB (400 GB max)
+• Storage Used:     1.95 MB (92 files stored)
+• Storage Left:     372.53 GB (99.9995% FREE)
+• Utilization:      0.0005%
+• Cycles Balance:   1.601 Trillion Cycles (Safe)
+
+Capacity Gauge: [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0.0005% used
+```
+
+### `npm run ci blob:audit`
+```text
+================================================================================
+           ICPAY CLOUD STORAGE (icBucket) — COMPREHENSIVE AUDIT REPORT           
+================================================================================
+• Audit Date/Time:    Fri, 16 Oct 2026 12:52:31 GMT (2026-10-16T12:52:31.993Z)
+• Network:             Mainnet (Internet Computer)
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 1. BUCKET SYSTEM & REGISTRATIONS (Control Plane)                             │
+└──────────────────────────────────────────────────────────────────────────────┘
+• Total Buckets Created:    8 buckets
+• Active Buckets:           8 active
+• Expired Buckets:          0 expired
+• System Acceptance:        ACCEPTING NEW BUCKETS (Normal)
+• Capacity Tiers Sold:      7.45 GB (7.45 GB total allocated)
+• Total Capacity Revenue:   ~4.00 ICP (Treasury gross)
+• Control Plane Canister:   6vbhm-nqaaa-aaaan-q6muq-cai (icp_wallet_backend)
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 2. DATA PLANE & PHYSICAL STORAGE (icp_blob_store)                            │
+└──────────────────────────────────────────────────────────────────────────────┘
+• Blob Canister ID:         fly6t-piaaa-aaaan-q6oga-cai
+• Status:                   Running
+• Module Hash:              0x206c3e85ceb8e2189bad0652b570817d3dc699c067dea4168a5738fd9796477b
+• Total Files Stored:       92 files
+• Physical Storage Used:    1.95 MB (0.0019 GB)
+• Hard Capacity Limit:      372.53 GB (372.5 GB max)
+• Free Storage Remaining:   372.53 GB (372.53 GB / 99.9995% free)
+• Canister Memory (Heap):   39.43 MB
+• Cycles Balance:           1.601 Trillion Cycles (TC)
+• Storage Utilization Bar:  [░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░] 0.0005%
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 3. SCALING RUNBOOK & SHARDING READINESS (Target: 400 GB - 40+ TB)            │
+└──────────────────────────────────────────────────────────────────────────────┘
+• Single Canister Ceiling:  400 GB
+• Sharding Threshold:       300 GB (75% mark — trigger for Canister #2)
+• Headroom Before Shard:    300.00 GB remaining before needing Shard 2
+• Sharding Health Status:   [HEALTHY & OPTIMAL]
+                            Current single canister has 372.5 GB of headroom.
+                            No additional storage canisters needed at this time.
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 4. LIFECYCLE NOTIFIER PLANE (icpay_notifier)                                 │
+└──────────────────────────────────────────────────────────────────────────────┘
+• Notifier Canister ID:     2hvuh-xiaaa-aaaan-q6uua-cai
+• Autonomous Sweep Timer:   ACTIVE (Daily 24h cron loop)
+• Bucket Subscriptions:     3 bucket owners registered
+• Total Emails Dispatched:  0 emails via Resend API
+
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ 5. REVENUE & UNIT ECONOMICS SNAPSHOT                                         │
+└──────────────────────────────────────────────────────────────────────────────┘
+• Annual 5 GB Plan Pricing: 20.00 ICP (~$180/yr)
+• IC Real Storage Burn:     ~2.96 ICP (~$26.63/yr) for 5 GB
+• Company Gross Margin:     ~85.2% Profit per User
+• 100 Users (500 GB) ROI:   +1,704 ICP (~+$15,337 USD/yr) net profit
+
+================================================================================
+                     AUDIT RESULT: ALL SYSTEMS NOMINAL                          
+================================================================================
+```
+
+### `npm run ci cycles:balance`
+```text
+=== backend (6vbhm-nqaaa-aaaan-q6muq-cai) ===
+Balance   33,298,056,070,563  (33.30T)
+Idle burn 60,939,131,284 cycles/day
+Reserved  1.83T  (30d freezing threshold)
+Runway    516 days above the reserve
+
+=== trade (gomfy-saaaa-aaaan-q6onq-cai) ===
+Balance   850,461,005,255  (0.85T)
+Idle burn 2,009,861,925 cycles/day
+Reserved  0.06T  (30d freezing threshold)
+Runway    393 days above the reserve
+
+=== frontend (63dke-waaaa-aaaan-q6mvq-cai) ===
+Balance   3,398,350,437,575  (3.40T)
+Idle burn 2,674,640,190 cycles/day
+Reserved  0.08T  (30d freezing threshold)
+Runway    1240 days above the reserve
+
+=== blob store (fly6t-piaaa-aaaan-q6oga-cai) ===
+Balance   1,601,192,767,319  (1.60T)
+Idle burn 1,920,322,914 cycles/day
+Reserved  0.06T  (30d freezing threshold)
+Runway    803 days above the reserve
+
+=== cns (6jtj7-4qaaa-aaaan-q6tta-cai) ===
+Balance   684,088,230,908  (0.68T)
+Idle burn 1,136,810,232 cycles/day
+Reserved  0.03T  (30d freezing threshold)
+Runway    571 days above the reserve
+
+=== notifier (2hvuh-xiaaa-aaaan-q6uua-cai) ===
+Balance   492,921,874,436  (0.49T)
+Idle burn 1,011,778,350 cycles/day
+Reserved  0.03T  (30d freezing threshold)
+Runway    457 days above the reserve
+```

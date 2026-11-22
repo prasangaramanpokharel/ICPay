@@ -1,20 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Alert02Icon,
-  PlayIcon,
-  StopIcon,
-  Delete02Icon,
-} from "@hugeicons/core-free-icons"
+import { useTranslations } from "next-intl"
+import { invalidateCanisterStatus } from "@/lib/swr/keys"
+import { toast } from "@/components/ui/sonner"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { SettingsSection } from "./settings-section"
 import { Button } from "@/components/ui/button"
-import { ButtonGroup } from "@/components/ui/button-group"
-import { Spinner } from "@/components/ui/spinner"
+import { Input } from "@/components/ui/input"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { useAuth } from "@/components/auth/auth-provider"
 import {
   startCanister,
@@ -45,76 +40,69 @@ export function CanisterLifecycleCard({
   isController: boolean
   onRefresh: () => void
 }) {
+  const t = useTranslations("myCanisters")
   const router = useRouter()
   const { identity } = useAuth()
 
   const [stopConfirmOpen, setStopConfirmOpen] = useState(false)
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
-  const [busyAction, setBusyAction] = useState<string | null>(null)
+  const [deleteConfirmationText, setDeleteConfirmationText] = useState("")
+  const [isPending, startTransition] = useTransition()
 
-  const handleToggleState = async (action: "start" | "stop") => {
+  const isDeleteMatched = deleteConfirmationText.trim() === canisterId
+
+  const handleToggleState = (action: "start" | "stop") => {
     if (!identity || !canisterId) return
-    setBusyAction(action)
-    try {
-      if (action === "start") {
-        await startCanister(identity, canisterId)
-        toast.success("Canister started successfully")
-      } else {
-        await stopCanister(identity, canisterId)
-        toast.success("Canister stopped successfully")
+    setStopConfirmOpen(false)
+
+    startTransition(async () => {
+      try {
+        if (action === "start") {
+          await startCanister(identity, canisterId)
+          toast.success(t("canisterStarted"))
+        } else {
+          await stopCanister(identity, canisterId)
+          toast.success(t("canisterStopped"))
+        }
+        void invalidateCanisterStatus(canisterId)
+        onRefresh()
+      } catch (err) {
+        toast.error(formatManageError(err))
       }
-      setStopConfirmOpen(false)
-      onRefresh()
-    } catch (err) {
-      toast.error(formatManageError(err))
-    } finally {
-      setBusyAction(null)
-    }
+    })
   }
 
-  const handleDelete = async () => {
-    if (!identity || !canisterId) return
-    setBusyAction("delete")
-    try {
-      await deleteCanister(identity, canisterId)
-      toast.success("Canister deleted successfully")
-      router.push("/canister")
-    } catch (err) {
-      toast.error(formatManageError(err))
-    } finally {
-      setBusyAction(null)
-      setDeleteConfirmOpen(false)
-    }
+  const handleDelete = () => {
+    if (!identity || !canisterId || !isDeleteMatched) return
+    setDeleteConfirmOpen(false)
+
+    startTransition(async () => {
+      try {
+        await deleteCanister(identity, canisterId)
+        toast.success(t("canisterDeleted"))
+        router.push("/canister")
+      } catch (err) {
+        toast.error(formatManageError(err))
+      }
+    })
   }
 
   return (
     <>
-      <Card className="rounded-2xl border border-destructive/30 bg-card/40">
-        <CardHeader>
-          <div className="flex items-center gap-2 text-destructive font-semibold">
-            <HugeiconsIcon icon={Alert02Icon} className="size-4" strokeWidth={1.75} />
-            <CardTitle className="text-base">Canister Lifecycle & Danger Zone</CardTitle>
-          </div>
-          <CardDescription className="text-xs">
-            Manage canister execution state or permanently decommission this on-chain canister.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          {!isController && (
-            <div className="rounded-xl border border-border/40 bg-muted/20 p-3 text-xs text-muted-foreground">
-              Read-only view · Only authorized controllers can change canister execution state or delete it.
-            </div>
-          )}
-
-          <div className="flex flex-col gap-3 rounded-xl border border-border/40 bg-muted/20 p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm font-medium text-foreground">
-                {runStatus === "running" ? "Stop Canister" : "Start Canister"}
+      <SettingsSection
+        title={t("lifecycleTitle")}
+        description={t("lifecycleSubtitle")}
+      >
+        <div className="divide-y divide-border/30">
+          <div className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-0.5">
+              <p className="text-xs font-medium text-foreground">
+                {runStatus === "running" ? t("stop") : t("start")}
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-[11px] text-muted-foreground">
                 {runStatus === "running"
-                  ? "Pause canister execution. In-flight messages finish, while new calls are rejected."
-                  : "Resume normal canister execution, message ingress, and timers."}
+                  ? t("stopConfirmDesc")
+                  : "Resume execution and timers."}
               </p>
             </div>
             {runStatus === "running" ? (
@@ -122,101 +110,118 @@ export function CanisterLifecycleCard({
                 type="button"
                 variant="outline"
                 size="sm"
-                disabled={!isController || busyAction != null}
+                disabled={!isController || isPending}
                 onClick={() => setStopConfirmOpen(true)}
-                className="shrink-0"
+                className="shrink-0 cursor-pointer"
               >
-                <HugeiconsIcon icon={StopIcon} data-icon="inline-start" />
-                Stop Canister
+                <span>{isPending ? "Stopping…" : t("stop")}</span>
               </Button>
             ) : (
               <Button
                 type="button"
                 variant="default"
                 size="sm"
-                disabled={!isController || busyAction != null}
+                disabled={!isController || isPending}
                 onClick={() => handleToggleState("start")}
-                className="shrink-0"
+                className="shrink-0 cursor-pointer"
               >
-                {busyAction === "start" ? (
-                  <Spinner data-icon="inline-start" />
-                ) : (
-                  <HugeiconsIcon icon={PlayIcon} data-icon="inline-start" />
-                )}
-                {busyAction === "start" ? "Starting…" : "Start Canister"}
+                <span>{isPending ? "Starting…" : t("start")}</span>
               </Button>
             )}
           </div>
 
-          <div className="flex flex-col gap-3 rounded-xl border border-destructive/20 bg-destructive/5 p-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-sm font-medium text-destructive">Delete Canister</p>
-              <p className="text-xs text-muted-foreground">
-                Irrevocably erase code, stable memory, and history. Remaining cycles are refunded to
-                the controller cycles ledger. Must be stopped first.
+          <div className="flex flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="space-y-0.5">
+              <p className="text-xs font-medium text-foreground">{t("delete")}</p>
+              <p className="text-[11px] text-muted-foreground">
+                {runStatus === "stopped" ? t("deleteCanisterConfirm") : t("stopFirstHint")}
               </p>
             </div>
-            <Button
-              type="button"
-              variant="destructive"
-              size="sm"
-              disabled={!isController || busyAction != null || runStatus !== "stopped"}
-              onClick={() => setDeleteConfirmOpen(true)}
-              className="shrink-0"
-            >
-              <HugeiconsIcon icon={Delete02Icon} data-icon="inline-start" />
-              Delete Canister
-            </Button>
+            {runStatus === "stopped" ? (
+              <Button
+                type="button"
+                variant="destructive"
+                size="sm"
+                disabled={!isController || isPending}
+                onClick={() => {
+                  setDeleteConfirmationText("")
+                  setDeleteConfirmOpen(true)
+                }}
+                className="shrink-0 cursor-pointer"
+              >
+                <span>{t("delete")}</span>
+              </Button>
+            ) : (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <span className="inline-block cursor-not-allowed">
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="sm"
+                        disabled
+                        className="shrink-0 pointer-events-none"
+                      >
+                        <span>{t("delete")}</span>
+                      </Button>
+                    </span>
+                  }
+                />
+                <TooltipContent side="left">{t("stopFirstHint")}</TooltipContent>
+              </Tooltip>
+            )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </SettingsSection>
 
       <AlertDialog open={stopConfirmOpen} onOpenChange={setStopConfirmOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent size="sm">
           <AlertDialogHeader>
-            <AlertDialogTitle>Stop this canister?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Stopping pauses execution until you start it again. Only authorized controllers can
-              start or stop canisters.
+            <AlertDialogTitle>{t("stop")}</AlertDialogTitle>
+            <AlertDialogDescription className="text-xs text-muted-foreground">
+              {t("stopConfirmDesc")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <ButtonGroup>
-              <AlertDialogCancel disabled={busyAction === "stop"}>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                disabled={busyAction === "stop"}
-                onClick={() => handleToggleState("stop")}
-              >
-                {busyAction === "stop" && <Spinner data-icon="inline-start" />}
-                <span>{busyAction === "stop" ? "Stopping…" : "Stop Canister"}</span>
-              </AlertDialogAction>
-            </ButtonGroup>
+            <AlertDialogCancel disabled={isPending}>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isPending}
+              onClick={() => handleToggleState("stop")}
+            >
+              {t("stop")}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
       <AlertDialog open={deleteConfirmOpen} onOpenChange={setDeleteConfirmOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent size="sm">
           <AlertDialogHeader>
-            <AlertDialogTitle>Irrevocably delete this canister?</AlertDialogTitle>
-            <AlertDialogDescription className="flex flex-col gap-2">
-              <p>This action is completely permanent and cannot be reversed.</p>
-              <p className="break-all font-mono font-medium text-foreground">{canisterId}</p>
-              <p>All canister memory, code, and stable state will be destroyed.</p>
+            <AlertDialogTitle>{t("delete")}</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-2 text-xs text-muted-foreground">
+              <p>{t("deleteCanisterConfirm")}</p>
+              <p className="font-mono text-foreground break-all">{canisterId}</p>
+              <div className="space-y-1 pt-1">
+                <p className="text-foreground">{t("typeCanisterNameToConfirm")}:</p>
+                <Input
+                  value={deleteConfirmationText}
+                  onChange={(e) => setDeleteConfirmationText(e.target.value)}
+                  placeholder={canisterId}
+                  className="font-mono text-xs rounded-md"
+                />
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <ButtonGroup>
-              <AlertDialogCancel disabled={busyAction === "delete"}>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                variant="destructive"
-                disabled={busyAction === "delete"}
-                onClick={handleDelete}
-              >
-                {busyAction === "delete" && <Spinner data-icon="inline-start" />}
-                <span>{busyAction === "delete" ? "Deleting…" : "Delete Permanently"}</span>
-              </AlertDialogAction>
-            </ButtonGroup>
+            <AlertDialogCancel disabled={isPending}>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              disabled={isPending || !isDeleteMatched}
+              onClick={handleDelete}
+            >
+              {isPending ? "Deleting…" : t("delete")}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

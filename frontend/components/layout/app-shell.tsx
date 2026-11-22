@@ -40,7 +40,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             ? channelChat
               ? "h-full min-h-0 overflow-hidden p-0"
               : cn("px-0 pt-0", bottomNavSpacerClass, "md:pb-0")
-            : cn("px-4 pt-2", bottomNavSpacerClass, "md:px-6 md:py-6 md:pb-6"),
+            : cn("px-4 pt-2 overscroll-y-contain", bottomNavSpacerClass, "md:px-6 md:py-6 md:pb-6"),
         )}
       >
         {children}

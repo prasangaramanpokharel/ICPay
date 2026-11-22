@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { Add01Icon, Book02Icon, CloudIcon, Key01Icon, PlayIcon, Search01Icon } from "@hugeicons/core-free-icons"
@@ -33,7 +33,7 @@ import {
 import { useAuth } from "@/components/auth/auth-provider"
 import { useBucketList, useInvalidateBucketCache } from "@/hooks/bucket/useBucket"
 import { clearLegacyBucketStorage } from "@/lib/bucket/legacyStorage"
-import { useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { useRefreshWallet, useProPerkStatus } from "@/hooks/wallet/useWalletData"
 import { isBucketActive } from "@/lib/bucket/bucket"
 import { createBucket } from "@/services/bucket/bucket"
 import { registerBucketEmail } from "@/services/notifier/notifier"
@@ -49,11 +49,15 @@ export function BucketListPanel() {
   const router = useRouter()
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
+  const { refresh: refreshProPerk } = useProPerkStatus()
   const invalidateBucketCache = useInvalidateBucketCache()
   const { buckets, isLoading, refresh } = useBucketList()
   const [query, setQuery] = useState("")
   const [filter, setFilter] = useState<FilterTab>("all")
-  const [createOpen, setCreateOpen] = useState(false)
+  const searchParams = useSearchParams()
+  const [createOpen, setCreateOpen] = useState(
+    searchParams.get("create") === "1" || searchParams.get("create") === "true"
+  )
   const [guideOpen, setGuideOpen] = useState(false)
 
   useEffect(() => {
@@ -84,6 +88,7 @@ export function BucketListPanel() {
       void registerBucketEmail(identity, result.ok, alertEmail.trim())
     }
     refreshWallet()
+    void refreshProPerk()
     await Promise.all([refresh(), invalidateBucketCache()])
     setCreateOpen(false)
     router.push(`/bucket?id=${encodeURIComponent(result.ok)}`)

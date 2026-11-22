@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -48,10 +48,10 @@ import { BucketUploadControl } from "@/components/bucket/bucket-upload-control"
 import { BucketRenewDrawer } from "@/components/bucket/bucket-renew-drawer"
 import { BucketApiKeysModal } from "@/components/bucket/bucket-api-keys-modal"
 import { BucketConnectModal } from "@/components/bucket/bucket-connect-modal"
+import { OnboardBucketAgentButton } from "@/components/bucket/onboard-bucket-agent-button"
 import { BucketNotificationModal } from "@/components/bucket/bucket-notification-modal"
 import { BucketStatsHeader } from "@/components/bucket/bucket-stats-header"
 import {
-  useBucketAllFiles,
   useBucketList,
   useBucketStats,
   useInvalidateBucketCache,
@@ -93,11 +93,6 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
     (rawLastSegment && rawLastSegment !== "id" && rawLastSegment !== "bucket" ? rawLastSegment : "")
 
   const { stats, isLoading: statsLoading, isValidating: statsValidating, refresh: refreshStats } = useBucketStats(bucketId || null)
-  const { allFiles } = useBucketAllFiles(bucketId || null)
-  const computedStorageUsed = useMemo(
-    () => allFiles.reduce((acc, f) => acc + f.size, 0n),
-    [allFiles]
-  )
   const { buckets, isLoading: bucketsLoading, isValidating: bucketsValidating, refresh: refreshBuckets } = useBucketList()
   const listBucket = buckets.find((b) => b.id === bucketId || b.name === bucketId)
   const isTombstoned = listBucket ? isBucketTombstoned(listBucket.status, listBucket.expiresAt) : false
@@ -114,20 +109,20 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
   const handleManualRefresh = useCallback(async () => {
     setIsManualRefreshing(true)
     try {
-      await Promise.all([refreshStats(), refreshBuckets()])
+      await Promise.allSettled([refreshStats(), refreshBuckets()])
     } finally {
       setIsManualRefreshing(false)
     }
   }, [refreshStats, refreshBuckets])
 
   useEffect(() => {
-    if (!bucketId || stats) return
+    if (!bucketId || stats || isTombstoned) return
     const timer = setInterval(() => {
       void refreshStats()
       void refreshBuckets()
     }, 10_000)
     return () => clearInterval(timer)
-  }, [bucketId, stats, refreshStats, refreshBuckets])
+  }, [bucketId, stats, isTombstoned, refreshStats, refreshBuckets])
 
   const active = stats ? isBucketActive(stats.status) : false
   const canWrite = active
@@ -392,6 +387,13 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
 
   const headerActions = (
     <div className="flex flex-wrap items-center justify-end gap-2">
+      {stats ? (
+        <OnboardBucketAgentButton
+          bucketId={bucketId}
+          bucketName={stats.name}
+          isPublic={Boolean(stats.visibility && "open" in stats.visibility)}
+        />
+      ) : null}
       <ButtonGroup>
         {stats ? (
           <Button
@@ -480,8 +482,8 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
           pathPrefix={prefix}
           remainingBytes={
             stats
-              ? stats.capacity > (computedStorageUsed > stats.storageUsed ? computedStorageUsed : stats.storageUsed)
-                ? stats.capacity - (computedStorageUsed > stats.storageUsed ? computedStorageUsed : stats.storageUsed)
+              ? stats.capacity > stats.storageUsed
+                ? stats.capacity - stats.storageUsed
                 : 0n
               : undefined
           }
@@ -627,8 +629,8 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
 
       <BucketStatsHeader
         stats={stats}
-        computedStorageUsed={computedStorageUsed}
-        computedFileCount={allFiles.length}
+        computedStorageUsed={stats?.storageUsed}
+        computedFileCount={stats ? Number(stats.fileCount) : undefined}
         onRenew={() => setRenewOpen(true)}
         onRefresh={refreshStats}
       />

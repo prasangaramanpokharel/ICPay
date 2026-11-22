@@ -53,6 +53,23 @@ module {
     UsernameValidator.priceFor(name);
   };
 
+  public func priceOfCurrency(name: Types.Username, currencyText: Text): Nat {
+    switch (parseCurrency(currencyText)) {
+      case (?c) { UsernameValidator.priceForCurrency(name, c) };
+      case (null) { UsernameValidator.priceFor(name) };
+    };
+  };
+
+  public func parseCurrency(text: Text): ?UsernameValidator.Currency {
+    if (text == "ICPAY" or text == "icpay") {
+      ?#ICPAY;
+    } else if (text == "ICP" or text == "icp") {
+      ?#ICP;
+    } else {
+      null;
+    };
+  };
+
   public func treasury(): Principal {
     Principal.fromText(Config.TREASURY);
   };
@@ -61,6 +78,18 @@ module {
   // assigned once the ledger confirms it, so a failed transfer never hands out
   // a free handle.
   public func purchase(service: UsernameSaleService, caller: Principal, name: Types.Username): async Types.ApiResult<Purchase> {
+    await purchaseInternal(service, caller, name, #ICP);
+  };
+
+  public func purchaseWithCurrency(service: UsernameSaleService, caller: Principal, name: Types.Username, currencyText: Text): async Types.ApiResult<Purchase> {
+    let currency = switch (parseCurrency(currencyText)) {
+      case (?c) { c };
+      case (null) { return #err("Unsupported payment currency: " # currencyText) };
+    };
+    await purchaseInternal(service, caller, name, currency);
+  };
+
+  func purchaseInternal(service: UsernameSaleService, caller: Principal, name: Types.Username, currency: UsernameValidator.Currency): async Types.ApiResult<Purchase> {
     if (not RateLimitService.allow(service.limits, caller, Config.RATE_PURCHASE_USERNAME, Time.now())) {
       return #err(RateLimitService.message(Config.RATE_PURCHASE_USERNAME));
     };
@@ -86,13 +115,15 @@ module {
     };
     service.pending.add(key);
 
-    let price = UsernameValidator.priceFor(name);
+    let price = UsernameValidator.priceForCurrency(name, currency);
+    let ledgerId = switch (currency) {
+      case (#ICP) { Config.ICP_LEDGER_CANISTER_ID };
+      case (#ICPAY) { Config.ICPAY_LEDGER_ID };
+    };
     let destination = AccountHelper.defaultAccount(treasury());
-    let memo = saleMemo(name, price, Time.now());
+    let memo = saleMemoWithCurrency(name, price, Time.now(), currency);
 
-    // Prices are denominated in ICP, so a sale settles on the ICP ledger
-    // regardless of which token the buyer was last looking at.
-    let result = await TransferService.transferByAccountInternal(service.transfers, caller, Config.ICP_LEDGER_CANISTER_ID, destination, price, ?memo);
+    let result = await TransferService.transferByAccountInternal(service.transfers, caller, ledgerId, destination, price, ?memo);
 
     switch (result) {
       case (#err(e)) {
@@ -121,15 +152,23 @@ module {
     };
   };
 
-  // The ledger memo is capped at 32 bytes, so the fields are packed tight:
-  // "@handle 10ICP 2026-08-02" is 24 bytes at the widest (an 8-char handle only
-  // ever prices at 1 ICP, so the long name and the long price cannot coincide).
+  // The ledger memo is capped at 32 bytes, so the fields are packed tight.
   public func saleMemo(name: Types.Username, price: Nat, now: Int): Text {
-    "@" # name # " " # icpWhole(price) # "ICP " # DateTime.toIsoDate(Int.abs(now));
+    saleMemoWithCurrency(name, price, now, #ICP);
   };
 
-  // Every tier is a whole number of ICP, so no decimal part is printed.
-  func icpWhole(e8s: Nat): Text {
+  public func saleMemoWithCurrency(name: Types.Username, price: Nat, now: Int, currency: UsernameValidator.Currency): Text {
+    switch (currency) {
+      case (#ICP) {
+        "@" # name # " " # wholeToken(price) # "ICP " # DateTime.toIsoDate(Int.abs(now));
+      };
+      case (#ICPAY) {
+        "@" # name # " " # wholeToken(price) # "ICPAY " # DateTime.toIsoDate(Int.abs(now));
+      };
+    };
+  };
+
+  func wholeToken(e8s: Nat): Text {
     Nat.toText(e8s / 100_000_000);
   };
 };

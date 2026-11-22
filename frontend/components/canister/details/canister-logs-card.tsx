@@ -1,18 +1,19 @@
 "use client"
 
-import { useEffect, useMemo, useRef, useState } from "react"
-import { toast } from "sonner"
+import { useMemo, useState } from "react"
+import { useTranslations } from "next-intl"
+import { toast } from "@/components/ui/sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   AlertCircleIcon,
   Copy01Icon,
   Delete02Icon,
   Download01Icon,
+  InformationCircleIcon,
   PauseIcon,
   PlayIcon,
   RefreshIcon,
   Search01Icon,
-  TerminalIcon,
 } from "@hugeicons/core-free-icons"
 
 import { Button } from "@/components/ui/button"
@@ -27,6 +28,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
 import { useAuth } from "@/components/auth/auth-provider"
@@ -38,14 +57,9 @@ function isErrorLog(text: string): boolean {
   return /trap:|panic:|error:|assert\s+failed|fatal|exception/i.test(text)
 }
 
-function isWarnLog(text: string): boolean {
-  return /warn:|warning:|deprecated/i.test(text)
-}
-
 export function CanisterLogsCard({
   canisterId,
   isController,
-  logVisibility,
   onSelectTab,
 }: {
   canisterId: string
@@ -53,6 +67,7 @@ export function CanisterLogsCard({
   logVisibility?: "controllers" | "public"
   onSelectTab?: (tab: CanisterDetailTab) => void
 }) {
+  const t = useTranslations("myCanisters")
   const { identity } = useAuth()
   const {
     logs,
@@ -72,7 +87,7 @@ export function CanisterLogsCard({
 
   const [search, setSearch] = useState("")
   const [filter, setFilter] = useState<"all" | "errors" | "normal">("all")
-  const logContainerRef = useRef<HTMLDivElement>(null)
+  const [clearDialogOpen, setClearDialogOpen] = useState(false)
 
   const errorCount = useMemo(
     () => logs.filter((l) => isErrorLog(l.text)).length,
@@ -98,17 +113,11 @@ export function CanisterLogsCard({
     })
   }, [logs, filter, search])
 
-  useEffect(() => {
-    if (logContainerRef.current) {
-      logContainerRef.current.scrollTop = logContainerRef.current.scrollHeight
-    }
-  }, [filteredLogs])
-
   const handleCopy = () => {
     if (filteredLogs.length === 0) return
     const content = filteredLogs.map((l) => `[#${l.idx}] [${l.at}] ${l.text}`).join("\n")
     void navigator.clipboard.writeText(content).then(() => {
-      toast.success("Logs copied to clipboard")
+      toast.success(t("copy"))
     })
   }
 
@@ -122,28 +131,33 @@ export function CanisterLogsCard({
     a.download = `${canisterId}-logs.txt`
     a.click()
     URL.revokeObjectURL(url)
-    toast.success("Logs downloaded")
+    toast.success(t("download"))
   }
 
   return (
-    <Card className="rounded-2xl border border-border/40 bg-card/40">
-      <CardHeader className="flex flex-col gap-4 border-b border-border/40 pb-4 sm:flex-row sm:items-center sm:justify-between">
+    <Card className="rounded-xl border border-border/40 bg-card p-6 gap-4">
+      <CardHeader className="flex flex-col gap-4 border-b border-border/40 pb-4 sm:flex-row sm:items-center sm:justify-between p-0">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={TerminalIcon} className="size-4 text-primary" strokeWidth={1.75} />
             <CardTitle className="text-base font-semibold text-foreground">
-              Execution & Debug Logs
+              {t("logsTitle")}
             </CardTitle>
-            <Badge variant="outline" className="text-[10px] uppercase font-mono">
-              4 KiB Ring Buffer
+            <Badge variant="outline" className="border-border/60 text-muted-foreground text-[10px] font-normal">
+              {t("controllersOnly")}
             </Badge>
+            <Tooltip>
+              <TooltipTrigger className="cursor-help text-muted-foreground hover:text-foreground">
+                <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5" />
+              </TooltipTrigger>
+              <TooltipContent side="top">{t("ringBufferTooltip")}</TooltipContent>
+            </Tooltip>
           </div>
           <CardDescription className="text-xs">
-            Real-time stdout prints, debug logging, and runtime trap stack traces from canister execution.
+            {t("logsSubtitle")}
           </CardDescription>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <ButtonGroup>
           <Button
             type="button"
             variant="outline"
@@ -151,106 +165,98 @@ export function CanisterLogsCard({
             onClick={toggleLive}
             className="h-8 gap-1.5 text-xs font-medium cursor-pointer"
           >
-            <span
-              className={cn(
-                "size-2 rounded-full shrink-0",
-                isLive ? "bg-success animate-pulse" : "bg-muted-foreground"
-              )}
-            />
-            <span>{isLive ? "Live" : "Paused"}</span>
             <HugeiconsIcon
               icon={isLive ? PauseIcon : PlayIcon}
-              className="size-3 text-muted-foreground"
+              className="size-3.5 text-muted-foreground"
             />
+            <span>{isLive ? t("live") : t("paused")}</span>
           </Button>
-
-          <ButtonGroup>
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon-sm"
-                    onClick={() => void refresh()}
-                    disabled={isLoading || isRefreshing}
-                    className="cursor-pointer"
-                    aria-label="Refresh logs"
-                  >
-                    <HugeiconsIcon
-                      icon={RefreshIcon}
-                      className={cn("size-3.5", (isLoading || isRefreshing) && "animate-spin")}
-                      strokeWidth={1.75}
-                    />
-                  </Button>
-                }
-              />
-              <TooltipContent side="top">Fetch latest logs</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon-sm"
-                    onClick={handleCopy}
-                    disabled={filteredLogs.length === 0}
-                    className="cursor-pointer"
-                    aria-label="Copy logs"
-                  >
-                    <HugeiconsIcon icon={Copy01Icon} className="size-3.5" strokeWidth={1.75} />
-                  </Button>
-                }
-              />
-              <TooltipContent side="top">Copy logs to clipboard</TooltipContent>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon-sm"
-                    onClick={handleDownload}
-                    disabled={logs.length === 0}
-                    className="cursor-pointer"
-                    aria-label="Download logs"
-                  >
-                    <HugeiconsIcon icon={Download01Icon} className="size-3.5" strokeWidth={1.75} />
-                  </Button>
-                }
-              />
-              <TooltipContent side="top">Download .txt log file</TooltipContent>
-            </Tooltip>
-          </ButtonGroup>
 
           <Tooltip>
             <TooltipTrigger
               render={
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="outline"
                   size="icon-sm"
-                  onClick={clear}
+                  onClick={() => void refresh()}
+                  disabled={isLoading || isRefreshing}
+                  className="cursor-pointer"
+                  aria-label={t("refresh")}
+                >
+                  <HugeiconsIcon
+                    icon={RefreshIcon}
+                    className={cn("size-3.5", (isLoading || isRefreshing) && "animate-spin")}
+                    strokeWidth={1.75}
+                  />
+                </Button>
+              }
+            />
+            <TooltipContent side="top">{t("refresh")}</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  onClick={handleCopy}
+                  disabled={filteredLogs.length === 0}
+                  className="cursor-pointer"
+                  aria-label={t("copy")}
+                >
+                  <HugeiconsIcon icon={Copy01Icon} className="size-3.5" strokeWidth={1.75} />
+                </Button>
+              }
+            />
+            <TooltipContent side="top">{t("copy")}</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  onClick={handleDownload}
                   disabled={logs.length === 0}
-                  className="cursor-pointer text-muted-foreground hover:text-foreground"
-                  aria-label="Clear local view"
+                  className="cursor-pointer"
+                  aria-label={t("download")}
+                >
+                  <HugeiconsIcon icon={Download01Icon} className="size-3.5" strokeWidth={1.75} />
+                </Button>
+              }
+            />
+            <TooltipContent side="top">{t("download")}</TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon-sm"
+                  onClick={() => setClearDialogOpen(true)}
+                  disabled={logs.length === 0}
+                  className="cursor-pointer text-muted-foreground hover:text-destructive"
+                  aria-label={t("clear")}
                 >
                   <HugeiconsIcon icon={Delete02Icon} className="size-3.5" strokeWidth={1.75} />
                 </Button>
               }
             />
-            <TooltipContent side="top">Clear console display</TooltipContent>
+            <TooltipContent side="top">{t("clear")}</TooltipContent>
           </Tooltip>
-        </div>
+        </ButtonGroup>
       </CardHeader>
 
-      <CardContent className="space-y-3 pt-4">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative flex-1 max-w-sm">
+      <CardContent className="space-y-4 p-0">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto] sm:items-center">
+          <div className="relative w-full max-w-sm">
             <HugeiconsIcon
               icon={Search01Icon}
               className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground"
@@ -259,52 +265,61 @@ export function CanisterLogsCard({
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Filter logs by message or ID..."
-              className="h-8 pl-8 text-xs bg-muted/20 border-border/60"
+              placeholder={t("searchLogs")}
+              className="h-8 pl-8 text-xs rounded-md bg-muted/20 border-border/60"
             />
           </div>
 
-          <div className="flex items-center gap-1.5 self-end sm:self-auto">
-            <Button
+          <div className="inline-flex items-center gap-1 rounded-lg border border-border/60 bg-muted/20 p-0.5 text-xs">
+            <button
               type="button"
-              variant={filter === "all" ? "secondary" : "ghost"}
-              size="sm"
               onClick={() => setFilter("all")}
-              className="h-7 px-2.5 text-xs font-medium cursor-pointer"
+              className={cn(
+                "px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer",
+                filter === "all"
+                  ? "bg-background text-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
             >
-              <span>All</span>
-              <span className="ml-1 text-[10px] text-muted-foreground">({logs.length})</span>
-            </Button>
-            <Button
+              <span>{t("filterAll")}</span>
+              <span className="ml-1 text-[10px] text-muted-foreground">{logs.length}</span>
+            </button>
+            <button
               type="button"
-              variant={filter === "errors" ? "secondary" : "ghost"}
-              size="sm"
               onClick={() => setFilter("errors")}
-              className="h-7 px-2.5 text-xs font-medium cursor-pointer"
+              className={cn(
+                "px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer",
+                filter === "errors"
+                  ? "bg-background text-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
             >
-              <span className={cn(errorCount > 0 && "text-destructive")}>Errors / Traps</span>
-              <span className="ml-1 text-[10px] text-muted-foreground">({errorCount})</span>
-            </Button>
-            <Button
+              <span className={cn(errorCount > 0 && "text-destructive")}>{t("filterErrors")}</span>
+              <span className="ml-1 text-[10px] text-muted-foreground">{errorCount}</span>
+            </button>
+            <button
               type="button"
-              variant={filter === "normal" ? "secondary" : "ghost"}
-              size="sm"
               onClick={() => setFilter("normal")}
-              className="h-7 px-2.5 text-xs font-medium cursor-pointer"
+              className={cn(
+                "px-2.5 py-1 rounded-md text-xs font-medium transition-colors cursor-pointer",
+                filter === "normal"
+                  ? "bg-background text-foreground shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
             >
-              <span>Normal</span>
-              <span className="ml-1 text-[10px] text-muted-foreground">({normalCount})</span>
-            </Button>
+              <span>{t("filterNormal")}</span>
+              <span className="ml-1 text-[10px] text-muted-foreground">{normalCount}</span>
+            </button>
           </div>
         </div>
 
         {denied ? (
-          <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-border/60 bg-muted/20 min-h-[360px] p-8 text-center">
+          <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-border/60 bg-muted/20 p-8 text-center">
             <HugeiconsIcon icon={AlertCircleIcon} className="size-8 text-destructive" strokeWidth={1.5} />
             <div className="space-y-1 max-w-md">
-              <p className="text-sm font-semibold text-foreground">Canister Logs Restricted</p>
+              <p className="text-sm font-semibold text-foreground">{t("restrictedTitle")}</p>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Viewing execution logs requires controller permissions or Public Log Visibility.
+                {t("restrictedBody")}
               </p>
             </div>
             {isController && onSelectTab && (
@@ -315,86 +330,90 @@ export function CanisterLogsCard({
                 onClick={() => onSelectTab("settings")}
                 className="mt-1 text-xs cursor-pointer"
               >
-                Change to Public Visibility in Settings
+                {t("settings")}
               </Button>
             )}
           </div>
         ) : (
-          <div
-            ref={logContainerRef}
-            className="flex flex-col rounded-xl border border-border/60 bg-muted/20 font-mono text-xs overflow-y-auto min-h-[360px] max-h-[560px] divide-y divide-border/20 p-2"
-          >
-            {isLoading && logs.length === 0 ? (
-              <div className="flex flex-1 flex-col items-center justify-center gap-2 p-12 text-muted-foreground">
-                <Spinner className="size-5" />
-                <span className="text-xs">Connecting to canister log stream...</span>
-              </div>
-            ) : filteredLogs.length === 0 ? (
-              <div className="flex flex-1 flex-col items-center justify-center gap-2 p-12 text-center text-muted-foreground">
-                <HugeiconsIcon icon={TerminalIcon} className="size-8 opacity-40" strokeWidth={1.5} />
-                <p className="text-xs font-medium text-foreground">No logs recorded</p>
-                <p className="text-[11px] max-w-md text-muted-foreground leading-relaxed">
-                  {search
-                    ? "No log entries match your filter criteria."
-                    : "Output generated by Motoko Debug.print() or Rust println!() and execution traps will automatically appear here."}
-                </p>
-              </div>
-            ) : (
-              filteredLogs.map((item) => {
-                const isError = isErrorLog(item.text)
-                const isWarn = isWarnLog(item.text)
-                return (
-                  <div
-                    key={`${item.idx}-${item.at}`}
-                    className={cn(
-                      "flex items-start gap-2.5 py-1.5 px-2 rounded transition-colors",
-                      isError
-                        ? "bg-destructive/10 text-destructive border-l-2 border-destructive"
-                        : isWarn
-                          ? "bg-warning/10 text-warning border-l-2 border-warning"
-                          : "hover:bg-muted/40 text-foreground"
-                    )}
-                  >
-                    <span className="select-none font-mono text-[10px] text-muted-foreground/60 w-10 shrink-0 text-right pt-0.5">
-                      #{item.idx}
-                    </span>
-                    <span className="select-none font-mono text-[10px] text-muted-foreground shrink-0 pt-0.5">
-                      {item.time || item.at}
-                    </span>
-                    <pre className="flex-1 whitespace-pre-wrap break-all font-mono text-[11px] leading-relaxed">
-                      {item.text || "—"}
-                    </pre>
-                  </div>
-                )
-              })
-            )}
+          <div className="rounded-lg border border-border/40 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-b border-border/40 hover:bg-transparent">
+                  <TableHead className="w-16 font-mono text-xs">{t("colIndex")}</TableHead>
+                  <TableHead className="w-44 font-mono text-xs">{t("colTime")}</TableHead>
+                  <TableHead className="text-xs">{t("colMessage")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading && logs.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={3} className="h-32 text-center text-xs text-muted-foreground">
+                      <div className="inline-flex items-center justify-center gap-2">
+                        <Spinner className="size-4" />
+                        <span>Loading…</span>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : filteredLogs.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={3} className="h-32 text-center text-xs text-muted-foreground">
+                      {t("noLogs")}
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredLogs.map((item) => {
+                    const isError = isErrorLog(item.text)
+                    return (
+                      <TableRow
+                        key={`${item.idx}-${item.at}`}
+                        className={cn(
+                          "border-b border-border/20 transition-colors",
+                          isError && "bg-destructive/5 text-destructive"
+                        )}
+                      >
+                        <TableCell className="w-16 font-mono text-xs text-muted-foreground select-none align-top">
+                          #{item.idx}
+                        </TableCell>
+                        <TableCell className="w-44 font-mono text-xs text-muted-foreground select-none whitespace-nowrap align-top">
+                          {item.time || item.at}
+                        </TableCell>
+                        <TableCell className="font-mono text-xs whitespace-pre-wrap break-all leading-relaxed align-top">
+                          {item.text || "—"}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  })
+                )}
+              </TableBody>
+            </Table>
           </div>
         )}
 
-        <div className="flex flex-col gap-2 pt-1 sm:flex-row sm:items-center sm:justify-between text-[11px] text-muted-foreground">
-          <div className="flex items-center gap-2">
-            <span
-              className={cn(
-                "size-1.5 rounded-full",
-                isLive ? "bg-success animate-pulse" : "bg-muted-foreground"
-              )}
-            />
-            <span>
-              {isLive ? "Polling every 3 seconds" : "Live stream paused"}
-            </span>
-            <span>·</span>
-            <span>
-              Log Visibility: {logVisibility === "public" ? "Public" : "Controllers Only"}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span>
-              Last fetched: {lastFetchedAt ? lastFetchedAt.toLocaleTimeString() : "—"}
-            </span>
-          </div>
+        <div className="text-xs text-muted-foreground tabular-nums">
+          {t("lastFetched", { time: lastFetchedAt ? lastFetchedAt.toLocaleTimeString() : "—" })}
         </div>
       </CardContent>
+
+      <AlertDialog open={clearDialogOpen} onOpenChange={setClearDialogOpen}>
+        <AlertDialogContent size="sm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("clearConfirmTitle")}</AlertDialogTitle>
+            <AlertDialogDescription>{t("clearConfirmBody")}</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => {
+                clear()
+                setClearDialogOpen(false)
+              }}
+            >
+              {t("clear")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   )
 }

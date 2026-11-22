@@ -10,6 +10,8 @@ import { useOwnProfile } from "@/hooks/wallet/useWalletData"
 import { useAnalytics } from "@/hooks/analytics/useAnalytics"
 import { AnalyticsSummaryGrid } from "@/components/analytics/analytics-summary-grid"
 import { AnalyticsTable } from "@/components/analytics/analytics-table"
+import { AnalyticsBarChart } from "@/components/analytics/analytics-bar-chart"
+import { AnalyticsPieChart } from "@/components/analytics/analytics-pie-chart"
 import { AnalyticsLocked } from "@/components/analytics/analytics-locked"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import {
@@ -109,8 +111,16 @@ export function AnalyticsView() {
             </Alert>
           ) : null}
 
-          <AnalyticsSummaryGrid summary={data.summary} />
-          <AnalyticsTable rows={data.rows} />
+          <div className="space-y-6 pt-1">
+            <AnalyticsSummaryGrid summary={data.summary} />
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+              <AnalyticsBarChart rows={data.rows} />
+              <AnalyticsPieChart summary={data.summary} />
+            </div>
+            <div className="pt-2">
+              <AnalyticsTable rows={data.rows} />
+            </div>
+          </div>
         </>
       ) : null}
     </AppPage>

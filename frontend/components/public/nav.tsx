@@ -10,7 +10,7 @@ import type { NavMenuItem } from "@/lib/public/site-links"
 import { cn } from "@/lib/ui/utils"
 import { LanguageSwitch } from "@/components/i18n/language-switch"
 import { NavMenuItemContent } from "@/components/public/nav-menu-item"
-import { PublicNavAuth } from "@/components/public/public-nav-auth"
+import { PublicNavAuth, PublicNavMobileUser, PublicNavMobileAuthFallback } from "@/components/public/public-nav-auth"
 import { PublicNavMobile } from "@/components/public/public-nav-mobile"
 import { ThemeToggle } from "@/components/public/theme-toggle"
 import { MotionHighlight, MotionHighlightItem } from "@/components/ui/motion-highlight"
@@ -115,7 +115,11 @@ export function PublicNav() {
       )}
     >
       <div className="mx-auto flex h-14 w-full items-center justify-between gap-4 px-4 md:h-16 md:px-6 lg:px-8">
-        <div className="flex min-w-0 items-center gap-5 lg:gap-8">
+        <div className="flex items-center md:hidden">
+          <PublicNavMobileUser />
+        </div>
+
+        <div className="hidden min-w-0 items-center gap-5 md:flex lg:gap-8">
           <Link
             href="/"
             className="flex shrink-0 items-center gap-2.5 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -176,10 +180,17 @@ export function PublicNav() {
 
         <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
           <LanguageSwitch />
-          <ThemeToggle />
-          <span aria-hidden className="mx-0.5 hidden h-5 w-px bg-border/60 sm:block" />
-          <PublicNavAuth />
-          <PublicNavMobile />
+          <div className="hidden md:flex md:items-center md:gap-1.5">
+            <ThemeToggle />
+            <span aria-hidden className="mx-0.5 h-5 w-px bg-border/60" />
+            <PublicNavAuth />
+          </div>
+          <div className="md:hidden">
+            <PublicNavMobileAuthFallback />
+          </div>
+          <div className="hidden md:block lg:hidden">
+            <PublicNavMobile />
+          </div>
         </div>
       </div>
     </header>

@@ -1,0 +1,39 @@
+prasanga@fedora:~$ curl -sSL https://icpay.app/bu/install.sh | bash
+
+    _     ____             _        _   
+   (_)___| __ ) _   _  ___| | _____| |_ 
+   | / __|  _ \| | | |/ __| |/ / _ \ __|
+   | \__ \ |_) | |_| | (__|   <  __/ |_ 
+   |_|___/____/ \__,_|\___|_|\_\___|\__|
+
+icBucket — Decentralized On-Chain Cloud Storage (ICPay)
+https://icpay.app/bucket
+
+🔎 Checking local environment...
+   ✓ Node.js v24.14.0 detected
+   ✓ npm detected
+
+📦 Installing icBucket CLI globally...
+✓ Successfully installed icpay-bucket globally!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎉 icBucket CLI is ready!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Quickstart Guide:
+  1. Get your Free 1 GB Plan and API Key at:
+     https://icpay.app/bucket
+
+  2. Upload any file or folder directly on-chain:
+     icbucket upload ./my-folder
+
+  3. List your active buckets:
+     icbucket list
+
+Need more storage? Instant 10 GB - 100 GB plans available at:
+https://icpay.app/bucket/pricing
+
+prasanga@fedora:~$  
+
+see a free is total a wronf swe dotn ahve free plan get it fix this amek sure  , 1. Get your Free 1 GB Plan and API Key at:
+     https://icpay.app/bucket and its icbucket for [ublic acess landing fi xthis get enus tehi mis infomatin lets not 

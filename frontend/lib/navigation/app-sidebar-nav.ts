@@ -11,7 +11,6 @@ import {
   Rocket01Icon,
   SentIcon,
   ThreeDViewIcon,
-  TimeScheduleIcon,
 } from "@hugeicons/core-free-icons"
 import { APP_NAV_ITEMS, isAppNavActive } from "@/lib/navigation/app-nav-items"
 
@@ -77,17 +76,6 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
         labelKey: "settings.items.canisters",
         icon: ThreeDViewIcon,
       },
-      {
-        href: "/cron",
-        labelKey: "settings.items.cron",
-        icon: TimeScheduleIcon,
-        badgeKey: "settings.items.cronBadge",
-        badgeVariant: "secondary",
-        subItems: [
-          { href: "/cron", labelKey: "settings.sections.overview" },
-          { href: "/cron/api", labelKey: "cron.apiKeys" },
-        ],
-      },
     ],
   },
   {
@@ -117,12 +105,7 @@ const ALL_ITEMS: SidebarNavItem[] = [
 export function isSidebarItemActive(pathname: string, href: string): boolean {
   if (href === "/home") return pathname === "/home"
   if (href === "/cron") {
-    return (
-      pathname === "/cron" ||
-      pathname.startsWith("/cron/") ||
-      pathname === "/iccron" ||
-      pathname.startsWith("/iccron/")
-    )
+    return pathname === "/cron" || pathname.startsWith("/cron/")
   }
   return pathname === href || pathname.startsWith(`${href}/`)
 }

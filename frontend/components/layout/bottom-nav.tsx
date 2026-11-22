@@ -83,7 +83,7 @@ function NavTab({
         <motion.span
           layoutId="bottomNavIndicator"
           transition={{ type: "spring", stiffness: 450, damping: 35 }}
-          className="absolute inset-x-1.5 inset-y-1 -z-10 rounded-2xl bg-primary/10 dark:bg-primary/15"
+          className="absolute inset-x-1.5 inset-y-1 -z-10 rounded-2xl bg-primary/12 dark:bg-primary/18 shadow-[0_0_12px_0px] shadow-primary/20"
         />
       )}
       <NavTabContent label={label} icon={icon} active={active} />
@@ -109,13 +109,17 @@ function NavTabContent({
         pending && "opacity-70"
       )}
     >
-      <span className="relative flex size-8 items-center justify-center transition-all duration-150 group-active:scale-90">
+      <motion.span
+          whileTap={{ scale: 0.84 }}
+          transition={{ type: "spring", stiffness: 500, damping: 20 }}
+          className="relative flex size-8 items-center justify-center"
+        >
         <HugeiconsIcon
           icon={icon}
           className="size-5 transition-transform duration-200 group-hover:scale-105"
           strokeWidth={active ? 2 : 1.75}
         />
-      </span>
+      </motion.span>
       <span
         className={cn(
           "mt-0.5 max-w-full truncate text-[10.5px] leading-none transition-colors",

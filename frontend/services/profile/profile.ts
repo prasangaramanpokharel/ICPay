@@ -12,12 +12,27 @@ export function getProfile(
   })
 }
 
+export function getUsernames(
+  identity: Identity | undefined
+): Promise<string[]> {
+  return query(identity, (actor) => actor.getUsernames())
+}
+
 export function updateUsername(
   identity: Identity | undefined,
   username: string
 ): Promise<Outcome<UserPublic>> {
   return call(identity, "Failed to update username", (actor) =>
     actor.updateUsername(username)
+  )
+}
+
+export function setPrimaryUsername(
+  identity: Identity | undefined,
+  username: string
+): Promise<Outcome<UserPublic>> {
+  return call(identity, "Failed to switch primary username", (actor) =>
+    actor.setPrimaryUsername(username)
   )
 }
 
@@ -35,5 +50,48 @@ export async function resolveUsername(
   const actor = await getWalletActor(identity)
   const [principal] = await actor.resolveUsername(name)
   return principal ? principal.toText() : null
+}
+
+export function claimProPerk(
+  identity: Identity | undefined
+): Promise<Outcome<boolean>> {
+  return call<boolean>(identity, "Failed to claim perk", async (actor) => {
+    const res = await actor.claim_pro_perk()
+    if ("ok" in res && res.ok !== undefined) {
+      return { ok: res.ok }
+    }
+    return { err: "err" in res && res.err ? res.err : "Failed to claim perk" }
+  })
+}
+
+export function hasClaimedProPerk(
+  identity: Identity | undefined
+): Promise<boolean> {
+  return query(identity, (actor) => actor.has_claimed_pro_perk())
+}
+
+export type ProPerkStatusData = {
+  claimed: boolean
+  fulfilled: boolean
+  storageGb: number
+  bucketId: string | null
+}
+
+export async function getProPerkStatus(
+  identity: Identity | undefined
+): Promise<ProPerkStatusData | null> {
+  return query(identity, async (actor) => {
+    if (!actor.get_pro_perk_status) return null
+    const res = await actor.get_pro_perk_status()
+    if ("ok" in res && res.ok) {
+      return {
+        claimed: res.ok.claimed,
+        fulfilled: res.ok.fulfilled,
+        storageGb: Number(res.ok.storageGb),
+        bucketId: res.ok.bucketId.length > 0 ? (res.ok.bucketId[0] ?? null) : null,
+      }
+    }
+    return null
+  })
 }
 

@@ -4,6 +4,7 @@ import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname, useSearchParams } from "next/navigation"
+import useSWR from "swr"
 import { useTranslations } from "next-intl"
 import { HugeiconsIcon } from "@hugeicons/react"
 import { CrownIcon } from "@hugeicons/core-free-icons"
@@ -19,26 +20,48 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { resolveAppPageTitle } from "@/lib/navigation/app-sidebar-nav"
+import { useAuth } from "@/components/auth/auth-provider"
+import {
+  subscribeSavedCanisters,
+  getSavedCanisterName,
+  shortCanisterId,
+} from "@/lib/canister/savedCanisters"
+import { fetchCanisterIndexMeta } from "@/services/canister/controlledCanisters"
 import { cn } from "@/lib/ui/utils"
 
 function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
   const searchParams = useSearchParams()
   const t = useTranslations()
+  const { identity } = useAuth()
+  const principal = identity?.getPrincipal().toText() ?? ""
+  const canisterId = searchParams.get("id")
 
-  if (pathname.startsWith("/cron") || pathname.startsWith("/iccron")) {
-    if (pathname === "/cron/api" || pathname === "/iccron/api") {
+  const savedCanisterName = React.useSyncExternalStore(
+    subscribeSavedCanisters,
+    () => (canisterId && principal ? getSavedCanisterName(principal, canisterId) : ""),
+    () => ""
+  )
+
+  const { data: indexMeta } = useSWR(
+    canisterId ? (["canister-index-meta", canisterId] as const) : null,
+    ([, id]) => fetchCanisterIndexMeta(id),
+    { revalidateOnFocus: false, dedupingInterval: 120_000 }
+  )
+
+  if (pathname.startsWith("/canister")) {
+    if (pathname === "/canister/create") {
       return (
         <Breadcrumb className="flex-1 min-w-0">
           <BreadcrumbList className="text-xs sm:text-sm">
             <BreadcrumbItem>
-              <BreadcrumbLink href="/cron" className="text-muted-foreground hover:text-foreground">
-                icCron
+              <BreadcrumbLink render={<Link href="/canister" />} className="text-muted-foreground hover:text-foreground">
+                {t("settings.items.canisters")}
               </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage className="font-medium text-foreground">
-                API Keys
+                {t("canisterCreate.title")}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -46,13 +69,56 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
       )
     }
 
-    if (pathname === "/cron/create" || pathname === "/iccron/create") {
+    if (canisterId) {
+      const displayName = savedCanisterName || indexMeta?.name || shortCanisterId(canisterId)
+      return (
+        <Breadcrumb className="flex-1 min-w-0">
+          <BreadcrumbList className="text-xs sm:text-sm">
+            <BreadcrumbItem>
+              <BreadcrumbLink render={<Link href="/canister" />} className="text-muted-foreground hover:text-foreground">
+                {t("settings.items.canisters")}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="font-medium text-foreground truncate max-w-40 sm:max-w-xs">
+                {displayName}
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      )
+    }
+  }
+
+  if (pathname.startsWith("/cron")) {
+    if (pathname === "/cron/api") {
+      return (
+        <Breadcrumb className="flex-1 min-w-0">
+          <BreadcrumbList className="text-xs sm:text-sm">
+            <BreadcrumbItem>
+              <BreadcrumbLink render={<Link href="/cron" />} className="text-muted-foreground hover:text-foreground">
+                icCron
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="font-medium text-foreground">
+                {t("cron.apiKeys")}
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      )
+    }
+
+    if (pathname === "/cron/create") {
       const projectName = searchParams.get("id") || searchParams.get("name")
       return (
         <Breadcrumb className="flex-1 min-w-0">
           <BreadcrumbList className="text-xs sm:text-sm">
             <BreadcrumbItem>
-              <BreadcrumbLink href="/cron" className="text-muted-foreground hover:text-foreground">
+              <BreadcrumbLink render={<Link href="/cron" />} className="text-muted-foreground hover:text-foreground">
                 icCron
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -61,7 +127,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
               <>
                 <BreadcrumbItem>
                   <BreadcrumbLink
-                    href={`/cron?id=${encodeURIComponent(projectName)}`}
+                    render={<Link href={`/cron?id=${encodeURIComponent(projectName)}`} />}
                     className="text-muted-foreground hover:text-foreground truncate max-w-32"
                   >
                     {decodeURIComponent(projectName)}
@@ -72,7 +138,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
             )}
             <BreadcrumbItem>
               <BreadcrumbPage className="font-medium text-foreground">
-                Create Job
+                {t("cron.createJob")}
               </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
@@ -86,7 +152,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
         <Breadcrumb className="flex-1 min-w-0">
           <BreadcrumbList className="text-xs sm:text-sm">
             <BreadcrumbItem>
-              <BreadcrumbLink href="/cron" className="text-muted-foreground hover:text-foreground">
+              <BreadcrumbLink render={<Link href="/cron" />} className="text-muted-foreground hover:text-foreground">
                 icCron
               </BreadcrumbLink>
             </BreadcrumbItem>
@@ -105,7 +171,7 @@ function HeaderTitleOrBreadcrumb({ pathname }: { pathname: string }) {
       <Breadcrumb className="flex-1 min-w-0">
         <BreadcrumbList className="text-xs sm:text-sm">
           <BreadcrumbItem>
-            <span className="text-muted-foreground">Services</span>
+            <span className="text-muted-foreground">{t("settings.sections.services")}</span>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>

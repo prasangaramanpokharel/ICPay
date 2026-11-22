@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
@@ -76,6 +77,8 @@ export function CronApiView() {
   const searchParams = useSearchParams()
   const initialProjectParam = searchParams.get("projectId")
   const { identity } = useAuth()
+  const t = useTranslations("cron")
+  const tCommon = useTranslations("common")
 
   const [projects, setProjects] = React.useState<RemoteProjectRecord[]>([])
   const [loadingProjects, setLoadingProjects] = React.useState(true)
@@ -291,8 +294,8 @@ export function CronApiView() {
 
   return (
     <AppPage
-      title="API Keys"
-      description="Manage programmatic trigger API keys and webhook endpoints for icCron."
+      title={t("apiKeys")}
+      description={t("apiKeysDesc")}
       actions={
         <div className="flex items-center gap-2">
           <Button
@@ -307,7 +310,7 @@ export function CronApiView() {
             className="gap-1.5"
           >
             <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={1.75} />
-            <span>Create API key</span>
+            <span>{t("createApiKey")}</span>
           </Button>
         </div>
       }
@@ -322,7 +325,7 @@ export function CronApiView() {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search keys by label, project, or hash..."
+            placeholder={t("searchApiKeysPlaceholder")}
             className="pl-10"
             autoComplete="off"
             spellCheck={false}
@@ -336,7 +339,7 @@ export function CronApiView() {
               onChange={(e) => setSelectedProjectId(e.target.value)}
               className="text-xs"
             >
-              <NativeSelectOption value="all">All projects</NativeSelectOption>
+              <NativeSelectOption value="all">{t("allProjects")}</NativeSelectOption>
               {projects.map((p) => (
                 <NativeSelectOption key={p.id.toString()} value={p.id.toString()}>
                   {p.name} ({formatProjectId(p.id)})
@@ -350,9 +353,9 @@ export function CronApiView() {
             onChange={(e) => setStatusFilter(e.target.value)}
             className="text-xs"
           >
-            <NativeSelectOption value="all">All statuses</NativeSelectOption>
-            <NativeSelectOption value="active">Active only</NativeSelectOption>
-            <NativeSelectOption value="revoked">Revoked only</NativeSelectOption>
+            <NativeSelectOption value="all">{t("allStatuses")}</NativeSelectOption>
+            <NativeSelectOption value="active">{t("activeOnly")}</NativeSelectOption>
+            <NativeSelectOption value="revoked">{t("revokedOnly")}</NativeSelectOption>
           </NativeSelect>
         </div>
       </div>
@@ -362,12 +365,12 @@ export function CronApiView() {
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/40 hover:bg-muted/40">
-                <TableHead className="w-[24%]">Label</TableHead>
-                <TableHead className="w-[26%]">API Key</TableHead>
-                <TableHead className="w-[14%]">Project</TableHead>
-                <TableHead className="w-[10%]">Status</TableHead>
-                <TableHead className="w-[12%]">Created</TableHead>
-                <TableHead className="w-[14%] text-right pr-6">Actions</TableHead>
+                <TableHead className="w-[24%]">{t("colLabel")}</TableHead>
+                <TableHead className="w-[26%]">{t("colApiKey")}</TableHead>
+                <TableHead className="w-[14%]">{t("colProject")}</TableHead>
+                <TableHead className="w-[10%]">{t("colStatus")}</TableHead>
+                <TableHead className="w-[12%]">{t("colCreated")}</TableHead>
+                <TableHead className="w-[14%] text-right pr-6">{t("colActions")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -385,9 +388,9 @@ export function CronApiView() {
                         <EmptyMedia variant="icon">
                           <HugeiconsIcon icon={Key01Icon} className="size-6 text-muted-foreground" />
                         </EmptyMedia>
-                        <EmptyTitle>No API keys found</EmptyTitle>
+                        <EmptyTitle>{t("noApiKeysTitle")}</EmptyTitle>
                         <EmptyDescription>
-                          Create an API key to trigger your cron jobs programmatically from GitHub Actions, Vercel, or cURL.
+                          {t("noApiKeysDesc")}
                         </EmptyDescription>
                       </EmptyHeader>
                     </Empty>
@@ -465,7 +468,7 @@ export function CronApiView() {
                           variant={key.revoked ? "destructive" : "default"}
                           className="text-[10px] py-0 px-1.5"
                         >
-                          {key.revoked ? "Revoked" : "Active"}
+                          {key.revoked ? t("revoked") : t("active")}
                         </Badge>
                       </TableCell>
 
@@ -488,7 +491,7 @@ export function CronApiView() {
                               ) : (
                                 <HugeiconsIcon icon={CancelCircleIcon} className="size-3 mr-1" />
                               )}
-                              Revoke
+                              {t("revoke")}
                             </Button>
                           )}
                           <Button
@@ -503,7 +506,7 @@ export function CronApiView() {
                             ) : (
                               <HugeiconsIcon icon={Delete02Icon} className="size-3 mr-1" />
                             )}
-                            Delete
+                            {t("delete")}
                           </Button>
                         </div>
                       </TableCell>
@@ -520,17 +523,17 @@ export function CronApiView() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              Create an API Key
+              {t("createApiKeyTitle")}
             </DialogTitle>
             <DialogDescription>
-              Generate an authentication key to trigger cron jobs programmatically.
+              {t("createApiKeyDesc")}
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={handleCreateSubmit} className="flex flex-col gap-4 py-2">
             {projects.length > 0 && (
               <div className="flex flex-col gap-1.5">
-                <Label>Target Project</Label>
+                <Label>{t("targetProject")}</Label>
                 <NativeSelect
                   value={targetProjectId}
                   onChange={(e) => setTargetProjectId(e.target.value)}
@@ -547,11 +550,11 @@ export function CronApiView() {
             )}
 
             <div className="flex flex-col gap-1.5">
-              <Label>Key Label</Label>
+              <Label>{t("keyLabel")}</Label>
               <Input
                 value={newKeyLabel}
                 onChange={(e) => setNewKeyLabel(e.target.value)}
-                placeholder="e.g. GitHub Actions, Vercel Deploy Hook"
+                placeholder={t("keyLabelPlaceholder")}
                 className="text-sm"
                 required
               />
@@ -564,7 +567,7 @@ export function CronApiView() {
                 size="sm"
                 onClick={() => setCreateOpen(false)}
               >
-                Cancel
+                {tCommon("cancel")}
               </Button>
               <Button
                 type="submit"
@@ -573,7 +576,7 @@ export function CronApiView() {
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 {creatingKey ? <Spinner data-icon="inline-start" /> : null}
-                <span>Generate Key</span>
+                <span>{t("generateKey")}</span>
               </Button>
             </div>
           </form>
@@ -584,10 +587,10 @@ export function CronApiView() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              API Key Generated
+              {t("apiKeyGeneratedTitle")}
             </DialogTitle>
             <DialogDescription>
-              Copy this key immediately. For security, it will never be displayed again.
+              {t("apiKeyGeneratedDesc")}
             </DialogDescription>
           </DialogHeader>
 
@@ -607,12 +610,12 @@ export function CronApiView() {
                   icon={copiedSecret ? Tick02Icon : Copy01Icon}
                   className="size-3.5"
                 />
-                {copiedSecret ? "Copied" : "Copy"}
+                {copiedSecret ? tCommon("copied") : tCommon("copy")}
               </Button>
             </div>
 
             <div className="rounded-lg border border-warning/40 bg-warning/10 p-3 text-xs text-warning-foreground">
-              Please save this key securely. If lost, you will need to generate a new key and revoke this one.
+              {t("apiKeyGeneratedWarning")}
             </div>
 
             <div className="flex justify-end pt-2">
@@ -621,7 +624,7 @@ export function CronApiView() {
                 size="sm"
                 onClick={() => setResultModalOpen(false)}
               >
-                Done
+                {tCommon("done")}
               </Button>
             </div>
           </div>

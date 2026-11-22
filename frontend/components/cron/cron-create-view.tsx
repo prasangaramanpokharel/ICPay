@@ -3,6 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Spinner } from "@/components/ui/spinner"
@@ -18,6 +19,7 @@ import { formatProjectId, parseProjectId } from "./cron-types"
 function CronCreateContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const t = useTranslations("cron")
   const queryProjectId = searchParams.get("projectId")
   const queryProjectName = searchParams.get("id") || searchParams.get("name")
 
@@ -81,9 +83,7 @@ function CronCreateContent() {
   const backHref = targetProjectName
     ? `/cron?id=${encodeURIComponent(targetProjectName)}`
     : "/cron"
-  const backLabel = targetProjectName
-    ? `Back to ${targetProjectName}`
-    : "Back to Projects"
+  const backLabel = targetProjectName ?? t("backToProjects")
 
   return (
     <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto py-6 px-4">
@@ -102,7 +102,7 @@ function CronCreateContent() {
         {projects.length > 1 && (
           <div className="flex items-center gap-2">
             <HugeiconsIcon icon={Folder01Icon} className="size-3.5 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">Project:</span>
+            <span className="text-xs text-muted-foreground">{t("project")}:</span>
             <NativeSelect
               value={selectedProjectId?.toString() ?? ""}
               onChange={(e) => {
@@ -137,9 +137,9 @@ function CronCreateContent() {
             <EmptyMedia variant="icon">
               <HugeiconsIcon icon={Folder01Icon} className="size-6 text-muted-foreground" />
             </EmptyMedia>
-            <EmptyTitle>No projects found</EmptyTitle>
+            <EmptyTitle>{t("noProjectsTitle")}</EmptyTitle>
             <EmptyDescription>
-              Please create a project namespace first before scheduling cron jobs.
+              {t("noProjectsDesc")}
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
@@ -149,7 +149,7 @@ function CronCreateContent() {
               render={<Link href="/cron" />}
               className="gap-1.5"
             >
-              Go to icCron Workspace
+              {t("backToProjects")}
             </Button>
           </EmptyContent>
         </Empty>

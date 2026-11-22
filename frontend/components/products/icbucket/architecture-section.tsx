@@ -17,7 +17,6 @@ import {
 import { Nodejs, Python, Go } from "@dev.icons/react"
 import { Card, CardContent } from "@/components/ui/card"
 import { AnimatedBeam } from "@/components/ui/animated-beam"
-import { APP_LOGO } from "@/lib/ui/brand-images"
 
 const UPLOAD_STEP_IDS = ["0", "1", "2"] as const
 const READ_STEP_IDS = ["0", "1", "2"] as const
@@ -203,17 +202,17 @@ export function ArchitectureSection() {
                       className="z-10 relative flex size-24 items-center justify-center rounded-3xl border-2 border-primary/50 bg-card p-3 shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-primary"
                     >
                       <Image
-                        src={APP_LOGO}
-                        alt="ICPay Canister"
-                        width={48}
-                        height={48}
-                        className="size-18 rounded-2xl object-contain drop-shadow-sm"
+                        src="/images/logo/icbucket/icbucket.png"
+                        alt="ICBucket Canister"
+                        width={72}
+                        height={72}
+                        className="size-16 sm:size-18 rounded-2xl object-contain drop-shadow-sm"
                       />
                     </div>
                     <div className="space-y-1">
                       <div className="flex items-center justify-center gap-1.5">
                         <p className="text-xs font-bold tracking-tight text-foreground">
-                          ICPay Bucket Canister
+                          ICBucket Canister
                         </p>
                       </div>
                     </div>

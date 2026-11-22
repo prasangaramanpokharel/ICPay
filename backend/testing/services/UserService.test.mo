@@ -159,4 +159,35 @@ let _u4 = UserRepo.create(users, usernames, usersById, "uid-4", p4, null, "Dave"
 assert(UserService.getVerifiedTier(svc, "uid-4") == null);
 Debug.print("PASS: getVerifiedTier returns null for a user with no handle");
 
+let p1Handles = UserService.getUsernames(svc, p1);
+assert(p1Handles.size() == 1);
+assert(p1Handles[0] == "alice");
+Debug.print("PASS: getUsernames returns user handle");
+
+assert(UserService.getUsernames(svc, p4).size() == 0);
+Debug.print("PASS: getUsernames returns empty array for user without handle");
+
+UserRepo.addAlias(usernames, _u1, "alias1", now);
+let p1Multi = UserService.getUsernames(svc, p1);
+assert(p1Multi.size() == 2);
+Debug.print("PASS: addAlias adds second handle to user");
+
+switch (UserService.setPrimaryUsername(svc, p1, "alice")) {
+  case (#ok(updated)) {
+    assert(updated.username == ?"alice");
+    Debug.print("PASS: setPrimaryUsername switches primary back to alice");
+  };
+  case (#err(msg)) { assert(false); Debug.print("FAIL: setPrimaryUsername failed: " # msg) };
+};
+
+switch (UserService.setPrimaryUsername(svc, p1, "bob")) {
+  case (#ok(_)) { assert(false); Debug.print("FAIL: cannot steal another user's handle") };
+  case (#err(msg)) { Debug.print("PASS: setPrimaryUsername rejects handle owned by someone else: " # msg) };
+};
+
+switch (UserService.setPrimaryUsername(svc, p1, "nonexistent")) {
+  case (#ok(_)) { assert(false); Debug.print("FAIL: cannot set unowned handle as primary") };
+  case (#err(msg)) { Debug.print("PASS: setPrimaryUsername rejects unowned handle: " # msg) };
+};
+
 Debug.print("ALL USER SERVICE TESTS PASSED");

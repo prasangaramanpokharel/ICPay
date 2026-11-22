@@ -1,6 +1,7 @@
 "use client"
 
-import type { ComponentProps } from "react"
+import { Suspense, type ComponentProps } from "react"
+import { usePathname, useSearchParams } from "next/navigation"
 import {
   Sidebar,
   SidebarContent,
@@ -9,8 +10,21 @@ import {
 } from "@/components/ui/sidebar"
 import { DashboardNavFooter, DashboardNavMain } from "@/components/layout/dashboard/nav-main"
 import { SidebarUserFooter } from "@/components/layout/dashboard/sidebar-user-footer"
+import { CanisterSidebarNav } from "@/components/layout/dashboard/canister-sidebar-nav"
 import { SIDEBAR_FOOTER } from "@/lib/navigation/app-sidebar-nav"
 import { cn } from "@/lib/ui/utils"
+
+function SidebarContentInner() {
+  const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const canisterId = pathname === "/canister" ? searchParams.get("id") : null
+
+  if (canisterId) {
+    return <CanisterSidebarNav canisterId={canisterId} />
+  }
+
+  return <DashboardNavMain />
+}
 
 export function AppSidebar({ className, ...props }: ComponentProps<typeof Sidebar>) {
   return (
@@ -23,8 +37,11 @@ export function AppSidebar({ className, ...props }: ComponentProps<typeof Sideba
       {...props}
     >
       <SidebarContent className="gap-0 pt-2">
-        <DashboardNavMain />
+        <Suspense fallback={<DashboardNavMain />}>
+          <SidebarContentInner />
+        </Suspense>
       </SidebarContent>
+
       <SidebarFooter className="mt-auto border-t border-sidebar-border/40 p-2.5 pb-3">
         {SIDEBAR_FOOTER.length > 0 ? (
           <div className="mb-2 border-b border-sidebar-border/60 pb-2">

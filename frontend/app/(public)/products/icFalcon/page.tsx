@@ -33,8 +33,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: pageImageUrl(PAGE_IMAGES.icfalcon.og),
-        width: 1920,
-        height: 1080,
+        width: 1254,
+        height: 1254,
         alt: "ICFalcon - Motoko Framework",
       },
     ],

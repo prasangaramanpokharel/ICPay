@@ -6,6 +6,7 @@ module {
 
   public let createUploadSessionStore = Bucket.createUploadSessionStore;
   public let create = Bucket.create;
+  public let setProPerks = Bucket.setProPerks;
 
   public let getCycleStatus = Bucket.getCycleStatus;
   public let getCloudStats = Bucket.getCloudStats;

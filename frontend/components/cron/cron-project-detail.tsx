@@ -3,6 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
@@ -101,6 +102,8 @@ export function CronProjectDetail({
 }) {
   const router = useRouter()
   const { identity } = useAuth()
+  const t = useTranslations("cron")
+  const tCommon = useTranslations("common")
 
   const [project, setProject] = React.useState<RemoteProjectRecord | null>(null)
   const [allProjects, setAllProjects] = React.useState<RemoteProjectRecord[]>([])
@@ -343,9 +346,9 @@ export function CronProjectDetail({
             <EmptyMedia variant="icon">
               <HugeiconsIcon icon={Folder01Icon} className="size-6 text-muted-foreground" />
             </EmptyMedia>
-            <EmptyTitle>Project not found</EmptyTitle>
+            <EmptyTitle>{t("projectNotFound")}</EmptyTitle>
             <EmptyDescription>
-              The project &quot;{projectNameOrId}&quot; does not exist or has been deleted.
+              {t("projectNotFoundDesc")}
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
@@ -356,7 +359,7 @@ export function CronProjectDetail({
               className="gap-1.5"
             >
               <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
-              <span>Back to projects</span>
+              <span>{t("backToProjects")}</span>
             </Button>
           </EmptyContent>
         </Empty>
@@ -367,8 +370,8 @@ export function CronProjectDetail({
   const n = Number(project.created_at)
   const ms = project.created_at < 1_000_000_000_000n ? n * 1000 : Number(project.created_at / 1_000_000n)
   const createdDate = n > 0 ? new Date(ms).toLocaleDateString() : ""
-  const descriptionText = `${jobs.length} ${jobs.length === 1 ? "job" : "jobs"}${
-    createdDate ? ` · Created ${createdDate}` : ""
+  const descriptionText = `${jobs.length} ${t("jobs")}${
+    createdDate ? ` · ${createdDate}` : ""
   }`
 
   return (
@@ -381,7 +384,7 @@ export function CronProjectDetail({
             variant={jobs.length === 0 ? "secondary" : hasActiveJobs ? "outline" : "secondary"}
             className="text-xs px-2 py-0.5 font-medium"
           >
-            {jobs.length === 0 ? "Empty" : hasActiveJobs ? "Active" : "Paused"}
+            {jobs.length === 0 ? t("empty") : hasActiveJobs ? t("active") : t("paused")}
           </Badge>
           <Badge variant="secondary" className="text-[11px] font-mono">
             ID: {formatProjectId(project.id)}
@@ -397,7 +400,7 @@ export function CronProjectDetail({
             onClick={() => setConnectOpen(true)}
             className="text-xs font-medium"
           >
-            Connect
+            {t("connect")}
           </Button>
 
           <DropdownMenu>
@@ -423,7 +426,7 @@ export function CronProjectDetail({
                 className="gap-2 text-xs cursor-pointer"
               >
                 <HugeiconsIcon icon={Edit01Icon} className="size-3.5" />
-                <span>Rename</span>
+                <span>{t("rename")}</span>
               </DropdownMenuItem>
               {jobs.length > 0 && (
                 <DropdownMenuItem
@@ -435,7 +438,7 @@ export function CronProjectDetail({
                     icon={hasActiveJobs ? PauseIcon : PlayIcon}
                     className="size-3.5"
                   />
-                  <span>{hasActiveJobs ? "Pause all jobs" : "Resume all jobs"}</span>
+                  <span>{hasActiveJobs ? t("pauseAllJobs") : t("resumeAllJobs")}</span>
                 </DropdownMenuItem>
               )}
               <DropdownMenuSeparator />
@@ -446,7 +449,7 @@ export function CronProjectDetail({
                 className="gap-2 text-xs text-destructive cursor-pointer"
               >
                 <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
-                <span>Delete</span>
+                <span>{t("delete")}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -458,7 +461,7 @@ export function CronProjectDetail({
             className="gap-1.5"
           >
             <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={1.75} />
-            <span>Create Job</span>
+            <span>{t("createJob")}</span>
           </Button>
         </div>
       }
@@ -474,7 +477,7 @@ export function CronProjectDetail({
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search cron jobs"
+                placeholder={t("searchJobs")}
                 className="pl-10"
                 autoComplete="off"
                 spellCheck={false}
@@ -489,7 +492,7 @@ export function CronProjectDetail({
                   variant={filter === tab ? "secondary" : "outline"}
                   onClick={() => setFilter(tab)}
                 >
-                  {tab === "all" ? "All" : tab === "active" ? "Active" : "Paused"}
+                  {tab === "all" ? t("all") : tab === "active" ? t("active") : t("paused")}
                 </Button>
               ))}
             </ButtonGroup>
@@ -502,9 +505,9 @@ export function CronProjectDetail({
               <EmptyMedia variant="icon" className="size-12 rounded-full bg-muted flex items-center justify-center">
                 <HugeiconsIcon icon={Clock01Icon} className="size-6 text-muted-foreground" />
               </EmptyMedia>
-              <EmptyTitle>No cron jobs yet</EmptyTitle>
+              <EmptyTitle>{t("noJobsTitle")}</EmptyTitle>
               <EmptyDescription className="max-w-md">
-                Schedule recurring tasks, HTTP webhooks, or on-chain canister calls for this project.
+                {t("noJobsDesc")}
               </EmptyDescription>
             </EmptyHeader>
           </Empty>
@@ -514,9 +517,9 @@ export function CronProjectDetail({
               <EmptyMedia variant="icon">
                 <HugeiconsIcon icon={Search01Icon} className="size-6 text-muted-foreground" />
               </EmptyMedia>
-              <EmptyTitle>No jobs match your search</EmptyTitle>
+              <EmptyTitle>{t("noJobsMatch")}</EmptyTitle>
               <EmptyDescription>
-                Try adjusting your search keywords or switching the status filter.
+                {t("noProjectsMatchDesc")}
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
@@ -528,7 +531,7 @@ export function CronProjectDetail({
                   setFilter("all")
                 }}
               >
-                Clear filters
+                {t("clearFilters")}
               </Button>
             </EmptyContent>
           </Empty>
@@ -538,12 +541,12 @@ export function CronProjectDetail({
               <Table>
                 <TableHeader>
                   <TableRow className="border-border hover:bg-transparent">
-                    <TableHead className="font-semibold text-muted-foreground py-3.5">Name</TableHead>
-                    <TableHead className="font-semibold text-muted-foreground py-3.5 hidden sm:table-cell">Type</TableHead>
-                    <TableHead className="font-semibold text-muted-foreground py-3.5">Schedule</TableHead>
-                    <TableHead className="font-semibold text-muted-foreground py-3.5 hidden md:table-cell">Status</TableHead>
-                    <TableHead className="font-semibold text-muted-foreground py-3.5 hidden md:table-cell">Last Run</TableHead>
-                    <TableHead className="text-right font-semibold text-muted-foreground py-3.5 w-32 pr-4">Action</TableHead>
+                    <TableHead className="font-semibold text-muted-foreground py-3.5">{t("project")}</TableHead>
+                    <TableHead className="font-semibold text-muted-foreground py-3.5 hidden sm:table-cell">{t("type")}</TableHead>
+                    <TableHead className="font-semibold text-muted-foreground py-3.5">{t("schedule")}</TableHead>
+                    <TableHead className="font-semibold text-muted-foreground py-3.5 hidden md:table-cell">{t("status")}</TableHead>
+                    <TableHead className="font-semibold text-muted-foreground py-3.5 hidden md:table-cell">{t("lastRun")}</TableHead>
+                    <TableHead className="text-right font-semibold text-muted-foreground py-3.5 w-32 pr-4">{t("action")}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -571,7 +574,7 @@ export function CronProjectDetail({
 
                         <TableCell className="py-3.5 hidden sm:table-cell">
                           <Badge variant="outline" className="text-[10px] px-1.5 py-0 font-medium">
-                            {isWebhook ? "Webhook" : "Canister"}
+                            {isWebhook ? t("webhook") : t("canister")}
                           </Badge>
                         </TableCell>
 
@@ -591,7 +594,7 @@ export function CronProjectDetail({
                             variant={job.status === "Active" ? "outline" : "secondary"}
                             className="text-[10px] px-1.5 py-0 font-medium"
                           >
-                            {job.status}
+                            {job.status === "Active" ? t("active") : t("paused")}
                           </Badge>
                         </TableCell>
 
@@ -600,11 +603,11 @@ export function CronProjectDetail({
                             <span className="text-xs text-muted-foreground">{lastRunLabel}</span>
                             {hasFailed ? (
                               <Badge variant="destructive" className="text-[9px] px-1 py-0">
-                                Failed
+                                {t("failed")}
                               </Badge>
                             ) : hasRan ? (
                               <Badge variant="outline" className="text-[9px] px-1 py-0 text-success border-success/30 bg-success/10">
-                                Success
+                                {t("success")}
                               </Badge>
                             ) : null}
                           </div>
@@ -624,7 +627,7 @@ export function CronProjectDetail({
                                     size="icon-sm"
                                     className="size-8"
                                     onClick={() => void handleToggleJob(job)}
-                                    aria-label={job.status === "Active" ? "Pause job" : "Resume job"}
+                                    aria-label={job.status === "Active" ? t("pauseJob") : t("resumeJob")}
                                     disabled={isBusy}
                                   >
                                     {isBusy ? (
@@ -639,7 +642,7 @@ export function CronProjectDetail({
                                 }
                               />
                               <TooltipContent side="top">
-                                {job.status === "Active" ? "Pause job" : "Resume job"}
+                                {job.status === "Active" ? t("pauseJob") : t("resumeJob")}
                               </TooltipContent>
                             </Tooltip>
 
@@ -652,13 +655,13 @@ export function CronProjectDetail({
                                     size="icon-sm"
                                     className="size-8 text-muted-foreground hover:text-foreground"
                                     onClick={() => handleOpenDrawer(job)}
-                                    aria-label="View job execution logs"
+                                    aria-label={t("viewLogs")}
                                   >
                                     <HugeiconsIcon icon={ViewIcon} className="size-3.5" />
                                   </Button>
                                 }
                               />
-                              <TooltipContent side="top">View execution logs</TooltipContent>
+                              <TooltipContent side="top">{t("viewLogs")}</TooltipContent>
                             </Tooltip>
 
                             <Tooltip>
@@ -670,14 +673,14 @@ export function CronProjectDetail({
                                     size="icon-sm"
                                     className="size-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10"
                                     onClick={() => setJobToDelete(job)}
-                                    aria-label="Delete cron job"
+                                    aria-label={t("deleteJob")}
                                     disabled={isBusy}
                                   >
                                     <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
                                   </Button>
                                 }
                               />
-                              <TooltipContent side="top">Delete job</TooltipContent>
+                              <TooltipContent side="top">{t("deleteJob")}</TooltipContent>
                             </Tooltip>
                           </div>
                         </TableCell>
@@ -695,10 +698,10 @@ export function CronProjectDetail({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              Rename Project
+              {t("renameProject")}
             </DialogTitle>
             <DialogDescription>
-              Update the display name of this project namespace.
+              {t("renameProjectDesc")}
             </DialogDescription>
           </DialogHeader>
 
@@ -706,7 +709,7 @@ export function CronProjectDetail({
             <Input
               value={renameName}
               onChange={(e) => setRenameName(e.target.value)}
-              placeholder="Project Name"
+              placeholder={t("projectName")}
               className="text-sm"
               required
             />
@@ -717,7 +720,7 @@ export function CronProjectDetail({
                 size="sm"
                 onClick={() => setRenameOpen(false)}
               >
-                Cancel
+                {tCommon("cancel")}
               </Button>
               <Button
                 type="submit"
@@ -726,7 +729,7 @@ export function CronProjectDetail({
                 className="bg-primary text-primary-foreground hover:bg-primary/90"
               >
                 {renaming ? <Spinner data-icon="inline-start" /> : null}
-                <span>Save</span>
+                <span>{t("save")}</span>
               </Button>
             </div>
           </form>
@@ -739,20 +742,20 @@ export function CronProjectDetail({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Project?</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteProjectTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete project &quot;{project.name}&quot; ({jobs.length} jobs)? All associated cron jobs will be permanently deleted. This action cannot be undone.
+              {t("deleteProjectConfirm")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               onClick={() => {
                 void handleDeleteProject()
               }}
             >
-              Delete Project
+              {t("deleteProject")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -766,20 +769,20 @@ export function CronProjectDetail({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Cron Job?</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteJobTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete job &quot;{jobToDelete?.label}&quot;? Recurring executions will stop immediately. This action cannot be undone.
+              {t("deleteJobConfirm")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               onClick={() => {
                 void handleDeleteJob()
               }}
             >
-              Delete Job
+              {t("deleteJob")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
