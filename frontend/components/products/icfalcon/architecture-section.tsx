@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { CodeBlock } from "@/components/ui/code-block"
@@ -96,19 +97,31 @@ export function ArchitectureSection() {
   return (
     <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="mx-auto max-w-3xl text-center space-y-3 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+          className="mx-auto max-w-3xl text-center space-y-3 mb-14 md:mb-16"
+        >
           <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
             Architecture Standard
           </Badge>
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
             The Enforced 4-Tier Backend Architecture
           </h2>
-          <p className="text-base text-muted-foreground leading-relaxed">
+          <p className="text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto">
             IcFalcon replaces monolithic Motoko actors with an enforced unidirectional architecture. Calls flow strictly downward from Candid endpoints to persistent storage.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid gap-8 lg:grid-cols-12 items-start">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+          className="grid gap-8 lg:grid-cols-12 items-start"
+        >
           <div className="lg:col-span-5 space-y-3">
             {TIERS.map((tier, idx) => {
               const isSelected = selectedTier === idx
@@ -206,7 +219,7 @@ export function ArchitectureSection() {
               </CardContent>
             </Card>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   )

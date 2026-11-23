@@ -1,5 +1,6 @@
 "use client"
 
+import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { CodeBlock } from "@/components/ui/code-block"
@@ -46,20 +47,32 @@ export function AgentSkillsSection() {
   return (
     <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="mx-auto max-w-3xl text-center space-y-3 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+          className="mx-auto max-w-3xl text-center space-y-3 mb-14 md:mb-16"
+        >
           <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
             AI-Native Engineering
           </Badge>
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
             64 Autonomous AI Agent Skills Built In
           </h2>
-          <p className="text-base text-muted-foreground leading-relaxed">
+          <p className="text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto">
             IcFalcon is designed for Cursor, Claude Code, Gemini CLI, and Antigravity. 64 verified architectural skills prevent AI coding agents from hallucinating deprecated Motoko APIs or invalid patterns.
           </p>
-        </div>
+        </motion.div>
 
         <div className="grid gap-6 lg:grid-cols-12 mb-12 items-center">
-          <div className="lg:col-span-7 space-y-3">
+          <motion.div
+            initial={{ opacity: 0, x: -16 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="lg:col-span-7 space-y-3"
+          >
             <div className="mb-2">
               <h3 className="text-base font-semibold text-foreground">
                 Core Standard Domains (.agent/skills/)
@@ -85,9 +98,15 @@ export function AgentSkillsSection() {
                 </Card>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="lg:col-span-5 space-y-4">
+          <motion.div
+            initial={{ opacity: 0, x: 16 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+            className="lg:col-span-5 space-y-4"
+          >
             <Card className="border-border/60 bg-card/70 backdrop-blur-xs">
               <CardHeader>
                 <div className="flex items-center gap-2 text-primary text-xs font-semibold uppercase tracking-wider">
@@ -107,7 +126,7 @@ export function AgentSkillsSection() {
                 />
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

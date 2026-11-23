@@ -1,5 +1,6 @@
 "use client"
 
+import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { CodeBlock } from "@/components/ui/code-block"
@@ -39,19 +40,31 @@ export function UniverseSection() {
   return (
     <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="mx-auto max-w-3xl text-center space-y-3 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+          className="mx-auto max-w-3xl text-center space-y-3 mb-14 md:mb-16"
+        >
           <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
             Multi-Canister Scaling
           </Badge>
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
             Falcon Universe: Multi-Canister Event Mesh
           </h2>
-          <p className="text-base text-muted-foreground leading-relaxed">
+          <p className="text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto">
             When dApps scale beyond a single canister memory limit, Falcon Universe serves as an asynchronous, event-driven mesh — Kafka for the Internet Computer.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid gap-6 md:grid-cols-3 mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+          className="grid gap-6 md:grid-cols-3 mb-12"
+        >
           {MESH_PRIMITIVES.map((item, idx) => (
             <Card key={idx} className="border-border/60 bg-card/60 backdrop-blur-xs transition-colors hover:border-primary/40 hover:bg-card/90">
               <CardHeader>
@@ -65,9 +78,15 @@ export function UniverseSection() {
               </CardHeader>
             </Card>
           ))}
-        </div>
+        </motion.div>
 
-        <Card className="border-border/60 bg-card/70 backdrop-blur-xs">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
+        >
+          <Card className="border-border/60 bg-card/70 backdrop-blur-xs">
           <CardHeader>
             <div className="flex items-center gap-2 text-primary text-xs font-semibold uppercase tracking-wider">
               <HugeiconsIcon icon={GlobalIcon} className="size-4" />
@@ -86,6 +105,7 @@ export function UniverseSection() {
             />
           </CardContent>
         </Card>
+        </motion.div>
       </div>
     </section>
   )

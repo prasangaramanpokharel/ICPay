@@ -1,5 +1,6 @@
 "use client"
 
+import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { CodeBlock } from "@/components/ui/code-block"
@@ -48,43 +49,56 @@ export function WalkthroughSection() {
   return (
     <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="mx-auto max-w-3xl text-center space-y-3 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+          className="mx-auto max-w-3xl text-center space-y-3 mb-14 md:mb-16"
+        >
           <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
             Developer Experience
           </Badge>
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
             Scaffold & Verify in Seconds
           </h2>
-          <p className="text-base text-muted-foreground leading-relaxed">
+          <p className="text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto">
             See how IcFalcon automates full-stack feature creation and validates all 4 tiers, AI skills, and Next.js builds in a single pipeline.
           </p>
-        </div>
+        </motion.div>
 
-        <Card className="border-border/60 bg-card/70 backdrop-blur-xs">
-          <CardHeader>
-            <CardTitle className="text-lg">Real-World Walkthrough</CardTitle>
-            <CardDescription className="text-xs">
-              From scaffolding a new business module to 100% green production verification.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <CodeBlock
-              tabs={[
-                {
-                  label: "1. falcon make:feature Invoice",
-                  code: SCAFFOLD_CODE,
-                  language: "bash",
-                },
-                {
-                  label: "2. falcon prod:check --local",
-                  code: CHECK_CODE,
-                  language: "bash",
-                },
-              ]}
-              className="border-border/60"
-            />
-          </CardContent>
-        </Card>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+        >
+          <Card className="border-border/60 bg-card/70 backdrop-blur-xs">
+            <CardHeader>
+              <CardTitle className="text-lg">Real-World Walkthrough</CardTitle>
+              <CardDescription className="text-xs">
+                From scaffolding a new business module to 100% green production verification.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CodeBlock
+                tabs={[
+                  {
+                    label: "1. falcon make:feature Invoice",
+                    code: SCAFFOLD_CODE,
+                    language: "bash",
+                  },
+                  {
+                    label: "2. falcon prod:check --local",
+                    code: CHECK_CODE,
+                    language: "bash",
+                  },
+                ]}
+                className="border-border/60"
+              />
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
     </section>
   )

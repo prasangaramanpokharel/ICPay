@@ -1,5 +1,6 @@
 "use client"
 
+import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { CodeBlock } from "@/components/ui/code-block"
@@ -60,19 +61,31 @@ export function AuthSection() {
   return (
     <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="mx-auto max-w-3xl text-center space-y-3 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+          className="mx-auto max-w-3xl text-center space-y-3 mb-14 md:mb-16"
+        >
           <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
             Authentication Standard
           </Badge>
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
             Production-Ready Auth with @icp-sdk/auth
           </h2>
-          <p className="text-base text-muted-foreground leading-relaxed">
+          <p className="text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto">
             Eliminates legacy @dfinity runtime TypeErrors, broken popup blocks on mobile devices, and delegation expiry edge-cases.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+          className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-12"
+        >
           {AUTH_PILLARS.map((pillar, idx) => (
             <Card key={idx} className="border-border/60 bg-card/60 backdrop-blur-xs transition-colors hover:border-primary/40 hover:bg-card/90">
               <CardHeader>
@@ -86,9 +99,15 @@ export function AuthSection() {
               </CardHeader>
             </Card>
           ))}
-        </div>
+        </motion.div>
 
-        <Card className="border-border/60 bg-card/70 backdrop-blur-xs">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
+        >
+          <Card className="border-border/60 bg-card/70 backdrop-blur-xs">
           <CardHeader>
             <CardTitle className="text-lg">Modern Client Setup & Self-Healing Pattern</CardTitle>
             <CardDescription className="text-xs">
@@ -113,7 +132,8 @@ export function AuthSection() {
             />
           </CardContent>
         </Card>
-      </div>
-    </section>
+      </motion.div>
+    </div>
+  </section>
   )
 }

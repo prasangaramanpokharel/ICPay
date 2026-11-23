@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -75,19 +76,31 @@ export function CliSection() {
   return (
     <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="mx-auto max-w-3xl text-center space-y-3 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+          className="mx-auto max-w-3xl text-center space-y-3 mb-14 md:mb-16"
+        >
           <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
             Developer Tooling
           </Badge>
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
             The Global falcon Ops CLI
           </h2>
-          <p className="text-base text-muted-foreground leading-relaxed">
+          <p className="text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto">
             One unified executable replaces fragmented dfx, mops, npm, and bash scripts. Every command comes with high-speed short aliases.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="grid gap-4 md:grid-cols-2 mb-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.5, delay: 0.1, ease: "easeOut" }}
+          className="grid gap-4 md:grid-cols-2 mb-10"
+        >
           {CLI_COMMANDS.map((item) => (
             <Card key={item.cmd} className="border-border/60 bg-card/60 backdrop-blur-xs transition-colors hover:border-primary/40">
               <CardHeader className="p-4 sm:p-5">
@@ -117,9 +130,15 @@ export function CliSection() {
               </CardHeader>
             </Card>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="flex justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-40px" }}
+          transition={{ duration: 0.45, delay: 0.2, ease: "easeOut" }}
+          className="flex justify-center"
+        >
           <Button
             variant="outline"
             className="gap-2 rounded-full border-border/70 hover:border-border"
@@ -131,7 +150,7 @@ export function CliSection() {
               </Link>
             }
           />
-        </div>
+        </motion.div>
       </div>
     </section>
   )
