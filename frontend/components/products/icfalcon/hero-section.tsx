@@ -72,12 +72,13 @@ export function HeroSection() {
           </span>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-3">
           <h1 className="text-4xl font-extrabold tracking-tight bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent sm:text-5xl md:text-6xl">
             {t("title")}
           </h1>
-          <p className="text-xl text-muted-foreground sm:text-2xl">{t("subtitle")}</p>
-          <p className="text-base text-muted-foreground">{t("features")}</p>
+          <p className="text-lg text-muted-foreground sm:text-xl max-w-2xl mx-auto leading-relaxed">
+            {t("subtitle")}
+          </p>
         </div>
 
         <div className="mx-auto flex flex-col items-center space-y-3">
