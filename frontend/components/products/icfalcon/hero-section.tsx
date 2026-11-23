@@ -57,6 +57,21 @@ export function HeroSection() {
           </div>
         </div>
 
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs font-medium text-foreground shadow-xs">
+            <span className="size-1.5 rounded-full bg-success" />
+            <span>Motoko 1.6.0</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs font-medium text-foreground shadow-xs">
+            <span className="size-1.5 rounded-full bg-primary" />
+            <span>mo:core 2.6.1</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs font-medium text-foreground shadow-xs">
+            <span className="size-1.5 rounded-full bg-accent" />
+            <span>Next.js 15 + @icp-sdk</span>
+          </span>
+        </div>
+
         <div className="space-y-4">
           <h1 className="text-4xl font-extrabold tracking-tight bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent sm:text-5xl md:text-6xl">
             {t("title")}
@@ -67,35 +82,39 @@ export function HeroSection() {
 
         <div className="mx-auto flex flex-col items-center space-y-3">
           <div className="flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 p-1 backdrop-blur-xs">
-            <button
+            <Button
               type="button"
+              variant={activeTab === "curl" ? "default" : "ghost"}
+              size="sm"
               onClick={() => setActiveTab("curl")}
               className={cn(
-                "rounded-full px-3 py-1 text-xs font-semibold transition-all cursor-pointer",
+                "rounded-full px-3 py-1 text-xs font-semibold h-7 transition-all",
                 activeTab === "curl"
                   ? "bg-primary text-primary-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               curl (One-Liner)
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant={activeTab === "npm" ? "default" : "ghost"}
+              size="sm"
               onClick={() => setActiveTab("npm")}
               className={cn(
-                "rounded-full px-3 py-1 text-xs font-semibold transition-all cursor-pointer",
+                "rounded-full px-3 py-1 text-xs font-semibold h-7 transition-all",
                 activeTab === "npm"
                   ? "bg-primary text-primary-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               npm create
-            </button>
+            </Button>
           </div>
 
           <div className="relative mx-auto flex w-full max-w-lg items-center justify-between gap-3 rounded-xl border border-border/60 bg-card/80 px-4 py-2.5 shadow-sm backdrop-blur-xs">
             <ShineBorder
-              shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+              shineColor={["var(--primary)", "var(--accent)", "var(--success)"]}
               borderWidth={1.2}
               duration={12}
             />

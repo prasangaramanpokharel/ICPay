@@ -91,7 +91,7 @@ export function PackagesHero() {
         <div className="mx-auto flex flex-col items-center space-y-3 pt-2">
           <div className="relative mx-auto flex w-full max-w-md items-center justify-between gap-3 rounded-xl border border-border/60 bg-card/80 px-4 py-2.5 shadow-sm backdrop-blur-xs">
             <ShineBorder
-              shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+              shineColor={["var(--primary)", "var(--accent)", "var(--success)"]}
               borderWidth={1.2}
               duration={10}
             />
