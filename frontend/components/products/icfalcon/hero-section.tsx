@@ -13,7 +13,7 @@ import { Particles } from "@/components/ui/particles"
 import { ShineBorder } from "@/components/ui/shine-border"
 
 import { cn } from "@/lib/ui/utils"
-import { Gitlab, NpmIcon } from "@dev.icons/react"
+import { Gitlab, NextjsIcon, NpmIcon } from "@dev.icons/react"
 
 export function HeroSection() {
   const t = useTranslations("publicSite.icfalcon.hero")
@@ -67,7 +67,7 @@ export function HeroSection() {
             <span>mo:core 2.6.1</span>
           </span>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs font-medium text-foreground shadow-xs">
-            <span className="size-1.5 rounded-full bg-accent" />
+            <NextjsIcon size={13} className="size-3.5 shrink-0 rounded-full dark:invert" />
             <span>Next.js 15 + @icp-sdk</span>
           </span>
         </div>
