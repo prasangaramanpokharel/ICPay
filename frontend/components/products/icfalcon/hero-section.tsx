@@ -68,7 +68,7 @@ export function HeroSection() {
           </span>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs font-medium text-foreground shadow-xs">
             <NextjsIcon size={13} className="size-3.5 shrink-0 rounded-full dark:invert" />
-            <span>Next.js 15 + @icp-sdk</span>
+            <span>Next.js 15</span>
           </span>
         </div>
 
