@@ -18,7 +18,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
 import { Icon } from "@/components/ui/icon"
-import { ZapGlassIcon, CoinsGlassIcon, ClockGlassIcon } from "@thesvg/ui-react"
+import { ZapGlassIcon, ClockGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import { buyCredits, quoteCredits } from "@/services/cron/client"
 import { getWalletActor } from "@/services/wallet/actor"
@@ -247,8 +247,7 @@ export function CronBuyPackModal({
 
               <div className="text-right flex flex-col items-end">
                 <span className="text-xs text-muted-foreground">{t("estimatedIcp")}</span>
-                <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground tabular-nums">
-                  <Icon icon={CoinsGlassIcon} className="size-4 text-primary" />
+                <div className="flex items-center text-sm font-semibold text-foreground tabular-nums">
                   {loadingQuote ? <Spinner className="size-3.5" /> : `${icpFormatted} ICP`}
                 </div>
               </div>
