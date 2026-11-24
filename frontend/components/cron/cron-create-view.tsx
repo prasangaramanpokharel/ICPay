@@ -4,6 +4,8 @@ import * as React from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
+import { AppPage } from "@/components/layout/dashboard/app-page"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Spinner } from "@/components/ui/spinner"
@@ -78,34 +80,51 @@ function CronCreateContent() {
   }, [projects, selectedProjectId])
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto py-6 px-4">
-      {projects.length > 1 && (
-        <div className="flex items-center justify-end gap-2">
-          <Icon icon={FolderGlassIcon} className="size-3.5 text-muted-foreground" />
-          <span className="text-xs text-muted-foreground">{t("project")}:</span>
-          <NativeSelect
-            value={selectedProjectId?.toString() ?? ""}
-            onChange={(e) => {
-              const nextId = BigInt(e.target.value)
-              setSelectedProjectId(nextId)
-              const nextProj = projects.find((p) => p.id === nextId)
-              if (nextProj) {
-                router.replace(
-                  `/cron/create?id=${encodeURIComponent(nextProj.name)}&projectId=${formatProjectId(nextProj.id)}`
-                )
-              }
-            }}
-            className="text-xs h-8 bg-card border-border"
-          >
-            {projects.map((p) => (
-              <NativeSelectOption key={p.id.toString()} value={p.id.toString()}>
-                {p.name} ({formatProjectId(p.id)})
-              </NativeSelectOption>
-            ))}
-          </NativeSelect>
+    <AppPage
+      className="w-full space-y-6"
+      title={
+        <div className="flex items-center gap-3">
+          <span className="text-2xl font-bold tracking-tight text-foreground">{t("createNew")}</span>
+          {currentProject && (
+            <Badge
+              variant="outline"
+              className="border-border/70 bg-card/60 text-xs font-mono text-muted-foreground"
+            >
+              {currentProject.name}
+            </Badge>
+          )}
         </div>
-      )}
-
+      }
+      description="Deploy autonomous recurring triggers on the Internet Computer with zero server upkeep"
+      actions={
+        projects.length > 1 ? (
+          <div className="flex items-center gap-2">
+            <Icon icon={FolderGlassIcon} className="size-3.5 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground">{t("project")}:</span>
+            <NativeSelect
+              value={selectedProjectId?.toString() ?? ""}
+              onChange={(e) => {
+                const nextId = BigInt(e.target.value)
+                setSelectedProjectId(nextId)
+                const nextProj = projects.find((p) => p.id === nextId)
+                if (nextProj) {
+                  router.replace(
+                    `/cron/create?id=${encodeURIComponent(nextProj.name)}&projectId=${formatProjectId(nextProj.id)}`
+                  )
+                }
+              }}
+              className="text-xs h-8 bg-card border-border"
+            >
+              {projects.map((p) => (
+                <NativeSelectOption key={p.id.toString()} value={p.id.toString()}>
+                  {p.name} ({formatProjectId(p.id)})
+                </NativeSelectOption>
+              ))}
+            </NativeSelect>
+          </div>
+        ) : null
+      }
+    >
       {loading ? (
         <div className="flex h-64 items-center justify-center">
           <Spinner className="size-6 text-primary" />
@@ -147,7 +166,7 @@ function CronCreateContent() {
           }}
         />
       ) : null}
-    </div>
+    </AppPage>
   )
 }
 
