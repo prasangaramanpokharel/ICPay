@@ -155,7 +155,7 @@ pub async fn execute_single_job(mut job: JobRecord) {
 
             let request = HttpRequestArgs {
                 url: url.clone(),
-                max_response_bytes: Some(512),
+                max_response_bytes: Some(8192),
                 method: req_method,
                 headers: req_headers,
                 body: body.clone(),
@@ -214,4 +214,5 @@ pub async fn execute_single_job(mut job: JobRecord) {
     job.last_run_at = Some(now_sec);
     job.updated_at = now_sec;
     storage::update_job(job);
+    arm_next_timer();
 }

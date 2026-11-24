@@ -7,14 +7,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { Icon } from "@/components/ui/icon"
+import { DiscordIcon, NextjsIcon } from "@dev.icons/react"
 import {
-  BotGlassIcon,
-  CloudGlassIcon,
   CodeGlassIcon,
   SettingsGlassIcon,
   ClockGlassIcon,
@@ -250,17 +249,12 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
   }
 
   return (
-    <Card className="border border-border/80 bg-card text-card-foreground shadow-xs">
+    <Card className="w-full border border-border/80 bg-card text-card-foreground shadow-xs">
       <CardHeader className="pb-4">
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <CardTitle className="text-xl font-semibold tracking-tight text-foreground">
-              {t("createNew")}
-            </CardTitle>
-            <CardDescription className="text-xs text-muted-foreground mt-0.5">
-              Deploy autonomous recurring triggers on the Internet Computer with zero cloud server upkeep.
-            </CardDescription>
-          </div>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-base font-semibold tracking-tight text-foreground">
+            Job Configuration
+          </CardTitle>
           <Badge variant="outline" className="w-fit text-xs font-mono border-border/60">
             $0.0005 / run
           </Badge>
@@ -282,19 +276,21 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                     : "border-border/70 bg-card/60 hover:border-border hover:bg-card"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex size-7 items-center justify-center rounded-md bg-primary/15 text-primary">
-                    <Icon icon={BotGlassIcon} className="size-4" />
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
+                      <DiscordIcon size={14} className="size-3.5" />
+                    </div>
+                    <span className="text-xs font-semibold text-foreground truncate">
+                      Telegram & Discord
+                    </span>
                   </div>
                   {template === "discord_telegram" && (
-                    <Icon icon={CircleCheckGlassIcon} className="size-4 text-primary" />
+                    <Icon icon={CircleCheckGlassIcon} className="size-4 shrink-0 text-primary" />
                   )}
                 </div>
-                <div>
-                  <div className="text-xs font-semibold text-foreground">Telegram & Discord</div>
-                  <div className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-                    Community posts & alerts
-                  </div>
+                <div className="text-[11px] text-muted-foreground leading-tight pl-8">
+                  Community posts & alerts
                 </div>
               </button>
 
@@ -307,19 +303,21 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                     : "border-border/70 bg-card/60 hover:border-border hover:bg-card"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex size-7 items-center justify-center rounded-md bg-primary/15 text-primary">
-                    <Icon icon={CloudGlassIcon} className="size-4" />
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
+                      <NextjsIcon size={14} className="size-3.5 dark:invert" />
+                    </div>
+                    <span className="text-xs font-semibold text-foreground truncate">
+                      Vercel & Next.js
+                    </span>
                   </div>
                   {template === "vercel_api" && (
-                    <Icon icon={CircleCheckGlassIcon} className="size-4 text-primary" />
+                    <Icon icon={CircleCheckGlassIcon} className="size-4 shrink-0 text-primary" />
                   )}
                 </div>
-                <div>
-                  <div className="text-xs font-semibold text-foreground">Vercel API Trigger</div>
-                  <div className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-                    Sub-daily crons without $20/mo
-                  </div>
+                <div className="text-[11px] text-muted-foreground leading-tight pl-8">
+                  Sub-daily crons without $20/mo
                 </div>
               </button>
 
@@ -332,19 +330,21 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                     : "border-border/70 bg-card/60 hover:border-border hover:bg-card"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex size-7 items-center justify-center rounded-md bg-primary/15 text-primary">
-                    <Icon icon={CodeGlassIcon} className="size-4" />
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
+                      <Icon icon={CodeGlassIcon} className="size-3.5" />
+                    </div>
+                    <span className="text-xs font-semibold text-foreground truncate">
+                      Canister Call
+                    </span>
                   </div>
                   {template === "canister" && (
-                    <Icon icon={CircleCheckGlassIcon} className="size-4 text-primary" />
+                    <Icon icon={CircleCheckGlassIcon} className="size-4 shrink-0 text-primary" />
                   )}
                 </div>
-                <div>
-                  <div className="text-xs font-semibold text-foreground">Canister Call</div>
-                  <div className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-                    On-chain smart contracts
-                  </div>
+                <div className="text-[11px] text-muted-foreground leading-tight pl-8">
+                  On-chain smart contracts
                 </div>
               </button>
 
@@ -357,19 +357,21 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                     : "border-border/70 bg-card/60 hover:border-border hover:bg-card"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex size-7 items-center justify-center rounded-md bg-primary/15 text-primary">
-                    <Icon icon={SettingsGlassIcon} className="size-4" />
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
+                      <Icon icon={SettingsGlassIcon} className="size-3.5" />
+                    </div>
+                    <span className="text-xs font-semibold text-foreground truncate">
+                      Custom Webhook
+                    </span>
                   </div>
                   {template === "custom" && (
-                    <Icon icon={CircleCheckGlassIcon} className="size-4 text-primary" />
+                    <Icon icon={CircleCheckGlassIcon} className="size-4 shrink-0 text-primary" />
                   )}
                 </div>
-                <div>
-                  <div className="text-xs font-semibold text-foreground">Custom Webhook</div>
-                  <div className="text-[11px] text-muted-foreground leading-tight mt-0.5">
-                    Any URL, headers, and body
-                  </div>
+                <div className="text-[11px] text-muted-foreground leading-tight pl-8">
+                  Any URL, headers, and body
                 </div>
               </button>
             </div>
