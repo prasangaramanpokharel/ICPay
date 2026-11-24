@@ -202,11 +202,11 @@ export function WalletBalanceCard({ balance, usdValue, price, holdings = [] }: W
 
           <div className="flex flex-wrap items-center gap-2">
             <Button
-              variant="outline"
+              variant="default"
               size="sm"
               nativeButton={false}
               render={<Link href="/transfer" />}
-              className="h-8 gap-1.5 rounded-full px-3.5 text-xs font-medium hover:bg-muted"
+              className="h-8 gap-1.5 rounded-full px-3.5 text-xs font-semibold shadow-xs"
             >
               <Icon icon={ArrowUpRightGlassIcon} className="size-3.5" strokeWidth={2} />
               <span>{tCommon("send")}</span>
