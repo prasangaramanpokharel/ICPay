@@ -1,5 +1,5 @@
 import type { UiIcon } from "@thesvg/ui-react"
-import { ChartColumnGlassIcon, ClockGlassIcon, ObjectStorageGlassIcon, CoinsGlassIcon, ArrowDownLeftGlassIcon, GlobeGlassIcon, HouseGlassIcon, MessageSquareGlassIcon, RocketGlassIcon, ArrowUpRightGlassIcon, Axis3dGlassIcon } from "@thesvg/ui-react"
+import { ChartColumnGlassIcon, ClockGlassIcon, ObjectStorageGlassIcon, CoinsGlassIcon, ArrowDownLeftGlassIcon, GlobeGlassIcon, HouseGlassIcon, MessageSquareGlassIcon, RocketGlassIcon, ArrowUpRightGlassIcon, Axis3dGlassIcon, CronJobGlassIcon } from "@thesvg/ui-react"
 import { APP_NAV_ITEMS, isAppNavActive } from "@/lib/navigation/app-nav-items"
 
 export type SidebarNavSubItem = {
@@ -57,6 +57,17 @@ export const SIDEBAR_SECTIONS: SidebarNavSection[] = [
           { href: "/bucket", labelKey: "settings.sections.overview" },
           { href: "/bucket/api", labelKey: "cron.apiKeys" },
           { href: "/bucket/docs", labelKey: "bucket.docs" },
+        ],
+      },
+      {
+        href: "/cron",
+        labelKey: "settings.items.cron",
+        icon: CronJobGlassIcon,
+        badgeKey: "settings.items.cronBadge",
+        badgeVariant: "secondary",
+        subItems: [
+          { href: "/cron", labelKey: "settings.sections.overview" },
+          { href: "/cron/api", labelKey: "cron.apiKeys" },
         ],
       },
       {
@@ -129,6 +140,7 @@ export function resolveAppPageTitle(
     return translate("settings.items.blog")
   }
   if (pathname.startsWith("/canister")) return translate("settings.items.canisters")
+  if (pathname.startsWith("/cron")) return translate("settings.items.cron")
   if (pathname.startsWith("/settings")) return translate("settings.items.settings")
 
   return "ICPay"
