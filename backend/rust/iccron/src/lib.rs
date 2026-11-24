@@ -596,3 +596,204 @@ fn get_audit_stats() -> CronAuditStats {
     let pages = ic_cdk::stable::stable_size();
     storage::get_audit_stats(credits::TREASURY_PRINCIPAL_TEXT, cycles, pages)
 }
+
+// -----------------------------------------------------------------------------
+// Inbound HTTP Gateway Handlers
+// -----------------------------------------------------------------------------
+
+#[ic_cdk::query]
+fn http_request(req: types::InboundHttpRequest) -> types::InboundHttpResponse {
+    if req.method.eq_ignore_ascii_case("POST")
+        || req.method.eq_ignore_ascii_case("PUT")
+        || req.method.eq_ignore_ascii_case("DELETE")
+    {
+        return types::InboundHttpResponse {
+            status_code: 200,
+            headers: vec![],
+            body: vec![],
+            upgrade: Some(true),
+        };
+    }
+
+    if req.method.eq_ignore_ascii_case("OPTIONS") {
+        return types::InboundHttpResponse {
+            status_code: 204,
+            headers: vec![
+                types::HeaderField("Access-Control-Allow-Origin".to_string(), "*".to_string()),
+                types::HeaderField(
+                    "Access-Control-Allow-Methods".to_string(),
+                    "POST, GET, OPTIONS".to_string(),
+                ),
+                types::HeaderField(
+                    "Access-Control-Allow-Headers".to_string(),
+                    "Authorization, Content-Type".to_string(),
+                ),
+            ],
+            body: vec![],
+            upgrade: None,
+        };
+    }
+
+    let body = serde_json::json!({
+        "status": "ok",
+        "service": "icCron",
+        "canister_id": ic_cdk::id().to_text()
+    });
+    let body_bytes = serde_json::to_vec(&body).unwrap_or_default();
+
+    types::InboundHttpResponse {
+        status_code: 200,
+        headers: vec![
+            types::HeaderField("Content-Type".to_string(), "application/json".to_string()),
+            types::HeaderField("Access-Control-Allow-Origin".to_string(), "*".to_string()),
+        ],
+        body: body_bytes,
+        upgrade: None,
+    }
+}
+
+#[ic_cdk::update]
+async fn http_request_update(req: types::InboundHttpRequest) -> types::InboundHttpResponse {
+    let cors_headers = vec![
+        types::HeaderField("Content-Type".to_string(), "application/json".to_string()),
+        types::HeaderField("Access-Control-Allow-Origin".to_string(), "*".to_string()),
+        types::HeaderField(
+            "Access-Control-Allow-Methods".to_string(),
+            "POST, GET, OPTIONS".to_string(),
+        ),
+        types::HeaderField(
+            "Access-Control-Allow-Headers".to_string(),
+            "Authorization, Content-Type".to_string(),
+        ),
+    ];
+
+    if req.method.eq_ignore_ascii_case("OPTIONS") {
+        return types::InboundHttpResponse {
+            status_code: 204,
+            headers: cors_headers,
+            body: vec![],
+            upgrade: None,
+        };
+    }
+
+    let mut api_key = None;
+    for types::HeaderField(name, val) in &req.headers {
+        if name.eq_ignore_ascii_case("authorization") {
+            let trimmed = val.trim();
+            if let Some(token) = trimmed.strip_prefix("Bearer ") {
+                api_key = Some(token.trim().to_string());
+            } else {
+                api_key = Some(trimmed.to_string());
+            }
+            break;
+        }
+    }
+
+    #[derive(serde::Deserialize)]
+    struct TriggerPayload {
+        job_id: Option<u64>,
+        api_key: Option<String>,
+    }
+
+    let payload: Option<TriggerPayload> = serde_json::from_slice(&req.body).ok();
+
+    if api_key.is_none() {
+        if let Some(ref p) = payload {
+            api_key = p.api_key.clone();
+        }
+    }
+
+    let key = match api_key {
+        Some(k) if !k.is_empty() => k,
+        _ => {
+            let err_body = serde_json::json!({
+                "ok": false,
+                "error": "Missing Authorization header or api_key in request body"
+            });
+            return types::InboundHttpResponse {
+                status_code: 401,
+                headers: cors_headers,
+                body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                upgrade: None,
+            };
+        }
+    };
+
+    let job_id = match payload.and_then(|p| p.job_id) {
+        Some(id) => id,
+        None => {
+            let err_body = serde_json::json!({
+                "ok": false,
+                "error": "Missing job_id in JSON payload"
+            });
+            return types::InboundHttpResponse {
+                status_code: 400,
+                headers: cors_headers,
+                body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                upgrade: None,
+            };
+        }
+    };
+
+    let key_record = match api_keys::verify_key(&key) {
+        Some(rec) => rec,
+        None => {
+            let err_body = serde_json::json!({
+                "ok": false,
+                "error": "Invalid or revoked API key"
+            });
+            return types::InboundHttpResponse {
+                status_code: 401,
+                headers: cors_headers,
+                body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                upgrade: None,
+            };
+        }
+    };
+
+    let job = match storage::get_job(job_id) {
+        Some(j) => j,
+        None => {
+            let err_body = serde_json::json!({
+                "ok": false,
+                "error": format!("Job {} not found", job_id)
+            });
+            return types::InboundHttpResponse {
+                status_code: 404,
+                headers: cors_headers,
+                body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                upgrade: None,
+            };
+        }
+    };
+
+    if job.project_id != key_record.project_id {
+        let err_body = serde_json::json!({
+            "ok": false,
+            "error": "API key does not have access to this job's project"
+        });
+        return types::InboundHttpResponse {
+            status_code: 403,
+            headers: cors_headers,
+            body: serde_json::to_vec(&err_body).unwrap_or_default(),
+            upgrade: None,
+        };
+    }
+
+    ic_cdk::futures::spawn(async move {
+        engine::execute_single_job(job).await;
+    });
+
+    let ok_body = serde_json::json!({
+        "ok": true,
+        "job_id": job_id,
+        "status": "triggered"
+    });
+
+    types::InboundHttpResponse {
+        status_code: 200,
+        headers: cors_headers,
+        body: serde_json::to_vec(&ok_body).unwrap_or_default(),
+        upgrade: None,
+    }
+}
