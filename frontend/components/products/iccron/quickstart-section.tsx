@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Autonomous scheduled logic
   await syncStripeInvoices();
   return NextResponse.json({ ok: true, timestamp: Date.now() });
 }`,
@@ -52,7 +51,7 @@ export async function POST(req: NextRequest) {
 actor MyCanister {
   public func setupScheduler() : async () {
     let jobId = await IcCron.create_job({
-      schedule = "0 0 * * *"; // Daily at midnight
+      schedule = "0 0 * * *";
       target = #CanisterCall({
         canister_id = Principal.fromActor(this);
         method = "harvest_rewards";
