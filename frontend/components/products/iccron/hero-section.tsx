@@ -8,8 +8,9 @@ import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ShineBorder } from "@/components/ui/shine-border"
+import { AnimatedShinyText } from "@/components/ui/animated-shiny-text"
 import { Icon } from "@/components/ui/icon"
-import { ArrowRightGlassIcon, CheckGlassOutlineIcon, ClockGlassIcon, CopyGlassIcon, GlobeGlassIcon, ExternalLinkGlassIcon, PlayGlassIcon, ZapGlassIcon } from "@thesvg/ui-react"
+import { ArrowRightIcon, ArrowRightGlassIcon, CheckGlassOutlineIcon, ClockGlassIcon, CopyGlassIcon, GlobeGlassIcon, ExternalLinkGlassIcon, PlayGlassIcon, ZapGlassIcon } from "@thesvg/ui-react"
 
 const PRESETS = [
   { label: "Hourly", expr: "0 * * * *", desc: "Every hour at minute 0" },
@@ -69,10 +70,21 @@ export function HeroSection() {
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
           <div className="space-y-6 lg:col-span-7">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
-              <span className="size-2 rounded-full bg-primary animate-pulse" />
-              Decentralized Job Orchestration · icCron
-            </div>
+            <Link
+              href="/cron"
+              className="group inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 py-1 pl-1.5 pr-2 text-xs font-medium text-foreground shadow-xs backdrop-blur-xs transition-all duration-200 hover:border-border hover:bg-card hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <span className="rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-semibold text-primary dark:bg-primary/20">
+                Live
+              </span>
+              <AnimatedShinyText className="inline-flex items-center gap-1.5 text-xs">
+                <span className="font-medium text-foreground">Decentralized Job Orchestration</span>
+                <span className="hidden text-muted-foreground sm:inline">· icCron Engine</span>
+              </AnimatedShinyText>
+              <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground transition-transform duration-200 group-hover:translate-x-0.5">
+                <ArrowRightIcon className="size-3" />
+              </span>
+            </Link>
 
             <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
               Autonomous On-Chain{" "}
@@ -138,7 +150,7 @@ export function HeroSection() {
                 <ShineBorder
                   borderWidth={1.5}
                   duration={12}
-                  shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+                  shineColor={["var(--primary)", "var(--accent)", "var(--success)"]}
                 />
 
                 <div className="space-y-5">

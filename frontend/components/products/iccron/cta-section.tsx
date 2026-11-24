@@ -16,7 +16,7 @@ export function CtaSection() {
             <ShineBorder
               borderWidth={1.5}
               duration={10}
-              shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+              shineColor={["var(--primary)", "var(--accent)", "var(--success)"]}
             />
 
             <div className="mx-auto max-w-2xl space-y-6">
