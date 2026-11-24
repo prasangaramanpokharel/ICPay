@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { Icon } from "@/components/ui/icon"
@@ -18,6 +19,7 @@ import {
   SettingsGlassIcon,
   ClockGlassIcon,
   CircleCheckGlassIcon,
+  InfoGlassIcon,
 } from "@thesvg/ui-react"
 import { toast } from "sonner"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -267,16 +269,20 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
               Select Preset Template
             </Label>
             <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => handleTemplateChange("discord_telegram")}
-                className={`flex flex-col gap-1.5 rounded-lg border p-3 text-left transition-all duration-200 ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleTemplateChange("discord_telegram")
+                }}
+                className={`flex flex-col gap-1.5 rounded-lg border p-3 text-left cursor-pointer transition-all duration-200 select-none ${
                   template === "discord_telegram"
                     ? "border-primary bg-primary/10 shadow-xs ring-1 ring-primary/40"
                     : "border-border/70 bg-card/60 hover:border-border hover:bg-card"
                 }`}
               >
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-1.5">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
                       <DiscordIcon size={14} className="size-3.5" />
@@ -285,25 +291,70 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                       Telegram & Discord
                     </span>
                   </div>
-                  {template === "discord_telegram" && (
-                    <Icon icon={CircleCheckGlassIcon} className="size-4 shrink-0 text-primary" />
-                  )}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <HoverCard>
+                      <HoverCardTrigger
+                        onClick={(e) => e.stopPropagation()}
+                        className="cursor-help p-1 rounded-full text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
+                      >
+                        <Icon icon={InfoGlassIcon} className="size-3.5" />
+                      </HoverCardTrigger>
+                      <HoverCardContent side="top" align="center" className="w-84 sm:w-88 space-y-2.5 p-3.5 text-xs">
+                        <div className="flex items-center justify-between border-b border-border/60 pb-2">
+                          <div className="flex items-center gap-2 font-semibold text-foreground">
+                            <DiscordIcon size={14} className="size-3.5" />
+                            <span>Telegram &amp; Discord Setup</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                            Webhooks
+                          </span>
+                        </div>
+                        <div className="space-y-2 text-[11px] text-muted-foreground leading-relaxed">
+                          <div>
+                            <span className="font-semibold text-foreground">Discord Setup:</span>
+                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                              Server Settings &rarr; Integrations &rarr; Webhooks &rarr; New Webhook &rarr; Copy Webhook URL.
+                            </div>
+                          </div>
+                          <div>
+                            <span className="font-semibold text-foreground">Telegram Setup:</span>
+                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                              Message <code className="text-foreground font-mono">@BotFather</code> on Telegram to get your Bot Token, then target:
+                            </div>
+                            <div className="font-mono text-[10px] bg-muted/80 p-1.5 rounded border border-border/50 text-foreground mt-0.5 select-all truncate">
+                              https://api.telegram.org/bot&lt;TOKEN&gt;/sendMessage
+                            </div>
+                          </div>
+                          <div>
+                            <span className="font-semibold text-foreground">Payload:</span> icCron automatically sets <code className="text-foreground font-mono">POST</code> and <code className="text-foreground font-mono">application/json</code>. Pass your chat ID and message text below.
+                          </div>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
+                    {template === "discord_telegram" && (
+                      <Icon icon={CircleCheckGlassIcon} className="size-4 shrink-0 text-primary" />
+                    )}
+                  </div>
                 </div>
                 <div className="text-[11px] text-muted-foreground leading-tight pl-8">
                   Community posts & alerts
                 </div>
-              </button>
+              </div>
 
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => handleTemplateChange("vercel_api")}
-                className={`flex flex-col gap-1.5 rounded-lg border p-3 text-left transition-all duration-200 ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleTemplateChange("vercel_api")
+                }}
+                className={`flex flex-col gap-1.5 rounded-lg border p-3 text-left cursor-pointer transition-all duration-200 select-none ${
                   template === "vercel_api"
                     ? "border-primary bg-primary/10 shadow-xs ring-1 ring-primary/40"
                     : "border-border/70 bg-card/60 hover:border-border hover:bg-card"
                 }`}
               >
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-1.5">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
                       <NextjsIcon size={14} className="size-3.5 dark:invert" />
@@ -312,25 +363,73 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                       Vercel & Next.js
                     </span>
                   </div>
-                  {template === "vercel_api" && (
-                    <Icon icon={CircleCheckGlassIcon} className="size-4 shrink-0 text-primary" />
-                  )}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <HoverCard>
+                      <HoverCardTrigger
+                        onClick={(e) => e.stopPropagation()}
+                        className="cursor-help p-1 rounded-full text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
+                      >
+                        <Icon icon={InfoGlassIcon} className="size-3.5" />
+                      </HoverCardTrigger>
+                      <HoverCardContent side="top" align="center" className="w-84 sm:w-88 space-y-2.5 p-3.5 text-xs">
+                        <div className="flex items-center justify-between border-b border-border/60 pb-2">
+                          <div className="flex items-center gap-2 font-semibold text-foreground">
+                            <NextjsIcon size={14} className="size-3.5 dark:invert" />
+                            <span>Vercel Cron Setup Guide</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                            CRON_SECRET
+                          </span>
+                        </div>
+                        <div className="space-y-2 text-[11px] text-muted-foreground leading-relaxed">
+                          <div>
+                            <span className="font-semibold text-foreground">1. Generate Secret (Terminal):</span>
+                            <div className="font-mono text-[10px] bg-muted/80 p-1.5 rounded border border-border/50 text-foreground mt-0.5 select-all">
+                              openssl rand -hex 32
+                            </div>
+                          </div>
+                          <div>
+                            <span className="font-semibold text-foreground">2. Add to Vercel:</span>
+                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                              Project Settings &rarr; Environment Variables &rarr; Add <code className="text-foreground font-mono">CRON_SECRET</code>.
+                            </div>
+                          </div>
+                          <div>
+                            <span className="font-semibold text-foreground">3. Next.js Guard (app/api/cron/sync/route.ts):</span>
+                            <div className="font-mono text-[10px] bg-muted/80 p-1.5 rounded border border-border/50 text-foreground mt-0.5 overflow-x-auto">
+                              req.headers.get(&quot;authorization&quot;) === `Bearer ${process.env.CRON_SECRET}`
+                            </div>
+                          </div>
+                          <div>
+                            <span className="font-semibold text-foreground">4. In Form Below:</span> Enter <code className="text-foreground font-mono">Bearer &lt;secret&gt;</code> in the Authorization field.
+                          </div>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
+                    {template === "vercel_api" && (
+                      <Icon icon={CircleCheckGlassIcon} className="size-4 shrink-0 text-primary" />
+                    )}
+                  </div>
                 </div>
                 <div className="text-[11px] text-muted-foreground leading-tight pl-8">
                   Sub-daily crons without $20/mo
                 </div>
-              </button>
+              </div>
 
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => handleTemplateChange("canister")}
-                className={`flex flex-col gap-1.5 rounded-lg border p-3 text-left transition-all duration-200 ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleTemplateChange("canister")
+                }}
+                className={`flex flex-col gap-1.5 rounded-lg border p-3 text-left cursor-pointer transition-all duration-200 select-none ${
                   template === "canister"
                     ? "border-primary bg-primary/10 shadow-xs ring-1 ring-primary/40"
                     : "border-border/70 bg-card/60 hover:border-border hover:bg-card"
                 }`}
               >
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-1.5">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
                       <Icon icon={CodeGlassIcon} className="size-3.5" />
@@ -339,25 +438,70 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                       Canister Call
                     </span>
                   </div>
-                  {template === "canister" && (
-                    <Icon icon={CircleCheckGlassIcon} className="size-4 shrink-0 text-primary" />
-                  )}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <HoverCard>
+                      <HoverCardTrigger
+                        onClick={(e) => e.stopPropagation()}
+                        className="cursor-help p-1 rounded-full text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
+                      >
+                        <Icon icon={InfoGlassIcon} className="size-3.5" />
+                      </HoverCardTrigger>
+                      <HoverCardContent side="top" align="center" className="w-84 sm:w-88 space-y-2.5 p-3.5 text-xs">
+                        <div className="flex items-center justify-between border-b border-border/60 pb-2">
+                          <div className="flex items-center gap-2 font-semibold text-foreground">
+                            <Icon icon={CodeGlassIcon} className="size-3.5" />
+                            <span>Canister Smart Contract Setup</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                            On-Chain
+                          </span>
+                        </div>
+                        <div className="space-y-2 text-[11px] text-muted-foreground leading-relaxed">
+                          <div>
+                            <span className="font-semibold text-foreground">Target Format:</span>
+                            <div className="font-mono text-[10px] bg-muted/80 p-1.5 rounded border border-border/50 text-foreground mt-0.5 select-all">
+                              &lt;canister_id&gt;::&lt;method_name&gt;
+                            </div>
+                          </div>
+                          <div>
+                            <span className="font-semibold text-foreground">Supported Methods:</span>
+                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                              Any public query or update method on the Internet Computer accepting empty Candid arguments.
+                            </div>
+                          </div>
+                          <div>
+                            <span className="font-semibold text-foreground">Zero Off-Chain Keepers:</span>
+                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                              Autonomous on-chain timer execution with no hot private keys, AWS bots, or seed phrases.
+                            </div>
+                          </div>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
+                    {template === "canister" && (
+                      <Icon icon={CircleCheckGlassIcon} className="size-4 shrink-0 text-primary" />
+                    )}
+                  </div>
                 </div>
                 <div className="text-[11px] text-muted-foreground leading-tight pl-8">
                   On-chain smart contracts
                 </div>
-              </button>
+              </div>
 
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => handleTemplateChange("custom")}
-                className={`flex flex-col gap-1.5 rounded-lg border p-3 text-left transition-all duration-200 ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleTemplateChange("custom")
+                }}
+                className={`flex flex-col gap-1.5 rounded-lg border p-3 text-left cursor-pointer transition-all duration-200 select-none ${
                   template === "custom"
                     ? "border-primary bg-primary/10 shadow-xs ring-1 ring-primary/40"
                     : "border-border/70 bg-card/60 hover:border-border hover:bg-card"
                 }`}
               >
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center justify-between gap-1.5">
                   <div className="flex items-center gap-2 min-w-0">
                     <div className="flex size-6 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
                       <Icon icon={SettingsGlassIcon} className="size-3.5" />
@@ -366,14 +510,52 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                       Custom Webhook
                     </span>
                   </div>
-                  {template === "custom" && (
-                    <Icon icon={CircleCheckGlassIcon} className="size-4 shrink-0 text-primary" />
-                  )}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <HoverCard>
+                      <HoverCardTrigger
+                        onClick={(e) => e.stopPropagation()}
+                        className="cursor-help p-1 rounded-full text-muted-foreground transition-colors hover:text-foreground hover:bg-muted"
+                      >
+                        <Icon icon={InfoGlassIcon} className="size-3.5" />
+                      </HoverCardTrigger>
+                      <HoverCardContent side="top" align="center" className="w-84 sm:w-88 space-y-2.5 p-3.5 text-xs">
+                        <div className="flex items-center justify-between border-b border-border/60 pb-2">
+                          <div className="flex items-center gap-2 font-semibold text-foreground">
+                            <Icon icon={SettingsGlassIcon} className="size-3.5" />
+                            <span>Custom Webhook Guide</span>
+                          </div>
+                          <span className="text-[10px] font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
+                            HTTP Outcall
+                          </span>
+                        </div>
+                        <div className="space-y-2 text-[11px] text-muted-foreground leading-relaxed">
+                          <div>
+                            <span className="font-semibold text-foreground">Target Endpoint:</span> Any public REST API or HTTP/HTTPS webhook URL.
+                          </div>
+                          <div>
+                            <span className="font-semibold text-foreground">Configurable Options:</span>
+                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                              Toggle GET/POST methods, attach custom Bearer or API key headers, and pass formatted JSON bodies.
+                            </div>
+                          </div>
+                          <div>
+                            <span className="font-semibold text-foreground">Consensus &amp; Logs:</span>
+                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                              Runs through ICP subnet consensus with execution logs recording status codes, duration (ms), and errors.
+                            </div>
+                          </div>
+                        </div>
+                      </HoverCardContent>
+                    </HoverCard>
+                    {template === "custom" && (
+                      <Icon icon={CircleCheckGlassIcon} className="size-4 shrink-0 text-primary" />
+                    )}
+                  </div>
                 </div>
                 <div className="text-[11px] text-muted-foreground leading-tight pl-8">
                   Any URL, headers, and body
                 </div>
-              </button>
+              </div>
             </div>
           </div>
 
