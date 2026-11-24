@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { motion } from "motion/react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon } from "@thesvg/ui-react"
 import {
   CutoutCard,
   CutoutCardMedia,
@@ -146,7 +146,7 @@ export function CourseCardCatalog() {
                         render={<Link href={`/academy/course?id=${course.id}`} />}
                       >
                         <span>Enroll Now</span>
-                        <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+                        <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
                       </Button>
                     </CutoutCardFooter>
                   </motion.div>

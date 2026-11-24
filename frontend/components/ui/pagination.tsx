@@ -1,10 +1,6 @@
 import * as React from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowLeft01Icon,
-  ArrowRight01Icon,
-  MoreHorizontalIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowLeftGlassIcon, ArrowRightGlassIcon, EllipsisGlassIcon } from "@thesvg/ui-react"
 import { cn } from "@/lib/ui/utils"
 import { Button } from "@/components/ui/button"
 
@@ -107,7 +103,7 @@ function PaginationPrevious({
       className={cn("gap-1 px-2.5 sm:pl-2.5", className)}
       {...props}
     >
-      <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" data-icon="inline-start" />
+      <Icon icon={ArrowLeftGlassIcon} className="size-4" data-icon="inline-start" />
       <span className="hidden sm:inline-block">{text}</span>
     </PaginationLink>
   )
@@ -128,7 +124,7 @@ function PaginationNext({
       {...props}
     >
       <span className="hidden sm:inline-block">{text}</span>
-      <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" data-icon="inline-end" />
+      <Icon icon={ArrowRightGlassIcon} className="size-4" data-icon="inline-end" />
     </PaginationLink>
   )
 }
@@ -147,7 +143,7 @@ function PaginationEllipsis({
       )}
       {...props}
     >
-      <HugeiconsIcon icon={MoreHorizontalIcon} className="size-4" />
+      <Icon icon={EllipsisGlassIcon} className="size-4" />
       <span className="sr-only">More pages</span>
     </span>
   )

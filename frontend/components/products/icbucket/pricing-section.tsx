@@ -8,15 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { ShineBorder } from "@/components/ui/shine-border"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  CheckmarkCircle02Icon,
-  ArrowRight01Icon,
-  Layers01Icon,
-  Key01Icon,
-  Clock01Icon,
-  Coins01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CircleCheckGlassIcon, ArrowRightGlassIcon, LayersGlassIcon, KeyGlassIcon, ClockGlassIcon, CoinsGlassIcon } from "@thesvg/ui-react"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 import {
   BUCKET_POPULAR_TIER_GB,
@@ -276,7 +269,7 @@ export function PricingSection() {
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <HugeiconsIcon icon={Layers01Icon} className="size-3.5" />
+                <Icon icon={LayersGlassIcon} className="size-3.5" />
                 <span>All 6 Plans (1G – 100G)</span>
               </button>
               <button
@@ -407,7 +400,7 @@ export function PricingSection() {
 
                       {/* Cryptographic Principal Sovereignty Pill */}
                       <div className="pt-1 text-xs text-muted-foreground flex items-center gap-1.5">
-                        <HugeiconsIcon icon={Key01Icon} className="size-3.5 text-primary shrink-0" />
+                        <Icon icon={KeyGlassIcon} className="size-3.5 text-primary shrink-0" />
                         <span className="truncate">Principal-Gated · Zero Egress Fees</span>
                       </div>
                     </CardHeader>
@@ -417,8 +410,8 @@ export function PricingSection() {
                         <ul className="space-y-2.5">
                           {plan.features.map((feature, idx) => (
                             <li key={idx} className="flex items-start gap-2.5">
-                              <HugeiconsIcon
-                                icon={CheckmarkCircle02Icon}
+                              <Icon
+                                icon={CircleCheckGlassIcon}
                                 className="mt-0.5 size-4 shrink-0 text-primary"
                               />
                               <span className="text-xs text-muted-foreground leading-normal">
@@ -443,7 +436,7 @@ export function PricingSection() {
                       render={<Link href="/bucket" />}
                     >
                       <span>{t("getStarted") || "Get Started"}</span>
-                      <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                      <Icon icon={ArrowRightGlassIcon} className="size-4" />
                     </Button>
                   </div>
                 </Card>
@@ -539,7 +532,7 @@ export function PricingSection() {
                             render={<Link href="/bucket" />}
                           >
                             <span>Deploy</span>
-                            <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+                            <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
                           </Button>
                         </td>
                       </tr>
@@ -555,7 +548,7 @@ export function PricingSection() {
         <div className="mt-12 grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-border/60 bg-muted/20 p-5 space-y-2">
             <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
-              <HugeiconsIcon icon={Key01Icon} className="size-4 text-primary" />
+              <Icon icon={KeyGlassIcon} className="size-4 text-primary" />
               <span>Sovereign Principal Ownership</span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -565,7 +558,7 @@ export function PricingSection() {
 
           <div className="rounded-2xl border border-border/60 bg-muted/20 p-5 space-y-2">
             <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
-              <HugeiconsIcon icon={Clock01Icon} className="size-4 text-primary" />
+              <Icon icon={ClockGlassIcon} className="size-4 text-primary" />
               <span>Autonomous Time Stacking</span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -575,7 +568,7 @@ export function PricingSection() {
 
           <div className="rounded-2xl border border-border/60 bg-muted/20 p-5 space-y-2">
             <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
-              <HugeiconsIcon icon={Coins01Icon} className="size-4 text-primary" />
+              <Icon icon={CoinsGlassIcon} className="size-4 text-primary" />
               <span>Zero Egress Bandwidth Taxes</span>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">

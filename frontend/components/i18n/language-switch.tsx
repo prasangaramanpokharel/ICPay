@@ -1,8 +1,8 @@
 "use client"
 
 import { Select as SelectPrimitive } from "@base-ui/react/select"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Globe02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { GlobeGlassIcon } from "@thesvg/ui-react"
 import { LOCALES } from "@/language/config"
 import { useLocale } from "@/components/i18n/locale-provider"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
@@ -31,16 +31,16 @@ export function LanguageSwitch({ variant = "icon" }: { variant?: "icon" | "row" 
       >
         {variant === "row" ? (
           <>
-            <HugeiconsIcon
-              icon={Globe02Icon}
+            <Icon
+              icon={GlobeGlassIcon}
               className="size-4 shrink-0 text-muted-foreground"
               strokeWidth={1.75}
             />
             <span className="min-w-0 flex-1 truncate text-left">{active.label}</span>
           </>
         ) : variant === "globe" ? (
-          <HugeiconsIcon
-            icon={Globe02Icon}
+          <Icon
+            icon={GlobeGlassIcon}
             className="size-4.5 shrink-0"
             strokeWidth={1.75}
           />

@@ -4,12 +4,8 @@ import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ShineBorder } from "@/components/ui/shine-border"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowRight01Icon,
-  Clock01Icon,
-  LinkSquare02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon, ClockGlassIcon, ExternalLinkGlassIcon } from "@thesvg/ui-react"
 
 export function CtaSection() {
   return (
@@ -25,7 +21,7 @@ export function CtaSection() {
 
             <div className="mx-auto max-w-2xl space-y-6">
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
-                <HugeiconsIcon icon={Clock01Icon} className="size-3.5" />
+                <Icon icon={ClockGlassIcon} className="size-3.5" />
                 Zero Infrastructure · Infinite Reliability
               </div>
 
@@ -46,7 +42,7 @@ export function CtaSection() {
                   render={<Link href="/login" />}
                 >
                   Start Free with Internet Identity
-                  <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                  <Icon icon={ArrowRightGlassIcon} className="size-4" />
                 </Button>
                 <Button
                   size="lg"
@@ -61,7 +57,7 @@ export function CtaSection() {
                     />
                   }
                 >
-                  <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" />
+                  <Icon icon={ExternalLinkGlassIcon} className="size-4" />
                   View Canister on icScan
                 </Button>
               </div>

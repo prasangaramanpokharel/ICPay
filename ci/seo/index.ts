@@ -3,25 +3,34 @@ import { dirname, join, resolve } from "node:path"
 import { createSign } from "node:crypto"
 import { fileURLToPath } from "node:url"
 
-// npm run ci seo:index [urls...] [--engine=all|google|yandex] [--delete]
+// npm run ci seo:index [urls...] [--engine=all|google|yandex] [--domain=all|app|cloud] [--delete]
 //
-// Submits one or multiple URLs to Google Indexing API and Yandex (IndexNow).
+// Submits one or multiple URLs to Google Indexing API and IndexNow mesh (Bing, Yandex, etc.).
+// Dual-indexes across both canonical domains: https://icpay.app and https://icpay.cloud.
 // If no URLs are provided, submits all core public ICPay pages and blog posts.
 //
 // Examples:
-//   npm run ci seo:index                                  (indexes all on Google & Yandex)
-//   npm run ci seo:index /blog/new-feature                (indexes single URL on both)
-//   npm run ci seo:index /bucket /faq                     (indexes multiple URLs on both)
-//   npm run ci seo:index /blog/post --engine=yandex       (indexes only on Yandex)
+//   npm run ci seo:index                                  (indexes all on Google & IndexNow for both domains)
+//   npm run ci seo:index /icfalcon                        (indexes /icfalcon on icpay.app & icpay.cloud)
+//   npm run ci seo:index /bucket /faq                     (indexes multiple URLs on both domains)
+//   npm run ci seo:index /blog/post --domain=cloud        (indexes only on icpay.cloud)
 //   npm run ci seo:index /blog/post --engine=google       (indexes only on Google)
 //   npm run ci seo:index /old-page --delete
 
-const BASE_DOMAIN = "https://icpay.app"
-const HOST = "icpay.app"
+interface DomainConfig {
+  name: string
+  base: string
+  host: string
+}
+
+const ALL_DOMAINS: DomainConfig[] = [
+  { name: "icpay.app", base: "https://icpay.app", host: "icpay.app" },
+  { name: "icpay.cloud", base: "https://icpay.cloud", host: "icpay.cloud" },
+]
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..")
 
-function loadAllPublicUrls(): string[] {
+function loadAllPublicPaths(): string[] {
   const blogFile = join(root, "frontend/services/blog/blog.ts")
   const slugs: string[] = []
   if (existsSync(blogFile)) {
@@ -35,12 +44,8 @@ function loadAllPublicUrls(): string[] {
   const staticPublicPages = [
     "/",
     "/icfalcon",
-    "/products/icFalcon",
-    "/products/icFalcon/packages",
-    "/products/icFalcon/commands",
     "/icbucket",
-    "/products/icBucket",
-    "/products/icBucket/packages",
+    "/icbucket/pricing",
     "/bucket/docs",
     "/bucket/docs/getting-started/overview",
     "/bucket/docs/getting-started/quickstart",
@@ -85,14 +90,14 @@ function loadAllPublicUrls(): string[] {
     "/blog",
   ]
 
-  const urls = new Set<string>()
+  const paths = new Set<string>()
   for (const page of staticPublicPages) {
-    urls.add(`${BASE_DOMAIN}${page === "/" ? "/" : page}`)
+    paths.add(page === "/" ? "/" : page)
   }
   for (const slug of slugs) {
-    urls.add(`${BASE_DOMAIN}/blog/${slug}`)
+    paths.add(`/blog/${slug}`)
   }
-  return [...urls]
+  return [...paths]
 }
 
 function verifyRobotsDirectives(): { passed: boolean; checks: { name: string; ok: boolean; detail: string }[] } {
@@ -168,8 +173,6 @@ function verifyRobotsDirectives(): { passed: boolean; checks: { name: string; ok
   const passed = checks.every((c) => c.ok)
   return { passed, checks }
 }
-
-const DEFAULT_URLS = loadAllPublicUrls()
 
 type ServiceAccountKey = {
   client_email: string
@@ -288,13 +291,17 @@ async function getGoogleToken(key: ServiceAccountKey): Promise<string> {
   return data.access_token
 }
 
-function normalizeUrl(input: string): string {
+function extractPath(input: string): string {
   const trimmed = input.trim()
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-    return trimmed
+    try {
+      const u = new URL(trimmed)
+      return u.pathname
+    } catch {
+      return trimmed
+    }
   }
-  const cleanPath = trimmed.startsWith("/") ? trimmed : `/${trimmed}`
-  return `${BASE_DOMAIN}${cleanPath}`
+  return trimmed.startsWith("/") ? trimmed : `/${trimmed}`
 }
 
 async function submitGoogleUrl(
@@ -321,12 +328,14 @@ async function submitGoogleUrl(
 
 async function submitIndexNowEndpoint(
   endpoint: string,
+  host: string,
+  baseDomain: string,
   key: string,
   urls: string[]
 ): Promise<{ endpoint: string; status: number; ok: boolean; msg?: string }> {
-  const keyLocation = `${BASE_DOMAIN}/${key}.txt`
+  const keyLocation = `${baseDomain}/${key}.txt`
   const body = {
-    host: HOST,
+    host,
     key,
     keyLocation,
     urlList: urls,
@@ -359,6 +368,16 @@ const onlyGoogle = rawArgs.includes("--google") || rawArgs.includes("--engine=go
 const onlyIndexNow = rawArgs.includes("--indexnow") || rawArgs.includes("--yandex") || rawArgs.includes("--engine=yandex")
 const verifyOnly = rawArgs.includes("--verify") || rawArgs.includes("--check")
 
+const domainArg = rawArgs.find((a) => a.startsWith("--domain="))?.replace("--domain=", "").toLowerCase()
+const appOnly = rawArgs.includes("--app-only") || domainArg === "app" || domainArg === "icpay.app"
+const cloudOnly = rawArgs.includes("--cloud-only") || domainArg === "cloud" || domainArg === "icpay.cloud"
+
+const activeDomains = appOnly
+  ? ALL_DOMAINS.filter((d) => d.name === "icpay.app")
+  : cloudOnly
+  ? ALL_DOMAINS.filter((d) => d.name === "icpay.cloud")
+  : ALL_DOMAINS
+
 // 0. Robots Meta & SEO Integrity Audit
 console.log("─── 0. Robots Meta & SEO Directives Audit ───────────")
 const audit = verifyRobotsDirectives()
@@ -382,10 +401,10 @@ if (verifyOnly) {
 }
 
 const urlArgs = rawArgs.filter((arg) => !arg.startsWith("-"))
-const targetUrls = urlArgs.length > 0 ? urlArgs.map(normalizeUrl) : DEFAULT_URLS
+const targetPaths = urlArgs.length > 0 ? urlArgs.map(extractPath) : loadAllPublicPaths()
 const action = isDelete ? "URL_DELETED" : "URL_UPDATED"
 
-console.log(`\n🌐 Target: ${targetUrls.length} URL(s) on ${HOST}`)
+console.log(`\n🌐 Target: ${targetPaths.length} path(s) across [${activeDomains.map((d) => d.name).join(", ")}]`)
 
 // 1. Google Indexing
 if (!onlyIndexNow) {
@@ -400,25 +419,29 @@ if (!onlyIndexNow) {
       let googleOk = 0
       let googleFail = 0
 
-      for (const url of targetUrls) {
-        const res = await submitGoogleUrl(token, url, action)
-        if (res.ok) {
-          console.log(`  🟢  [INDEXED]  ${url}`)
-          googleOk++
-        } else {
-          console.error(`  🔴  [ERROR ${res.status}]  ${url}  (${res.message ?? "failed"})`)
-          googleFail++
+      for (const domain of activeDomains) {
+        console.log(`\n  📍 Domain: ${domain.name}`)
+        for (const path of targetPaths) {
+          const url = `${domain.base}${path === "/" ? "/" : path}`
+          const res = await submitGoogleUrl(token, url, action)
+          if (res.ok) {
+            console.log(`  🟢  [INDEXED]  ${url}`)
+            googleOk++
+          } else {
+            console.error(`  🔴  [ERROR ${res.status}]  ${url}  (${res.message ?? "failed"})`)
+            googleFail++
+          }
+          await new Promise((r) => setTimeout(r, 150))
         }
-        if (targetUrls.length > 1) await new Promise((r) => setTimeout(r, 200))
       }
-      console.log(`Google result: ${googleOk} succeeded, ${googleFail} failed.`)
+      console.log(`\nGoogle result: ${googleOk} succeeded, ${googleFail} failed.`)
     } catch (e: unknown) {
       console.error("❌ Google Indexing error:", e instanceof Error ? e.message : e)
     }
   }
 }
 
-// 2. IndexNow (Bing, Yandex, Naver, Seznam)
+// 2. IndexNow (Bing, Yandex, Naver, Seznam, Yep)
 if (!onlyGoogle) {
   console.log("\n─── 2. IndexNow (Bing, Yandex, Global) ──────────────")
   const indexNowKey = findIndexNowKey()
@@ -426,8 +449,6 @@ if (!onlyGoogle) {
     console.error("⚠️  Skipping IndexNow: No IndexNow key found in auto/seo/yandex/indexnow_key.txt")
   } else {
     console.log(`🔑 Key: ${indexNowKey}`)
-    console.log(`📍 Key Location: ${BASE_DOMAIN}/${indexNowKey}.txt`)
-    console.log(`🚀 Sending batch of ${targetUrls.length} URL(s) to IndexNow endpoints...`)
 
     const endpoints = [
       { name: "IndexNow Global Hub (Broadcasts to Yandex, Bing, Naver, Seznam)", url: "https://api.indexnow.org/indexnow" },
@@ -437,25 +458,31 @@ if (!onlyGoogle) {
       { name: "Yep Direct IndexNow", url: "https://indexnow.yep.com/indexnow" },
     ]
 
-    for (const ep of endpoints) {
-      try {
-        const res = await submitIndexNowEndpoint(ep.url, indexNowKey, targetUrls)
-        if (res.ok) {
-          console.log(`  🟢  [${ep.name}] HTTP ${res.status} (Success - URLs queued for instant crawling)`)
-        } else {
-          console.log(`  🟡  [${ep.name}] HTTP ${res.status}: ${res.msg ?? "Queued via Global IndexNow mesh"}`)
-        }
-      } catch (e: unknown) {
-        if (ep.url.includes("yandex.com")) {
-          console.log(`  ℹ️   [${ep.name}] Direct socket closed (Normal: handled automatically via IndexNow Global Hub)`)
-        } else {
-          console.error(`❌ ${ep.name} error:`, e instanceof Error ? e.message : e)
+    for (const domain of activeDomains) {
+      const domainUrls = targetPaths.map((p) => `${domain.base}${p === "/" ? "/" : p}`)
+      console.log(`\n  📍 Submitting ${domainUrls.length} URL(s) for ${domain.name} (Key Location: ${domain.base}/${indexNowKey}.txt)...`)
+
+      for (const ep of endpoints) {
+        try {
+          const res = await submitIndexNowEndpoint(ep.url, domain.host, domain.base, indexNowKey, domainUrls)
+          if (res.ok) {
+            console.log(`  🟢  [${ep.name}] HTTP ${res.status} (Success - URLs queued for ${domain.name})`)
+          } else {
+            console.log(`  🟡  [${ep.name}] HTTP ${res.status}: ${res.msg ?? `Queued via mesh for ${domain.name}`}`)
+          }
+        } catch (e: unknown) {
+          if (ep.url.includes("yandex.com")) {
+            console.log(`  ℹ️   [${ep.name}] Direct socket closed (Normal: handled automatically via IndexNow Global Hub)`)
+          } else {
+            console.error(`❌ ${ep.name} error for ${domain.name}:`, e instanceof Error ? e.message : e)
+          }
         }
       }
     }
-    console.log(`\n  Queued ${targetUrls.length} public URL(s):`)
-    for (const u of targetUrls) {
-      console.log(`      ✓ ${u}`)
+
+    console.log(`\n  Queued paths across active domains:`)
+    for (const p of targetPaths) {
+      console.log(`      ✓ ${p}`)
     }
   }
 }
@@ -465,11 +492,13 @@ const baiduToken = findBaiduToken()
 if (baiduToken && !onlyGoogle && !onlyIndexNow) {
   console.log("\n─── 3. Baidu Link Submission API ────────────────────")
   try {
-    const baiduApiUrl = `http://data.zz.baidu.com/urls?site=${encodeURIComponent(BASE_DOMAIN)}&token=${encodeURIComponent(baiduToken)}`
+    const primaryDomain = ALL_DOMAINS[0]
+    const baiduUrls = targetPaths.map((p) => `${primaryDomain.base}${p === "/" ? "/" : p}`)
+    const baiduApiUrl = `http://data.zz.baidu.com/urls?site=${encodeURIComponent(primaryDomain.base)}&token=${encodeURIComponent(baiduToken)}`
     const res = await fetch(baiduApiUrl, {
       method: "POST",
       headers: { "Content-Type": "text/plain" },
-      body: targetUrls.join("\n"),
+      body: baiduUrls.join("\n"),
     })
     const data = (await res.json()) as { success?: number; remain?: number; message?: string }
     if (res.ok && data.success) {

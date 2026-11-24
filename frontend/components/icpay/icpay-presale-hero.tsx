@@ -4,8 +4,8 @@ import { useState, useSyncExternalStore } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { InformationCircleIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { InfoGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useIcpaySale } from "@/hooks/icpay/useIcpaySale"
@@ -69,7 +69,7 @@ export function IcpayPresaleHero({ symbol }: { symbol: string }) {
               className="size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
               aria-label={t("viewGuide")}
             >
-              <HugeiconsIcon icon={InformationCircleIcon} className="size-4" strokeWidth={1.75} />
+              <Icon icon={InfoGlassIcon} className="size-4" strokeWidth={1.75} />
             </Button>
           </div>
 

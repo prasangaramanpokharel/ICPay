@@ -398,14 +398,20 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Símbolo",
+    "colName": "Nome",
+    "colQuantity": "Quantidade",
+    "colValue": "Valor",
+    "totalIcpBalance": "Saldo total de ICP",
+    "yourAssets": "Seus ativos"
   },
   "token": {
     "back": "Carteira",
     "notFound": "Não foi possível carregar este token.",
     "send": "Enviar",
     "deposit": "Depositar",
-    "depositTitle": "Endereço de depósito",
+    "depositTitle": "Depósito",
     "depositSubtitle": "Envie {symbol} para cá para recarregar a sua carteira.",
     "warning": "Envie apenas {symbol} para este endereço. Outros tokens serão perdidos.",
     "selfCustodyTitle": "Mantido fora do ICPay",
@@ -422,7 +428,7 @@
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
     "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet.",
-    "historyTitle": "On-chain history",
+    "historyTitle": "Histórico",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
@@ -451,7 +457,8 @@
     "suggested": "Sugeridos para você",
     "noneFound": "Ninguém encontrado para “{query}”.",
     "empty": "Nenhuma conta com nome de usuário ainda. Seja o primeiro.",
-    "premium": "Identificador premium verificado"
+    "premium": "Identificador premium verificado",
+    "subtitle": "Explore perfis de usuários em toda a rede"
   },
   "success": {
     "send": "Envio concluído",
@@ -1415,6 +1422,10 @@
         "charity": {
           "title": "Caridade",
           "description": "Códigos QR oficiais de ajuda humanitária do governo."
+        },
+        "downloads": {
+          "title": "Downloads",
+          "description": "Aplicativos de desktop para macOS, Windows e Linux."
         }
       },
       "sectionMore": "Mais",
@@ -1481,7 +1492,8 @@
         "terms": "Termos",
         "privacy": "Privacidade",
         "transparency": "Transparência",
-        "charity": "Caridade"
+        "charity": "Caridade",
+        "downloads": "Downloads"
       },
       "community": {
         "github": "GitLab",
@@ -2127,6 +2139,87 @@
             "answer": "Sim. O ICFalcon é de código aberto. O código-fonte é fornecido como está para uso e modificação. Pacotes hub são licenciados conforme suas entradas no icp-hub."
           }
         }
+      }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "Novo",
+        "version": "Desktop v1.0.0",
+        "platforms": "· macOS, Windows e Linux"
+      },
+      "hero": {
+        "title": "Baixar ICPay Desktop",
+        "description": "A carteira custodial de ICP criada nativamente para o seu computador. Rápida, segura e autenticada exclusivamente via Internet Identity."
+      },
+      "primary": {
+        "downloadMac": "Baixar para Mac",
+        "downloadWindows": "Baixar para Windows",
+        "downloadLinux": "Baixar para Linux",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 e 11 (64 bits) · 84 MB",
+        "linuxSubtitle": "Tarball x64 · 98 MB",
+        "releaseHashes": "Hashes de lançamento"
+      },
+      "dropdown": {
+        "ariaLabel": "Selecionar plataforma",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64 bits)",
+        "windowsPortable": "Windows Portátil",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Pacote universal para máquinas Apple Silicon e Intel.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Arquitetura Intel",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Portátil",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "Instalador de 64 bits e arquivo executável portátil.",
+          "installerTitle": "Instalador",
+          "installerSub": "Pacote NSIS · EXE",
+          "portableTitle": "Arquivo Portátil",
+          "portableSub": "Binário x64 · ZIP",
+          "archTitle": "Arquitetura",
+          "archSub": "x86_64 Verificado",
+          "supportedBadge": "Suportado"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Arquivo de distribuição para Ubuntu, Debian, Fedora e Arch.",
+          "tarballTitle": "Tarball de distribuição",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "Compatível com RPM",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "Compatível com DEB"
+        }
+      },
+      "hashes": {
+        "title": "Integridade Criptográfica (SHA-256)",
+        "description": "Verifique os hashes no terminal para assegurar arquivos genuínos e inalterados.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Copiar",
+        "copied": "Copiado",
+        "toastSuccess": "Hash SHA-256 copiado para a área de transferência",
+        "toastError": "Falha ao copiar hash"
+      },
+      "features": {
+        "custodyTitle": "Arquitetura Custodial",
+        "custodyDesc": "Autenticado exclusivamente via Internet Identity. Nenhuma frase semente, chave ou senha é armazenada localmente.",
+        "perfTitle": "Desempenho Nativo",
+        "perfDesc": "Renderização acelerada por hardware e criptografia com Electron 33 e mínimo uso de memória.",
+        "edgeTitle": "Entrega Cloudflare Edge",
+        "edgeDesc": "Armazenamento global de objetos R2 com cache de borda em mais de 330 locais sem estrangulamento."
       }
     }
   },

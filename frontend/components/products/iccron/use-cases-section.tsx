@@ -6,23 +6,14 @@ import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Coins01Icon,
-  CloudIcon,
-  CodeIcon,
-  ShoppingBag01Icon,
-  ShieldIcon,
-  ArrowRight01Icon,
-  CheckmarkCircle02Icon,
-  Copy01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CoinsGlassIcon, CloudGlassIcon, CodeGlassIcon, ShoppingBagGlassIcon, ShieldGlassIcon, ArrowRightGlassIcon, CheckGlassOutlineIcon, CopyGlassIcon } from "@thesvg/ui-react"
 
 const RECIPES = [
   {
     id: "defi",
     title: "DeFi Yield Compounding",
-    icon: Coins01Icon,
+    icon: CoinsGlassIcon,
     image: "/images/pages/iccron/defi-finance.jpg",
     schedule: "0 0 * * *",
     scheduleLabel: "Daily at 00:00 UTC",
@@ -40,7 +31,7 @@ const RECIPES = [
   {
     id: "backup",
     title: "Database Backup to icBucket",
-    icon: CloudIcon,
+    icon: CloudGlassIcon,
     image: "/images/pages/iccron/cloud-network.jpg",
     schedule: "0 2 * * *",
     scheduleLabel: "Every night at 02:00 UTC",
@@ -58,7 +49,7 @@ const RECIPES = [
   {
     id: "vercel",
     title: "Bypassing Vercel's Cron Tax",
-    icon: CodeIcon,
+    icon: CodeGlassIcon,
     image: "/images/pages/iccron/developer-code.jpg",
     schedule: "0 * * * *",
     scheduleLabel: "Hourly at minute 0",
@@ -76,7 +67,7 @@ const RECIPES = [
   {
     id: "commerce",
     title: "Abandoned Cart Reminders",
-    icon: ShoppingBag01Icon,
+    icon: ShoppingBagGlassIcon,
     image: "/images/pages/iccron/workflow-automation.jpg",
     schedule: "*/30 * * * *",
     scheduleLabel: "Every 30 minutes",
@@ -94,7 +85,7 @@ const RECIPES = [
   {
     id: "sentinel",
     title: "Canister Cycle Top-Up Sentinel",
-    icon: ShieldIcon,
+    icon: ShieldGlassIcon,
     image: "/images/pages/iccron/security-shield.jpg",
     schedule: "0 */6 * * *",
     scheduleLabel: "Every 6 hours",
@@ -150,7 +141,7 @@ export function UseCasesSection() {
                   : "border border-border bg-card/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
               }`}
             >
-              <HugeiconsIcon icon={recipe.icon} className="size-4" />
+              <Icon icon={recipe.icon} className="size-4" />
               {recipe.title}
             </button>
           ))}
@@ -194,11 +185,17 @@ export function UseCasesSection() {
                       onClick={copyPayload}
                       className="flex items-center gap-1 text-primary hover:underline font-medium"
                     >
-                      <HugeiconsIcon
-                        icon={copied ? CheckmarkCircle02Icon : Copy01Icon}
-                        className="size-3.5"
-                      />
-                      {copied ? "Copied" : "Copy Payload"}
+                      {copied ? (
+                        <>
+                          <Icon icon={CheckGlassOutlineIcon} className="size-3.5 text-success" strokeWidth={2.5} />
+                          <span className="text-success font-medium">Copied</span>
+                        </>
+                      ) : (
+                        <>
+                          <Icon icon={CopyGlassIcon} className="size-3.5" />
+                          <span>Copy Payload</span>
+                        </>
+                      )}
                     </button>
                   </div>
                   <pre className="overflow-x-auto rounded-xl border border-border bg-background p-3.5 font-mono text-xs text-muted-foreground">
@@ -214,7 +211,7 @@ export function UseCasesSection() {
                     render={<Link href="/login" />}
                   >
                     Deploy This Recipe
-                    <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+                    <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
                   </Button>
                 </div>
               </div>

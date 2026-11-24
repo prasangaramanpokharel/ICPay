@@ -8,6 +8,8 @@ import { ShareProfileCard } from "@/components/profile/share-profile-card"
 import { SocialLinksEditor } from "@/components/profile/social-links-editor"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import { Spinner } from "@/components/ui/spinner"
 import { PremiumBadge } from "@/components/verified/premium-badge"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -75,7 +77,14 @@ export function ProfileSettingsView() {
           className="mt-1 gap-1.5 text-muted-foreground"
         >
           <span className="font-mono text-xs">{shortPrincipal(principal)}</span>
-          <span className="text-xs">{copied ? tc("copied") : tc("copy")}</span>
+          {copied ? (
+            <span className="inline-flex items-center gap-1 text-xs text-success">
+              <Icon icon={CheckGlassOutlineIcon} className="size-3 text-success" strokeWidth={2.5} />
+              <span>{tc("copied")}</span>
+            </span>
+          ) : (
+            <span className="text-xs">{tc("copy")}</span>
+          )}
         </Button>
       </div>
 

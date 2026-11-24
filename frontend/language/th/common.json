@@ -448,7 +448,13 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "สัญลักษณ์",
+    "colName": "ชื่อ",
+    "colQuantity": "จำนวน",
+    "colValue": "มูลค่า",
+    "totalIcpBalance": "ยอดคงเหลือ ICP ทั้งหมด",
+    "yourAssets": "สินทรัพย์ของคุณ"
   },
   "token": {
     "back": "กระเป๋าเงิน",
@@ -456,7 +462,7 @@
     "send": "ส่ง",
     "deposit": "ฝาก",
     "swap": "Swap",
-    "depositTitle": "ที่อยู่ฝาก",
+    "depositTitle": "ฝาก",
     "depositSubtitle": "ส่ง {symbol} มาที่นี่เพื่อเติมกระเป๋า",
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "ที่อยู่ส่วนตัว — มีเพียงคุณฝากได้ที่นี่ ส่ง {symbol} เพื่อเติมยอด",
@@ -472,7 +478,7 @@
     "selfCustodyNet": "คุณได้รับ",
     "selfCustodyDust": "ต่ำกว่าค่าธรรมเนียมเครือข่าย {symbol} จึงย้ายไม่ได้",
     "selfCustodyEmpty": "ไม่มีอะไรให้ย้าย — โทเคนนี้ยังไม่ถูกส่งไป Principal ของคุณ",
-    "historyTitle": "ประวัติบน chain",
+    "historyTitle": "ประวัติ",
     "snsLink": "ดู SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
@@ -540,7 +546,8 @@
     "suggested": "แนะนำสำหรับคุณ",
     "noneFound": "ไม่พบใครสำหรับ “{query}”",
     "empty": "ยังไม่มีบัญชีที่มีชื่อผู้ใช้ เป็นคนแรกเลย",
-    "premium": "Verified premium handle"
+    "premium": "Verified premium handle",
+    "subtitle": "สำรวจโปรไฟล์ผู้ใช้ทั่วทั้งเครือข่าย"
   },
   "success": {
     "send": "ส่งสำเร็จ",
@@ -1415,6 +1422,10 @@
         "charity": {
           "title": "การกุศล",
           "description": "คิวอาร์โค้ดช่วยเหลือภัยพิบัติอย่างเป็นทางการของรัฐบาล"
+        },
+        "downloads": {
+          "title": "ดาวน์โหลด",
+          "description": "แอปเดสก์ท็อปสำหรับ macOS, Windows และ Linux"
         }
       },
       "sectionMore": "เพิ่มเติม",
@@ -1481,7 +1492,8 @@
         "terms": "ข้อกำหนด",
         "privacy": "ความเป็นส่วนตัว",
         "transparency": "ความโปร่งใส",
-        "charity": "การกุศล"
+        "charity": "การกุศล",
+        "downloads": "ดาวน์โหลด"
       },
       "community": {
         "github": "GitLab",
@@ -2127,6 +2139,87 @@
             "answer": "ใช่ ICFalcon เป็นโอเพนซอร์ส ซอร์สโค้ดให้ตามที่เป็นเพื่อใช้และแก้ไข แพ็กเกจ hub มีใบอนุญาตตามรายการใน icp-hub"
           }
         }
+      }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "ใหม่",
+        "version": "เดสก์ท็อป v1.0.0",
+        "platforms": "· macOS, Windows และ Linux"
+      },
+      "hero": {
+        "title": "ดาวน์โหลด ICPay Desktop",
+        "description": "กระเป๋าเงิน ICP แบบ Custodial สำหรับเดสก์ท็อปของคุณโดยเฉพาะ รวดเร็ว ปลอดภัย และยืนยันตัวตนผ่าน Internet Identity เท่านั้น"
+      },
+      "primary": {
+        "downloadMac": "ดาวน์โหลดสำหรับ Mac",
+        "downloadWindows": "ดาวน์โหลดสำหรับ Windows",
+        "downloadLinux": "ดาวน์โหลดสำหรับ Linux",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 และ 11 (64 บิต) · 84 MB",
+        "linuxSubtitle": "x64 Tarball · 98 MB",
+        "releaseHashes": "แฮชเวอร์ชัน"
+      },
+      "dropdown": {
+        "ariaLabel": "เลือกแพลตฟอร์มเดสก์ท็อป",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64 บิต)",
+        "windowsPortable": "Windows Portable",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "แพ็กเกจสากลสำหรับอุปกรณ์ Apple Silicon และ Intel",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "สถาปัตยกรรม Intel",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Portable",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "ตัวติดตั้ง 64 บิตและไฟล์สั่งการแบบพกพา",
+          "installerTitle": "ตัวติดตั้ง",
+          "installerSub": "แพ็กเกจ NSIS · EXE",
+          "portableTitle": "ไฟล์แบบพกพา",
+          "portableSub": "ไบนารี x64 · ZIP",
+          "archTitle": "สถาปัตยกรรม",
+          "archSub": "x86_64 ยืนยันแล้ว",
+          "supportedBadge": "รองรับ"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "ไฟล์แจกจ่ายสำหรับ Ubuntu, Debian, Fedora, Arch",
+          "tarballTitle": "ทาร์บอลสำหรับแจกจ่าย",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "เข้ากันได้กับ RPM",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "เข้ากันได้กับ DEB"
+        }
+      },
+      "hashes": {
+        "title": "ความถูกต้องของการเข้ารหัส (SHA-256)",
+        "description": "ตรวจสอบผลรวมตรวจสอบในเทอร์มินัลเพื่อยืนยันไฟล์ไบนารีแท้ที่ไม่ผ่านการดัดแปลง",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "คัดลอก",
+        "copied": "คัดลอกแล้ว",
+        "toastSuccess": "คัดลอกแฮช SHA-256 ไปยังคลิปบอร์ดแล้ว",
+        "toastError": "คัดลอกแฮชไม่สำเร็จ"
+      },
+      "features": {
+        "custodyTitle": "สถาปัตยกรรม Custodial",
+        "custodyDesc": "ยืนยันตัวตนผ่าน Internet Identity เท่านั้น ไม่มีการจัดเก็บ seed phrase หรือรหัสผ่านไว้ในเครื่อง",
+        "perfTitle": "ประสิทธิภาพระดับเนทีฟ",
+        "perfDesc": "การเรนเดอร์และการเข้ารหัสด้วยฮาร์ดแวร์โดย Electron 33 พร้อมการใช้หน่วยความจำต่ำ",
+        "edgeTitle": "การส่งผ่าน Cloudflare Edge",
+        "edgeDesc": "ที่เก็บข้อมูลอ็อบเจกต์ R2 ระดับโลกพร้อมการแคช Edge ในกว่า 330 แห่งทั่วโลก"
       }
     }
   },

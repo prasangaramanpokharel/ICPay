@@ -1,8 +1,8 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Delete02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { DeleteGlassIcon } from "@thesvg/ui-react"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Spinner } from "@/components/ui/spinner"
 import {
@@ -74,7 +74,7 @@ export function BucketFileDeleteDialog({
                 </>
               ) : (
                 <>
-                  <HugeiconsIcon icon={Delete02Icon} className="size-4 text-destructive" strokeWidth={1.75} />
+                  <Icon icon={DeleteGlassIcon} className="size-4 text-destructive" strokeWidth={1.75} />
                   <span>{t("delete")}</span>
                 </>
               )}

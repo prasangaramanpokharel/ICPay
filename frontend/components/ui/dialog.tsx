@@ -5,8 +5,8 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 
 import { cn } from "@/lib/ui/utils"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Cancel01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { XGlassIcon } from "@thesvg/ui-react"
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />
@@ -73,7 +73,7 @@ function DialogContent({
               />
             }
           >
-            <HugeiconsIcon icon={Cancel01Icon} className="size-4" />
+            <Icon icon={XGlassIcon} className="size-4" />
             <span className="sr-only">Close</span>
           </DialogPrimitive.Close>
         )}

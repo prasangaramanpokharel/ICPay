@@ -1,7 +1,7 @@
 "use client"
 
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Cancel01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { XGlassIcon } from "@thesvg/ui-react"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { NOT_DOING } from "@/lib/roadmap/roadmapData"
 
@@ -23,7 +23,7 @@ export function RoadmapNotDoing() {
                 render={<button type="button" />}
                 className="inline-flex items-center gap-1.5 rounded-full border bg-muted/40 px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
               >
-                <HugeiconsIcon icon={Cancel01Icon} className="size-3" />
+                <Icon icon={XGlassIcon} className="size-3" />
                 {item.title}
               </HoverCardTrigger>
               <HoverCardContent className="w-72 text-xs leading-relaxed">{item.why}</HoverCardContent>

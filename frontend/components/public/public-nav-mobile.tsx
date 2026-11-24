@@ -3,8 +3,8 @@
 import Link from "next/link"
 import { useState } from "react"
 import { usePathname } from "next/navigation"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Menu01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { MenuGlassIcon, StoreGlassIcon, ScatterPlotGlassIcon, HeatTileGlassIcon, DropdownGlassIcon, type UiIcon } from "@thesvg/ui-react"
 import type { NavMenuItem } from "@/lib/public/site-links"
 import { cn } from "@/lib/ui/utils"
 import { NavMenuLinkRow } from "@/components/public/nav-menu-item"
@@ -19,17 +19,20 @@ import {
 
 function MobileNavSection({
   title,
+  icon: SectionIcon,
   items,
   onNavigate,
 }: {
   title: string
+  icon?: UiIcon
   items: NavMenuItem[]
   onNavigate: () => void
 }) {
   return (
     <div className="space-y-2">
-      <p className="px-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-        {title}
+      <p className="flex items-center gap-1.5 px-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        {SectionIcon && <Icon icon={SectionIcon} className="size-3.5" />}
+        <span>{title}</span>
       </p>
       <ul className="space-y-1">
         {items.map((item) => (
@@ -67,7 +70,7 @@ export function PublicNavMobile() {
         aria-label={navLabels.openMenu}
         onClick={() => setOpen(true)}
       >
-        <HugeiconsIcon icon={Menu01Icon} className="size-4" />
+        <Icon icon={MenuGlassIcon} className="size-4" />
       </Button>
 
       <Drawer open={open} onOpenChange={setOpen} swipeDirection="right" showSwipeHandle>
@@ -95,10 +98,10 @@ export function PublicNavMobile() {
               ))}
             </div>
 
-            <MobileNavSection title={sectionLabels.products} items={productMenu} onNavigate={close} />
-            <MobileNavSection title={sectionLabels.resources} items={resourceMenu} onNavigate={close} />
-            <MobileNavSection title={sectionLabels.canisters} items={canisterMenu} onNavigate={close} />
-            <MobileNavSection title={sectionLabels.more} items={legalMenu} onNavigate={close} />
+            <MobileNavSection title={sectionLabels.products} icon={StoreGlassIcon} items={productMenu} onNavigate={close} />
+            <MobileNavSection title={sectionLabels.resources} icon={ScatterPlotGlassIcon} items={resourceMenu} onNavigate={close} />
+            <MobileNavSection title={sectionLabels.canisters} icon={HeatTileGlassIcon} items={canisterMenu} onNavigate={close} />
+            <MobileNavSection title={sectionLabels.more} icon={DropdownGlassIcon} items={legalMenu} onNavigate={close} />
           </div>
         </DrawerContent>
       </Drawer>

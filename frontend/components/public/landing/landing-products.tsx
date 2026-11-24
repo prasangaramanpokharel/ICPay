@@ -4,8 +4,8 @@ import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { motion } from "motion/react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon } from "@thesvg/ui-react"
 import {
   CutoutCard,
   CutoutCardAction,
@@ -181,7 +181,7 @@ export function LandingProducts() {
                     className="bg-primary text-primary-foreground rounded-full px-4 py-2 text-xs font-semibold shadow-md transition-transform duration-150 ease-[cubic-bezier(0.23,1,0.32,1)] hover:bg-primary/90 active:scale-[0.97] inline-flex items-center gap-1.5"
                   >
                     <span>{t(`items.${product.id}.cta`)}</span>
-                    <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" strokeWidth={2} />
+                    <Icon icon={ArrowRightGlassIcon} className="size-3.5" strokeWidth={2} />
                   </Link>
                 </CutoutCardAction>
               </CutoutCard>

@@ -50,7 +50,7 @@ Always consult the matching skill before starting a task:
 | **Icons & Visual Elements Standard** | [`.agents/skills/icon-standard/SKILL.md`](.agents/skills/icon-standard/SKILL.md) | Clean formal fintech icons, semantic tokens only, no bg clutter, CopyButton standard |
 
 ### Auto-Applied Cursor Rules
-- [`.agents/rules/ui-components.mdc`](.agents/rules/ui-components.mdc): shadcn primitives, `@hugeicons/react`, semantic color tokens
+- [`.agents/rules/ui-components.mdc`](.agents/rules/ui-components.mdc): shadcn primitives, `@thesvg/ui-react`, semantic color tokens
 - [`.agents/rules/services.mdc`](.agents/rules/services.mdc): typed service layer, zero inline fetches
 - [`.agents/rules/lib-standard.mdc`](.agents/rules/lib-standard.mdc): pure utilities only, domain folders
 - [`.agents/rules/hooks-standard.mdc`](.agents/rules/hooks-standard.mdc): SWR data layer, domain folders
@@ -88,7 +88,7 @@ Always consult the matching skill before starting a task:
 4. **UI & Styling Standards**:
    - **shadcn/ui only**: Always import primitives from `@/components/ui/*`. Never hand-roll raw HTML `<button>`, `<input>`, or `<select>`.
    - **Forms**: Must use semantic `@/components/ui/field` primitives (`FieldGroup`, `Field`, `FieldLabel`, `FieldDescription`, `FieldError`).
-   - **Icons**: Always use `@hugeicons/react` with `@hugeicons/core-free-icons`. Never add `lucide-react` or write inline `<svg>`.
+   - **Icons**: Always use `@thesvg/ui-react` with `@/components/ui/icon`. Never add `lucide-react`, `@hugeicons/*`, or write inline `<svg>`.
    - **Semantic Color Tokens**: Always use CSS variables (`bg-background`, `text-foreground`, `bg-card`, `border-border`, `text-muted-foreground`, `text-destructive`). Never hardcode hex colors or raw utility colors like `bg-white` or `text-black`.
    - **Responsive & Modals**: Use `<Dialog>` for standard modal forms and `<AlertDialog>` with `<AlertDialogAction variant="destructive">` for destructive actions.
 

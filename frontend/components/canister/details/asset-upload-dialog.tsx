@@ -3,8 +3,8 @@
 import { useState } from "react"
 import { mutate } from "swr"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Upload01Icon, CheckmarkCircle01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { UploadGlassIcon, CircleCheckGlassIcon } from "@thesvg/ui-react"
 import {
   Dialog,
   DialogContent,
@@ -92,7 +92,7 @@ export function AssetUploadDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={Upload01Icon} className="size-4 text-primary" strokeWidth={1.75} />
+            <Icon icon={UploadGlassIcon} className="size-4 text-primary" strokeWidth={1.75} />
             <DialogTitle className="text-base font-semibold">Upload Asset</DialogTitle>
           </div>
           <DialogDescription className="text-xs">
@@ -131,7 +131,7 @@ export function AssetUploadDialog({
                 <span className="flex items-center gap-1.5 font-medium text-foreground">
                   {uploading && <Spinner className="size-3.5" />}
                   {completed && (
-                    <HugeiconsIcon icon={CheckmarkCircle01Icon} className="size-3.5 text-success" />
+                    <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-success" />
                   )}
                   <span>{completed ? "Upload complete" : "Uploading chunks…"}</span>
                 </span>

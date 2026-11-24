@@ -89,6 +89,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
+    { url: `${siteUrl}/downloads`, changeFrequency: "weekly", priority: 0.85 },
     { url: `${siteUrl}/about`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${siteUrl}/contact`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${siteUrl}/faq`, changeFrequency: "monthly", priority: 0.8 },
@@ -96,13 +97,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/brand-protection`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${siteUrl}/login`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/icbucket`, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${siteUrl}/products/icBucket`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${siteUrl}/products/icBucket/packages`, changeFrequency: "weekly", priority: 0.75 },
+    { url: `${siteUrl}/icbucket/pricing`, changeFrequency: "weekly", priority: 0.85 },
     ...bucketDocEntries,
     { url: `${siteUrl}/icfalcon`, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${siteUrl}/products/icFalcon`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${siteUrl}/products/icFalcon/packages`, changeFrequency: "weekly", priority: 0.75 },
-    { url: `${siteUrl}/products/icFalcon/commands`, changeFrequency: "weekly", priority: 0.75 },
     { url: `${siteUrl}/token/create`, changeFrequency: "weekly", priority: 0.85 },
     { url: `${siteUrl}/canister/tools`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/canister/manage`, changeFrequency: "weekly", priority: 0.75 },

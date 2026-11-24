@@ -20,8 +20,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Tick02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassOutlineIcon } from "@thesvg/ui-react"
 
 function Menubar({ className, ...props }: MenubarPrimitive.Props) {
   return (
@@ -126,7 +126,7 @@ function MenubarCheckboxItem({
     >
       <span className="pointer-events-none absolute left-3 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenuPrimitive.CheckboxItemIndicator>
-          <HugeiconsIcon icon={Tick02Icon} className="size-4" />
+          <Icon icon={CheckGlassOutlineIcon} className="size-4" />
         </MenuPrimitive.CheckboxItemIndicator>
       </span>
       {children}
@@ -160,7 +160,7 @@ function MenubarRadioItem({
     >
       <span className="pointer-events-none absolute left-3 flex size-4 items-center justify-center [&_svg:not([class*='size-'])]:size-4">
         <MenuPrimitive.RadioItemIndicator>
-          <HugeiconsIcon icon={Tick02Icon} className="size-4" />
+          <Icon icon={CheckGlassOutlineIcon} className="size-4" />
         </MenuPrimitive.RadioItemIndicator>
       </span>
       {children}

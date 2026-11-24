@@ -18,8 +18,8 @@ import {
 } from "@/components/ui/dialog"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Spinner } from "@/components/ui/spinner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowLeftGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { slugifyText, type NewCourseDraft } from "@/lib/academy/csv"
 
 export function CourseCreateDialog({
@@ -290,7 +290,7 @@ export function CourseCreateDialog({
                   className="gap-1.5"
                 >
                   Next: Media & Instructor
-                  <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" strokeWidth={1.75} />
+                  <Icon icon={ArrowRightGlassIcon} className="size-3.5" strokeWidth={1.75} />
                 </Button>
               </>
             ) : (
@@ -301,7 +301,7 @@ export function CourseCreateDialog({
                   onClick={() => onStepChange(1)}
                   className="gap-1.5"
                 >
-                  <HugeiconsIcon icon={ArrowLeft01Icon} className="size-3.5" strokeWidth={1.75} />
+                  <Icon icon={ArrowLeftGlassIcon} className="size-3.5" strokeWidth={1.75} />
                   Back to Overview
                 </Button>
                 <Button

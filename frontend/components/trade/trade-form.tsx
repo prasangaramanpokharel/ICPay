@@ -2,11 +2,11 @@
 
 import { useMemo, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Exchange01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ReplaceGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import { TradeConfirmDrawer } from "@/components/trade/trade-confirm-drawer"
 import { TradeTokenPicker } from "@/components/trade/trade-token-picker"
 import { TradeAmountField } from "@/components/trade/trade-amount-field"
@@ -34,6 +34,41 @@ export type TradeSuccess = {
   tokenOut: TokenHolding
   beforeIn: bigint
   beforeOut: bigint
+}
+
+function TradeFormSkeleton() {
+  return (
+    <div className="mx-auto w-full max-w-md space-y-4">
+      <div className="overflow-hidden rounded-(--radius) border border-border/60 bg-card p-4 space-y-4 shadow-sm">
+        <div className="space-y-2 rounded-(--radius) bg-muted/20 p-3">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-3.5 w-16 rounded-md" />
+            <Skeleton className="h-3.5 w-24 rounded-md" />
+          </div>
+          <div className="flex items-center justify-between pt-1">
+            <Skeleton className="h-8 w-32 rounded-lg" />
+            <Skeleton className="h-9 w-24 rounded-(--radius)" />
+          </div>
+        </div>
+
+        <div className="flex justify-center">
+          <Skeleton className="size-10 rounded-(--radius)" />
+        </div>
+
+        <div className="space-y-2 rounded-(--radius) bg-muted/20 p-3">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-3.5 w-20 rounded-md" />
+            <Skeleton className="h-3.5 w-20 rounded-md" />
+          </div>
+          <div className="flex items-center justify-between pt-1">
+            <Skeleton className="h-8 w-32 rounded-lg" />
+            <Skeleton className="h-9 w-24 rounded-(--radius)" />
+          </div>
+        </div>
+      </div>
+      <Skeleton className="h-12 w-full rounded-(--radius)" />
+    </div>
+  )
 }
 
 export function TradeForm({
@@ -186,11 +221,7 @@ export function TradeForm({
   }
 
   if (tokensLoading && tokens.length === 0) {
-    return (
-      <div className="flex justify-center py-20">
-        <Spinner className="size-6 text-muted-foreground" />
-      </div>
-    )
+    return <TradeFormSkeleton />
   }
 
   if (tokens.length < 2) {
@@ -211,7 +242,7 @@ export function TradeForm({
   return (
     <>
       <div className="mx-auto w-full max-w-md space-y-4">
-        <div className="overflow-hidden rounded-3xl border border-border/60 bg-card shadow-sm">
+        <div className="overflow-hidden rounded-(--radius) border border-border/60 bg-card shadow-sm">
           <TradeAmountField
             label={t("youPay")}
             token={tokenIn}
@@ -235,7 +266,7 @@ export function TradeForm({
                 className="size-10 rounded-xl border-4 border-card bg-background shadow-sm hover:bg-muted"
                 onClick={flip}
               >
-                <HugeiconsIcon icon={Exchange01Icon} className="size-5" strokeWidth={2} />
+                <Icon icon={ReplaceGlassIcon} className="size-5" strokeWidth={2} />
                 <span className="sr-only">{t("flip")}</span>
               </Button>
             </div>

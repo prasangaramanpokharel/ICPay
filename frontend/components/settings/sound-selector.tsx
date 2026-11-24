@@ -2,8 +2,8 @@
 
 import { useSyncExternalStore } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { VolumeHighIcon, VolumeOffIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { VolumeGlassIcon } from "@thesvg/ui-react"
 import { Switch } from "@/components/ui/switch"
 import {
   soundEnabled,
@@ -22,7 +22,7 @@ export function SoundSelector() {
   return (
     <div className="flex items-center gap-3 rounded-2xl border px-4 py-3.5">
       <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
-        <HugeiconsIcon icon={on ? VolumeHighIcon : VolumeOffIcon} className="size-4.5" />
+        <Icon icon={on ? VolumeGlassIcon : VolumeGlassIcon} className="size-4.5" />
       </span>
       <div className="flex-1">
         <p className="text-sm">{t("label")}</p>

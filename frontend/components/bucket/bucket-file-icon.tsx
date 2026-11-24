@@ -1,23 +1,7 @@
 "use client"
 
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  CodeIcon,
-  Csv01Icon,
-  Doc01Icon,
-  File01Icon,
-  Folder02Icon,
-  Image01Icon,
-  MusicNote01Icon,
-  Pdf01Icon,
-  Ppt01Icon,
-  TextFontIcon,
-  Txt01Icon,
-  Video01Icon,
-  Xls01Icon,
-  Xml01Icon,
-  Zip01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CodeGlassIcon, SpreadsheetGlassIcon, FileTextGlassIcon, FileGlassIcon, FolderGlassIcon, FileImageGlassIcon, AudioLinesGlassIcon, PresentationGlassIcon, TypeGlassIcon, VideoGlassIcon, FileCodeGlassIcon, FileArchiveGlassIcon } from "@thesvg/ui-react"
 import { pathExtension } from "@/lib/bucket/allowedFiles"
 import { cn } from "@/lib/ui/utils"
 
@@ -182,32 +166,32 @@ function iconForExtension(ext: string) {
     case "tiff":
     case "heic":
     case "heif":
-      return Image01Icon
+      return FileImageGlassIcon
     case "pdf":
-      return Pdf01Icon
+      return FileTextGlassIcon
     case "doc":
     case "docx":
     case "odt":
     case "rtf":
-      return Doc01Icon
+      return FileTextGlassIcon
     case "xls":
     case "xlsx":
     case "ods":
-      return Xls01Icon
+      return SpreadsheetGlassIcon
     case "csv":
     case "tsv":
-      return Csv01Icon
+      return SpreadsheetGlassIcon
     case "ppt":
     case "pptx":
     case "odp":
-      return Ppt01Icon
+      return PresentationGlassIcon
     case "txt":
     case "md":
     case "mdx":
     case "rst":
     case "tex":
     case "log":
-      return Txt01Icon
+      return FileTextGlassIcon
     case "json":
     case "jsonl":
     case "ndjson":
@@ -220,7 +204,7 @@ function iconForExtension(ext: string) {
     case "conf":
     case "lock":
     case "map":
-      return Xml01Icon
+      return FileCodeGlassIcon
     case "mo":
     case "did":
     case "rs":
@@ -253,7 +237,7 @@ function iconForExtension(ext: string) {
     case "scss":
     case "less":
     case "wasm":
-      return CodeIcon
+      return CodeGlassIcon
     case "zip":
     case "tar":
     case "gz":
@@ -263,7 +247,7 @@ function iconForExtension(ext: string) {
     case "zst":
     case "7z":
     case "rar":
-      return Zip01Icon
+      return FileArchiveGlassIcon
     case "mp3":
     case "wav":
     case "ogg":
@@ -271,7 +255,7 @@ function iconForExtension(ext: string) {
     case "m4a":
     case "aac":
     case "opus":
-      return MusicNote01Icon
+      return AudioLinesGlassIcon
     case "mp4":
     case "webm":
     case "mov":
@@ -282,22 +266,22 @@ function iconForExtension(ext: string) {
     case "3gp":
     case "mpeg":
     case "mpg":
-      return Video01Icon
+      return VideoGlassIcon
     case "ttf":
     case "otf":
     case "woff":
     case "woff2":
     case "eot":
-      return TextFontIcon
+      return TypeGlassIcon
     default:
-      return File01Icon
+      return FileGlassIcon
   }
 }
 
 export function BucketFolderIcon({ className }: { className?: string }) {
   return (
-    <HugeiconsIcon
-      icon={Folder02Icon}
+    <Icon
+      icon={FolderGlassIcon}
       className={cn("size-5 shrink-0 text-muted-foreground", className)}
       strokeWidth={1.75}
     />
@@ -316,7 +300,7 @@ export function BucketFileIcon({
   const IconComponent = iconForExtension(ext)
 
   return (
-    <HugeiconsIcon
+    <Icon
       icon={IconComponent}
       className={cn("size-5 shrink-0 text-muted-foreground", className)}
       strokeWidth={1.75}

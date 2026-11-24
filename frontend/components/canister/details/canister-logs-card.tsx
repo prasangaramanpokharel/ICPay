@@ -3,18 +3,8 @@
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { toast } from "@/components/ui/sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  AlertCircleIcon,
-  Copy01Icon,
-  Delete02Icon,
-  Download01Icon,
-  InformationCircleIcon,
-  PauseIcon,
-  PlayIcon,
-  RefreshIcon,
-  Search01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CircleAlertGlassIcon, CopyGlassIcon, DeleteGlassIcon, DownloadGlassIcon, InfoGlassIcon, PauseGlassIcon, PlayGlassIcon, RefreshCwGlassIcon, SearchGlassIcon } from "@thesvg/ui-react"
 
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
@@ -147,7 +137,7 @@ export function CanisterLogsCard({
             </Badge>
             <Tooltip>
               <TooltipTrigger className="cursor-help text-muted-foreground hover:text-foreground">
-                <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5" />
+                <Icon icon={InfoGlassIcon} className="size-3.5" />
               </TooltipTrigger>
               <TooltipContent side="top">{t("ringBufferTooltip")}</TooltipContent>
             </Tooltip>
@@ -165,8 +155,8 @@ export function CanisterLogsCard({
             onClick={toggleLive}
             className="h-8 gap-1.5 text-xs font-medium cursor-pointer"
           >
-            <HugeiconsIcon
-              icon={isLive ? PauseIcon : PlayIcon}
+            <Icon
+              icon={isLive ? PauseGlassIcon : PlayGlassIcon}
               className="size-3.5 text-muted-foreground"
             />
             <span>{isLive ? t("live") : t("paused")}</span>
@@ -184,8 +174,8 @@ export function CanisterLogsCard({
                   className="cursor-pointer"
                   aria-label={t("refresh")}
                 >
-                  <HugeiconsIcon
-                    icon={RefreshIcon}
+                  <Icon
+                    icon={RefreshCwGlassIcon}
                     className={cn("size-3.5", (isLoading || isRefreshing) && "animate-spin")}
                     strokeWidth={1.75}
                   />
@@ -207,7 +197,7 @@ export function CanisterLogsCard({
                   className="cursor-pointer"
                   aria-label={t("copy")}
                 >
-                  <HugeiconsIcon icon={Copy01Icon} className="size-3.5" strokeWidth={1.75} />
+                  <Icon icon={CopyGlassIcon} className="size-3.5" strokeWidth={1.75} />
                 </Button>
               }
             />
@@ -226,7 +216,7 @@ export function CanisterLogsCard({
                   className="cursor-pointer"
                   aria-label={t("download")}
                 >
-                  <HugeiconsIcon icon={Download01Icon} className="size-3.5" strokeWidth={1.75} />
+                  <Icon icon={DownloadGlassIcon} className="size-3.5" strokeWidth={1.75} />
                 </Button>
               }
             />
@@ -245,7 +235,7 @@ export function CanisterLogsCard({
                   className="cursor-pointer text-muted-foreground hover:text-destructive"
                   aria-label={t("clear")}
                 >
-                  <HugeiconsIcon icon={Delete02Icon} className="size-3.5" strokeWidth={1.75} />
+                  <Icon icon={DeleteGlassIcon} className="size-3.5" strokeWidth={1.75} />
                 </Button>
               }
             />
@@ -257,8 +247,8 @@ export function CanisterLogsCard({
       <CardContent className="space-y-4 p-0">
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto] sm:items-center">
           <div className="relative w-full max-w-sm">
-            <HugeiconsIcon
-              icon={Search01Icon}
+            <Icon
+              icon={SearchGlassIcon}
               className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground"
               strokeWidth={1.75}
             />
@@ -315,7 +305,7 @@ export function CanisterLogsCard({
 
         {denied ? (
           <div className="flex flex-col items-center justify-center gap-3 rounded-lg border border-border/60 bg-muted/20 p-8 text-center">
-            <HugeiconsIcon icon={AlertCircleIcon} className="size-8 text-destructive" strokeWidth={1.5} />
+            <Icon icon={CircleAlertGlassIcon} className="size-8 text-destructive" strokeWidth={1.5} />
             <div className="space-y-1 max-w-md">
               <p className="text-sm font-semibold text-foreground">{t("restrictedTitle")}</p>
               <p className="text-xs text-muted-foreground leading-relaxed">

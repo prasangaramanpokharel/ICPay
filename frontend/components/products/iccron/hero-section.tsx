@@ -8,17 +8,8 @@ import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { ShineBorder } from "@/components/ui/shine-border"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowRight01Icon,
-  CheckmarkCircle02Icon,
-  Clock01Icon,
-  Copy01Icon,
-  GlobalIcon,
-  LinkSquare02Icon,
-  PlayIcon,
-  ZapIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon, CheckGlassOutlineIcon, ClockGlassIcon, CopyGlassIcon, GlobeGlassIcon, ExternalLinkGlassIcon, PlayGlassIcon, ZapGlassIcon } from "@thesvg/ui-react"
 
 const PRESETS = [
   { label: "Hourly", expr: "0 * * * *", desc: "Every hour at minute 0" },
@@ -105,7 +96,7 @@ export function HeroSection() {
                 render={<Link href="/login" />}
               >
                 Start Free (60 runs/mo)
-                <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                <Icon icon={ArrowRightGlassIcon} className="size-4" />
               </Button>
               <Button
                 size="lg"
@@ -120,7 +111,7 @@ export function HeroSection() {
                   />
                 }
               >
-                <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" />
+                <Icon icon={ExternalLinkGlassIcon} className="size-4" />
                 Live Canister
               </Button>
             </div>
@@ -154,7 +145,7 @@ export function HeroSection() {
                   <div className="flex items-center justify-between border-b border-border/60 pb-3">
                     <div className="flex items-center gap-2">
                       <div className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                        <HugeiconsIcon icon={Clock01Icon} className="size-4" />
+                        <Icon icon={ClockGlassIcon} className="size-4" />
                       </div>
                       <span className="text-sm font-semibold tracking-tight text-foreground">
                         Interactive Cron Sandbox
@@ -184,7 +175,7 @@ export function HeroSection() {
                     </div>
 
                     <div className="flex items-center gap-2 rounded-xl border border-border bg-background p-2.5">
-                      <HugeiconsIcon icon={PlayIcon} className="size-4 text-primary shrink-0" />
+                      <Icon icon={PlayGlassIcon} className="size-4 text-primary shrink-0" />
                       <Input
                         value={cronExpr}
                         onChange={(e) => setCronExpr(e.target.value)}
@@ -232,7 +223,7 @@ export function HeroSection() {
                       {targetMode === "webhook" ? (
                         <div className="space-y-1">
                           <p className="flex items-center gap-1.5 text-foreground font-semibold">
-                            <HugeiconsIcon icon={GlobalIcon} className="size-3.5 text-primary" />
+                            <Icon icon={GlobeGlassIcon} className="size-3.5 text-primary" />
                             POST https://api.my-app.com/api/cron
                           </p>
                           <p className="text-[11px] text-muted-foreground">
@@ -242,7 +233,7 @@ export function HeroSection() {
                       ) : (
                         <div className="space-y-1">
                           <p className="flex items-center gap-1.5 text-foreground font-semibold">
-                            <HugeiconsIcon icon={ZapIcon} className="size-3.5 text-primary" />
+                            <Icon icon={ZapGlassIcon} className="size-3.5 text-primary" />
                             canister.trigger_action(record {"{}"})
                           </p>
                           <p className="text-[11px] text-muted-foreground">
@@ -277,11 +268,17 @@ export function HeroSection() {
                       onClick={copySnippet}
                       className="w-full gap-2 rounded-xl text-xs font-medium"
                     >
-                      <HugeiconsIcon
-                        icon={copied ? CheckmarkCircle02Icon : Copy01Icon}
-                        className={`size-3.5 ${copied ? "text-primary" : ""}`}
-                      />
-                      {copied ? "Copied Snippet" : "Copy Schedule CLI Command"}
+                      {copied ? (
+                        <>
+                          <Icon icon={CheckGlassOutlineIcon} className="size-4 text-success" strokeWidth={2.5} />
+                          <span className="text-success font-medium">Copied Snippet</span>
+                        </>
+                      ) : (
+                        <>
+                          <Icon icon={CopyGlassIcon} className="size-3.5" strokeWidth={2} />
+                          <span>Copy Schedule CLI Command</span>
+                        </>
+                      )}
                     </Button>
                   </div>
                 </div>

@@ -25,6 +25,7 @@ import {
 import { SendSuccess } from "@/components/wallet/send-success"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { useIcpaySale } from "@/hooks/icpay/useIcpaySale"
 import { buyIcpay, icpayReceiveAmount, type IcpayPurchase } from "@/services/icpay/sale"
 import {
@@ -68,6 +69,7 @@ export function BuyIcpayDrawer({
   const { sale, rate, refresh } = useIcpaySale()
   const balance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
+  const { hidden } = useBalanceVisibility()
 
   const [value, setValue] = useState("")
   const [external, setExternal] = useState(false)
@@ -177,7 +179,7 @@ export function BuyIcpayDrawer({
                     <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
                       {tc("balance")}{" "}
                       <span className="font-semibold text-foreground">
-                        {formatAmount(balance)} ICP
+                        {hidden ? "••••••" : `${formatAmount(balance)} ICP`}
                       </span>
                     </Badge>
                   )}

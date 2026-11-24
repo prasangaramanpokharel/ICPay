@@ -10,26 +10,28 @@ import { formatAmount, copyText, E8S } from "@/lib/wallet/utils"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 import { useAccountStats } from "@/hooks/wallet/useWalletData"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { cn } from "@/lib/ui/utils"
 
 export function AccountStatsCard({ principal }: { principal: string }) {
   const t = useTranslations("accountStats")
+  const { hidden } = useBalanceVisibility()
   const { stats, isLoading } = useAccountStats(principal)
   const { price } = useIcpPrice()
   const usd = price && stats ? (Number(stats.balance) / Number(E8S)) * price.usd : null
   const fiat = useFiatValue(usd)
 
-  if (isLoading) return <Skeleton className="h-44 w-full rounded-2xl" />
+  if (isLoading) return <Skeleton className="h-44 w-full rounded-(--radius)" />
   if (!stats) return null
 
   return (
     <Card className="w-full gap-0 overflow-hidden font-mono text-xs border border-border p-0">
       <div className="grid grid-cols-2 gap-px bg-border">
-        <Cell label={t("balance")} value={`${formatAmount(stats.balance)} ICP`} strong />
+        <Cell label={t("balance")} value={hidden ? "••••••" : `${formatAmount(stats.balance)} ICP`} strong />
         <Cell label={t("transactions")} value={stats.txCount === 0 ? "—" : String(stats.txCount)} strong />
         <Cell
           label={t("value")}
-          value={fiat.formatted === null ? "—" : `≈ ${fiat.symbol}${fiat.formatted}`}
+          value={hidden ? "••••••" : fiat.formatted === null ? "—" : `≈ ${fiat.symbol}${fiat.formatted}`}
         />
         <Cell
           label={t("sinceBlock")}

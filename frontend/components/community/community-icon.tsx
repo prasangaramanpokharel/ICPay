@@ -1,43 +1,25 @@
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowDown01Icon,
-  ArrowLeft01Icon,
-  Copy01Icon,
-  DashboardSquare02Icon,
-  Delete02Icon,
-  Forward01Icon,
-  BookOpen02Icon,
-  GiftIcon,
-  Message01Icon,
-  MoreVerticalIcon,
-  Pin02Icon,
-  Search01Icon,
-  SentIcon,
-  Settings01Icon,
-  Share08Icon,
-  Tick02Icon,
-  Upload01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowDownGlassIcon, ArrowLeftGlassIcon, CopyGlassIcon, LayoutGridGlassIcon, DeleteGlassIcon, ForwardGlassIcon, BookOpenGlassIcon, GiftGlassIcon, MessageSquareGlassIcon, EllipsisVerticalGlassIcon, PinGlassIcon, SearchGlassIcon, SendGlassIcon, SettingsGlassIcon, Share2GlassIcon, CheckGlassOutlineIcon, UploadGlassIcon } from "@thesvg/ui-react"
 import { cn } from "@/lib/ui/utils"
 
 const ICONS = {
-  back: ArrowLeft01Icon,
-  more: MoreVerticalIcon,
-  pin: Pin02Icon,
-  copy: Copy01Icon,
-  forward: Forward01Icon,
-  guide: BookOpen02Icon,
-  delete: Delete02Icon,
-  share: Share08Icon,
-  send: SentIcon,
-  arrowDown: ArrowDown01Icon,
-  community: Message01Icon,
-  gift: GiftIcon,
-  home: DashboardSquare02Icon,
-  search: Search01Icon,
-  upload: Upload01Icon,
-  settings: Settings01Icon,
-  check: Tick02Icon,
+  back: ArrowLeftGlassIcon,
+  more: EllipsisVerticalGlassIcon,
+  pin: PinGlassIcon,
+  copy: CopyGlassIcon,
+  forward: ForwardGlassIcon,
+  guide: BookOpenGlassIcon,
+  delete: DeleteGlassIcon,
+  share: Share2GlassIcon,
+  send: SendGlassIcon,
+  arrowDown: ArrowDownGlassIcon,
+  community: MessageSquareGlassIcon,
+  gift: GiftGlassIcon,
+  home: LayoutGridGlassIcon,
+  search: SearchGlassIcon,
+  upload: UploadGlassIcon,
+  settings: SettingsGlassIcon,
+  check: CheckGlassOutlineIcon,
 } as const
 
 export type CommunityIconName = keyof typeof ICONS
@@ -52,7 +34,7 @@ export function CommunityIcon({
   className?: string
 }) {
   return (
-    <HugeiconsIcon
+    <Icon
       icon={ICONS[name]}
       className={cn("shrink-0", className)}
       style={{ width: size, height: size }}

@@ -3,39 +3,33 @@
 import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Layers01Icon,
-  CpuIcon,
-  GlobalIcon,
-  ShieldIcon,
-  DatabaseIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { LayersGlassIcon, CpuGlassIcon, GlobeGlassIcon, ShieldGlassIcon, DatabaseGlassIcon } from "@thesvg/ui-react"
 
 const SPECS = [
   {
-    icon: CpuIcon,
+    icon: CpuGlassIcon,
     title: "Rust Canister Core",
     subtitle: "uzt4z-lp777-77774-qaabq-cai",
     description:
       "Engineered in memory-safe Rust with ic-stable-structures. State persists safely across canister Wasm upgrades without serialization loss.",
   },
   {
-    icon: Layers01Icon,
+    icon: LayersGlassIcon,
     title: "Nanosecond Timer Loop",
     subtitle: "Zero Heartbeat Idle Burn",
     description:
       "Direct integration with Internet Computer system timers. Sleeps at zero cycles between jobs, waking up with 1-second consensus precision.",
   },
   {
-    icon: GlobalIcon,
+    icon: GlobeGlassIcon,
     title: "Subnet HTTPS Dispatch",
     subtitle: "Threshold-Signed Calls",
     description:
       "Outbound HTTP calls to Web2 endpoints are verified and threshold-signed by independent node providers, ensuring verifiable webhook delivery.",
   },
   {
-    icon: ShieldIcon,
+    icon: ShieldGlassIcon,
     title: "DLQ & Circuit Breaker",
     subtitle: "Auto-Pause on Dormancy",
     description:
@@ -78,7 +72,7 @@ export function ArchitectureSection() {
               >
                 <div className="space-y-3">
                   <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                    <HugeiconsIcon icon={spec.icon} className="size-4" />
+                    <Icon icon={spec.icon} className="size-4" />
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-foreground">{spec.title}</h3>
@@ -94,7 +88,7 @@ export function ArchitectureSection() {
 
           <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-2xl border border-border/60 bg-secondary/30 p-4 sm:flex-row">
             <div className="flex items-center gap-3">
-              <HugeiconsIcon icon={DatabaseIcon} className="size-5 text-primary shrink-0" />
+              <Icon icon={DatabaseGlassIcon} className="size-5 text-primary shrink-0" />
               <div>
                 <p className="text-xs font-semibold text-foreground">
                   Canister ID: <span className="font-mono text-primary">uzt4z-lp777-77774-qaabq-cai</span>

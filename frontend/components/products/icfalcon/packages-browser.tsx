@@ -29,8 +29,8 @@ export function PackagesBrowser() {
       <div className="mx-auto max-w-6xl">
         {loading ? (
           <div className="space-y-6">
-            <div className="space-y-4 rounded-2xl border border-border/60 bg-card/60 p-6">
-              <Skeleton className="h-10 w-full rounded-xl" />
+            <div className="space-y-4 rounded-(--radius) border border-border/60 bg-card/60 p-6">
+              <Skeleton className="h-10 w-full rounded-(--radius)" />
               <div className="flex flex-wrap gap-2">
                 {Array.from({ length: 7 }).map((_, i) => (
                   <Skeleton key={i} className="h-8 w-24 rounded-full" />
@@ -42,7 +42,7 @@ export function PackagesBrowser() {
               {Array.from({ length: 6 }).map((_, i) => (
                 <div
                   key={i}
-                  className="flex flex-col justify-between space-y-4 rounded-2xl border border-border/60 bg-card/60 p-5"
+                  className="flex flex-col justify-between space-y-4 rounded-(--radius) border border-border/60 bg-card/60 p-5"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
@@ -52,7 +52,7 @@ export function PackagesBrowser() {
                     <Skeleton className="h-4 w-full rounded-md" />
                     <Skeleton className="h-4 w-3/4 rounded-md" />
                   </div>
-                  <Skeleton className="h-10 w-full rounded-xl" />
+                  <Skeleton className="h-10 w-full rounded-(--radius)" />
                 </div>
               ))}
             </div>

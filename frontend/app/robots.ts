@@ -28,6 +28,10 @@ const PRIVATE = [
   "/analytics",
   "/launch",
   "/icpay",
+  "/yourname",
+  "/hello.txt",
+  "/1",
+  "/$",
 ]
 
 const BLOG_PUBLIC = BLOG_POSTS.map((post) => `/blog/${post.slug}`)
@@ -48,14 +52,10 @@ const PUBLIC = [
   "/llms.txt",
   "/llms-full.txt",
   "/icbucket",
-  "/products/icBucket",
-  "/products/icBucket/packages",
+  "/icbucket/pricing",
   "/bucket/docs",
   "/bucket/docs/",
   "/icfalcon",
-  "/products/icFalcon",
-  "/products/icFalcon/packages",
-  "/products/icFalcon/commands",
   "/canister/tools",
   "/canister/manage",
   "/canister/create",

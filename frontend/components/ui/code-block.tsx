@@ -194,7 +194,7 @@ export function CodeBlock({
           aria-label="Copy code"
         >
           <CopyIconIndicator copied={copied} iconClassName="size-3.5" />
-          <span>{copied ? "Copied" : "Copy"}</span>
+          <span className={cn(copied && "text-success font-medium")}>{copied ? "Copied" : "Copy"}</span>
         </motion.button>
         <pre
           className={cn(

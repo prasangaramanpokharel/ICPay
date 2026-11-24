@@ -31,7 +31,14 @@
     { "source": "/icp-reverse-gas-model", "destination": "/blog/icp-reverse-gas-model", "permanent": true },
     { "source": "/icp-https-outcalls", "destination": "/blog/icp-https-outcalls", "permanent": true },
     { "source": "/how-to-stake-icp", "destination": "/blog/how-to-stake-icp", "permanent": true },
-    { "source": "/icpay-bucket-sdk", "destination": "/blog/icpay-bucket-sdk", "permanent": true }
+    { "source": "/icpay-bucket-sdk", "destination": "/blog/icpay-bucket-sdk", "permanent": true },
+    { "source": "/products/icBucket", "destination": "/icbucket", "permanent": true },
+    { "source": "/products/icBucket/packages", "destination": "/icbucket", "permanent": true },
+    { "source": "/products/icFalcon", "destination": "/icfalcon", "permanent": true },
+    { "source": "/products/icFalcon/packages", "destination": "/icfalcon", "permanent": true },
+    { "source": "/products/icFalcon/commands", "destination": "/icfalcon", "permanent": true },
+    { "source": "/charit", "destination": "/charity", "permanent": true },
+    { "source": "/home", "destination": "/", "permanent": true }
   ],
   "rewrites": [
     {

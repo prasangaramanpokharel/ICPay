@@ -3,8 +3,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon, Cancel01Icon, PlayIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon, XGlassIcon, PlayGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 import {
@@ -49,7 +49,7 @@ export function LandingHero() {
               </span>
             </AnimatedShinyText>
             <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground transition-transform duration-200 group-hover:translate-x-0.5">
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3" />
+              <Icon icon={ArrowRightGlassIcon} className="size-3" />
             </span>
           </Link>
         </div>
@@ -82,7 +82,7 @@ export function LandingHero() {
                 className="absolute top-4 right-4 z-30 size-10 rounded-full bg-background/80 text-foreground backdrop-blur-md transition-all hover:bg-background hover:scale-105 cursor-pointer shadow-lg"
                 aria-label="Close video"
               >
-                <HugeiconsIcon icon={Cancel01Icon} className="size-5" />
+                <Icon icon={XGlassIcon} className="size-5" />
               </Button>
 
               <div className="relative aspect-video w-full bg-background">
@@ -141,7 +141,7 @@ export function LandingHero() {
               className="h-11 rounded-full border-border/70 bg-card/60 px-5 text-foreground hover:bg-card cursor-pointer gap-2.5"
             >
               <span className="flex size-6 items-center justify-center rounded-full bg-primary/15 text-primary">
-                <HugeiconsIcon icon={PlayIcon} className="size-3" />
+                <Icon icon={PlayGlassIcon} className="size-3" />
               </span>
               <span>Watch overview</span>
             </Button>

@@ -448,7 +448,13 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Sembol",
+    "colName": "İsim",
+    "colQuantity": "Miktar",
+    "colValue": "Değer",
+    "totalIcpBalance": "Toplam ICP Bakiyesi",
+    "yourAssets": "Varlıklarınız"
   },
   "token": {
     "back": "Cüzdan",
@@ -456,7 +462,7 @@
     "send": "Gönder",
     "deposit": "Yatır",
     "swap": "Swap",
-    "depositTitle": "Yatırma adresi",
+    "depositTitle": "Yatırma",
     "depositSubtitle": "Cüzdanınızı doldurmak için {symbol} buraya gönderin.",
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Kişisel adresiniz — yalnızca siz buraya yatırabilirsiniz. Bakiyenizi doldurmak için {symbol} gönderin.",
@@ -472,7 +478,7 @@
     "selfCustodyNet": "Alacağınız",
     "selfCustodyDust": "Bu, {symbol} ağ ücretinin altında; taşınamaz.",
     "selfCustodyEmpty": "Taşınacak bir şey yok — bu token Principal'inize gönderilmemiş.",
-    "historyTitle": "Zincir üstü geçmiş",
+    "historyTitle": "Geçmiş",
     "snsLink": "SNS'i görüntüle",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
@@ -540,7 +546,8 @@
     "suggested": "Sizin için önerilen",
     "noneFound": "“{query}” için kimse bulunamadı.",
     "empty": "Henüz kullanıcı adı olan hesap yok. İlk siz olun.",
-    "premium": "Verified premium handle"
+    "premium": "Verified premium handle",
+    "subtitle": "Ağ genelindeki kullanıcı profillerini keşfedin"
   },
   "success": {
     "send": "Gönderim başarılı",
@@ -1415,6 +1422,10 @@
         "charity": {
           "title": "Yardım",
           "description": "Resmi devlet afet yardımı QR kodları."
+        },
+        "downloads": {
+          "title": "İndirmeler",
+          "description": "macOS, Windows ve Linux için masaüstü uygulamaları."
         }
       },
       "sectionMore": "Daha fazla",
@@ -1481,7 +1492,8 @@
         "terms": "Koşullar",
         "privacy": "Gizlilik",
         "transparency": "Şeffaflık",
-        "charity": "Yardım"
+        "charity": "Yardım",
+        "downloads": "İndirmeler"
       },
       "community": {
         "github": "GitLab",
@@ -2127,6 +2139,87 @@
             "answer": "Evet. ICFalcon açık kaynaklıdır. Kaynak kodu olduğu gibi kullanım ve değiştirme için sağlanır. Hub paketleri icp-hub'daki girişlerine göre lisanslanır."
           }
         }
+      }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "Yeni",
+        "version": "Masaüstü v1.0.0",
+        "platforms": "· macOS, Windows ve Linux"
+      },
+      "hero": {
+        "title": "ICPay Masaüstünü İndir",
+        "description": "Masaüstünüz için yerel olarak geliştirilmiş emanet ICP cüzdanı. Hızlı, güvenli ve yalnızca Internet Identity ile doğrulanmış."
+      },
+      "primary": {
+        "downloadMac": "Mac için İndir",
+        "downloadWindows": "Windows için İndir",
+        "downloadLinux": "Linux için İndir",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 ve 11 (64 bit) · 84 MB",
+        "linuxSubtitle": "x64 Tarball · 98 MB",
+        "releaseHashes": "Sürüm Karmaları"
+      },
+      "dropdown": {
+        "ariaLabel": "Masaüstü platformu seçin",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64 bit)",
+        "windowsPortable": "Windows Taşınabilir",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Apple Silicon ve Intel cihazları için evrensel paket.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Intel Mimarisi",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Taşınabilir",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "64 bit kurulum yükleyicisi ve taşınabilir çalıştırılabilir arşiv.",
+          "installerTitle": "Kurulum Yükleyicisi",
+          "installerSub": "NSIS Paketi · EXE",
+          "portableTitle": "Taşınabilir Arşiv",
+          "portableSub": "x64 İkili · ZIP",
+          "archTitle": "Mimari",
+          "archSub": "x86_64 Doğrulandı",
+          "supportedBadge": "Destekleniyor"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Ubuntu, Debian, Fedora, Arch için dağıtım arşivi.",
+          "tarballTitle": "Dağıtım Tarball",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "RPM Uyumlu",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "DEB Uyumlu"
+        }
+      },
+      "hashes": {
+        "title": "Kriptografik Bütünlük (SHA-256)",
+        "description": "Orijinal ve değiştirilmemiş ikili dosyaları sağlamak için doğrudan terminalinizde doğrulayın.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Kopyala",
+        "copied": "Kopyalandı",
+        "toastSuccess": "SHA-256 karması panoya kopyalandı",
+        "toastError": "Karma kopyalanamadı"
+      },
+      "features": {
+        "custodyTitle": "Emanet Mimarisi",
+        "custodyDesc": "Yalnızca Internet Identity ile doğrulanır. Hiçbir tohum cümlesi veya parola yerel olarak saklanmaz.",
+        "perfTitle": "Yerel Performans",
+        "perfDesc": "Minimum bellek kullanımıyla Electron 33 tarafından desteklenen donanım hızlandırmalı işleme.",
+        "edgeTitle": "Cloudflare Edge Dağıtımı",
+        "edgeDesc": "330'dan fazla konumda çok bölgeli uç önbelleğe alma ile küresel R2 nesne depolaması."
       }
     }
   },

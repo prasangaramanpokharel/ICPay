@@ -398,14 +398,20 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Символ",
+    "colName": "Название",
+    "colQuantity": "Количество",
+    "colValue": "Стоимость",
+    "totalIcpBalance": "Общий баланс ICP",
+    "yourAssets": "Ваши активы"
   },
   "token": {
     "back": "Кошелёк",
     "notFound": "Не удалось загрузить этот токен.",
     "send": "Отправить",
     "deposit": "Пополнение",
-    "depositTitle": "Адрес для пополнения",
+    "depositTitle": "Депозит",
     "depositSubtitle": "Отправьте {symbol} сюда, чтобы пополнить кошелёк.",
     "warning": "Отправляйте на этот адрес только {symbol}. Другие токены будут потеряны.",
     "selfCustodyTitle": "Хранится вне ICPay",
@@ -422,7 +428,7 @@
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
     "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet.",
-    "historyTitle": "On-chain history",
+    "historyTitle": "История",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
@@ -451,7 +457,8 @@
     "suggested": "Рекомендации для вас",
     "noneFound": "По запросу “{query}” никого не найдено.",
     "empty": "Аккаунтов с именами пока нет. Будьте первым.",
-    "premium": "Проверенный премиальный ник"
+    "premium": "Проверенный премиальный ник",
+    "subtitle": "Исследуйте профили пользователей по всей сети"
   },
   "success": {
     "send": "Отправлено",
@@ -1415,6 +1422,10 @@
         "charity": {
           "title": "Благотворительность",
           "description": "Официальные QR-коды государственной помощи при бедствиях."
+        },
+        "downloads": {
+          "title": "Загрузки",
+          "description": "Приложения для macOS, Windows и Linux."
         }
       },
       "sectionMore": "Ещё",
@@ -1481,7 +1492,8 @@
         "terms": "Условия",
         "privacy": "Конфиденциальность",
         "transparency": "Прозрачность",
-        "charity": "Благотворительность"
+        "charity": "Благотворительность",
+        "downloads": "Загрузки"
       },
       "community": {
         "github": "GitLab",
@@ -2127,6 +2139,87 @@
             "answer": "Да. ICFalcon с открытым исходным кодом. Исходный код предоставляется as-is для использования и изменения. Пакеты hub лицензируются по записям на icp-hub."
           }
         }
+      }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "Новое",
+        "version": "Desktop v1.0.0",
+        "platforms": "· macOS, Windows и Linux"
+      },
+      "hero": {
+        "title": "Скачать ICPay Desktop",
+        "description": "Кастодиальный кошелек ICP, созданный специально для настольных ПК. Быстрый, безопасный и аутентифицируемый исключительно через Internet Identity."
+      },
+      "primary": {
+        "downloadMac": "Скачать для Mac",
+        "downloadWindows": "Скачать для Windows",
+        "downloadLinux": "Скачать для Linux",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 МБ",
+        "windowsSubtitle": "Windows 10 и 11 (64-бит) · 84 МБ",
+        "linuxSubtitle": "Архив x64 · 98 МБ",
+        "releaseHashes": "Хэши релизов"
+      },
+      "dropdown": {
+        "ariaLabel": "Выбрать платформу",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64-бит)",
+        "windowsPortable": "Windows Портативная",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Универсальный пакет для устройств Apple Silicon и Intel.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Архитектура Intel",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Портативная",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "64-разрядный установщик и портативный архив исполняемых файлов.",
+          "installerTitle": "Установщик",
+          "installerSub": "Пакет NSIS · EXE",
+          "portableTitle": "Портативный архив",
+          "portableSub": "Бинарный x64 · ZIP",
+          "archTitle": "Архитектура",
+          "archSub": "x86_64 Проверено",
+          "supportedBadge": "Поддерживается"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Архив дистрибутивов для Ubuntu, Debian, Fedora, Arch.",
+          "tarballTitle": "Архив Tarball",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "Совместимо с RPM",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "Совместимо с DEB"
+        }
+      },
+      "hashes": {
+        "title": "Криптографическая целостность (SHA-256)",
+        "description": "Проверяйте контрольные суммы в терминале, чтобы гарантировать подлинность бинарных файлов.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Копировать",
+        "copied": "Скопировано",
+        "toastSuccess": "Хэш SHA-256 скопирован в буфер обмена",
+        "toastError": "Не удалось скопировать хэш"
+      },
+      "features": {
+        "custodyTitle": "Кастодиальная архитектура",
+        "custodyDesc": "Аутентификация исключительно через Internet Identity. Сид-фразы, ключи и пароли никогда не сохраняются локально.",
+        "perfTitle": "Нативная производительность",
+        "perfDesc": "Аппаратное ускорение рендеринга и криптографии на базе Electron 33 с минимальным потреблением памяти.",
+        "edgeTitle": "Доставка Cloudflare Edge",
+        "edgeDesc": "Глобальное объектное хранилище R2 с кешированием в 330+ локациях по всему миру без ограничений скорости."
       }
     }
   },

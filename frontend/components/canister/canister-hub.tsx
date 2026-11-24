@@ -2,16 +2,8 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Book02Icon,
-  ArrowRight01Icon,
-  Camera01Icon,
-  Package01Icon,
-  Settings01Icon,
-  Wallet01Icon,
-  ZapIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { BookGlassIcon, ArrowRightGlassIcon, CameraGlassIcon, PackageGlassIcon, SettingsGlassIcon, WalletBalanceGlassIcon, ZapGlassIcon } from "@thesvg/ui-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export function CanisterHub() {
@@ -20,31 +12,31 @@ export function CanisterHub() {
   const cards = [
     {
       href: "/canister/manage",
-      icon: Settings01Icon,
+      icon: SettingsGlassIcon,
       title: t("manageTitle"),
       description: t("manageDescription"),
     },
     {
       href: "/canister/create",
-      icon: Package01Icon,
+      icon: PackageGlassIcon,
       title: t("createTitle"),
       description: t("createDescription"),
     },
     {
       href: "/canister/cycles",
-      icon: Wallet01Icon,
+      icon: WalletBalanceGlassIcon,
       title: t("cyclesTitle"),
       description: t("cyclesDescription"),
     },
     {
       href: "/topup",
-      icon: ZapIcon,
+      icon: ZapGlassIcon,
       title: t("topupTitle"),
       description: t("topupDescription"),
     },
     {
       href: "/canister/snapshots",
-      icon: Camera01Icon,
+      icon: CameraGlassIcon,
       title: t("snapshotsTitle"),
       description: t("snapshotsDescription"),
     },
@@ -106,7 +98,7 @@ export function CanisterHub() {
               <Link key={card.href} href={card.href} className="group block outline-none">
                 <Card className="h-full transition-colors group-hover:border-primary/40 group-focus-visible:ring-2 group-focus-visible:ring-ring">
                   <CardHeader className="gap-3">
-                    <HugeiconsIcon
+                    <Icon
                       icon={card.icon}
                       className="size-5 text-primary"
                       strokeWidth={1.75}
@@ -146,14 +138,14 @@ export function CanisterHub() {
                 className="group flex items-center justify-between gap-3 rounded-xl border border-border/60 bg-card/60 p-3.5 text-sm transition-all hover:border-primary/40 hover:bg-card"
               >
                 <div className="flex items-center gap-2.5">
-                  <HugeiconsIcon
-                    icon={Book02Icon}
+                  <Icon
+                    icon={BookGlassIcon}
                     className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary"
                   />
                   <span className="font-medium text-foreground">{label}</span>
                 </div>
-                <HugeiconsIcon
-                  icon={ArrowRight01Icon}
+                <Icon
+                  icon={ArrowRightGlassIcon}
                   className="size-4 shrink-0 text-muted-foreground opacity-60 transition-all group-hover:translate-x-0.5 group-hover:text-primary group-hover:opacity-100"
                 />
               </Link>

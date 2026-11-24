@@ -1,8 +1,8 @@
 "use client"
 
 import { Bar, BarChart, Cell, XAxis, YAxis } from "recharts"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CircleCheckGlassIcon } from "@thesvg/ui-react"
 import {
   ChartContainer,
   ChartTooltip,
@@ -78,7 +78,7 @@ export function RoadmapProgress() {
             render={<button type="button" />}
             className="inline-flex items-center gap-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+            <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
             {shipped} phases live
           </HoverCardTrigger>
           <HoverCardContent className="w-72 text-xs leading-relaxed">

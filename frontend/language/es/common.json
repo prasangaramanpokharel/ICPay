@@ -398,14 +398,20 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Símbolo",
+    "colName": "Nombre",
+    "colQuantity": "Cantidad",
+    "colValue": "Valor",
+    "totalIcpBalance": "Saldo total de ICP",
+    "yourAssets": "Tus activos"
   },
   "token": {
     "back": "Cartera",
     "notFound": "No se pudo cargar este token.",
     "send": "Enviar",
     "deposit": "Depositar",
-    "depositTitle": "Dirección de depósito",
+    "depositTitle": "Depósito",
     "depositSubtitle": "Envía {symbol} aquí para recargar tu cartera.",
     "warning": "Envía solo {symbol} a esta dirección. Otros tokens se perderán.",
     "selfCustodyTitle": "Fuera de ICPay",
@@ -422,7 +428,7 @@
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
     "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet.",
-    "historyTitle": "On-chain history",
+    "historyTitle": "Historial",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
@@ -451,7 +457,8 @@
     "suggested": "Sugerencias para ti",
     "noneFound": "No se encontró a nadie para “{query}”.",
     "empty": "Aún no hay cuentas con nombre de usuario. Sé el primero.",
-    "premium": "Identificador premium verificado"
+    "premium": "Identificador premium verificado",
+    "subtitle": "Explora perfiles de usuario en toda la red"
   },
   "success": {
     "send": "Envío correcto",
@@ -1415,6 +1422,10 @@
         "charity": {
           "title": "Caridad",
           "description": "Códigos QR oficiales de ayuda humanitaria gubernamental."
+        },
+        "downloads": {
+          "title": "Descargas",
+          "description": "Aplicaciones de escritorio para macOS, Windows y Linux."
         }
       },
       "sectionMore": "Más",
@@ -1481,7 +1492,8 @@
         "terms": "Términos",
         "privacy": "Privacidad",
         "transparency": "Transparencia",
-        "charity": "Caridad"
+        "charity": "Caridad",
+        "downloads": "Descargas"
       },
       "community": {
         "github": "GitLab",
@@ -2127,6 +2139,87 @@
             "answer": "Sí. ICFalcon es de código abierto. El código fuente se proporciona tal cual para uso y modificación. Los paquetes hub tienen licencia según sus entradas en icp-hub."
           }
         }
+      }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "Nuevo",
+        "version": "Desktop v1.0.0",
+        "platforms": "· macOS, Windows y Linux"
+      },
+      "hero": {
+        "title": "Descargar ICPay Desktop",
+        "description": "La billetera custodia de ICP creada de forma nativa para tu escritorio. Rápida, segura y autenticada exclusivamente mediante Internet Identity."
+      },
+      "primary": {
+        "downloadMac": "Descargar para Mac",
+        "downloadWindows": "Descargar para Windows",
+        "downloadLinux": "Descargar para Linux",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 y 11 (64 bits) · 84 MB",
+        "linuxSubtitle": "Tarball x64 · 98 MB",
+        "releaseHashes": "Hashes de versión"
+      },
+      "dropdown": {
+        "ariaLabel": "Seleccionar plataforma de escritorio",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64 bits)",
+        "windowsPortable": "Windows Portable",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Paquete universal para equipos Apple Silicon e Intel.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Arquitectura Intel",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Portable",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "Instalador de 64 bits y archivo ejecutable portable.",
+          "installerTitle": "Instalador",
+          "installerSub": "Paquete NSIS · EXE",
+          "portableTitle": "Archivo Portable",
+          "portableSub": "Binario x64 · ZIP",
+          "archTitle": "Arquitectura",
+          "archSub": "x86_64 Verificado",
+          "supportedBadge": "Compatible"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Archivo de distribución para Ubuntu, Debian, Fedora y Arch.",
+          "tarballTitle": "Tarball de distribución",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "Compatible con RPM",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "Compatible con DEB"
+        }
+      },
+      "hashes": {
+        "title": "Integridad Criptográfica (SHA-256)",
+        "description": "Verifica las sumas de comprobación en tu terminal para garantizar binarios auténticos e inalterados.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Copiar",
+        "copied": "Copiado",
+        "toastSuccess": "Hash SHA-256 copiado al portapapeles",
+        "toastError": "Error al copiar el hash"
+      },
+      "features": {
+        "custodyTitle": "Arquitectura de Custodia",
+        "custodyDesc": "Autenticado exclusivamente mediante Internet Identity. Sin frases semilla, claves ni contraseñas almacenadas localmente.",
+        "perfTitle": "Rendimiento Nativo",
+        "perfDesc": "Renderizado acelerado por hardware y criptografía impulsada por Electron 33 con mínimo consumo de memoria.",
+        "edgeTitle": "Distribución Cloudflare Edge",
+        "edgeDesc": "Almacenamiento global de objetos R2 con caché perimetral en más de 330 ubicaciones sin límite de salida."
       }
     }
   },

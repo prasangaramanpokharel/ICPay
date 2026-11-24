@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { Delete02Icon, Key01Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { DeleteGlassIcon, KeyGlassIcon } from "@thesvg/ui-react"
+import { Icon } from "@/components/ui/icon"
 import { Button } from "@/components/ui/button"
 import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { ButtonGroup } from "@/components/ui/button-group"
@@ -132,7 +132,7 @@ export function BucketApiKeysModal({
         <DialogContent className="max-w-md gap-3 sm:max-w-lg" showCloseButton>
           <DialogHeader className="gap-1">
             <DialogTitle className="flex items-center gap-2">
-              <HugeiconsIcon icon={Key01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+              <Icon icon={KeyGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
               {t("apiKeysTitle")}
             </DialogTitle>
             <DialogDescription>
@@ -228,7 +228,7 @@ export function BucketApiKeysModal({
                                 size="icon-sm"
                                 aria-label={t("apiKeyRevoke")}
                               >
-                                <HugeiconsIcon icon={Delete02Icon} className="size-4" strokeWidth={1.75} />
+                                <Icon icon={DeleteGlassIcon} className="size-4" strokeWidth={1.75} />
                               </Button>
                             }
                           />

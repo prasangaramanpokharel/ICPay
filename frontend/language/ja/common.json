@@ -398,14 +398,20 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "シンボル",
+    "colName": "名称",
+    "colQuantity": "数量",
+    "colValue": "価値",
+    "totalIcpBalance": "合計ICP残高",
+    "yourAssets": "保有資産"
   },
   "token": {
     "back": "ウォレット",
     "notFound": "このトークンを読み込めませんでした。",
     "send": "送金",
     "deposit": "入金",
-    "depositTitle": "入金アドレス",
+    "depositTitle": "入金",
     "depositSubtitle": "ウォレットに入金するには、ここに {symbol} を送ってください。",
     "warning": "このアドレスには {symbol} のみを送ってください。他のトークンは失われます。",
     "selfCustodyTitle": "ICPay の外で保有",
@@ -422,7 +428,7 @@
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
     "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet.",
-    "historyTitle": "On-chain history",
+    "historyTitle": "履歴",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
@@ -451,7 +457,8 @@
     "suggested": "おすすめ",
     "noneFound": "“{query}” に一致する人は見つかりませんでした。",
     "empty": "ユーザー名を持つアカウントはまだありません。最初の一人になりましょう。",
-    "premium": "認証済みプレミアムハンドル"
+    "premium": "認証済みプレミアムハンドル",
+    "subtitle": "ネットワーク全体のユーザープロファイルを探索"
   },
   "success": {
     "send": "送金完了",
@@ -1415,6 +1422,10 @@
         "charity": {
           "title": "チャリティ",
           "description": "政府公式の災害救援QRコード。"
+        },
+        "downloads": {
+          "title": "ダウンロード",
+          "description": "macOS、Windows、Linux 向けデスクトップアプリ。"
         }
       },
       "sectionMore": "その他",
@@ -1481,7 +1492,8 @@
         "terms": "利用規約",
         "privacy": "プライバシー",
         "transparency": "透明性",
-        "charity": "チャリティ"
+        "charity": "チャリティ",
+        "downloads": "ダウンロード"
       },
       "community": {
         "github": "GitLab",
@@ -2127,6 +2139,87 @@
             "answer": "はい。ICFalcon はオープンソースです。ソースコードは現状のまま使用・改変可能です。Hub パッケージは icp-hub 上の各エントリのライセンスに従います。"
           }
         }
+      }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "新機能",
+        "version": "デスクトップ v1.0.0",
+        "platforms": "· macOS、Windows、Linux"
+      },
+      "hero": {
+        "title": "ICPay デスクトップをダウンロード",
+        "description": "デスクトップ専用にネイティブ構築されたカストディアルICPウォレット。高速、安全、Internet Identity専用認証。"
+      },
+      "primary": {
+        "downloadMac": "Mac版をダウンロード",
+        "downloadWindows": "Windows版をダウンロード",
+        "downloadLinux": "Linux版をダウンロード",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 & 11 (64ビット) · 84 MB",
+        "linuxSubtitle": "x64 Tarball · 98 MB",
+        "releaseHashes": "リリースハッシュ"
+      },
+      "dropdown": {
+        "ariaLabel": "デスクトッププラットフォームを選択",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64ビット)",
+        "windowsPortable": "Windows ポータブル",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Apple SiliconおよびIntelマシン用のユニバーサルパッケージ。",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Intel アーキテクチャ",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon ポータブル",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "64ビットセットアップインストーラーおよびポータブル実行ファイル。",
+          "installerTitle": "セットアップインストーラー",
+          "installerSub": "NSISパッケージ · EXE",
+          "portableTitle": "ポータブルアーカイブ",
+          "portableSub": "x64バイナリ · ZIP",
+          "archTitle": "アーキテクチャ",
+          "archSub": "x86_64 検証済み",
+          "supportedBadge": "対応"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Ubuntu、Debian、Fedora、Arch用のディストリビューションアーカイブ。",
+          "tarballTitle": "配布用Tarball",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "RPM互換",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "DEB互換"
+        }
+      },
+      "hashes": {
+        "title": "暗号学的完全性 (SHA-256)",
+        "description": "ターミナルで直接チェックサムを検証し、改ざんのない正規バイナリを確認できます。",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "コピー",
+        "copied": "コピー完了",
+        "toastSuccess": "SHA-256ハッシュをクリップボードにコピーしました",
+        "toastError": "ハッシュのコピーに失敗しました"
+      },
+      "features": {
+        "custodyTitle": "カストディアル設計",
+        "custodyDesc": "Internet Identityのみで認証。シードフレーズ、平文キー、パスワードは端末に保存されません。",
+        "perfTitle": "ネイティブパフォーマンス",
+        "perfDesc": "Electron 33によるハードウェアアクセラレーションと低メモリ消費の高速暗号処理。",
+        "edgeTitle": "Cloudflare Edge 配信",
+        "edgeDesc": "世界330以上のエッジ拠点でキャッシュされるR2オブジェクトストレージで高速配信。"
       }
     }
   },

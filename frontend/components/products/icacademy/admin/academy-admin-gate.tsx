@@ -19,13 +19,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  SecurityLockIcon,
-  ViewIcon,
-  ViewOffSlashIcon,
-  ArrowRight01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ShieldCheckGlassIcon, EyeGlassIcon, EyeClosedGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 import {
   getAdminSession,
   verifyAdminCredentials,
@@ -91,7 +86,7 @@ export function AcademyAdminGate({ children, className }: AcademyAdminGateProps)
       <Card className="w-full max-w-md border-border bg-card shadow-lg">
         <CardHeader className="space-y-2 pb-4 text-center">
           <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-            <HugeiconsIcon icon={SecurityLockIcon} className="size-6" />
+            <Icon icon={ShieldCheckGlassIcon} className="size-6" />
           </div>
           <div className="flex items-center justify-center gap-2">
             <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary">
@@ -138,7 +133,7 @@ export function AcademyAdminGate({ children, className }: AcademyAdminGateProps)
                     onClick={() => setShowPassword(!showPassword)}
                     className="h-6 gap-1 text-xs text-muted-foreground hover:text-foreground"
                   >
-                    <HugeiconsIcon icon={showPassword ? ViewOffSlashIcon : ViewIcon} className="size-3.5" />
+                    <Icon icon={showPassword ? EyeClosedGlassIcon : EyeGlassIcon} className="size-3.5" />
                     <span>{showPassword ? "Hide" : "Show"}</span>
                   </Button>
                 </div>
@@ -167,7 +162,7 @@ export function AcademyAdminGate({ children, className }: AcademyAdminGateProps)
                   ) : (
                     <>
                       <span>Sign In to Academy Admin</span>
-                      <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                      <Icon icon={ArrowRightGlassIcon} className="size-4" />
                     </>
                   )}
                 </Button>

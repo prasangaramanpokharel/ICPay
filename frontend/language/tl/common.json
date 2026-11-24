@@ -448,7 +448,13 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Simbolo",
+    "colName": "Pangalan",
+    "colQuantity": "Dami",
+    "colValue": "Halaga",
+    "totalIcpBalance": "Kabuuang Balanse ng ICP",
+    "yourAssets": "Iyong mga asset"
   },
   "token": {
     "back": "wallet",
@@ -456,7 +462,7 @@
     "send": "Ipadala",
     "deposit": "Deposito",
     "swap": "Magpalit",
-    "depositTitle": "Address ng deposito",
+    "depositTitle": "Deposito",
     "depositSubtitle": "Ipadala ang {symbol} dito para i-top up ang iyong wallet.",
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Ang iyong personal na address — ikaw lamang ang maaaring magdeposito dito. Magpadala ng {symbol} para i-top up ang iyong balanse.",
@@ -472,7 +478,7 @@
     "selfCustodyNet": "Matatanggap mo",
     "selfCustodyDust": "Ito ay mas mababa sa {symbol} network fee, kaya hindi ito maaaring ilipat.",
     "selfCustodyEmpty": "Walang maililipat — ang token na ito ay hindi naipadala sa iyong punong-guro.",
-    "historyTitle": "On-chain na kasaysayan",
+    "historyTitle": "Kasaysayan",
     "snsLink": "Tingnan ang SNS",
     "snsDashboard": "Dashboard ng SNS",
     "snsSwap": "SNS palitan",
@@ -540,7 +546,8 @@
     "suggested": "Iminungkahi para sa iyo",
     "noneFound": "Walang nahanap para sa “{query}”.",
     "empty": "Wala pang mga account na may mga username. Maging una.",
-    "premium": "Na-verify na premium handle"
+    "premium": "Na-verify na premium handle",
+    "subtitle": "Galugarin ang mga profile ng user sa buong network"
   },
   "success": {
     "send": "Ipadala ang Tagumpay",
@@ -1415,6 +1422,10 @@
         "charity": {
           "title": "Kawanggawa",
           "description": "Opisyal na QR code ng gobyerno para sa tulong sa kalamidad."
+        },
+        "downloads": {
+          "title": "Mga Download",
+          "description": "Mga desktop app para sa macOS, Windows, at Linux."
         }
       },
       "sectionMore": "Higit pa",
@@ -1481,7 +1492,8 @@
         "terms": "Mga Tuntunin",
         "privacy": "Privacy",
         "transparency": "Transparency",
-        "charity": "Kawanggawa"
+        "charity": "Kawanggawa",
+        "downloads": "Mga Download"
       },
       "community": {
         "github": "GitLab",
@@ -2127,6 +2139,87 @@
             "answer": "Oo. Open-source ang ICFalcon. As-is ang source code para sa paggamit at pagbabago. Per-entry sa icp-hub ang license ng hub packages."
           }
         }
+      }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "Bago",
+        "version": "Desktop v1.0.0",
+        "platforms": "· macOS, Windows at Linux"
+      },
+      "hero": {
+        "title": "I-download ang ICPay Desktop",
+        "description": "Ang custodial ICP wallet na binuo para sa iyong desktop. Mabilis, ligtas, at eksklusibong napatotohanan sa pamamagitan ng Internet Identity."
+      },
+      "primary": {
+        "downloadMac": "I-download para sa Mac",
+        "downloadWindows": "I-download para sa Windows",
+        "downloadLinux": "I-download para sa Linux",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 at 11 (64-bit) · 84 MB",
+        "linuxSubtitle": "x64 Tarball · 98 MB",
+        "releaseHashes": "Mga Release Hash"
+      },
+      "dropdown": {
+        "ariaLabel": "Pumili ng desktop platform",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64-bit)",
+        "windowsPortable": "Windows Portable",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Pangkalahatang package para sa mga aparatong Apple Silicon at Intel.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Arkitektura ng Intel",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Portable",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "64-bit setup installer at portable executable archive.",
+          "installerTitle": "Setup Installer",
+          "installerSub": "NSIS Package · EXE",
+          "portableTitle": "Portable Archive",
+          "portableSub": "x64 Binary · ZIP",
+          "archTitle": "Arkitektura",
+          "archSub": "x86_64 Na-verify",
+          "supportedBadge": "Suportado"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Distribution archive para sa Ubuntu, Debian, Fedora, Arch.",
+          "tarballTitle": "Distribution Tarball",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "Tugma sa RPM",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "Tugma sa DEB"
+        }
+      },
+      "hashes": {
+        "title": "Cryptographic Integrity (SHA-256)",
+        "description": "I-verify ang mga checksum nang direkta sa iyong terminal upang matiyak ang tunay na binary.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Kopyahin",
+        "copied": "Nakopya",
+        "toastSuccess": "Nakopya ang SHA-256 hash sa clipboard",
+        "toastError": "Nabigong kopyahin ang hash"
+      },
+      "features": {
+        "custodyTitle": "Custodial Architecture",
+        "custodyDesc": "Eksklusibong napatotohanan sa pamamagitan ng Internet Identity. Walang mga seed phrase o password na naiimbak nang lokal.",
+        "perfTitle": "Native Performance",
+        "perfDesc": "Pinapagana ng Electron 33 na may hardware-accelerated rendering at mababang paggamit ng memory.",
+        "edgeTitle": "Cloudflare Edge Delivery",
+        "edgeDesc": "Global R2 object storage na may multi-region caching sa higit 330 lokasyon."
       }
     }
   },

@@ -4,6 +4,15 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
 import { toast } from "@/components/ui/toast"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Card } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import {
   Empty,
   EmptyHeader,
@@ -13,8 +22,8 @@ import {
   EmptyContent,
 } from "@/components/ui/empty"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Folder02Icon, Upload01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { FolderGlassIcon, UploadGlassIcon } from "@thesvg/ui-react"
 import { Drawer, DrawerContent } from "@/components/ui/drawer"
 import { BucketFilePagination } from "@/components/bucket/bucket-file-pagination"
 import { BucketFilePreviewPane } from "@/components/bucket/bucket-file-preview-pane"
@@ -611,15 +620,75 @@ export function BucketFilesPanel({
       ) : null}
 
       {isLoading && files.length === 0 ? (
-        <Skeleton className="h-40 w-full rounded-2xl" />
+        viewMode === "grid" ? (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="rounded-xl border border-border/60 bg-card p-3 space-y-2.5">
+                <Skeleton className="aspect-square w-full rounded-lg" />
+                <div className="space-y-1.5">
+                  <Skeleton className="h-3.5 w-3/4 rounded-md" />
+                  <Skeleton className="h-3 w-1/2 rounded-md" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <Card className="overflow-hidden border-border/80 bg-card/60 py-0 shadow-xs">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border/60 hover:bg-transparent">
+                  {canWrite ? (
+                    <TableHead className="w-10">
+                      <Skeleton className="size-4 rounded" />
+                    </TableHead>
+                  ) : null}
+                  <TableHead className="min-w-[200px]">{t("name")}</TableHead>
+                  <TableHead className="w-24 text-center">Type</TableHead>
+                  <TableHead className="w-28 text-right">{t("fileSize")}</TableHead>
+                  <TableHead className="w-32 text-right">Modified</TableHead>
+                  <TableHead className="w-12 text-right" />
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <TableRow key={i} className="border-border/40">
+                    {canWrite ? (
+                      <TableCell className="w-10">
+                        <Skeleton className="size-4 rounded" />
+                      </TableCell>
+                    ) : null}
+                    <TableCell>
+                      <div className="flex items-center gap-2.5">
+                        <Skeleton className="size-4 shrink-0 rounded" />
+                        <Skeleton className="h-4 w-36 rounded-md" />
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Skeleton className="mx-auto h-5 w-14 rounded-full" />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Skeleton className="ml-auto h-3.5 w-16 rounded-md" />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Skeleton className="ml-auto h-3.5 w-20 rounded-md" />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Skeleton className="ml-auto size-7 rounded-md" />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+        )
       ) : empty ? (
         <Empty className="border border-dashed border-border/80 bg-card/20 py-14">
           <EmptyHeader>
             <EmptyMedia
               variant="icon"
-              className="size-12 rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-xs"
+              className="size-12 rounded-(--radius) border border-primary/20 bg-primary/10 text-primary shadow-xs"
             >
-              <HugeiconsIcon icon={Folder02Icon} className="size-6" strokeWidth={1.75} />
+              <Icon icon={FolderGlassIcon} className="size-6" strokeWidth={1.75} />
             </EmptyMedia>
             <EmptyTitle className="text-base font-semibold text-foreground">
               {searching ? t("noFilterMatch") : t("noFiles")}
@@ -638,7 +707,7 @@ export function BucketFilesPanel({
                 onClick={() => document.getElementById("bucket-upload-input")?.click()}
                 className="gap-1.5"
               >
-                <HugeiconsIcon icon={Upload01Icon} className="size-4" strokeWidth={1.75} />
+                <Icon icon={UploadGlassIcon} className="size-4" strokeWidth={1.75} />
                 <span>{t("upload")}</span>
               </Button>
               <Button
@@ -648,7 +717,7 @@ export function BucketFilesPanel({
                 onClick={() => document.getElementById("bucket-upload-folder-input")?.click()}
                 className="gap-1.5"
               >
-                <HugeiconsIcon icon={Folder02Icon} className="size-4" strokeWidth={1.75} />
+                <Icon icon={FolderGlassIcon} className="size-4" strokeWidth={1.75} />
                 <span>Upload folder</span>
               </Button>
               <Button
@@ -658,7 +727,7 @@ export function BucketFilesPanel({
                 onClick={onCreateFolder}
                 className="gap-1.5"
               >
-                <HugeiconsIcon icon={Folder02Icon} className="size-4" strokeWidth={1.75} />
+                <Icon icon={FolderGlassIcon} className="size-4" strokeWidth={1.75} />
                 <span>{t("createFolder")}</span>
               </Button>
             </EmptyContent>

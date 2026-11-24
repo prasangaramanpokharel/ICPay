@@ -2,14 +2,8 @@
 
 import { useState } from "react"
 import useSWR from "swr"
-import {
-  BellIcon,
-  Mail01Icon,
-  CheckmarkCircle01Icon,
-  Delete02Icon,
-  Clock01Icon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { BellGlassIcon, MailGlassIcon, CircleCheckGlassIcon, DeleteGlassIcon, ClockGlassIcon } from "@thesvg/ui-react"
+import { Icon } from "@/components/ui/icon"
 import { toast } from "@/components/ui/toast"
 import {
   Dialog,
@@ -127,7 +121,7 @@ export function BucketNotificationModal({
       <DialogContent className="max-w-md gap-4 sm:max-w-lg">
         <DialogHeader className="gap-1.5">
           <DialogTitle className="flex items-center gap-2">
-            <HugeiconsIcon icon={BellIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+            <Icon icon={BellGlassIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
             <span>Expiry Alerts</span>
           </DialogTitle>
           <DialogDescription>
@@ -143,8 +137,8 @@ export function BucketNotificationModal({
           ) : currentEmail ? (
             <div className="flex items-center justify-between rounded-lg border border-success/30 bg-success/5 p-3 text-xs">
               <div className="flex items-center gap-2">
-                <HugeiconsIcon
-                  icon={CheckmarkCircle01Icon}
+                <Icon
+                  icon={CircleCheckGlassIcon}
                   className="size-4 text-success"
                   strokeWidth={2}
                 />
@@ -181,8 +175,8 @@ export function BucketNotificationModal({
                   disabled={isLoading || saving || removing}
                   className="pr-9 font-mono text-xs"
                 />
-                <HugeiconsIcon
-                  icon={Mail01Icon}
+                <Icon
+                  icon={MailGlassIcon}
                   className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
                 />
               </div>
@@ -190,7 +184,7 @@ export function BucketNotificationModal({
 
             <div className="rounded-lg border border-border/40 bg-muted/10 p-3 text-[11px] space-y-2">
               <div className="font-medium text-foreground/90 flex items-center gap-1.5">
-                <HugeiconsIcon icon={Clock01Icon} className="size-3.5 text-muted-foreground" />
+                <Icon icon={ClockGlassIcon} className="size-3.5 text-muted-foreground" />
                 <span>Automated Alert Schedule</span>
               </div>
               <ul className="space-y-1 text-muted-foreground list-disc list-inside">
@@ -213,7 +207,7 @@ export function BucketNotificationModal({
                   {removing ? (
                     <Spinner data-icon="inline-start" />
                   ) : (
-                    <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                    <Icon icon={DeleteGlassIcon} className="size-3.5" />
                   )}
                   {removing ? "Removing..." : "Remove Email"}
                 </Button>

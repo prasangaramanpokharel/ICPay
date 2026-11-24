@@ -34,8 +34,8 @@ export function LaunchDetail({ id: propId }: { id?: string } = {}) {
     return (
       <div className="space-y-4 pt-2">
         {back}
-        <Skeleton className="h-16 w-full rounded-2xl" />
-        <Skeleton className="h-40 w-full rounded-2xl" />
+        <Skeleton className="h-16 w-full rounded-(--radius)" />
+        <Skeleton className="h-40 w-full rounded-(--radius)" />
       </div>
     )
   }

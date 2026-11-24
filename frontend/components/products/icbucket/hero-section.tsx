@@ -5,7 +5,6 @@ import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { HeroSignOptions } from "@/components/public/hero-sign-options"
 import { Button } from "@/components/ui/button"
-import { Gitlab } from "@dev.icons/react"
 import { OnboardBucketHeroPill } from "@/components/bucket/onboard-bucket-hero-pill"
 
 export function HeroSection() {
@@ -13,7 +12,7 @@ export function HeroSection() {
 
   return (
     <section className="border-b border-border/60 bg-background relative overflow-hidden">
-      <div className="mx-auto max-w-7xl px-4 pt-10 pb-16 md:px-6 md:pt-14 md:pb-20 lg:py-24 relative z-10">
+      <div className="mx-auto max-w-7xl px-4 pt-8 pb-8 md:px-6 md:pt-10 md:pb-10 lg:pt-12 lg:pb-12 relative z-10">
         <div className="mb-8 flex justify-center w-full sm:mb-10">
           <OnboardBucketHeroPill />
         </div>
@@ -37,22 +36,6 @@ export function HeroSection() {
                 render={<Link href="/bucket" />}
               >
                 {t("tryIcBucket")}
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="gap-2 rounded-full px-5 cursor-pointer font-medium"
-                nativeButton={false}
-                render={
-                  <Link
-                    href="https://gitlab.com/prasangapokharel/icbucket"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  />
-                }
-              >
-                <Gitlab size={16} />
-                <span>GitLab</span>
               </Button>
               <Button
                 size="lg"
@@ -81,7 +64,7 @@ export function HeroSection() {
           </div>
         </div>
 
-        <div className="mt-14 w-full border-t border-border/40 pt-10 sm:mt-16 sm:pt-12">
+        <div className="mt-8 w-full border-t border-border/40 pt-6 sm:mt-10 sm:pt-8">
           <div className="grid grid-cols-2 gap-8 text-left sm:grid-cols-4 md:gap-12">
             <div>
               <div className="tabular-nums text-3xl font-extrabold tracking-tight sm:text-4xl md:text-5xl bg-linear-to-r from-primary via-primary/80 to-foreground bg-clip-text text-transparent">

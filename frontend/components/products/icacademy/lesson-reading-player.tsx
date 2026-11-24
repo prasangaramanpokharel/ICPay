@@ -1,12 +1,7 @@
 "use client"
 
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Book01Icon,
-  Tick02Icon,
-  Time02Icon,
-  ArrowRight01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { BookGlassIcon, CheckGlassIcon, ClockGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ShineBorder } from "@/components/ui/shine-border"
@@ -48,7 +43,7 @@ export function LessonReadingPlayer({
             variant="outline"
             className="gap-1.5 border-secondary/50 bg-secondary/20 text-secondary-foreground text-xs"
           >
-            <HugeiconsIcon icon={Book01Icon} className="size-3.5" />
+            <Icon icon={BookGlassIcon} className="size-3.5" />
             <span>Architectural Deep Dive</span>
           </Badge>
           <span className="text-xs font-semibold text-muted-foreground">
@@ -57,7 +52,7 @@ export function LessonReadingPlayer({
         </div>
 
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <HugeiconsIcon icon={Time02Icon} className="size-3.5" />
+          <Icon icon={ClockGlassIcon} className="size-3.5" />
           <span>{lesson.durationMinutes} min read</span>
         </div>
       </div>
@@ -98,7 +93,7 @@ export function LessonReadingPlayer({
             onClick={handleComplete}
             className="gap-1.5 text-xs font-semibold px-4"
           >
-            <HugeiconsIcon icon={Tick02Icon} className="size-3.5" />
+            <Icon icon={CheckGlassIcon} className="size-3.5" />
             <span>{isCompleted ? "Completed" : "Complete Reading"}</span>
           </Button>
 
@@ -110,7 +105,7 @@ export function LessonReadingPlayer({
               className="gap-1.5 text-xs font-semibold"
             >
               <span>Next Lesson</span>
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+              <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
             </Button>
           )}
         </div>

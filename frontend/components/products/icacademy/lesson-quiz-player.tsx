@@ -1,16 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  HelpCircleIcon,
-  Tick02Icon,
-  Cancel01Icon,
-  ReloadIcon,
-  Award01Icon,
-  ArrowRight01Icon,
-  ArrowLeft01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CircleQuestionMarkGlassIcon, CheckGlassIcon, XGlassIcon, RefreshCwGlassIcon, AwardGlassIcon, ArrowRightGlassIcon, ArrowLeftGlassIcon } from "@thesvg/ui-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
@@ -223,7 +215,7 @@ export function LessonQuizPlayer({
             variant="outline"
             className="gap-1.5 border-primary/40 bg-primary/10 text-primary text-xs"
           >
-            <HugeiconsIcon icon={HelpCircleIcon} className="size-3.5" />
+            <Icon icon={CircleQuestionMarkGlassIcon} className="size-3.5" />
             <span>Interactive Knowledge Check</span>
           </Badge>
           <span className="text-xs font-semibold text-muted-foreground">
@@ -245,7 +237,7 @@ export function LessonQuizPlayer({
         {isFinished ? (
           <div className="text-center space-y-3 py-2">
             <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <HugeiconsIcon icon={isPassed ? Award01Icon : ReloadIcon} className="size-6" />
+              <Icon icon={isPassed ? AwardGlassIcon : RefreshCwGlassIcon} className="size-6" />
             </div>
 
             <div className="space-y-1">
@@ -266,7 +258,7 @@ export function LessonQuizPlayer({
                 onClick={handleRetake}
                 className="gap-1.5 text-xs rounded-full"
               >
-                <HugeiconsIcon icon={ReloadIcon} className="size-3.5" />
+                <Icon icon={RefreshCwGlassIcon} className="size-3.5" />
                 <span>Retake Quiz</span>
               </Button>
               {isPassed && onNext && (
@@ -276,7 +268,7 @@ export function LessonQuizPlayer({
                   className="gap-1.5 text-xs rounded-full font-semibold"
                 >
                   <span>Next Lesson</span>
-                  <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+                  <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
                 </Button>
               )}
             </div>
@@ -318,10 +310,10 @@ export function LessonQuizPlayer({
                     </span>
                     <span className="leading-snug flex-1">{option}</span>
                     {isCurrentSubmitted && isCorrect && (
-                      <HugeiconsIcon icon={Tick02Icon} className="size-4 shrink-0 text-success" />
+                      <Icon icon={CheckGlassIcon} className="size-4 shrink-0 text-success" />
                     )}
                     {isCurrentSubmitted && isSelected && !isCorrect && (
-                      <HugeiconsIcon icon={Cancel01Icon} className="size-4 shrink-0 text-destructive" />
+                      <Icon icon={XGlassIcon} className="size-4 shrink-0 text-destructive" />
                     )}
                   </button>
                 )
@@ -346,7 +338,7 @@ export function LessonQuizPlayer({
           onClick={handlePrevious}
           className="gap-1 text-xs text-muted-foreground"
         >
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="size-3.5" />
+          <Icon icon={ArrowLeftGlassIcon} className="size-3.5" />
           <span>Previous</span>
         </Button>
 
@@ -360,7 +352,7 @@ export function LessonQuizPlayer({
                 className="gap-1.5 text-xs font-semibold px-4"
               >
                 <span>Check Answer</span>
-                <HugeiconsIcon icon={Tick02Icon} className="size-3.5" />
+                <Icon icon={CheckGlassIcon} className="size-3.5" />
               </Button>
             ) : (
               <Button
@@ -369,7 +361,7 @@ export function LessonQuizPlayer({
                 className="gap-1.5 text-xs font-semibold px-4"
               >
                 <span>{currentIdx === totalQuestions - 1 ? "Finish Quiz" : "Next Question"}</span>
-                <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+                <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
               </Button>
             )}
           </div>

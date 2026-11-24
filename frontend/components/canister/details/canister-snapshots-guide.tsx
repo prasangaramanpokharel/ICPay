@@ -1,15 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  HelpCircleIcon,
-  ArrowDown01Icon,
-  Camera01Icon,
-  Clock01Icon,
-  Alert02Icon,
-  Coins01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CircleQuestionMarkGlassIcon, ArrowDownGlassIcon, CameraGlassIcon, ClockGlassIcon, TriangleAlertGlassIcon, CoinsGlassIcon } from "@thesvg/ui-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
@@ -23,7 +16,7 @@ export function CanisterSnapshotsGuide() {
       <Collapsible open={open} onOpenChange={setOpen}>
         <div className="flex items-center justify-between p-4 sm:p-5">
           <div className="flex items-center gap-3">
-            <HugeiconsIcon icon={HelpCircleIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+            <Icon icon={CircleQuestionMarkGlassIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
             <div>
               <h3 className="text-sm font-semibold tracking-tight text-foreground">
                 Canister Snapshots Guide
@@ -41,8 +34,8 @@ export function CanisterSnapshotsGuide() {
                 className="h-8 gap-1 px-2.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 <span>{open ? "Hide guide" : "Learn more"}</span>
-                <HugeiconsIcon
-                  icon={ArrowDown01Icon}
+                <Icon
+                  icon={ArrowDownGlassIcon}
                   className={cn("size-3.5 transition-transform duration-200", open && "rotate-180")}
                 />
               </Button>
@@ -55,7 +48,7 @@ export function CanisterSnapshotsGuide() {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={Camera01Icon} className="size-4 text-info" strokeWidth={1.75} />
+                  <Icon icon={CameraGlassIcon} className="size-4 text-info" strokeWidth={1.75} />
                   <span>Point-in-Time State</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -65,7 +58,7 @@ export function CanisterSnapshotsGuide() {
 
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={Clock01Icon} className="size-4 text-success" strokeWidth={1.75} />
+                  <Icon icon={ClockGlassIcon} className="size-4 text-success" strokeWidth={1.75} />
                   <span>Pre-Upgrade Safety</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -75,7 +68,7 @@ export function CanisterSnapshotsGuide() {
 
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={Alert02Icon} className="size-4 text-destructive" strokeWidth={1.75} />
+                  <Icon icon={TriangleAlertGlassIcon} className="size-4 text-destructive" strokeWidth={1.75} />
                   <span>Restore Considerations</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -85,7 +78,7 @@ export function CanisterSnapshotsGuide() {
 
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={Coins01Icon} className="size-4 text-primary" strokeWidth={1.75} />
+                  <Icon icon={CoinsGlassIcon} className="size-4 text-primary" strokeWidth={1.75} />
                   <span>Storage & Cycles Cost</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">

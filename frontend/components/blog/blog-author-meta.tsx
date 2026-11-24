@@ -1,6 +1,6 @@
 import Image from "next/image"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Clock01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ClockGlassIcon } from "@thesvg/ui-react"
 import { BlogSocialShare } from "@/components/blog/blog-social-share"
 
 export function BlogAuthorMeta({
@@ -52,7 +52,7 @@ export function BlogAuthorMeta({
       {/* Meta details: Reading time + Social Share buttons */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-1.5 rounded-full border border-border/50 bg-muted/30 px-3 py-1 text-xs text-muted-foreground">
-          <HugeiconsIcon icon={Clock01Icon} className="size-3.5 text-primary" />
+          <Icon icon={ClockGlassIcon} className="size-3.5 text-primary" />
           <span>{readingMinutes ?? 7} min read</span>
         </div>
 

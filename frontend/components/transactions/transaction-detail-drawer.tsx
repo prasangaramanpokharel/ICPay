@@ -3,11 +3,8 @@
 import { useMemo, type ReactNode } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Cancel01Icon,
-  CheckmarkCircle02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { XGlassIcon, CircleCheckGlassIcon } from "@thesvg/ui-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { CopyButton } from "@/components/ui/copy-button"
@@ -17,10 +14,11 @@ import {
   DrawerTitle,
   DrawerDescription,
 } from "@/components/ui/drawer"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { TokenFiatHint } from "@/components/token/token-fiat-hint"
 import { PremiumBadge } from "@/components/verified/premium-badge"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { avatarUriFor } from "@/lib/profile/avatar"
 import { useLedgerSymbol, useTransactionDetail } from "@/hooks/wallet/useWalletData"
 import { useIsMobile } from "@/hooks/use-mobile"
@@ -41,6 +39,29 @@ type TransactionDetailDrawerProps = {
   txId?: string | null
   open: boolean
   onOpenChange: (open: boolean) => void
+}
+
+function TransactionDetailSkeleton() {
+  return (
+    <div className="space-y-6 pt-1">
+      <div className="text-center space-y-2">
+        <Skeleton className="mx-auto size-16 rounded-full" />
+        <Skeleton className="mx-auto h-4 w-28 rounded-md" />
+        <Skeleton className="mx-auto h-3 w-20 rounded-md" />
+        <Skeleton className="mx-auto h-9 w-40 rounded-lg" />
+        <Skeleton className="mx-auto h-3.5 w-24 rounded-md" />
+        <Skeleton className="mx-auto h-5 w-20 rounded-full" />
+      </div>
+      <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-3">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="flex items-center justify-between py-1">
+            <Skeleton className="h-3.5 w-20 rounded-md" />
+            <Skeleton className="h-3.5 w-36 rounded-md font-mono" />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 export function TransactionDetailDrawer({
@@ -93,16 +114,13 @@ export function TransactionDetailDrawer({
             onClick={handleClose}
             aria-label="Close drawer"
           >
-            <HugeiconsIcon icon={Cancel01Icon} className="size-4" strokeWidth={2} />
+            <Icon icon={XGlassIcon} className="size-4" strokeWidth={2} />
           </Button>
         </div>
 
-        {/* Drawer Body */}
         <div className="flex-1 overflow-y-auto px-5 py-5 sm:px-6 space-y-6">
           {isLoading && !tx ? (
-            <div className="flex justify-center py-20">
-              <Spinner className="size-6 text-muted-foreground" />
-            </div>
+            <TransactionDetailSkeleton />
           ) : error || !tx ? (
             <Alert variant="destructive">
               <AlertDescription>{t("notFound")}</AlertDescription>
@@ -118,6 +136,7 @@ export function TransactionDetailDrawer({
 
 function TransactionDrawerBody({ tx }: { tx: TransactionPublic }) {
   const t = useTranslations("transactions")
+  const { hidden } = useBalanceVisibility()
   const type = txTypeKey(tx.txType)
   const incoming = isIncomingTx(tx.txType)
   const status = txStatusLabel(tx.status)
@@ -137,7 +156,6 @@ function TransactionDrawerBody({ tx }: { tx: TransactionPublic }) {
 
   return (
     <>
-      {/* Hero Summary */}
       <div className="text-center pt-1">
         <Avatar className="mx-auto size-16 shadow-xs">
           <AvatarImage src={avatarUri} alt="" />
@@ -169,7 +187,7 @@ function TransactionDrawerBody({ tx }: { tx: TransactionPublic }) {
           )}
         >
           {incoming ? "+" : "−"}
-          {formatTokenAmount(tx.amount, decimals, decimals)} {symbol}
+          {hidden ? "••••••" : formatTokenAmount(tx.amount, decimals, decimals)} {symbol}
         </p>
         <TokenFiatHint
           ledgerId={tx.ledgerId}
@@ -184,13 +202,12 @@ function TransactionDrawerBody({ tx }: { tx: TransactionPublic }) {
           )}
         >
           {status === "completed" ? (
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5" strokeWidth={2} />
+            <Icon icon={CircleCheckGlassIcon} className="size-3.5" strokeWidth={2} />
           ) : null}
           {t(`status.${status}`)}
         </p>
       </div>
 
-      {/* Action Button */}
       {showAction ? (
         <Button
           variant="secondary"
@@ -202,11 +219,10 @@ function TransactionDrawerBody({ tx }: { tx: TransactionPublic }) {
         </Button>
       ) : null}
 
-      {/* Breakdown Details */}
-      <div className="rounded-2xl border border-border/60 bg-muted/15 p-4 divide-y divide-border/60">
+      <div className="rounded-(--radius) border border-border/60 bg-muted/15 p-4 divide-y divide-border/60">
         <DetailRow
           label={t("rowAmount")}
-          value={`${formatTokenAmount(tx.amount, decimals, decimals)} ${symbol}`}
+          value={`${hidden ? "••••••" : formatTokenAmount(tx.amount, decimals, decimals)} ${symbol}`}
         />
         <DetailRow
           label={t("rowNetworkFee")}

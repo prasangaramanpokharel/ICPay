@@ -16,6 +16,7 @@ import { createAgent } from "@/services/icp"
 import { requiredBalance, requiredIcpSwapBalance, icpServiceDebit } from "@/lib/swap/utils"
 import { ICP_LEDGER_ID } from "@/services/tokens"
 import { formatTokenAmount } from "@/lib/wallet/utils"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import type { TokenHolding } from "@/services/tokens"
 import type { Identity } from "@icp-sdk/core/agent"
 import { cn } from "@/lib/ui/utils"
@@ -146,15 +147,16 @@ function BalanceChangeRow({
   after: bigint
 }) {
   const t = useTranslations("swap")
+  const { hidden } = useBalanceVisibility()
   return (
     <div className="flex items-center justify-between gap-3 text-sm">
       <span className="font-medium">{symbol}</span>
       <div className="flex items-center gap-2 tabular-nums">
         <span className="text-muted-foreground">
-          {formatTokenAmount(before, decimals)}
+          {hidden ? "••••••" : formatTokenAmount(before, decimals)}
         </span>
         <span className="text-muted-foreground/60">→</span>
-        <span className="font-medium">{formatTokenAmount(after, decimals)}</span>
+        <span className="font-medium">{hidden ? "••••••" : formatTokenAmount(after, decimals)}</span>
         <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
           {t("afterLabel")}
         </span>

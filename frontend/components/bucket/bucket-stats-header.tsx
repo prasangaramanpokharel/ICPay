@@ -2,16 +2,8 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Calendar01Icon,
-  Database01Icon,
-  Folder02Icon,
-  Globe02Icon,
-  LockIcon,
-  RefreshIcon,
-  Alert02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CalendarGlassIcon, DatabaseGlassIcon, FolderGlassIcon, GlobeGlassIcon, LockGlassIcon, RefreshCwGlassIcon, TriangleAlertGlassIcon } from "@thesvg/ui-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -133,7 +125,7 @@ export function BucketStatsHeader({
       <CardContent className="space-y-3 p-3.5 sm:p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2.5">
-            <HugeiconsIcon icon={Database01Icon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+            <Icon icon={DatabaseGlassIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
             <div>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-semibold tracking-tight text-foreground">
@@ -163,7 +155,7 @@ export function BucketStatsHeader({
                   variant="secondary"
                   className="h-4.5 gap-1 px-1.5 text-[10px] font-medium text-muted-foreground"
                 >
-                  <HugeiconsIcon icon={isPublic ? Globe02Icon : LockIcon} className={cn("size-2.5", isPublic && "text-primary")} />
+                  <Icon icon={isPublic ? GlobeGlassIcon : LockGlassIcon} className={cn("size-2.5", isPublic && "text-primary")} />
                   <span>{isPublic ? t("public") : t("private")}</span>
                 </Badge>
               </div>
@@ -210,8 +202,8 @@ export function BucketStatsHeader({
 
           <div className="flex flex-wrap items-center gap-2">
             <div className="flex items-center gap-2 rounded-lg border border-border/70 bg-muted/40 px-2.5 py-1 text-xs">
-              <HugeiconsIcon
-                icon={isPublic ? Globe02Icon : LockIcon}
+              <Icon
+                icon={isPublic ? GlobeGlassIcon : LockGlassIcon}
                 className={cn("size-3.5", isPublic ? "text-primary" : "text-muted-foreground")}
                 strokeWidth={1.75}
               />
@@ -234,7 +226,7 @@ export function BucketStatsHeader({
               onClick={onRenew}
               className="h-8 shrink-0 gap-1.5 text-xs"
             >
-              <HugeiconsIcon icon={RefreshIcon} className="size-3.5" strokeWidth={1.75} />
+              <Icon icon={RefreshCwGlassIcon} className="size-3.5" strokeWidth={1.75} />
               <span>{t("renew")}</span>
             </Button>
           </div>
@@ -244,7 +236,7 @@ export function BucketStatsHeader({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-1.5 font-medium text-muted-foreground">
-                <HugeiconsIcon icon={Folder02Icon} className="size-3.5 text-primary" />
+                <Icon icon={FolderGlassIcon} className="size-3.5 text-primary" />
                 <span>{t("usage")}</span>
               </div>
               <span className="font-medium text-foreground tabular-nums">
@@ -265,8 +257,8 @@ export function BucketStatsHeader({
           <div className="space-y-1.5">
             <div className="flex items-center justify-between text-xs">
               <div className="flex items-center gap-1.5 font-medium text-muted-foreground">
-                <HugeiconsIcon
-                  icon={stats.isExpiringSoon || !active ? Alert02Icon : Calendar01Icon}
+                <Icon
+                  icon={stats.isExpiringSoon || !active ? TriangleAlertGlassIcon : CalendarGlassIcon}
                   className={
                     stats.isExpiringSoon || !active
                       ? "size-3.5 text-warning"

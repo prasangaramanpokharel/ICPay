@@ -2,13 +2,8 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import {
-  Book02Icon,
-  Key01Icon,
-  Plug01Icon,
-  TerminalIcon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { BookGlassIcon, KeyGlassIcon, PlugGlassIcon, TerminalGlassIcon } from "@thesvg/ui-react"
+import { Icon } from "@/components/ui/icon"
 import {
   Dialog,
   DialogContent,
@@ -110,7 +105,7 @@ curl -O "https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${bucketName}/uploads/h
       <DialogContent className="max-h-[90vh] w-full max-w-[calc(100vw-2rem)] sm:max-w-2xl overflow-y-auto overflow-x-hidden p-5 sm:p-6 min-w-0">
         <DialogHeader className="gap-2 min-w-0 w-full">
           <DialogTitle className="flex items-center gap-2">
-            <HugeiconsIcon icon={Plug01Icon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+            <Icon icon={PlugGlassIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
             <span className="truncate">Connect to your bucket</span>
           </DialogTitle>
           <DialogDescription>
@@ -144,7 +139,7 @@ curl -O "https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${bucketName}/uploads/h
               <MotionTabPanel tabKey="node" className="space-y-3.5">
                 <div className="space-y-1.5 min-w-0 w-full">
                   <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                    <HugeiconsIcon icon={TerminalIcon} className="size-3.5" />
+                    <Icon icon={TerminalGlassIcon} className="size-3.5" />
                     <span>Install client library (npm)</span>
                   </div>
                   <BucketCodeBlock code={nodeInstall} language="bash" />
@@ -164,7 +159,7 @@ curl -O "https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${bucketName}/uploads/h
               <MotionTabPanel tabKey="python" className="space-y-3.5">
                 <div className="space-y-1.5 min-w-0 w-full">
                   <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-                    <HugeiconsIcon icon={TerminalIcon} className="size-3.5" />
+                    <Icon icon={TerminalGlassIcon} className="size-3.5" />
                     <span>Install Python client (pip)</span>
                   </div>
                   <BucketCodeBlock code={pythonInstall} language="bash" />
@@ -214,7 +209,7 @@ curl -O "https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${bucketName}/uploads/h
                 }}
                 className="gap-1.5"
               >
-                <HugeiconsIcon icon={Key01Icon} className="size-4" strokeWidth={1.75} />
+                <Icon icon={KeyGlassIcon} className="size-4" strokeWidth={1.75} />
                 <span>Manage API Keys</span>
               </Button>
             ) : null}
@@ -225,7 +220,7 @@ curl -O "https://${WALLET_CANISTER_ID}.raw.icp0.io/cloud/${bucketName}/uploads/h
               render={<Link href="/bucket/docs" />}
               className="gap-1.5 text-muted-foreground hover:text-foreground"
             >
-              <HugeiconsIcon icon={Book02Icon} className="size-4" strokeWidth={1.75} />
+              <Icon icon={BookGlassIcon} className="size-4" strokeWidth={1.75} />
               <span>Full Docs</span>
             </Button>
           </div>

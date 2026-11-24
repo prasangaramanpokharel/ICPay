@@ -4,12 +4,8 @@ import type { MouseEvent } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Coins01Icon,
-  ArrowRight01Icon,
-  FuelStationIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CoinsGlassIcon, ArrowRightGlassIcon, FuelGaugeGlassIcon } from "@thesvg/ui-react"
 import { Badge } from "@/components/ui/badge"
 import { statusOf } from "@/services/launch/launch"
 import { formatCycles } from "@/services/cycles/topUp"
@@ -55,7 +51,7 @@ export function TokenCard({
           {logo ? (
             <Image src={logo} alt="" width={40} height={40} className="size-full object-cover" unoptimized />
           ) : (
-            <HugeiconsIcon icon={Coins01Icon} className="size-5 text-muted-foreground" strokeWidth={1.75} />
+            <Icon icon={CoinsGlassIcon} className="size-5 text-muted-foreground" strokeWidth={1.75} />
           )}
         </span>
 
@@ -79,7 +75,7 @@ export function TokenCard({
               <>
                 <span>•</span>
                 <span className="inline-flex items-center gap-1 text-[11px]">
-                  <HugeiconsIcon icon={FuelStationIcon} className="size-3 text-muted-foreground" strokeWidth={1.75} />
+                  <Icon icon={FuelGaugeGlassIcon} className="size-3 text-muted-foreground" strokeWidth={1.75} />
                   {formatCycles(cyclesFunded)}
                 </span>
               </>
@@ -94,8 +90,8 @@ export function TokenCard({
         <Badge variant={STATUS_VARIANT[status]} className={cn("text-xs", status === "pending" && "animate-pulse")}>
           {t(`status.${status}`)}
         </Badge>
-        <HugeiconsIcon
-          icon={ArrowRight01Icon}
+        <Icon
+          icon={ArrowRightGlassIcon}
           className="size-4 text-muted-foreground/40 transition-transform group-hover:translate-x-0.5 group-hover:text-muted-foreground"
           strokeWidth={1.75}
         />

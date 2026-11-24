@@ -1,8 +1,7 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import Image from "next/image"
 import { useTranslations } from "next-intl"
+import { QRCode } from "@ttsalpha/qrcode"
 import { Card } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/ui/utils"
@@ -12,33 +11,33 @@ type QrCodeProps = {
   value: string
   logo?: string
   className?: string
+  dotStyle?: "rounded" | "circle" | "square"
 }
 
-export function QrCode({ value, logo, className }: QrCodeProps) {
+export function QrCode({
+  value,
+  logo,
+  className,
+  dotStyle = "circle",
+}: QrCodeProps) {
   const t = useTranslations("deposit")
-  const [done, setDone] = useState<{ value: string; src: string } | null>(null)
 
-  useEffect(() => {
-    let active = true
-    import("qrcode")
-      .then((mod) =>
-        mod.toDataURL(value, {
-          errorCorrectionLevel: logo ? "H" : "M",
-          margin: 2,
-          width: 640,
-          color: { dark: "#000000", light: "#ffffff" },
-        })
-      )
-      .then((src) => {
-        if (active) setDone({ value, src })
-      })
-      .catch(() => {})
-    return () => {
-      active = false
-    }
-  }, [value, logo])
-
-  const loading = done?.value !== value
+  if (!value) {
+    return (
+      <Card
+        className={cn(
+          "mx-auto w-full max-w-[min(100%,18rem)] gap-0 py-0 shadow-sm sm:max-w-[min(100%,20rem)]",
+          className
+        )}
+      >
+        <div className="p-4 sm:p-5">
+          <div className="aspect-square w-full rounded-xl bg-white p-3 sm:p-4">
+            <Skeleton className="size-full rounded-lg" />
+          </div>
+        </div>
+      </Card>
+    )
+  }
 
   return (
     <Card
@@ -48,31 +47,28 @@ export function QrCode({ value, logo, className }: QrCodeProps) {
       )}
     >
       <div className="p-4 sm:p-5">
-        <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-white p-3 ring-1 ring-black/5 sm:p-4">
-          {loading ? (
-            <Skeleton className="size-full rounded-lg" />
-          ) : (
-            <>
-              <Image
-                src={done.src}
-                alt={t("qrAlt")}
-                width={640}
-                height={640}
-                unoptimized
-                className="size-full object-contain"
-              />
-              <span className="absolute left-1/2 top-1/2 flex size-[clamp(2rem,22%,3rem)] -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full bg-background shadow-sm ring-1 ring-black/10">
-                <Image
-                  src={logo ?? ICP_LOGO}
-                  alt=""
-                  width={48}
-                  height={48}
-                  unoptimized
-                  className="size-[68%] object-contain"
-                />
-              </span>
-            </>
-          )}
+        <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-white p-3 ring-1 ring-black/5 sm:p-4 flex items-center justify-center">
+          <QRCode
+            value={value}
+            size={280}
+            margin={1}
+            dotStyle={dotStyle}
+            dotColor="#000000"
+            backgroundColor="#ffffff"
+            corner={{
+              square: { style: "extra-rounded", color: "#000000" },
+              dot: { style: dotStyle === "circle" ? "circle" : "rounded", color: "#000000" },
+            }}
+            logo={{
+              src: logo ?? ICP_LOGO,
+              size: 0.36,
+              margin: 1,
+              radius: 1,
+              aspectRatio: 1,
+            }}
+            className="size-full object-contain"
+            ariaLabel={t("qrAlt")}
+          />
         </div>
       </div>
     </Card>

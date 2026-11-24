@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import { motion } from "motion/react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -40,7 +40,7 @@ export function AcademyCta() {
                   render={<Link href="#courses" />}
                 >
                   <span>Start Learning Now</span>
-                  <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                  <Icon icon={ArrowRightGlassIcon} className="size-4" />
                 </Button>
                 <Button
                   size="lg"

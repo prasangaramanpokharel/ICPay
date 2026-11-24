@@ -1,8 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowUp01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowUpGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/ui/utils"
 
@@ -35,7 +35,7 @@ export function BackToTop({ threshold = 400 }: { threshold?: number }) {
       )}
       aria-label="Back to top"
     >
-      <HugeiconsIcon icon={ArrowUp01Icon} className="size-5" strokeWidth={2} />
+      <Icon icon={ArrowUpGlassIcon} className="size-5" strokeWidth={2} />
     </Button>
   )
 }

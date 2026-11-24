@@ -15,8 +15,8 @@ import {
   InputGroup,
   InputGroupAddon,
 } from "@/components/ui/input-group"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { SearchGlassIcon, CheckGlassOutlineIcon } from "@thesvg/ui-react"
 
 function Command({
   className,
@@ -83,7 +83,7 @@ function CommandInput({
           {...props}
         />
         <InputGroupAddon>
-          <HugeiconsIcon icon={Search01Icon} className="size-4 shrink-0 opacity-50" />
+          <Icon icon={SearchGlassIcon} className="size-4 shrink-0 opacity-50" />
         </InputGroupAddon>
       </InputGroup>
     </div>
@@ -163,7 +163,7 @@ function CommandItem({
       {...props}
     >
       {children}
-      <HugeiconsIcon icon={Tick02Icon} className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100 size-4" />
+      <Icon icon={CheckGlassOutlineIcon} className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100 size-4" />
     </CommandPrimitive.Item>
   )
 }

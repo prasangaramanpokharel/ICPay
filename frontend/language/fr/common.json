@@ -398,14 +398,20 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Symbole",
+    "colName": "Nom",
+    "colQuantity": "Quantité",
+    "colValue": "Valeur",
+    "totalIcpBalance": "Solde total ICP",
+    "yourAssets": "Vos actifs"
   },
   "token": {
     "back": "Portefeuille",
     "notFound": "Ce jeton n'a pas pu être chargé.",
     "send": "Envoyer",
     "deposit": "Déposer",
-    "depositTitle": "Adresse de dépôt",
+    "depositTitle": "Dépôt",
     "depositSubtitle": "Envoyez des {symbol} ici pour recharger votre portefeuille.",
     "warning": "N'envoyez que des {symbol} à cette adresse. Les autres jetons seront perdus.",
     "selfCustodyTitle": "Détenu hors d'ICPay",
@@ -422,7 +428,7 @@
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
     "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet.",
-    "historyTitle": "On-chain history",
+    "historyTitle": "Historique",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
@@ -451,7 +457,8 @@
     "suggested": "Suggestions pour vous",
     "noneFound": "Aucun résultat pour “{query}”.",
     "empty": "Aucun compte avec nom d'utilisateur. Soyez le premier.",
-    "premium": "Identifiant premium vérifié"
+    "premium": "Identifiant premium vérifié",
+    "subtitle": "Explorez les profils d'utilisateurs sur le réseau"
   },
   "success": {
     "send": "Envoi réussi",
@@ -1415,6 +1422,10 @@
         "charity": {
           "title": "Charité",
           "description": "Codes QR officiels pour l'aide humanitaire gouvernementale."
+        },
+        "downloads": {
+          "title": "Téléchargements",
+          "description": "Applications de bureau pour macOS, Windows et Linux."
         }
       },
       "sectionMore": "Plus",
@@ -1481,7 +1492,8 @@
         "terms": "Conditions",
         "privacy": "Confidentialité",
         "transparency": "Transparence",
-        "charity": "Charité"
+        "charity": "Charité",
+        "downloads": "Téléchargements"
       },
       "community": {
         "github": "GitLab",
@@ -2127,6 +2139,87 @@
             "answer": "Oui. ICFalcon est open source. Le code source est fourni tel quel pour utilisation et modification. Les paquets hub sont sous licence selon leurs entrées sur icp-hub."
           }
         }
+      }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "Nouveau",
+        "version": "Desktop v1.0.0",
+        "platforms": "· macOS, Windows & Linux"
+      },
+      "hero": {
+        "title": "Télécharger ICPay Desktop",
+        "description": "Le portefeuille de garde ICP conçu nativement pour votre ordinateur. Rapide, sécurisé et authentifié exclusivement via Internet Identity."
+      },
+      "primary": {
+        "downloadMac": "Télécharger pour Mac",
+        "downloadWindows": "Télécharger pour Windows",
+        "downloadLinux": "Télécharger pour Linux",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 Mo",
+        "windowsSubtitle": "Windows 10 & 11 (64 bits) · 84 Mo",
+        "linuxSubtitle": "Tarball x64 · 98 Mo",
+        "releaseHashes": "Hachages de version"
+      },
+      "dropdown": {
+        "ariaLabel": "Sélectionner la plateforme",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64 bits)",
+        "windowsPortable": "Windows Portable",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Paquet universel pour machines Apple Silicon et Intel.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Architecture Intel",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Portable",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "Programme d'installation 64 bits et archive exécutable portable.",
+          "installerTitle": "Programme d'installation",
+          "installerSub": "Package NSIS · EXE",
+          "portableTitle": "Archive Portable",
+          "portableSub": "Binaire x64 · ZIP",
+          "archTitle": "Architecture",
+          "archSub": "x86_64 Vérifié",
+          "supportedBadge": "Pris en charge"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Archive de distribution pour Ubuntu, Debian, Fedora et Arch.",
+          "tarballTitle": "Tarball de distribution",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "Compatible RPM",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "Compatible DEB"
+        }
+      },
+      "hashes": {
+        "title": "Intégrité Cryptographique (SHA-256)",
+        "description": "Vérifiez les sommes de contrôle dans votre terminal pour garantir des binaires authentiques.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Copier",
+        "copied": "Copié",
+        "toastSuccess": "Hachage SHA-256 copié dans le presse-papiers",
+        "toastError": "Échec de la copie du hachage"
+      },
+      "features": {
+        "custodyTitle": "Architecture de Garde",
+        "custodyDesc": "Authentifié exclusivement via Internet Identity. Aucune phrase de récupération, clé ou mot de passe stocké localement.",
+        "perfTitle": "Performances Natives",
+        "perfDesc": "Rendu accéléré matériellement et cryptographie optimisée par Electron 33 avec une empreinte mémoire minimale.",
+        "edgeTitle": "Distribution Cloudflare Edge",
+        "edgeDesc": "Stockage d'objets global R2 avec mise en cache périphérique sur plus de 330 sites sans frais de sortie."
       }
     }
   },

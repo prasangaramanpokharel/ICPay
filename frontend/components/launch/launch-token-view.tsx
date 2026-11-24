@@ -3,12 +3,9 @@
 import { Suspense, useState, useCallback } from "react"
 import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Add01Icon,
-  ArrowLeft02Icon,
-  Coins01Icon,
-} from "@hugeicons/core-free-icons"
+import { motion, AnimatePresence } from "motion/react"
+import { Icon } from "@/components/ui/icon"
+import { PlusGlassIcon, ArrowLeftGlassIcon, CoinsGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
@@ -77,12 +74,14 @@ function LaunchPageContent() {
     return null
   }
 
-  if (showForm) {
-    return (
-      <AppPage
-        title={t("formTitle")}
-        description={t("formSubtitle")}
-        back={
+  const hasTokens = tokens.length > 0
+
+  return (
+    <AppPage
+      title={showForm ? t("formTitle") : t("title")}
+      description={showForm ? t("formSubtitle") : t("subtitle")}
+      back={
+        showForm ? (
           <Button
             type="button"
             variant="ghost"
@@ -90,79 +89,89 @@ function LaunchPageContent() {
             onClick={() => setShowForm(false)}
             className="mb-2 text-xs text-muted-foreground hover:text-foreground"
           >
-            <HugeiconsIcon icon={ArrowLeft02Icon} data-icon="inline-start" />
+            <Icon icon={ArrowLeftGlassIcon} data-icon="inline-start" />
             Back to my tokens
           </Button>
-        }
-      >
-        <LaunchForm onLaunch={handleLaunch} />
-      </AppPage>
-    )
-  }
-
-  const hasTokens = tokens.length > 0
-
-  return (
-    <AppPage
-      title={t("title")}
-      description={t("subtitle")}
+        ) : undefined
+      }
       actions={
-        hasTokens ? (
+        !showForm && hasTokens ? (
           <Button onClick={() => setShowForm(true)} size="sm">
-            <HugeiconsIcon icon={Add01Icon} data-icon="inline-start" />
+            <Icon icon={PlusGlassIcon} data-icon="inline-start" />
             {t("createCta")}
           </Button>
         ) : null
       }
     >
-      <div className="flex flex-col gap-6">
-        {isLoading && !hasTokens ? (
-          <div className="flex flex-col gap-3">
-            <Skeleton className="h-14 w-full rounded-2xl" />
-            <Skeleton className="h-14 w-full rounded-2xl" />
-          </div>
-        ) : !hasTokens ? (
-          <Empty className="rounded-3xl border border-dashed border-border/60 bg-muted/15 py-14">
-            <EmptyMedia variant="icon">
-              <HugeiconsIcon
-                icon={Coins01Icon}
-                className="size-5 text-muted-foreground"
-                strokeWidth={1.75}
-              />
-            </EmptyMedia>
-            <EmptyHeader>
-              <EmptyTitle className="text-base font-semibold">{t("empty")}</EmptyTitle>
-              <EmptyDescription className="text-xs text-muted-foreground">
-                Deploy your custom ICRC-1 token on the Internet Computer with zero presale and full decentralization.
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              <Button onClick={() => setShowForm(true)}>
-                <HugeiconsIcon icon={Add01Icon} data-icon="inline-start" />
-                {t("createCta")}
-              </Button>
-            </EmptyContent>
-          </Empty>
+      <AnimatePresence mode="wait">
+        {showForm ? (
+          <motion.div
+            key="launch-form"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+          >
+            <LaunchForm onLaunch={handleLaunch} />
+          </motion.div>
         ) : (
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-foreground">{t("myTokens")}</h2>
-              <Badge variant="outline" className="text-xs">
-                {tokens.length} {tokens.length === 1 ? "token" : "tokens"}
-              </Badge>
-            </div>
-            <Card className="divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/60">
-              {tokens.map((token) => (
-                <TokenCard
-                  key={token.id}
-                  token={token}
-                  onSelect={handleSelectToken}
-                />
-              ))}
-            </Card>
-          </div>
+          <motion.div
+            key="token-list"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+            className="flex flex-col gap-6"
+          >
+            {isLoading && !hasTokens ? (
+              <div className="flex flex-col gap-3">
+                <Skeleton className="h-14 w-full rounded-(--radius)" />
+                <Skeleton className="h-14 w-full rounded-(--radius)" />
+              </div>
+            ) : !hasTokens ? (
+              <Empty className="rounded-(--radius) border border-dashed border-border/60 bg-muted/15 py-14">
+                <EmptyMedia variant="icon">
+                  <Icon
+                    icon={CoinsGlassIcon}
+                    className="size-5 text-muted-foreground"
+                    strokeWidth={1.75}
+                  />
+                </EmptyMedia>
+                <EmptyHeader>
+                  <EmptyTitle className="text-base font-semibold">{t("empty")}</EmptyTitle>
+                  <EmptyDescription className="text-xs text-muted-foreground">
+                    Deploy your custom ICRC-1 token on the Internet Computer with zero presale and full decentralization.
+                  </EmptyDescription>
+                </EmptyHeader>
+                <EmptyContent>
+                  <Button onClick={() => setShowForm(true)}>
+                    <Icon icon={PlusGlassIcon} data-icon="inline-start" />
+                    {t("createCta")}
+                  </Button>
+                </EmptyContent>
+              </Empty>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-foreground">{t("myTokens")}</h2>
+                  <Badge variant="outline" className="text-xs">
+                    {tokens.length} {tokens.length === 1 ? "token" : "tokens"}
+                  </Badge>
+                </div>
+                <Card className="divide-y divide-border/60 overflow-hidden rounded-(--radius) border border-border/60">
+                  {tokens.map((token) => (
+                    <TokenCard
+                      key={token.id}
+                      token={token}
+                      onSelect={handleSelectToken}
+                    />
+                  ))}
+                </Card>
+              </div>
+            )}
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
 
       <LaunchTokenDrawer
         open={Boolean(effectiveId)}

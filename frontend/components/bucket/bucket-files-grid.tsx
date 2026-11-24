@@ -1,8 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { GripVerticalIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { GripVerticalGlassIcon } from "@thesvg/ui-react"
 import { MotionList, MotionListItem } from "@/components/ui/motion-list"
 import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -228,7 +228,7 @@ export function BucketFilesGrid({
                       className="cursor-grab opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-active:opacity-100 text-muted-foreground/50 hover:text-foreground active:cursor-grabbing"
                       title="Drag to move"
                     >
-                      <HugeiconsIcon icon={GripVerticalIcon} className="size-3.5 shrink-0" strokeWidth={1.75} />
+                      <Icon icon={GripVerticalGlassIcon} className="size-3.5 shrink-0" strokeWidth={1.75} />
                     </span>
                     <Checkbox
                       checked={isSelected}

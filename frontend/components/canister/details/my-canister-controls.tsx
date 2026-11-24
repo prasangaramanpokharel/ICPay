@@ -3,16 +3,8 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowUp02Icon,
-  Link01Icon,
-  MoreHorizontalIcon,
-  PlayIcon,
-  RefreshIcon,
-  SentIcon,
-  StopIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowUpGlassIcon, LinkGlassIcon, EllipsisGlassIcon, PlayGlassIcon, RefreshCwGlassIcon, SendGlassIcon, CircleStopGlassIcon } from "@thesvg/ui-react"
 import { Spinner } from "@/components/ui/spinner"
 import { Button } from "@/components/ui/button"
 import {
@@ -99,7 +91,7 @@ export function MyCanisterControls({
           onClick={() => setTopupOpen(true)}
           className="h-8 gap-1.5 px-3.5 text-xs font-medium cursor-pointer"
         >
-          <HugeiconsIcon icon={ArrowUp02Icon} className="size-3.5" strokeWidth={2} />
+          <Icon icon={ArrowUpGlassIcon} className="size-3.5" strokeWidth={2} />
           <span>Top up</span>
         </Button>
 
@@ -118,7 +110,7 @@ export function MyCanisterControls({
             {busy != null ? (
               <Spinner className="size-3.5" />
             ) : (
-              <HugeiconsIcon icon={MoreHorizontalIcon} className="size-4 text-muted-foreground" />
+              <Icon icon={EllipsisGlassIcon} className="size-4 text-muted-foreground" />
             )}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
@@ -134,7 +126,7 @@ export function MyCanisterControls({
                       {busy === "stop" ? (
                         <Spinner className="size-4 text-destructive" />
                       ) : (
-                        <HugeiconsIcon icon={StopIcon} className="size-4 text-destructive" />
+                        <Icon icon={CircleStopGlassIcon} className="size-4 text-destructive" />
                       )}
                       <span>{busy === "stop" ? t("stopping") : "Stop canister"}</span>
                     </DropdownMenuItem>
@@ -147,7 +139,7 @@ export function MyCanisterControls({
                       {busy === "start" ? (
                         <Spinner className="size-4 text-success" />
                       ) : (
-                        <HugeiconsIcon icon={PlayIcon} className="size-4 text-success" />
+                        <Icon icon={PlayGlassIcon} className="size-4 text-success" />
                       )}
                       <span>{busy === "start" ? t("starting") : isStopping ? "Stopping..." : "Start canister"}</span>
                     </DropdownMenuItem>
@@ -157,7 +149,7 @@ export function MyCanisterControls({
                     onClick={() => setTransferOpen(true)}
                     className="cursor-pointer gap-2"
                   >
-                    <HugeiconsIcon icon={SentIcon} className="size-4 text-muted-foreground" />
+                    <Icon icon={SendGlassIcon} className="size-4 text-muted-foreground" />
                     <span>{t("transfer")}</span>
                   </DropdownMenuItem>
 
@@ -169,7 +161,7 @@ export function MyCanisterControls({
                 onClick={onRefresh}
                 className="cursor-pointer gap-2"
               >
-                <HugeiconsIcon icon={RefreshIcon} className="size-4 text-muted-foreground" />
+                <Icon icon={RefreshCwGlassIcon} className="size-4 text-muted-foreground" />
                 <span>Reload status</span>
               </DropdownMenuItem>
 
@@ -186,7 +178,7 @@ export function MyCanisterControls({
                   />
                 }
               >
-                <HugeiconsIcon icon={Link01Icon} className="size-4 text-muted-foreground" />
+                <Icon icon={LinkGlassIcon} className="size-4 text-muted-foreground" />
                 <span>View on IC Dashboard</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>

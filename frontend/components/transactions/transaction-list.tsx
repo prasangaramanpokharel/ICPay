@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { avatarUriFor } from "@/lib/profile/avatar"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon, InboxIcon, Message01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon, InboxGlassIcon, MessageSquareGlassIcon } from "@thesvg/ui-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -25,6 +25,7 @@ import {
   txTypeKey,
 } from "@/lib/wallet/utils"
 import { useLedgerSymbol } from "@/hooks/wallet/useWalletData"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { cn } from "@/lib/ui/utils"
 
 type TransactionListProps = {
@@ -66,10 +67,10 @@ export function TransactionList({
 
   if (transactions.length === 0) {
     return (
-      <Empty className="rounded-2xl border border-dashed border-border/70 p-8">
+      <Empty className="rounded-(--radius) border border-dashed border-border/70 p-8">
         <EmptyHeader>
           <EmptyMedia variant="icon">
-            <HugeiconsIcon icon={InboxIcon} className="size-6 text-muted-foreground" />
+            <Icon icon={InboxGlassIcon} className="size-6 text-muted-foreground" />
           </EmptyMedia>
           <EmptyTitle>{td("noTransactions")}</EmptyTitle>
           <EmptyDescription>{td("noTransactionsHint")}</EmptyDescription>
@@ -86,7 +87,7 @@ export function TransactionList({
             <h2 className="mb-2 px-1 text-xs font-semibold tracking-wide text-muted-foreground text-balance">
               {formatTransactionDateGroup(group.items[0].createdAt, dateLabels)}
             </h2>
-            <ItemGroup className="divide-y divide-border/60 overflow-hidden rounded-2xl border border-border/60 bg-card gap-0">
+            <ItemGroup className="divide-y divide-border/60 overflow-hidden rounded-(--radius) border border-border/60 bg-card gap-0">
               {group.items.map((tx) => (
                 <TransactionRow
                   key={tx.id}
@@ -145,6 +146,7 @@ function TransactionRow({
   onSelect: () => void
 }) {
   const t = useTranslations("transactions")
+  const { hidden } = useBalanceVisibility()
   const type = txTypeKey(tx.txType)
   const incoming = isIncomingTx(tx.txType)
   const status = txStatusLabel(tx.status)
@@ -187,7 +189,7 @@ function TransactionRow({
         </ItemDescription>
         {memo ? (
           <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-            <HugeiconsIcon icon={Message01Icon} className="size-3 shrink-0" />
+            <Icon icon={MessageSquareGlassIcon} className="size-3 shrink-0" />
             <span className="truncate">{memo}</span>
           </p>
         ) : null}
@@ -202,7 +204,7 @@ function TransactionRow({
             )}
           >
             {incoming ? "+" : "−"}
-            {formatTokenAmount(tx.amount, decimals, 4)} {symbol}
+            {hidden ? "••••••" : formatTokenAmount(tx.amount, decimals, 4)} {symbol}
           </p>
           {status !== "completed" ? (
             <Badge variant={getTxStatusVariant(tx.status)} className="mt-0.5 text-[10px]">
@@ -210,7 +212,7 @@ function TransactionRow({
             </Badge>
           ) : null}
         </div>
-        <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+        <Icon icon={ArrowRightGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
       </ItemActions>
     </Item>
   )

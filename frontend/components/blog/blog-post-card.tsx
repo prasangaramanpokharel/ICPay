@@ -1,8 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { blogPostPath, type BlogPost } from "@/services/blog/blog"
 
 function formatDate(iso: string) {
@@ -35,8 +35,8 @@ export function BlogPostCard({ post }: { post: BlogPost }) {
           {formatDate(post.publishedAt)} · {post.readingMinutes} min read
         </p>
       </div>
-      <HugeiconsIcon
-        icon={ArrowRight01Icon}
+      <Icon
+        icon={ArrowRightGlassIcon}
         className="mt-0.5 size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary"
         strokeWidth={1.75}
       />

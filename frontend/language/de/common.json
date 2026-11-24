@@ -398,14 +398,20 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Symbol",
+    "colName": "Name",
+    "colQuantity": "Menge",
+    "colValue": "Wert",
+    "totalIcpBalance": "Gesamt-ICP-Guthaben",
+    "yourAssets": "Ihre Vermögenswerte"
   },
   "token": {
     "back": "Wallet",
     "notFound": "Dieses Token konnte nicht geladen werden.",
     "send": "Senden",
     "deposit": "Einzahlen",
-    "depositTitle": "Einzahlungsadresse",
+    "depositTitle": "Einzahlung",
     "depositSubtitle": "Sende {symbol} hierhin, um dein Wallet aufzuladen.",
     "warning": "Sende nur {symbol} an diese Adresse. Andere Token gehen verloren.",
     "selfCustodyTitle": "Außerhalb von ICPay gehalten",
@@ -422,7 +428,7 @@
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
     "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet.",
-    "historyTitle": "On-chain history",
+    "historyTitle": "Verlauf",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
@@ -451,7 +457,8 @@
     "suggested": "Für dich vorgeschlagen",
     "noneFound": "Niemand gefunden für “{query}”.",
     "empty": "Noch keine Konten mit Benutzernamen. Sei der Erste.",
-    "premium": "Verifizierter Premium-Handle"
+    "premium": "Verifizierter Premium-Handle",
+    "subtitle": "Entdecke Benutzerprofile im gesamten Netzwerk"
   },
   "success": {
     "send": "Erfolgreich gesendet",
@@ -1415,6 +1422,10 @@
         "charity": {
           "title": "Wohltätigkeit",
           "description": "Offizielle staatliche Katastrophenhilfe-QR-Codes."
+        },
+        "downloads": {
+          "title": "Downloads",
+          "description": "Desktop-Apps für macOS, Windows und Linux."
         }
       },
       "sectionMore": "Mehr",
@@ -1481,7 +1492,8 @@
         "terms": "Nutzungsbedingungen",
         "privacy": "Datenschutz",
         "transparency": "Transparenz",
-        "charity": "Wohltätigkeit"
+        "charity": "Wohltätigkeit",
+        "downloads": "Downloads"
       },
       "community": {
         "github": "GitLab",
@@ -2127,6 +2139,87 @@
             "answer": "Ja. ICFalcon ist Open Source. Quellcode wird as-is zur Nutzung und Modifikation bereitgestellt. Hub-Pakete sind gemäß ihren Einträgen auf icp-hub lizenziert."
           }
         }
+      }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "Neu",
+        "version": "Desktop v1.0.0",
+        "platforms": "· macOS, Windows & Linux"
+      },
+      "hero": {
+        "title": "ICPay Desktop herunterladen",
+        "description": "Die native ICP-Verwahrungs-Wallet für Ihren Desktop. Schnell, sicher und exklusiv über Internet Identity authentifiziert."
+      },
+      "primary": {
+        "downloadMac": "Für Mac herunterladen",
+        "downloadWindows": "Für Windows herunterladen",
+        "downloadLinux": "Für Linux herunterladen",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 & 11 (64-Bit) · 84 MB",
+        "linuxSubtitle": "x64-Tarball · 98 MB",
+        "releaseHashes": "Release-Hashes"
+      },
+      "dropdown": {
+        "ariaLabel": "Desktop-Plattform auswählen",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64-Bit)",
+        "windowsPortable": "Windows Portabel",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Universelles Paket für Apple Silicon- und Intel-Rechner.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Intel-Architektur",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Portabel",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "64-Bit-Setup-Installationsprogramm und portables Archiv.",
+          "installerTitle": "Setup-Installer",
+          "installerSub": "NSIS-Paket · EXE",
+          "portableTitle": "Portables Archiv",
+          "portableSub": "x64-Binärdatei · ZIP",
+          "archTitle": "Architektur",
+          "archSub": "x86_64 Verifiziert",
+          "supportedBadge": "Unterstützt"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Distributionsarchiv für Ubuntu, Debian, Fedora, Arch.",
+          "tarballTitle": "Distributions-Tarball",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "RPM-kompatibel",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "DEB-kompatibel"
+        }
+      },
+      "hashes": {
+        "title": "Kryptografische Integrität (SHA-256)",
+        "description": "Prüfen Sie Prüfsummen direkt im Terminal, um unversehrte Originaldateien sicherzustellen.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Kopieren",
+        "copied": "Kopiert",
+        "toastSuccess": "SHA-256-Hash in Zwischenablage kopiert",
+        "toastError": "Kopieren des Hashes fehlgeschlagen"
+      },
+      "features": {
+        "custodyTitle": "Verwahrungs-Architektur",
+        "custodyDesc": "Exklusiv über Internet Identity authentifiziert. Keine Seed-Phrasen, Klartextschlüssel oder Passwörter lokal gespeichert.",
+        "perfTitle": "Native Leistung",
+        "perfDesc": "Hardwarebeschleunigtes Rendering und Kryptografie powered by Electron 33 mit minimalem Speicherverbrauch.",
+        "edgeTitle": "Cloudflare Edge Auslieferung",
+        "edgeDesc": "Globaler R2-Objektspeicher mit Multi-Regionen-Edge-Caching an über 330 Standorten ohne Egress-Drosselung."
       }
     }
   },

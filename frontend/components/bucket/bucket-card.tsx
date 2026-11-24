@@ -3,13 +3,8 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowRight01Icon,
-  Database01Icon,
-  Globe02Icon,
-  LockIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { DataLakeGlassIcon, DatabaseGlassIcon, GlobeGlassIcon, LockGlassIcon } from "@thesvg/ui-react"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { TableCell, TableRow } from "@/components/ui/table"
@@ -87,7 +82,7 @@ export function BucketCard({
           prefetch
           className="group flex items-center gap-2"
         >
-          <HugeiconsIcon icon={Database01Icon} className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" strokeWidth={1.75} />
+          <Icon icon={DatabaseGlassIcon} className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" strokeWidth={1.75} />
           <span className="truncate text-sm font-medium">{bucket.name}</span>
         </Link>
       </TableCell>
@@ -97,8 +92,8 @@ export function BucketCard({
             variant="secondary"
             className="h-4.5 gap-1 px-1.5 text-[10px] font-medium text-muted-foreground"
           >
-            <HugeiconsIcon
-              icon={isPublic ? Globe02Icon : LockIcon}
+            <Icon
+              icon={isPublic ? GlobeGlassIcon : LockGlassIcon}
               className={cn("size-2.5", isPublic && "text-primary")}
             />
             <span>{isPublic ? t("public") : t("private")}</span>
@@ -158,9 +153,9 @@ export function BucketCard({
       </TableCell>
       <TableCell className="text-right">
         <Link href={`/bucket?id=${encodeURIComponent(bucket.id)}`} prefetch aria-label={bucket.name}>
-          <HugeiconsIcon
-            icon={ArrowRight01Icon}
-            className="size-4 text-muted-foreground"
+          <Icon
+            icon={DataLakeGlassIcon}
+            className="size-4 text-muted-foreground transition-colors hover:text-foreground"
             strokeWidth={1.75}
           />
         </Link>

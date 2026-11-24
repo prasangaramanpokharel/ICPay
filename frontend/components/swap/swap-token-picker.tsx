@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { SearchGlassIcon } from "@thesvg/ui-react"
 import {
   Drawer,
   DrawerContent,
@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { formatTokenAmount } from "@/lib/wallet/utils"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { type TokenHolding } from "@/services/tokens"
 import { TokenLogo } from "@/components/token/token-logo"
 
@@ -32,6 +33,7 @@ export function SwapTokenPicker({
   title: string
 }) {
   const t = useTranslations("swap")
+  const { hidden } = useBalanceVisibility()
   const [query, setQuery] = useState("")
 
   const filtered = useMemo(() => {
@@ -51,8 +53,8 @@ export function SwapTokenPicker({
         </DrawerHeader>
         <div className="space-y-3 overflow-y-auto px-4 pb-6">
           <div className="relative">
-            <HugeiconsIcon
-              icon={Search01Icon}
+            <Icon
+              icon={SearchGlassIcon}
               className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
             />
             <Input
@@ -86,7 +88,7 @@ export function SwapTokenPicker({
                       <p className="truncate text-xs text-muted-foreground">{token.name}</p>
                     </div>
                     <p className="shrink-0 text-sm font-semibold tabular-nums">
-                      {formatTokenAmount(token.balance, token.decimals)}
+                      {hidden ? "••••••" : formatTokenAmount(token.balance, token.decimals)}
                     </p>
                   </Button>
                 </li>

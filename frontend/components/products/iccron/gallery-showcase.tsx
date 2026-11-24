@@ -3,22 +3,15 @@
 import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Clock01Icon,
-  GlobalIcon,
-  Analytics02Icon,
-  CpuIcon,
-  ZapIcon,
-  ShieldIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ClockGlassIcon, GlobeGlassIcon, ChartLineGlassIcon, CpuGlassIcon, ZapGlassIcon, ShieldGlassIcon } from "@thesvg/ui-react"
 
 const GALLERY_ITEMS = [
   {
     image: "/images/pages/iccron/precision-timer.jpg",
     title: "Nanosecond Canister Precision",
     badge: "Sub-Second",
-    icon: Clock01Icon,
+    icon: ClockGlassIcon,
     description:
       "Native IC 64-bit nanosecond canister timers wake up at the exact scheduled microsecond without server clock drift or cron jitter.",
     span: "col-span-12 lg:col-span-7",
@@ -27,7 +20,7 @@ const GALLERY_ITEMS = [
     image: "/images/pages/iccron/global-nodes.jpg",
     title: "Decentralized Subnet Consensus",
     badge: "Consensus-Backed",
-    icon: GlobalIcon,
+    icon: GlobeGlassIcon,
     description:
       "Replicated state machine running across dozens of sovereign data centers with automatic Byzantine fault tolerance.",
     span: "col-span-12 lg:col-span-5",
@@ -36,7 +29,7 @@ const GALLERY_ITEMS = [
     image: "/images/pages/iccron/execution-metrics.jpg",
     title: "Live Observability & Latency",
     badge: "Audit Trails",
-    icon: Analytics02Icon,
+    icon: ChartLineGlassIcon,
     description:
       "Instant inspection of execution latencies, HTTP response codes, Candid return payloads, and retry history.",
     span: "col-span-12 lg:col-span-4",
@@ -45,7 +38,7 @@ const GALLERY_ITEMS = [
     image: "/images/pages/iccron/autonomous-dispatch.jpg",
     title: "Autonomous Webhook Engine",
     badge: "Zero Servers",
-    icon: CpuIcon,
+    icon: CpuGlassIcon,
     description:
       "Trigger Next.js endpoints, Supabase edge functions, AWS Lambdas, or smart contracts without maintaining any server fleet.",
     span: "col-span-12 lg:col-span-4",
@@ -54,7 +47,7 @@ const GALLERY_ITEMS = [
     image: "/images/pages/iccron/instant-webhooks.jpg",
     title: "Threshold-Signed HTTPS Outcalls",
     badge: "Cryptographic",
-    icon: ZapIcon,
+    icon: ZapGlassIcon,
     description:
       "Outbound HTTP requests signed with subnet threshold keys, ensuring trustless execution and verified delivery.",
     span: "col-span-12 lg:col-span-4",
@@ -63,7 +56,7 @@ const GALLERY_ITEMS = [
     image: "/images/pages/iccron/decentralized-cloud.jpg",
     title: "Zero Single Point of Failure",
     badge: "High Availability",
-    icon: ShieldIcon,
+    icon: ShieldGlassIcon,
     description:
       "Unstoppable decentralized infrastructure immune to single cloud outages, region blackouts, or DNS hijacking.",
     span: "col-span-12",
@@ -102,7 +95,7 @@ export function GalleryShowcase() {
                 <div className="absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
                 <div className="absolute top-4 left-4 flex items-center gap-2">
                   <div className="flex size-8 items-center justify-center rounded-xl bg-background/80 backdrop-blur-md text-primary shadow-xs">
-                    <HugeiconsIcon icon={item.icon} className="size-4" />
+                    <Icon icon={item.icon} className="size-4" />
                   </div>
                   <Badge variant="secondary" className="bg-background/80 backdrop-blur-md text-xs font-semibold">
                     {item.badge}

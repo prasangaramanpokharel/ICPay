@@ -5,13 +5,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { useTheme } from "next-themes"
 import { PAGE_IMAGES } from "@/lib/public/page-images"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Copy01Icon,
-  Tick02Icon,
-  Package01Icon,
-  CommandLineIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CopyGlassIcon, CheckGlassOutlineIcon, PackageGlassIcon, TerminalGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Particles } from "@/components/ui/particles"
 import { ShineBorder } from "@/components/ui/shine-border"
@@ -91,7 +86,7 @@ export function PackagesHero() {
         <div className="mx-auto flex flex-col items-center space-y-3 pt-2">
           <div className="relative mx-auto flex w-full max-w-md items-center justify-between gap-3 rounded-xl border border-border/60 bg-card/80 px-4 py-2.5 shadow-sm backdrop-blur-xs">
             <ShineBorder
-              shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+              shineColor={["var(--primary)", "var(--accent)", "var(--success)"]}
               borderWidth={1.2}
               duration={10}
             />
@@ -106,10 +101,11 @@ export function PackagesHero() {
               className="size-7 shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer transition-colors"
               aria-label="Copy command"
             >
-              <HugeiconsIcon
-                icon={copied ? Tick02Icon : Copy01Icon}
-                className={`size-4 transition-colors ${copied ? "text-primary" : "text-muted-foreground"}`}
-              />
+              {copied ? (
+                <Icon icon={CheckGlassOutlineIcon} className="size-4 text-success" strokeWidth={2.5} />
+              ) : (
+                <Icon icon={CopyGlassIcon} className="size-4 text-muted-foreground" />
+              )}
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">
@@ -125,7 +121,7 @@ export function PackagesHero() {
             nativeButton={false}
             render={
               <Link href="/products/icFalcon">
-                <HugeiconsIcon icon={Package01Icon} className="size-3.5 text-primary" />
+                <Icon icon={PackageGlassIcon} className="size-3.5 text-primary" />
                 <span>ICFalcon Framework</span>
               </Link>
             }
@@ -137,7 +133,7 @@ export function PackagesHero() {
             nativeButton={false}
             render={
               <Link href="/products/icFalcon/commands">
-                <HugeiconsIcon icon={CommandLineIcon} className="size-3.5 text-primary" />
+                <Icon icon={TerminalGlassIcon} className="size-3.5 text-primary" />
                 <span>CLI Commands</span>
               </Link>
             }

@@ -12,6 +12,8 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import {
   Dialog,
   DialogContent,
@@ -175,8 +177,15 @@ export function PaymentLinkDialog({
                 <p className="break-all font-mono text-xs leading-relaxed text-foreground">
                   {generatedLink.replace(/^https?:\/\//, "")}
                 </p>
-                <Button variant="outline" onClick={handleCopy} className="w-full">
-                  {copied ? tc("copied") : t("copyLink")}
+                <Button variant="outline" onClick={handleCopy} className="w-full gap-1.5">
+                  {copied ? (
+                    <>
+                      <Icon icon={CheckGlassOutlineIcon} className="size-4 text-success" strokeWidth={2.5} />
+                      <span className="text-success font-medium">{tc("copied")}</span>
+                    </>
+                  ) : (
+                    t("copyLink")
+                  )}
                 </Button>
               </div>
             )}

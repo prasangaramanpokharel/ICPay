@@ -1,15 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  HelpCircleIcon,
-  ArrowDown01Icon,
-  CpuIcon,
-  FuelStationIcon,
-  Blockchain01Icon,
-  AiSecurity01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CircleQuestionMarkGlassIcon, ArrowDownGlassIcon, CpuGlassIcon, FuelGaugeGlassIcon, BlocksGlassIcon, ShieldCheckGlassIcon } from "@thesvg/ui-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
@@ -23,7 +16,7 @@ export function CanisterOverviewGuide() {
       <Collapsible open={open} onOpenChange={setOpen}>
         <div className="flex items-center justify-between p-4 sm:p-5">
           <div className="flex items-center gap-3">
-            <HugeiconsIcon icon={HelpCircleIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+            <Icon icon={CircleQuestionMarkGlassIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
             <div>
               <h3 className="text-sm font-semibold tracking-tight text-foreground">
                 Canister Architecture Guide
@@ -41,8 +34,8 @@ export function CanisterOverviewGuide() {
                 className="h-8 gap-1 px-2.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
               >
                 <span>{open ? "Hide guide" : "Learn more"}</span>
-                <HugeiconsIcon
-                  icon={ArrowDown01Icon}
+                <Icon
+                  icon={ArrowDownGlassIcon}
                   className={cn("size-3.5 transition-transform duration-200", open && "rotate-180")}
                 />
               </Button>
@@ -56,7 +49,7 @@ export function CanisterOverviewGuide() {
               {/* Reverse Gas Model */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={FuelStationIcon} className="size-4 text-primary" />
+                  <Icon icon={FuelGaugeGlassIcon} className="size-4 text-primary" />
                   <span>Reverse-Gas Model</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -67,7 +60,7 @@ export function CanisterOverviewGuide() {
               {/* Memory Model */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={CpuIcon} className="size-4 text-foreground" />
+                  <Icon icon={CpuGlassIcon} className="size-4 text-foreground" />
                   <span>WASM & Stable Memory</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -78,7 +71,7 @@ export function CanisterOverviewGuide() {
               {/* Lifecycle States */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={Blockchain01Icon} className="size-4 text-success" />
+                  <Icon icon={BlocksGlassIcon} className="size-4 text-success" />
                   <span>Lifecycle Management</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">
@@ -89,7 +82,7 @@ export function CanisterOverviewGuide() {
               {/* Subnet Consensus */}
               <div className="rounded-xl border border-border/40 bg-card/40 p-3.5 space-y-1.5">
                 <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                  <HugeiconsIcon icon={AiSecurity01Icon} className="size-4 text-destructive" />
+                  <Icon icon={ShieldCheckGlassIcon} className="size-4 text-destructive" />
                   <span>Subnet Replication</span>
                 </div>
                 <p className="text-xs leading-relaxed text-muted-foreground">

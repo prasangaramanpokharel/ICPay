@@ -2,17 +2,9 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowDown01Icon,
-  Copy01Icon,
-  Delete02Icon,
-  Download01Icon,
-  LinkSquare02Icon,
-  Tick02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CopyGlassIcon, DeleteGlassIcon, DownloadGlassIcon, ExternalLinkGlassIcon, CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { cn } from "@/lib/ui/utils"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import {
@@ -158,24 +150,25 @@ export function BucketFilePreviewPane({
       {isPublic && cdnUrl ? (
         <div className="mx-4 mb-2 rounded-xl border border-border/70 bg-card/60 p-2.5 backdrop-blur-xs">
           <div className="flex items-center justify-between text-xs mb-1">
-            <span className="flex items-center gap-1.5 font-medium text-foreground">
-              <span>CDN Link</span>
-              <span className="rounded bg-success/15 px-1 py-0.2 text-[9px] font-medium text-success">
-                Fast & Cached
-              </span>
-            </span>
+            <span className="font-medium text-foreground">CDN Link</span>
             <Button
               type="button"
               variant="ghost"
               size="xs"
               onClick={() => void handleCopy(cdnUrl, "cdn")}
-              className="h-5 gap-1 px-1.5 font-mono text-[10px] text-muted-foreground hover:text-foreground cursor-pointer"
+              className="h-5 gap-1.5 px-2 font-mono text-[10px] text-muted-foreground hover:text-foreground cursor-pointer"
             >
-              <HugeiconsIcon
-                icon={copiedMode === "cdn" ? Tick02Icon : Copy01Icon}
-                className="size-3 text-muted-foreground"
-              />
-              <span>{copiedMode === "cdn" ? "Copied" : "Copy"}</span>
+              {copiedMode === "cdn" ? (
+                <>
+                  <Icon icon={CheckGlassOutlineIcon} className="size-3.5 text-success" strokeWidth={2.5} />
+                  <span className="text-success font-medium">Copied</span>
+                </>
+              ) : (
+                <>
+                  <Icon icon={CopyGlassIcon} className="size-3 text-muted-foreground" />
+                  <span>Copy</span>
+                </>
+              )}
             </Button>
           </div>
           <p className="font-mono text-[10.5px] text-muted-foreground truncate select-all">{cdnUrl}</p>
@@ -204,7 +197,7 @@ export function BucketFilePreviewPane({
               onClick={handleDownload}
               className="flex-1 justify-center gap-1.5"
             >
-              <HugeiconsIcon icon={Download01Icon} className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+              <Icon icon={DownloadGlassIcon} className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
               <span>{downloading ? "Downloading…" : t("download")}</span>
             </Button>
 
@@ -218,22 +211,17 @@ export function BucketFilePreviewPane({
                       size="sm"
                       className="flex-1 justify-center gap-1.5 cursor-pointer"
                     >
-                      <HugeiconsIcon
-                        icon={copiedMode ? Tick02Icon : Copy01Icon}
-                        className={cn(
-                          "size-4 shrink-0 transition-colors",
-                          copiedMode ? "text-primary" : "text-muted-foreground"
-                        )}
-                        strokeWidth={1.75}
-                      />
-                      <span className="truncate">
-                        {copiedMode === "cdn"
-                          ? "Copied CDN!"
-                          : copiedMode === "raw"
-                            ? "Copied Raw!"
-                            : t("copyUrl")}
-                      </span>
-                      <HugeiconsIcon icon={ArrowDown01Icon} className="size-3 shrink-0 text-muted-foreground opacity-70" />
+                      {copiedMode ? (
+                        <>
+                          <Icon icon={CheckGlassOutlineIcon} className="size-4 text-success" strokeWidth={2.5} />
+                          <span className="truncate text-success font-medium">Copied</span>
+                        </>
+                      ) : (
+                        <>
+                          <Icon icon={CopyGlassIcon} className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+                          <span className="truncate">{t("copyUrl")}</span>
+                        </>
+                      )}
                     </Button>
                   }
                 />
@@ -288,7 +276,7 @@ export function BucketFilePreviewPane({
                 onClick={handleOpen}
                 className="flex-1 justify-center gap-1.5"
               >
-                <HugeiconsIcon icon={LinkSquare02Icon} className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+                <Icon icon={ExternalLinkGlassIcon} className="size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
                 <span>{t("openInNewTab")}</span>
               </Button>
             ) : null}
@@ -302,7 +290,7 @@ export function BucketFilePreviewPane({
                 onClick={() => setDeleteOpen(true)}
                 className="flex-1 justify-center gap-1.5 text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30"
               >
-                <HugeiconsIcon icon={Delete02Icon} className="size-4 shrink-0 text-destructive" strokeWidth={1.75} />
+                <Icon icon={DeleteGlassIcon} className="size-4 shrink-0 text-destructive" strokeWidth={1.75} />
                 <span>{t("delete")}</span>
               </Button>
             ) : null}

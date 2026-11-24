@@ -1,8 +1,8 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Cancel01Icon, Delete02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { XGlassIcon, DeleteGlassIcon } from "@thesvg/ui-react"
 import {
   ActionBar,
   ActionBarBody,
@@ -56,13 +56,13 @@ export function BucketSelectBar({
               {deleting ? (
                 <Spinner data-icon="inline-start" />
               ) : (
-                <HugeiconsIcon icon={Delete02Icon} className="size-3.5" strokeWidth={1.75} />
+                <Icon icon={DeleteGlassIcon} className="size-3.5" strokeWidth={1.75} />
               )}
               <span>{deleting ? tc("loading") : t("delete")}</span>
             </Button>
           ) : null}
           <ActionBarClose onClick={onClear} disabled={deleting} aria-label={tc("cancel")}>
-            <HugeiconsIcon icon={Cancel01Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={XGlassIcon} className="size-4" strokeWidth={1.75} />
           </ActionBarClose>
         </ActionBarBody>
       </ActionBarContent>

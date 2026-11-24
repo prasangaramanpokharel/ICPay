@@ -1,24 +1,16 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  CloudIcon,
-  Message01Icon,
-  ShieldIcon,
-  TerminalIcon,
-  UserIcon,
-  ViewIcon,
-} from "@hugeicons/core-free-icons"
+import { CloudGlassIcon, MessageSquareGlassIcon, ShieldGlassIcon, TerminalGlassIcon, UserGlassIcon, EyeGlassIcon } from "@thesvg/ui-react"
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 
 const FEATURE_CONFIG = [
-  { id: "0", icon: UserIcon },
-  { id: "1", icon: ShieldIcon },
-  { id: "2", icon: Message01Icon },
-  { id: "3", icon: CloudIcon },
-  { id: "4", icon: TerminalIcon },
-  { id: "5", icon: ViewIcon },
+  { id: "0", icon: UserGlassIcon },
+  { id: "1", icon: ShieldGlassIcon },
+  { id: "2", icon: MessageSquareGlassIcon },
+  { id: "3", icon: CloudGlassIcon },
+  { id: "4", icon: TerminalGlassIcon },
+  { id: "5", icon: EyeGlassIcon },
 ] as const
 
 export function LandingFeatures() {
@@ -40,15 +32,14 @@ export function LandingFeatures() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {FEATURE_CONFIG.map(({ id, icon: Icon }) => (
+          {FEATURE_CONFIG.map(({ id, icon: FeatureIcon }) => (
             <Card
               key={id}
               className="group border-border/60 bg-card shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-md"
             >
               <CardHeader className="gap-3.5 p-6">
                 <div className="flex items-center gap-2.5">
-                  <HugeiconsIcon
-                    icon={Icon}
+                  <FeatureIcon
                     className="size-5 shrink-0 text-primary transition-transform duration-200 group-hover:scale-105"
                     strokeWidth={1.75}
                   />

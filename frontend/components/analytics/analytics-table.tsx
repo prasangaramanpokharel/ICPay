@@ -31,8 +31,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon, FilterIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { SearchGlassIcon, FunnelGlassIcon } from "@thesvg/ui-react"
 import type { TransactionPublic } from "@/services/types"
 import {
   formatTime,
@@ -42,6 +42,7 @@ import {
 } from "@/lib/wallet/utils"
 import { cn } from "@/lib/ui/utils"
 import { ICP_LEDGER_ID } from "@/services/tokens"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 
 type AnalyticsTableProps = {
   rows: TransactionPublic[]
@@ -73,6 +74,7 @@ function getPageItems(current: number, total: number): (number | "ellipsis")[] {
 export function AnalyticsTable({ rows }: AnalyticsTableProps) {
   const t = useTranslations("analytics")
   const tt = useTranslations("transactions")
+  const { hidden } = useBalanceVisibility()
 
   const [search, setSearch] = React.useState("")
   const [typeFilter, setTypeFilter] = React.useState<string>("all")
@@ -136,8 +138,8 @@ export function AnalyticsTable({ rows }: AnalyticsTableProps) {
     <div className="space-y-3">
       <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1">
-          <HugeiconsIcon
-            icon={Search01Icon}
+          <Icon
+            icon={SearchGlassIcon}
             className="absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground"
           />
           <Input
@@ -209,7 +211,7 @@ export function AnalyticsTable({ rows }: AnalyticsTableProps) {
 
           {(search !== "" || typeFilter !== "all" || statusFilter !== "all") && (
             <Button variant="ghost" size="sm" onClick={handleResetFilters} className="h-8.5 text-xs">
-              <HugeiconsIcon icon={FilterIcon} className="size-3 mr-1" />
+              <Icon icon={FunnelGlassIcon} className="size-3 mr-1" />
               Reset
             </Button>
           )}
@@ -249,7 +251,7 @@ export function AnalyticsTable({ rows }: AnalyticsTableProps) {
                       {tt(`type.${typeKey}` as "type.deposit")}
                     </TableCell>
                     <TableCell className="px-3 py-2.5 font-medium tabular-nums">
-                      {formatTokenAmount(tx.amount, 8)} {token}
+                      {hidden ? "••••••" : formatTokenAmount(tx.amount, 8)} {token}
                     </TableCell>
                     <TableCell className="max-w-[140px] px-3 py-2.5">
                       <div className="flex items-center gap-1">

@@ -2,17 +2,8 @@
 
 import { useLayoutEffect, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  CodeIcon,
-  Link01Icon,
-  QuoteUpIcon,
-  SentIcon,
-  SmileIcon,
-  TextBoldIcon,
-  TextItalicIcon,
-  ViewOffIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CodeGlassIcon, LinkGlassIcon, QuoteGlassIcon, SendGlassIcon, EmojiReactGlassIcon, TypeGlassIcon, TypeOutlineGlassIcon, EyeOffGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import {
@@ -173,7 +164,7 @@ export function CommunityComposer({
                   onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "*", "*"))}
                   className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
                 >
-                  <HugeiconsIcon icon={TextBoldIcon} className="size-3.5" />
+                  <Icon icon={TypeGlassIcon} className="size-3.5" />
                 </Button>
               }
             />
@@ -190,7 +181,7 @@ export function CommunityComposer({
                   onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "_", "_"))}
                   className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
                 >
-                  <HugeiconsIcon icon={TextItalicIcon} className="size-3.5" />
+                  <Icon icon={TypeOutlineGlassIcon} className="size-3.5" />
                 </Button>
               }
             />
@@ -207,7 +198,7 @@ export function CommunityComposer({
                   onClick={() => withSelection(insertLink)}
                   className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
                 >
-                  <HugeiconsIcon icon={Link01Icon} className="size-3.5" />
+                  <Icon icon={LinkGlassIcon} className="size-3.5" />
                 </Button>
               }
             />
@@ -224,7 +215,7 @@ export function CommunityComposer({
                   onClick={() => withSelection(prefixQuoteLines)}
                   className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
                 >
-                  <HugeiconsIcon icon={QuoteUpIcon} className="size-3.5" />
+                  <Icon icon={QuoteGlassIcon} className="size-3.5" />
                 </Button>
               }
             />
@@ -241,7 +232,7 @@ export function CommunityComposer({
                   onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "`", "`"))}
                   className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
                 >
-                  <HugeiconsIcon icon={CodeIcon} className="size-3.5" />
+                  <Icon icon={CodeGlassIcon} className="size-3.5" />
                 </Button>
               }
             />
@@ -258,7 +249,7 @@ export function CommunityComposer({
                   onClick={() => withSelection((v, s, e) => wrapMarkers(v, s, e, "||", "||"))}
                   className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
                 >
-                  <HugeiconsIcon icon={ViewOffIcon} className="size-3.5" />
+                  <Icon icon={EyeOffGlassIcon} className="size-3.5" />
                 </Button>
               }
             />
@@ -274,7 +265,7 @@ export function CommunityComposer({
                   size="icon-xs"
                   className="size-7 rounded-lg text-muted-foreground hover:text-foreground ml-1"
                 >
-                  <HugeiconsIcon icon={SmileIcon} className="size-3.5" />
+                  <Icon icon={EmojiReactGlassIcon} className="size-3.5" />
                 </Button>
               }
             />
@@ -343,7 +334,7 @@ export function CommunityComposer({
           {submitting ? (
             <Spinner className="size-4" />
           ) : (
-            <HugeiconsIcon icon={SentIcon} className="size-4" strokeWidth={2} />
+            <Icon icon={SendGlassIcon} className="size-4" strokeWidth={2} />
           )}
         </Button>
       </div>

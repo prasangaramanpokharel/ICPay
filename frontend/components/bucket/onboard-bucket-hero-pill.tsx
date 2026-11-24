@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import { toast } from "@/components/ui/sonner"
 import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { WALLET_CANISTER_ID } from "@/services/icp"
@@ -93,7 +95,14 @@ Please help me implement file upload/download operations with ICBucket in my pro
       className="group inline-flex items-center gap-2.5 sm:gap-3.5 rounded-full border border-border/80 bg-card/80 hover:bg-card px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-foreground transition-all duration-200 cursor-pointer shadow-xs backdrop-blur-xs hover:border-border hover:shadow-md"
       title={t("onboardAgentTooltip")}
     >
-      <span className="font-semibold tracking-tight">{copied ? t("onboardAgentCopied") : t("onboardAgentTitle")}</span>
+      {copied ? (
+        <span className="inline-flex items-center gap-1.5 text-success font-semibold tracking-tight">
+          <Icon icon={CheckGlassOutlineIcon} className="size-4 text-success" strokeWidth={2.5} />
+          <span>{t("onboardAgentCopied")}</span>
+        </span>
+      ) : (
+        <span className="font-semibold tracking-tight">{t("onboardAgentTitle")}</span>
+      )}
       <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 pl-1">
         <ClaudeCodeIcon className="size-4 sm:size-5 shrink-0" />
         <CursorIcon className="size-4 sm:size-5 shrink-0" />

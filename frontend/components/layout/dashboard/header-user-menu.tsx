@@ -3,8 +3,8 @@
 import Link from "next/link"
 import { useMemo } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { BookOpen02Icon, Logout01Icon, Settings01Icon, UserIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { BookOpenGlassIcon, LogOutGlassIcon, SettingsGlassIcon, UserGlassIcon } from "@thesvg/ui-react"
 import {
   Avatar,
   AvatarFallback,
@@ -79,21 +79,21 @@ export function HeaderUserMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem render={<Link href="/profile" />}>
-            <HugeiconsIcon icon={UserIcon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={UserGlassIcon} className="size-4" strokeWidth={1.75} />
             {t("items.profile")}
           </DropdownMenuItem>
           <DropdownMenuItem render={<Link href="/blog" />}>
-            <HugeiconsIcon icon={BookOpen02Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={BookOpenGlassIcon} className="size-4" strokeWidth={1.75} />
             {t("items.blog")}
           </DropdownMenuItem>
           <DropdownMenuItem render={<Link href="/settings" />}>
-            <HugeiconsIcon icon={Settings01Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={SettingsGlassIcon} className="size-4" strokeWidth={1.75} />
             {t("items.settings")}
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => void logout()}>
-          <HugeiconsIcon icon={Logout01Icon} className="size-4" strokeWidth={1.75} />
+          <Icon icon={LogOutGlassIcon} className="size-4" strokeWidth={1.75} />
           {t("signOut")}
         </DropdownMenuItem>
       </DropdownMenuContent>

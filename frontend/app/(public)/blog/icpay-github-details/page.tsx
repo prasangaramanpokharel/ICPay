@@ -14,15 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  GitForkIcon,
-  GitCommitIcon,
-  Clock01Icon,
-  LinkSquare02Icon,
-  SourceCodeIcon,
-  Folder01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { GitForkGlassIcon, CommitGraphGlassIcon, ClockGlassIcon, ExternalLinkGlassIcon, CodeGlassIcon, FolderGlassIcon } from "@thesvg/ui-react"
 
 const SLUG = "icpay-github-details"
 const TITLE = "Inside the ICPay GitHub Repository: Codebase Architecture, 641 Commits, and 311K+ Lines of Decentralized Code"
@@ -199,7 +192,7 @@ export default function IcpayGithubDetailsPage() {
           <Card className="rounded-2xl border border-border bg-card p-5 space-y-1">
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-xs font-semibold">Total Commits</span>
-              <HugeiconsIcon icon={GitCommitIcon} className="size-4 text-primary" />
+              <Icon icon={CommitGraphGlassIcon} className="size-4 text-primary" />
             </div>
             <p className="font-mono text-3xl font-black text-foreground">641</p>
             <p className="text-[11px] text-muted-foreground">Verified Git revisions</p>
@@ -208,7 +201,7 @@ export default function IcpayGithubDetailsPage() {
           <Card className="rounded-2xl border border-border bg-card p-5 space-y-1">
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-xs font-semibold">Active Days</span>
-              <HugeiconsIcon icon={Clock01Icon} className="size-4 text-primary" />
+              <Icon icon={ClockGlassIcon} className="size-4 text-primary" />
             </div>
             <p className="font-mono text-3xl font-black text-foreground">69 Days</p>
             <p className="text-[11px] text-muted-foreground">~9.3 commits per active day</p>
@@ -217,7 +210,7 @@ export default function IcpayGithubDetailsPage() {
           <Card className="rounded-2xl border border-border bg-card p-5 space-y-1">
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-xs font-semibold">Total Source Lines</span>
-              <HugeiconsIcon icon={SourceCodeIcon} className="size-4 text-primary" />
+              <Icon icon={CodeGlassIcon} className="size-4 text-primary" />
             </div>
             <p className="font-mono text-3xl font-black text-foreground">311,769</p>
             <p className="text-[11px] text-muted-foreground">Across 1,978 code files</p>
@@ -226,7 +219,7 @@ export default function IcpayGithubDetailsPage() {
           <Card className="rounded-2xl border border-border bg-card p-5 space-y-1">
             <div className="flex items-center justify-between text-muted-foreground">
               <span className="text-xs font-semibold">Tracked Objects</span>
-              <HugeiconsIcon icon={Folder01Icon} className="size-4 text-primary" />
+              <Icon icon={FolderGlassIcon} className="size-4 text-primary" />
             </div>
             <p className="font-mono text-3xl font-black text-foreground">2,931</p>
             <p className="text-[11px] text-muted-foreground">Files, assets, and diagrams</p>
@@ -343,7 +336,7 @@ export default function IcpayGithubDetailsPage() {
               />
             }
           >
-            <HugeiconsIcon icon={GitForkIcon} className="size-4" />
+            <Icon icon={GitForkGlassIcon} className="size-4" />
             GitHub Repository
           </Button>
           <Button
@@ -359,7 +352,7 @@ export default function IcpayGithubDetailsPage() {
               />
             }
           >
-            <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" />
+            <Icon icon={ExternalLinkGlassIcon} className="size-4" />
             GitLab Mirror
           </Button>
         </div>

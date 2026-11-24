@@ -4,15 +4,15 @@ import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Add01Icon, Book02Icon, CloudIcon, Key01Icon, PlayIcon, Search01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { PlusGlassIcon, BookGlassIcon, CloudGlassIcon, KeyGlassIcon, PlayGlassIcon, SearchGlassIcon } from "@thesvg/ui-react"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { BucketCard } from "@/components/bucket/bucket-card"
 import { BucketCreateForm } from "@/components/bucket/bucket-create-form"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { ShineBorder } from "@/components/ui/shine-border"
 import {
   Dialog,
@@ -26,6 +26,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
   TableBody,
+  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -109,7 +110,7 @@ export function BucketListPanel() {
               nativeButton={false}
               render={<Link href="/bucket/api" />}
             >
-              <HugeiconsIcon icon={Key01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+              <Icon icon={KeyGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
               <span>API</span>
             </Button>
             <Button
@@ -119,7 +120,7 @@ export function BucketListPanel() {
               nativeButton={false}
               render={<Link href="/bucket/docs" />}
             >
-              <HugeiconsIcon icon={Book02Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+              <Icon icon={BookGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
               <span>Docs</span>
             </Button>
             <Button
@@ -128,12 +129,12 @@ export function BucketListPanel() {
               className="gap-1.5 text-xs font-medium"
               onClick={() => setGuideOpen(true)}
             >
-              <HugeiconsIcon icon={PlayIcon} className="size-3.5 text-primary fill-primary/20" strokeWidth={1.75} />
+              <Icon icon={PlayGlassIcon} className="size-3.5 text-primary fill-primary/20" strokeWidth={1.75} />
               <span>{t("docs")}</span>
             </Button>
           </ButtonGroup>
           <Button size="sm" onClick={() => setCreateOpen(true)} className="gap-1.5">
-            <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={PlusGlassIcon} className="size-4" strokeWidth={1.75} />
             {t("createCta")}
           </Button>
         </>
@@ -141,8 +142,8 @@ export function BucketListPanel() {
     >
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <div className="relative flex-1">
-          <HugeiconsIcon
-            icon={Search01Icon}
+          <Icon
+            icon={SearchGlassIcon}
             className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
           />
           <Input
@@ -173,25 +174,62 @@ export function BucketListPanel() {
       </div>
 
       {isLoading && buckets.length === 0 ? (
-        <Card>
-          <CardContent className="space-y-2 py-4">
-            {Array.from({ length: 4 }, (_, i) => (
-              <Skeleton key={i} className="h-12 w-full rounded-lg" />
-            ))}
-          </CardContent>
+        <Card className="overflow-hidden py-0">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>{t("name")}</TableHead>
+                <TableHead>{t("visibility")}</TableHead>
+                <TableHead>{t("usage")}</TableHead>
+                <TableHead>{tAnalytics("colStatus")}</TableHead>
+                <TableHead>Expires</TableHead>
+                <TableHead className="w-10" />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i}>
+                  <TableCell>
+                    <div className="flex items-center gap-2.5">
+                      <Skeleton className="size-4 shrink-0 rounded" />
+                      <Skeleton className="h-4 w-32 rounded-md" />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-16 rounded-full" />
+                  </TableCell>
+                  <TableCell>
+                    <div className="space-y-1.5">
+                      <Skeleton className="h-3.5 w-24 rounded-md" />
+                      <Skeleton className="h-1.5 w-28 rounded-full" />
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-16 rounded-full" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-3.5 w-24 rounded-md" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="size-4 rounded" />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </Card>
       ) : filtered.length === 0 ? (
-        <Empty className="rounded-2xl border border-dashed py-14">
+        <Empty className="rounded-(--radius) border border-dashed py-14">
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <HugeiconsIcon icon={CloudIcon} className="size-6 text-muted-foreground" strokeWidth={1.75} />
+              <Icon icon={CloudGlassIcon} className="size-6 text-muted-foreground" strokeWidth={1.75} />
             </EmptyMedia>
             <EmptyTitle>{t("empty")}</EmptyTitle>
             <EmptyDescription>{t("emptyHint")}</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Button onClick={() => setCreateOpen(true)} className="gap-1.5">
-              <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={1.75} />
+              <Icon icon={PlusGlassIcon} className="size-4" strokeWidth={1.75} />
               {t("createCta")}
             </Button>
           </EmptyContent>
@@ -240,7 +278,7 @@ export function BucketListPanel() {
         <DialogContent className="max-w-2xl sm:max-w-3xl overflow-hidden p-0">
           <DialogHeader className="p-4 pb-3 border-b border-border/60">
             <DialogTitle className="flex items-center gap-2">
-              <HugeiconsIcon icon={PlayIcon} className="size-4 text-primary fill-primary/20" strokeWidth={1.75} />
+              <Icon icon={PlayGlassIcon} className="size-4 text-primary fill-primary/20" strokeWidth={1.75} />
               How to create an icBucket
             </DialogTitle>
             <DialogDescription>

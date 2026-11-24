@@ -9,6 +9,7 @@ import { SwrProvider } from "@/components/swr-provider"
 import { LocaleProvider } from "@/components/i18n/locale-provider"
 import { AutoLocale } from "@/components/i18n/auto-locale"
 import { FiatProvider } from "@/components/fiat/fiat-provider"
+import { BalanceVisibilityProvider } from "@/components/wallet/balance-visibility-provider"
 import { cn } from "@/lib/ui/utils"
 import { SiteAnalytics } from "@/components/analytics/site-analytics"
 import { IncomingBalanceNotifier } from "@/components/wallet/incoming-balance-notifier"
@@ -180,14 +181,16 @@ export default function RootLayout({
           <LocaleProvider>
             <AutoLocale />
             <FiatProvider>
-              <SwrProvider>
-                <MotionProvider>
-                  <AuthProvider>
-                    <IncomingBalanceNotifier />
-                    {children}
-                  </AuthProvider>
-                </MotionProvider>
-              </SwrProvider>
+              <BalanceVisibilityProvider>
+                <SwrProvider>
+                  <MotionProvider>
+                    <AuthProvider>
+                      <IncomingBalanceNotifier />
+                      {children}
+                    </AuthProvider>
+                  </MotionProvider>
+                </SwrProvider>
+              </BalanceVisibilityProvider>
             </FiatProvider>
           </LocaleProvider>
         </ThemeProvider>

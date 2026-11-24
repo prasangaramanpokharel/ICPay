@@ -2,14 +2,8 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  BookmarkAdd01Icon,
-  Bookmark02Icon,
-  ArrowUpRight01Icon,
-  InboxIcon,
-  Cancel01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { BookmarkGlassIcon, ArrowUpRightGlassIcon, InboxGlassIcon, XGlassIcon } from "@thesvg/ui-react"
 import { Spinner } from "@/components/ui/spinner"
 import {
   Drawer,
@@ -71,7 +65,7 @@ export function BookmarkDrawer({
         <div className="space-y-0.5 px-4 pb-6">
           {usable.length === 0 ? (
             <div className="py-10 text-center">
-              <HugeiconsIcon icon={InboxIcon} className="mx-auto size-8 text-muted-foreground/40" />
+              <Icon icon={InboxGlassIcon} className="mx-auto size-8 text-muted-foreground/40" />
               <p className="mt-3 text-sm font-medium">{t("empty")}</p>
               <p className="mt-1 text-xs text-muted-foreground">{t("emptyHint")}</p>
             </div>
@@ -141,8 +135,8 @@ export function BookmarkButton({
       {loading ? (
         <Spinner className="size-4" />
       ) : (
-        <HugeiconsIcon
-          icon={isBookmarked ? Bookmark02Icon : BookmarkAdd01Icon}
+        <Icon
+          icon={isBookmarked ? BookmarkGlassIcon : BookmarkGlassIcon}
           className="size-4"
           strokeWidth={1.75}
         />
@@ -207,7 +201,7 @@ function BookmarkRow({
             aria-label={t("sendTo", { name: username })}
             onClick={pick}
           >
-            <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={ArrowUpRightGlassIcon} className="size-4" strokeWidth={1.75} />
           </Button>
         )}
         <Button
@@ -218,7 +212,7 @@ function BookmarkRow({
           aria-label={tc("close")}
           onClick={onRemove}
         >
-          <HugeiconsIcon icon={Cancel01Icon} className="size-4" strokeWidth={1.75} />
+          <Icon icon={XGlassIcon} className="size-4" strokeWidth={1.75} />
         </Button>
       </div>
     </div>

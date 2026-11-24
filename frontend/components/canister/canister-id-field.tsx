@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { ArrowUpDownIcon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { ArrowUpDownGlassIcon } from "@thesvg/ui-react"
+import { Icon } from "@/components/ui/icon"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -61,7 +61,7 @@ export function CanisterIdField({
               }
             >
               <span className="hidden sm:inline">{t("choose")}</span>
-              <HugeiconsIcon icon={ArrowUpDownIcon} className="size-4 opacity-70" />
+              <Icon icon={ArrowUpDownGlassIcon} className="size-4 opacity-70" />
             </PopoverTrigger>
             <PopoverContent align="end" className="w-[min(100vw-2rem,22rem)] p-1">
               <p className="px-2 py-1.5 text-[11px] font-medium text-muted-foreground">

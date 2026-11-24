@@ -5,14 +5,8 @@ import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import useSWR from "swr"
 import { toast } from "@/components/ui/sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Camera01Icon,
-  Download01Icon,
-  InformationCircleIcon,
-  Delete02Icon,
-  RotateLeft01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CameraGlassIcon, DownloadGlassIcon, InfoGlassIcon, DeleteGlassIcon, RotateCcwGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -153,13 +147,13 @@ export function SnapshotsCard({
         <CardHeader className="flex flex-col gap-4 border-b border-border/40 pb-4 sm:flex-row sm:items-center sm:justify-between p-0">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <HugeiconsIcon icon={Camera01Icon} className="size-4 text-muted-foreground" strokeWidth={1.5} />
+              <Icon icon={CameraGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.5} />
               <CardTitle className="text-base font-semibold text-foreground">
                 {t("snapshotsTitle")}
               </CardTitle>
               <HoverCard>
                 <HoverCardTrigger className="cursor-help inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
-                  <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5 text-muted-foreground/70" />
+                  <Icon icon={InfoGlassIcon} className="size-3.5 text-muted-foreground/70" />
                 </HoverCardTrigger>
                 <HoverCardContent className="w-80 space-y-2 text-xs">
                   <p className="font-semibold text-foreground">Canister State Snapshots</p>
@@ -182,7 +176,7 @@ export function SnapshotsCard({
               onClick={() => void onTake()}
               className="h-8 gap-1.5 text-xs cursor-pointer"
             >
-              <HugeiconsIcon icon={Camera01Icon} className="size-3.5" />
+              <Icon icon={CameraGlassIcon} className="size-3.5" />
               <span>{t("takeSnapshot")}</span>
             </Button>
           </div>
@@ -191,7 +185,7 @@ export function SnapshotsCard({
         <CardContent className="space-y-4 p-0">
           {canControl === false && isAuthenticated && (
             <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center space-y-2">
-              <HugeiconsIcon icon={InformationCircleIcon} className="size-5 text-muted-foreground mx-auto" />
+              <Icon icon={InfoGlassIcon} className="size-5 text-muted-foreground mx-auto" />
               <p className="text-xs font-medium text-foreground">{t("controllersOnly")}</p>
               <p className="text-xs text-muted-foreground max-w-md mx-auto">
                 {t("restrictedBody")}
@@ -251,7 +245,7 @@ export function SnapshotsCard({
                               onClick={() => setConfirm({ kind: "load", id: row.id })}
                               className="h-7 text-xs cursor-pointer gap-1"
                             >
-                              <HugeiconsIcon icon={RotateLeft01Icon} className="size-3" />
+                              <Icon icon={RotateCcwGlassIcon} className="size-3" />
                               <span>{t("restore")}</span>
                             </Button>
                             <Button
@@ -262,7 +256,7 @@ export function SnapshotsCard({
                               onClick={() => setDownloadSnapshotId(row.id)}
                               className="h-7 text-xs cursor-pointer gap-1"
                             >
-                              <HugeiconsIcon icon={Download01Icon} className="size-3" />
+                              <Icon icon={DownloadGlassIcon} className="size-3" />
                               <span>{t("download")}</span>
                             </Button>
                             <Button
@@ -273,7 +267,7 @@ export function SnapshotsCard({
                               onClick={() => setConfirm({ kind: "delete", id: row.id })}
                               className="h-7 text-xs cursor-pointer gap-1"
                             >
-                              <HugeiconsIcon icon={Delete02Icon} className="size-3" />
+                              <Icon icon={DeleteGlassIcon} className="size-3" />
                               <span>{t("clear")}</span>
                             </Button>
                           </div>

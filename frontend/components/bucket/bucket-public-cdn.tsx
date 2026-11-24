@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
+import { Icon } from "@/components/ui/icon"
+import { CdnCacheGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { ButtonGroup } from "@/components/ui/button-group"
@@ -50,7 +52,10 @@ export function BucketPublicCdn({ publicBaseUrl }: { publicBaseUrl: string }) {
             size="sm"
             className="w-full justify-between text-muted-foreground"
           >
-            <span>{t("publicCdn")}</span>
+            <span className="flex items-center gap-1.5">
+              <Icon icon={CdnCacheGlassIcon} className="size-4 text-muted-foreground" />
+              <span>{t("publicCdn")}</span>
+            </span>
           </Button>
         }
       />

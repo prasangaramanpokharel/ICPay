@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState, useSyncExternalStore } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { InformationCircleIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { InfoGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -55,7 +55,7 @@ function FieldHint({ label, tip }: { label: string; tip: string }) {
           className="inline-flex text-muted-foreground hover:text-foreground"
           aria-label={tip}
         >
-          <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5" strokeWidth={1.75} />
+          <Icon icon={InfoGlassIcon} className="size-3.5" strokeWidth={1.75} />
         </TooltipTrigger>
         <TooltipContent className="max-w-xs text-xs">{tip}</TooltipContent>
       </Tooltip>

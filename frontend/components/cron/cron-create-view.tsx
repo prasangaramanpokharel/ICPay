@@ -8,8 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Spinner } from "@/components/ui/spinner"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon, Folder01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowLeftGlassIcon, CronJobGlassIcon, FolderGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import { listProjects } from "@/services/cron/client"
 import type { RemoteProjectRecord } from "@/services/cron/types"
@@ -95,13 +95,13 @@ function CronCreateContent() {
           render={<Link href={backHref} />}
           className="gap-1.5 text-xs text-muted-foreground hover:text-foreground -ml-2"
         >
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
+          <Icon icon={ArrowLeftGlassIcon} className="size-4" />
           <span>{backLabel}</span>
         </Button>
 
         {projects.length > 1 && (
           <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={Folder01Icon} className="size-3.5 text-muted-foreground" />
+            <Icon icon={FolderGlassIcon} className="size-3.5 text-muted-foreground" />
             <span className="text-xs text-muted-foreground">{t("project")}:</span>
             <NativeSelect
               value={selectedProjectId?.toString() ?? ""}
@@ -132,10 +132,10 @@ function CronCreateContent() {
           <Spinner className="size-6 text-primary" />
         </div>
       ) : projects.length === 0 ? (
-        <Empty className="rounded-2xl border border-dashed py-14">
+        <Empty className="rounded-(--radius) border border-dashed py-14">
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <HugeiconsIcon icon={Folder01Icon} className="size-6 text-muted-foreground" />
+              <Icon icon={CronJobGlassIcon} className="size-6 text-muted-foreground" />
             </EmptyMedia>
             <EmptyTitle>{t("noProjectsTitle")}</EmptyTitle>
             <EmptyDescription>

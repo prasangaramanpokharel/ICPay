@@ -72,13 +72,18 @@ function avatarDataUri(seed: string): string {
 }
 
 async function qrDataUri(blockIndex: bigint): Promise<string> {
-  const mod = await import("qrcode")
-  return mod.toDataURL(explorerTxUrl(blockIndex), {
-    errorCorrectionLevel: "M",
-    margin: 0,
-    width: 512,
-    color: { dark: "#000000", light: "#ffffff" },
+  const { toSVGString } = await import("@ttsalpha/qrcode")
+  const svg = toSVGString({
+    value: explorerTxUrl(blockIndex),
+    size: 160,
+    margin: 1,
+    dotStyle: "rounded",
+    corner: {
+      square: { style: "extra-rounded" },
+      dot: { style: "rounded" },
+    },
   })
+  return `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svg)))}`
 }
 
 export async function receiptSvg(receipt: Receipt): Promise<string> {

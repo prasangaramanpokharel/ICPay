@@ -1,8 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowLeftGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 import type { BucketDocNavGroup } from "@/lib/bucket/docs/types"
 
 type BucketDocsPaginationProps = {
@@ -34,8 +34,8 @@ export function BucketDocsPagination({ currentSlug, navGroups }: BucketDocsPagin
           className="group flex flex-1 flex-col items-start rounded-xl border border-border/60 bg-card p-4 transition-all hover:border-border hover:bg-muted/30"
         >
           <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
-            <HugeiconsIcon
-              icon={ArrowLeft01Icon}
+            <Icon
+              icon={ArrowLeftGlassIcon}
               className="size-3.5 transition-transform group-hover:-translate-x-0.5"
               strokeWidth={1.75}
             />
@@ -56,8 +56,8 @@ export function BucketDocsPagination({ currentSlug, navGroups }: BucketDocsPagin
         >
           <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
             Next
-            <HugeiconsIcon
-              icon={ArrowRight01Icon}
+            <Icon
+              icon={ArrowRightGlassIcon}
               className="size-3.5 transition-transform group-hover:translate-x-0.5"
               strokeWidth={1.75}
             />

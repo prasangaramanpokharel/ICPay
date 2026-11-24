@@ -398,14 +398,20 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "符号",
+    "colName": "名称",
+    "colQuantity": "数量",
+    "colValue": "价值",
+    "totalIcpBalance": "ICP 总余额",
+    "yourAssets": "您的资产"
   },
   "token": {
     "back": "钱包",
     "notFound": "无法加载此代币。",
     "send": "发送",
     "deposit": "充值",
-    "depositTitle": "充值地址",
+    "depositTitle": "充值",
     "depositSubtitle": "将 {symbol} 发送至此以充值钱包。",
     "warning": "请仅向此地址转入 {symbol}，其他代币将会丢失。",
     "selfCustodyTitle": "在 ICPay 之外持有",
@@ -422,7 +428,7 @@
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
     "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet.",
-    "historyTitle": "On-chain history",
+    "historyTitle": "历史",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
@@ -451,7 +457,8 @@
     "suggested": "为您推荐",
     "noneFound": "未找到与“{query}”相关的用户。",
     "empty": "暂无设置用户名的账户，快来抢先注册。",
-    "premium": "已验证的高级名称"
+    "premium": "已验证的高级名称",
+    "subtitle": "探索全网用户个人资料"
   },
   "success": {
     "send": "发送成功",
@@ -1415,6 +1422,10 @@
         "charity": {
           "title": "慈善",
           "description": "政府官方救灾捐赠二维码。"
+        },
+        "downloads": {
+          "title": "下载",
+          "description": "适用于 macOS、Windows 和 Linux 的桌面客户端。"
         }
       },
       "sectionMore": "更多",
@@ -1481,7 +1492,8 @@
         "terms": "服务条款",
         "privacy": "隐私",
         "transparency": "透明度",
-        "charity": "慈善"
+        "charity": "慈善",
+        "downloads": "下载"
       },
       "community": {
         "github": "GitLab",
@@ -2127,6 +2139,87 @@
             "answer": "是的。ICFalcon 是开源的。源代码按原样提供供使用和修改。Hub 软件包按其 icp-hub 条目中的许可授权。"
           }
         }
+      }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "新功能",
+        "version": "桌面版 v1.0.0",
+        "platforms": "· macOS、Windows 和 Linux"
+      },
+      "hero": {
+        "title": "下载 ICPay 桌面版",
+        "description": "专为桌面打造的原生托管型 ICP 钱包。快速、安全，并仅通过 Internet Identity 验证。"
+      },
+      "primary": {
+        "downloadMac": "下载 Mac 版",
+        "downloadWindows": "下载 Windows 版",
+        "downloadLinux": "下载 Linux 版",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 & 11 (64位) · 84 MB",
+        "linuxSubtitle": "x64 Tarball · 98 MB",
+        "releaseHashes": "发行版哈希"
+      },
+      "dropdown": {
+        "ariaLabel": "选择桌面平台",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64位)",
+        "windowsPortable": "Windows 便携版",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "适用于 Apple Silicon 和 Intel 设备的通用安装包。",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Intel 架构",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon 便携版",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "64位安装程序与便携式可执行文件压缩包。",
+          "installerTitle": "安装程序",
+          "installerSub": "NSIS 安装包 · EXE",
+          "portableTitle": "便携压缩包",
+          "portableSub": "x64 二进制 · ZIP",
+          "archTitle": "架构",
+          "archSub": "x86_64 已验证",
+          "supportedBadge": "已支持"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "适用于 Ubuntu、Debian、Fedora、Arch 的发行版压缩包。",
+          "tarballTitle": "分发包 Tarball",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "兼容 RPM",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "兼容 DEB"
+        }
+      },
+      "hashes": {
+        "title": "加密完整性验证 (SHA-256)",
+        "description": "直接在终端中验证校验和，确保二进制文件原装未篡改。",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "复制",
+        "copied": "已复制",
+        "toastSuccess": "SHA-256 哈希已复制到剪贴板",
+        "toastError": "复制哈希失败"
+      },
+      "features": {
+        "custodyTitle": "托管架构",
+        "custodyDesc": "专由 Internet Identity 认证。本地绝不存储助记词、明文密钥或密码。",
+        "perfTitle": "原生性能",
+        "perfDesc": "由 Electron 33 提供硬件加速渲染与密码学计算，内存占用极低。",
+        "edgeTitle": "Cloudflare 边缘分发",
+        "edgeDesc": "全球 R2 对象存储，覆盖 330 多个边缘节点，零流出限速。"
       }
     }
   },

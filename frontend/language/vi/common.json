@@ -448,7 +448,13 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Ký hiệu",
+    "colName": "Tên",
+    "colQuantity": "Số lượng",
+    "colValue": "Giá trị",
+    "totalIcpBalance": "Tổng số dư ICP",
+    "yourAssets": "Tài sản của bạn"
   },
   "token": {
     "back": "Ví",
@@ -456,7 +462,7 @@
     "send": "Gửi",
     "deposit": "Nạp",
     "swap": "Hoán đổi",
-    "depositTitle": "Địa chỉ nạp",
+    "depositTitle": "Nạp",
     "depositSubtitle": "Gửi {symbol} vào đây để nạp ví.",
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Địa chỉ cá nhân — chỉ bạn nạp được. Gửi {symbol} để nạp số dư.",
@@ -472,7 +478,7 @@
     "selfCustodyNet": "Bạn nhận",
     "selfCustodyDust": "Dưới phí mạng {symbol}, không thể chuyển.",
     "selfCustodyEmpty": "Không có gì để chuyển — token chưa gửi vào principal.",
-    "historyTitle": "Lịch sử on-chain",
+    "historyTitle": "Lịch sử",
     "snsLink": "Xem SNS",
     "snsDashboard": "Bảng điều khiển SNS",
     "snsSwap": "Swap SNS",
@@ -540,7 +546,8 @@
     "suggested": "Gợi ý cho bạn",
     "noneFound": "Không tìm thấy ai với “{query}”.",
     "empty": "Chưa có tài khoản có tên. Hãy là người đầu tiên.",
-    "premium": "Handle premium đã xác minh"
+    "premium": "Handle premium đã xác minh",
+    "subtitle": "Khám phá hồ sơ người dùng trên toàn mạng lưới"
   },
   "success": {
     "send": "Gửi thành công",
@@ -1415,6 +1422,10 @@
         "charity": {
           "title": "Từ thiện",
           "description": "Mã QR cứu trợ thiên tai chính thức của chính phủ."
+        },
+        "downloads": {
+          "title": "Tải xuống",
+          "description": "Ứng dụng máy tính để bàn cho macOS, Windows và Linux."
         }
       },
       "sectionMore": "Thêm",
@@ -1481,7 +1492,8 @@
         "terms": "Điều khoản",
         "privacy": "Quyền riêng tư",
         "transparency": "Minh bạch",
-        "charity": "Từ thiện"
+        "charity": "Từ thiện",
+        "downloads": "Tải xuống"
       },
       "community": {
         "github": "GitLab",
@@ -2127,6 +2139,87 @@
             "answer": "Có. ICFalcon mã nguồn mở. Mã nguồn cung cấp nguyên trạng để sử dụng và sửa đổi. Gói hub được cấp phép theo mục trên icp-hub."
           }
         }
+      }
+    },
+    "downloadsPage": {
+      "badge": {
+        "new": "Mới",
+        "version": "Desktop v1.0.0",
+        "platforms": "· macOS, Windows & Linux"
+      },
+      "hero": {
+        "title": "Tải xuống ICPay Desktop",
+        "description": "Ví lưu ký ICP được xây dựng riêng cho máy tính để bàn của bạn. Nhanh chóng, an toàn và được xác thực độc quyền qua Internet Identity."
+      },
+      "primary": {
+        "downloadMac": "Tải cho Mac",
+        "downloadWindows": "Tải cho Windows",
+        "downloadLinux": "Tải cho Linux",
+        "macSubtitle": "Apple Silicon (M1/M2/M3/M4) · 96 MB",
+        "windowsSubtitle": "Windows 10 & 11 (64-bit) · 84 MB",
+        "linuxSubtitle": "x64 Tarball · 98 MB",
+        "releaseHashes": "Mã băm phát hành"
+      },
+      "dropdown": {
+        "ariaLabel": "Chọn nền tảng máy tính",
+        "macArm64": "Mac (Apple Silicon)",
+        "macX64": "Mac (Intel)",
+        "windowsX64": "Windows (64-bit)",
+        "windowsPortable": "Windows Portable",
+        "linuxX64": "Linux (x64)"
+      },
+      "cards": {
+        "macos": {
+          "title": "macOS",
+          "badge": "macOS 12.0+",
+          "description": "Gói phổ quát cho các thiết bị Apple Silicon và Intel.",
+          "arm64Title": "Apple Silicon",
+          "arm64Sub": "M1 / M2 / M3 / M4 · DMG",
+          "intelTitle": "Kiến trúc Intel",
+          "intelSub": "x86_64 · DMG",
+          "portableTitle": "Silicon Portable",
+          "portableSub": "ARM64 · ZIP"
+        },
+        "windows": {
+          "title": "Windows",
+          "badge": "Windows 10 / 11",
+          "description": "Trình cài đặt 64-bit và tệp thực thi di động.",
+          "installerTitle": "Trình cài đặt",
+          "installerSub": "Gói NSIS · EXE",
+          "portableTitle": "Tệp di động",
+          "portableSub": "Nhị phân x64 · ZIP",
+          "archTitle": "Kiến trúc",
+          "archSub": "x86_64 Đã xác minh",
+          "supportedBadge": "Được hỗ trợ"
+        },
+        "linux": {
+          "title": "Linux",
+          "badge": "GLIBC 2.31+",
+          "description": "Bản phân phối cho Ubuntu, Debian, Fedora, Arch.",
+          "tarballTitle": "Tarball phân phối",
+          "tarballSub": "x86_64 · TAR.GZ",
+          "fedoraTitle": "Fedora / RHEL",
+          "fedoraSub": "Tương thích RPM",
+          "debianTitle": "Debian / Ubuntu",
+          "debianSub": "Tương thích DEB"
+        }
+      },
+      "hashes": {
+        "title": "Tính toàn vẹn mã hóa (SHA-256)",
+        "description": "Xác minh mã băm trực tiếp trong terminal để đảm bảo tệp chính hãng và an toàn.",
+        "viewAll": "SHA256SUMS.txt",
+        "copy": "Sao chép",
+        "copied": "Đã sao chép",
+        "toastSuccess": "Đã sao chép mã băm SHA-256 vào bộ nhớ tạm",
+        "toastError": "Sao chép mã băm thất bại"
+      },
+      "features": {
+        "custodyTitle": "Kiến trúc lưu ký",
+        "custodyDesc": "Xác thực độc quyền qua Internet Identity. Không lưu cụm từ hạt giống, khóa hoặc mật khẩu trên máy cục bộ.",
+        "perfTitle": "Hiệu năng gốc",
+        "perfDesc": "Đồ họa tăng tốc phần cứng và mã hóa được hỗ trợ bởi Electron 33 với mức sử dụng bộ nhớ tối thiểu.",
+        "edgeTitle": "Phân phối Cloudflare Edge",
+        "edgeDesc": "Lưu trữ đối tượng R2 toàn cầu với bộ nhớ đệm biên trên hơn 330 địa điểm."
       }
     }
   },

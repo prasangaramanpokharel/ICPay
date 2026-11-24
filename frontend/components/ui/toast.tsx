@@ -3,13 +3,8 @@
 import * as React from "react"
 import { Toast as ToastPrimitive } from "@base-ui/react/toast"
 
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Cancel01Icon,
-  InformationCircleIcon,
-  Alert02Icon,
-  Loading01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { XGlassIcon, InfoGlassIcon, TriangleAlertGlassIcon, LoaderGlassIcon } from "@thesvg/ui-react"
 
 import { cn } from "@/lib/ui/utils"
 import { Button } from "@/components/ui/button"
@@ -158,7 +153,7 @@ function ToastClose({
         {...props}
       >
         {children ?? (
-          <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" aria-hidden="true" strokeWidth={2.5} />
+          <Icon icon={XGlassIcon} className="size-3.5" aria-hidden="true" strokeWidth={2.5} />
         )}
       </ToastPrimitive.Close>
     </div>
@@ -200,7 +195,7 @@ function ToastIcon({ type, title }: { type: string | undefined; title?: React.Re
   if (type === "info") {
     return (
       <span className="flex size-6 items-center justify-center rounded-full bg-info/15 text-info shrink-0 ring-2 ring-info/20">
-        <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5" aria-hidden="true" strokeWidth={2.5} />
+        <Icon icon={InfoGlassIcon} className="size-3.5" aria-hidden="true" strokeWidth={2.5} />
       </span>
     )
   }
@@ -208,7 +203,7 @@ function ToastIcon({ type, title }: { type: string | undefined; title?: React.Re
   if (type === "warning") {
     return (
       <span className="flex size-6 items-center justify-center rounded-full bg-warning/20 text-warning shrink-0 ring-2 ring-warning/20">
-        <HugeiconsIcon icon={Alert02Icon} className="size-3.5" aria-hidden="true" strokeWidth={2.5} />
+        <Icon icon={TriangleAlertGlassIcon} className="size-3.5" aria-hidden="true" strokeWidth={2.5} />
       </span>
     )
   }
@@ -216,14 +211,14 @@ function ToastIcon({ type, title }: { type: string | undefined; title?: React.Re
   if (type === "error") {
     return (
       <span className="flex size-6 items-center justify-center rounded-full bg-destructive/15 text-destructive shrink-0 ring-2 ring-destructive/20">
-        <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" aria-hidden="true" strokeWidth={2.5} />
+        <Icon icon={XGlassIcon} className="size-3.5" aria-hidden="true" strokeWidth={2.5} />
       </span>
     )
   }
 
   if (type === "loading") {
     return (
-      <HugeiconsIcon icon={Loading01Icon} className="size-4.5 animate-spin text-primary shrink-0" aria-hidden="true" strokeWidth={2.5} />
+      <Icon icon={LoaderGlassIcon} className="size-4.5 animate-spin text-primary shrink-0" aria-hidden="true" strokeWidth={2.5} />
     )
   }
 
