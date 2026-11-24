@@ -182,7 +182,7 @@ fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
 
     let project = storage::get_project(args.project_id)
         .ok_or_else(|| "Project not found".to_string())?;
-    if project.owner != caller {
+    if project.owner != caller && !ic_cdk::api::is_controller(&caller) {
         return Err("Unauthorized to add job to this project".to_string());
     }
 
@@ -220,7 +220,7 @@ fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
     let job = JobRecord {
         id: job_id,
         project_id: args.project_id,
-        owner: caller,
+        owner: project.owner,
         label: label.to_string(),
         target: args.target,
         cron_expression: args.cron_expression.trim().to_string(),
@@ -419,7 +419,7 @@ fn list_jobs(project_id: Option<u64>) -> Vec<JobSummary> {
 fn get_job(job_id: u64) -> Result<JobRecord, String> {
     let caller = ic_cdk::api::msg_caller();
     let job = storage::get_job(job_id).ok_or_else(|| "Job not found".to_string())?;
-    if job.owner != caller {
+    if job.owner != caller && !ic_cdk::api::is_controller(&caller) {
         return Err("Unauthorized".to_string());
     }
     Ok(job)
@@ -429,7 +429,7 @@ fn get_job(job_id: u64) -> Result<JobRecord, String> {
 fn get_job_logs(job_id: u64, limit: Option<u64>) -> Vec<ExecutionLog> {
     let caller = ic_cdk::api::msg_caller();
     if let Some(job) = storage::get_job(job_id) {
-        if job.owner != caller {
+        if job.owner != caller && !ic_cdk::api::is_controller(&caller) {
             return vec![];
         }
     } else {

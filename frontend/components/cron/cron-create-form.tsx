@@ -39,14 +39,6 @@ interface CronCreateFormProps {
   onJobCreated?: () => void
 }
 
-const SCHEDULE_SHORTCUTS = [
-  { label: "Every 10 min", value: "*/10 * * * *" },
-  { label: "Every hour", value: "0 * * * *" },
-  { label: "Every 6 hours", value: "0 */6 * * *" },
-  { label: "Daily at 9:00 AM", value: "0 9 * * *" },
-  { label: "Weekly (Monday)", value: "0 9 * * 1" },
-]
-
 export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps) {
   const { identity } = useAuth()
   const t = useTranslations("cron")
@@ -60,6 +52,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
   const [body, setBody] = React.useState('{\n  "content": "Good morning! Automated daily broadcast from icCron on ICP."\n}')
 
   const [commonPreset, setCommonPreset] = React.useState("0 9 * * *")
+  const [showCustomDropdowns, setShowCustomDropdowns] = React.useState(false)
   const [minute, setMinute] = React.useState("0")
   const [hour, setHour] = React.useState("9")
   const [day, setDay] = React.useState("*")
@@ -69,6 +62,35 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const [success, setSuccess] = React.useState(false)
+
+  const isPlatformPreset = template === "discord_telegram" || template === "vercel_api"
+
+  const activeShortcuts = React.useMemo(() => {
+    if (template === "discord_telegram") {
+      return [
+        { label: "Daily at 9:00 AM", value: "0 9 * * *" },
+        { label: "Every 6 hours", value: "0 */6 * * *" },
+        { label: "Every 12 hours", value: "0 */12 * * *" },
+        { label: "Weekly (Monday)", value: "0 9 * * 1" },
+      ]
+    }
+    if (template === "vercel_api") {
+      return [
+        { label: "Every 10 min", value: "*/10 * * * *" },
+        { label: "Every 15 min", value: "*/15 * * * *" },
+        { label: "Every hour", value: "0 * * * *" },
+        { label: "Every 6 hours", value: "0 */6 * * *" },
+        { label: "Daily at midnight", value: "0 0 * * *" },
+      ]
+    }
+    return [
+      { label: "Every 10 min", value: "*/10 * * * *" },
+      { label: "Every hour", value: "0 * * * *" },
+      { label: "Every 6 hours", value: "0 */6 * * *" },
+      { label: "Daily at 9:00 AM", value: "0 9 * * *" },
+      { label: "Weekly (Monday)", value: "0 9 * * 1" },
+    ]
+  }, [template])
 
   const cronExpression = React.useMemo(() => {
     return `${minute} ${hour} ${day} ${month} ${weekday}`.trim()
@@ -98,6 +120,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
       setMethod("POST")
       setAuthHeader("")
       setBody('{\n  "content": "Good morning! Automated daily broadcast from icCron on ICP."\n}')
+      setShowCustomDropdowns(false)
       applySchedule("0 9 * * *")
     } else if (nextTemplate === "vercel_api") {
       setLabel("Vercel Sync Trigger")
@@ -105,10 +128,12 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
       setMethod("GET")
       setAuthHeader("Bearer your_cron_secret")
       setBody("")
+      setShowCustomDropdowns(false)
       applySchedule("*/10 * * * *")
     } else if (nextTemplate === "canister") {
       setLabel("Canister Execution Call")
       setCanisterTarget("ryjl3-tyaaa-aaaaa-aaaba-cai::get_account_identifier")
+      setShowCustomDropdowns(false)
       applySchedule("0 * * * *")
     } else {
       setLabel("Custom Webhook")
@@ -116,6 +141,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
       setMethod("POST")
       setAuthHeader("")
       setBody('{\n  "status": "ping"\n}')
+      setShowCustomDropdowns(true)
       applySchedule("0 * * * *")
     }
   }
@@ -379,40 +405,57 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
-                <div className="sm:col-span-1 flex flex-col gap-2">
-                  <Label htmlFor="http-method" className="text-xs font-medium text-foreground">
-                    Method
-                  </Label>
-                  <NativeSelect
-                    id="http-method"
-                    value={method}
-                    onChange={(e) => setMethod(e.target.value as "GET" | "POST")}
-                    className="w-full bg-background border-border text-sm"
-                  >
-                    <NativeSelectOption value="POST">POST</NativeSelectOption>
-                    <NativeSelectOption value="GET">GET</NativeSelectOption>
-                  </NativeSelect>
-                </div>
-
-                <div className="sm:col-span-3 flex flex-col gap-2">
-                  <Label htmlFor="webhook-url" className="text-xs font-medium text-foreground">
-                    Destination Webhook URL
-                  </Label>
+              {template === "discord_telegram" ? (
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="webhook-url" className="text-xs font-medium text-foreground">
+                      Telegram or Discord Webhook URL
+                    </Label>
+                    <Badge variant="outline" className="text-[10px] font-mono border-border/70 text-primary">
+                      POST (JSON)
+                    </Badge>
+                  </div>
                   <Input
                     id="webhook-url"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
-                    placeholder={
-                      template === "discord_telegram"
-                        ? "https://discord.com/api/webhooks/... or https://api.telegram.org/bot<TOKEN>/sendMessage"
-                        : "https://my-app.vercel.app/api/cron/sync"
-                    }
+                    placeholder="https://discord.com/api/webhooks/... or https://api.telegram.org/bot<TOKEN>/sendMessage"
                     className="font-mono text-sm bg-background border-border"
                     required
                   />
                 </div>
-              </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
+                  <div className="sm:col-span-1 flex flex-col gap-2">
+                    <Label htmlFor="http-method" className="text-xs font-medium text-foreground">
+                      Method
+                    </Label>
+                    <NativeSelect
+                      id="http-method"
+                      value={method}
+                      onChange={(e) => setMethod(e.target.value as "GET" | "POST")}
+                      className="w-full bg-background border-border text-sm"
+                    >
+                      <NativeSelectOption value="GET">GET</NativeSelectOption>
+                      <NativeSelectOption value="POST">POST</NativeSelectOption>
+                    </NativeSelect>
+                  </div>
+
+                  <div className="sm:col-span-3 flex flex-col gap-2">
+                    <Label htmlFor="webhook-url" className="text-xs font-medium text-foreground">
+                      Destination Webhook URL
+                    </Label>
+                    <Input
+                      id="webhook-url"
+                      value={url}
+                      onChange={(e) => setUrl(e.target.value)}
+                      placeholder="https://my-app.vercel.app/api/cron/sync"
+                      className="font-mono text-sm bg-background border-border"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between">
@@ -468,112 +511,131 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
               </div>
             </div>
 
-            <div className="flex flex-wrap gap-1.5">
-              {SCHEDULE_SHORTCUTS.map((sc) => (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {activeShortcuts.map((sc) => (
                 <Button
                   key={sc.value}
                   type="button"
-                  variant={commonPreset === sc.value ? "default" : "outline"}
+                  variant={commonPreset === sc.value && !showCustomDropdowns ? "default" : "outline"}
                   size="sm"
-                  onClick={() => applySchedule(sc.value)}
+                  onClick={() => {
+                    applySchedule(sc.value)
+                    if (isPlatformPreset) {
+                      setShowCustomDropdowns(false)
+                    }
+                  }}
                   className="h-7 text-[11px] px-2.5 rounded-full"
                 >
                   {sc.label}
                 </Button>
               ))}
+
+              {isPlatformPreset && (
+                <Button
+                  type="button"
+                  variant={showCustomDropdowns ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setShowCustomDropdowns(!showCustomDropdowns)}
+                  className="h-7 text-[11px] px-2.5 rounded-full text-muted-foreground hover:text-foreground"
+                >
+                  {showCustomDropdowns ? "Hide custom dropdowns" : "Custom expression..."}
+                </Button>
+              )}
             </div>
 
-            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mt-1">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="select-minute" className="text-[11px] font-medium text-muted-foreground">
-                  {t("minute")}
-                </Label>
-                <NativeSelect
-                  id="select-minute"
-                  value={minute}
-                  onChange={(e) => setMinute(e.target.value)}
-                  className="w-full text-xs bg-background border-border"
-                >
-                  {MINUTE_OPTIONS.map((opt) => (
-                    <NativeSelectOption key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </NativeSelectOption>
-                  ))}
-                </NativeSelect>
-              </div>
+            {(!isPlatformPreset || showCustomDropdowns) && (
+              <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mt-1 transition-all duration-200">
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="select-minute" className="text-[11px] font-medium text-muted-foreground">
+                    {t("minute")}
+                  </Label>
+                  <NativeSelect
+                    id="select-minute"
+                    value={minute}
+                    onChange={(e) => setMinute(e.target.value)}
+                    className="w-full text-xs bg-background border-border"
+                  >
+                    {MINUTE_OPTIONS.map((opt) => (
+                      <NativeSelectOption key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </NativeSelectOption>
+                    ))}
+                  </NativeSelect>
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="select-hour" className="text-[11px] font-medium text-muted-foreground">
-                  {t("hour")}
-                </Label>
-                <NativeSelect
-                  id="select-hour"
-                  value={hour}
-                  onChange={(e) => setHour(e.target.value)}
-                  className="w-full text-xs bg-background border-border"
-                >
-                  {HOUR_OPTIONS.map((opt) => (
-                    <NativeSelectOption key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </NativeSelectOption>
-                  ))}
-                </NativeSelect>
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="select-hour" className="text-[11px] font-medium text-muted-foreground">
+                    {t("hour")}
+                  </Label>
+                  <NativeSelect
+                    id="select-hour"
+                    value={hour}
+                    onChange={(e) => setHour(e.target.value)}
+                    className="w-full text-xs bg-background border-border"
+                  >
+                    {HOUR_OPTIONS.map((opt) => (
+                      <NativeSelectOption key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </NativeSelectOption>
+                    ))}
+                  </NativeSelect>
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="select-day" className="text-[11px] font-medium text-muted-foreground">
-                  {t("day")}
-                </Label>
-                <NativeSelect
-                  id="select-day"
-                  value={day}
-                  onChange={(e) => setDay(e.target.value)}
-                  className="w-full text-xs bg-background border-border"
-                >
-                  {DAY_OPTIONS.map((opt) => (
-                    <NativeSelectOption key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </NativeSelectOption>
-                  ))}
-                </NativeSelect>
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="select-day" className="text-[11px] font-medium text-muted-foreground">
+                    {t("day")}
+                  </Label>
+                  <NativeSelect
+                    id="select-day"
+                    value={day}
+                    onChange={(e) => setDay(e.target.value)}
+                    className="w-full text-xs bg-background border-border"
+                  >
+                    {DAY_OPTIONS.map((opt) => (
+                      <NativeSelectOption key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </NativeSelectOption>
+                    ))}
+                  </NativeSelect>
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="select-month" className="text-[11px] font-medium text-muted-foreground">
-                  {t("month")}
-                </Label>
-                <NativeSelect
-                  id="select-month"
-                  value={month}
-                  onChange={(e) => setMonth(e.target.value)}
-                  className="w-full text-xs bg-background border-border"
-                >
-                  {MONTH_OPTIONS.map((opt) => (
-                    <NativeSelectOption key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </NativeSelectOption>
-                  ))}
-                </NativeSelect>
-              </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="select-month" className="text-[11px] font-medium text-muted-foreground">
+                    {t("month")}
+                  </Label>
+                  <NativeSelect
+                    id="select-month"
+                    value={month}
+                    onChange={(e) => setMonth(e.target.value)}
+                    className="w-full text-xs bg-background border-border"
+                  >
+                    {MONTH_OPTIONS.map((opt) => (
+                      <NativeSelectOption key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </NativeSelectOption>
+                    ))}
+                  </NativeSelect>
+                </div>
 
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="select-weekday" className="text-[11px] font-medium text-muted-foreground">
-                  {t("weekday")}
-                </Label>
-                <NativeSelect
-                  id="select-weekday"
-                  value={weekday}
-                  onChange={(e) => setWeekday(e.target.value)}
-                  className="w-full text-xs bg-background border-border"
-                >
-                  {WEEKDAY_OPTIONS.map((opt) => (
-                    <NativeSelectOption key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </NativeSelectOption>
-                  ))}
-                </NativeSelect>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="select-weekday" className="text-[11px] font-medium text-muted-foreground">
+                    {t("weekday")}
+                  </Label>
+                  <NativeSelect
+                    id="select-weekday"
+                    value={weekday}
+                    onChange={(e) => setWeekday(e.target.value)}
+                    className="w-full text-xs bg-background border-border"
+                  >
+                    {WEEKDAY_OPTIONS.map((opt) => (
+                      <NativeSelectOption key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </NativeSelectOption>
+                    ))}
+                  </NativeSelect>
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="flex items-center justify-end pt-2">

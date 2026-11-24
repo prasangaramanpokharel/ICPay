@@ -9,7 +9,7 @@ import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTi
 import { Spinner } from "@/components/ui/spinner"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Icon } from "@/components/ui/icon"
-import { ArrowLeftGlassIcon, CronJobGlassIcon, FolderGlassIcon } from "@thesvg/ui-react"
+import { CronJobGlassIcon, FolderGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import { listProjects } from "@/services/cron/client"
 import type { RemoteProjectRecord } from "@/services/cron/types"
@@ -77,55 +77,34 @@ function CronCreateContent() {
     return projects.find((p) => p.id === selectedProjectId) ?? null
   }, [projects, selectedProjectId])
 
-  const targetProjectName =
-    currentProject?.name ??
-    (queryProjectName ? decodeURIComponent(queryProjectName) : null)
-  const backHref = targetProjectName
-    ? `/cron?id=${encodeURIComponent(targetProjectName)}`
-    : "/cron"
-  const backLabel = targetProjectName ?? t("backToProjects")
-
   return (
     <div className="flex flex-col gap-6 w-full max-w-4xl mx-auto py-6 px-4">
-      <div className="flex items-center justify-between gap-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          nativeButton={false}
-          render={<Link href={backHref} />}
-          className="gap-1.5 text-xs text-muted-foreground hover:text-foreground -ml-2"
-        >
-          <Icon icon={ArrowLeftGlassIcon} className="size-4" />
-          <span>{backLabel}</span>
-        </Button>
-
-        {projects.length > 1 && (
-          <div className="flex items-center gap-2">
-            <Icon icon={FolderGlassIcon} className="size-3.5 text-muted-foreground" />
-            <span className="text-xs text-muted-foreground">{t("project")}:</span>
-            <NativeSelect
-              value={selectedProjectId?.toString() ?? ""}
-              onChange={(e) => {
-                const nextId = BigInt(e.target.value)
-                setSelectedProjectId(nextId)
-                const nextProj = projects.find((p) => p.id === nextId)
-                if (nextProj) {
-                  router.replace(
-                    `/cron/create?id=${encodeURIComponent(nextProj.name)}&projectId=${formatProjectId(nextProj.id)}`
-                  )
-                }
-              }}
-              className="text-xs h-8 bg-card border-border"
-            >
-              {projects.map((p) => (
-                <NativeSelectOption key={p.id.toString()} value={p.id.toString()}>
-                  {p.name} ({formatProjectId(p.id)})
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
-          </div>
-        )}
-      </div>
+      {projects.length > 1 && (
+        <div className="flex items-center justify-end gap-2">
+          <Icon icon={FolderGlassIcon} className="size-3.5 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground">{t("project")}:</span>
+          <NativeSelect
+            value={selectedProjectId?.toString() ?? ""}
+            onChange={(e) => {
+              const nextId = BigInt(e.target.value)
+              setSelectedProjectId(nextId)
+              const nextProj = projects.find((p) => p.id === nextId)
+              if (nextProj) {
+                router.replace(
+                  `/cron/create?id=${encodeURIComponent(nextProj.name)}&projectId=${formatProjectId(nextProj.id)}`
+                )
+              }
+            }}
+            className="text-xs h-8 bg-card border-border"
+          >
+            {projects.map((p) => (
+              <NativeSelectOption key={p.id.toString()} value={p.id.toString()}>
+                {p.name} ({formatProjectId(p.id)})
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+        </div>
+      )}
 
       {loading ? (
         <div className="flex h-64 items-center justify-center">
