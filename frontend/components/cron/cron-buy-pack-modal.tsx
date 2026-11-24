@@ -38,16 +38,16 @@ function formatRunway(runs: number): string {
   const hourlyDays = Math.floor(runs / 24)
   if (hourlyDays >= 365) {
     const years = (hourlyDays / 365).toFixed(1)
-    return `~${years} years of hourly runs`
+    return `~ ${years} years of hourly runs`
   }
   if (hourlyDays >= 30) {
     const months = (hourlyDays / 30).toFixed(1)
-    return `~${months} months of hourly runs`
+    return `~ ${months} months of hourly runs`
   }
   if (hourlyDays >= 2) {
-    return `~${hourlyDays} days of hourly runs`
+    return `~ ${hourlyDays} days of hourly runs`
   }
-  return `~${runs} hours of hourly runs`
+  return `~ ${runs} hours of hourly runs`
 }
 
 export function CronBuyPackModal({
@@ -68,9 +68,12 @@ export function CronBuyPackModal({
   React.useEffect(() => {
     if (!open) return
     if (runs < 100) {
+      setQuote(null)
+      setLoadingQuote(false)
       return
     }
     let active = true
+    setLoadingQuote(true)
     quoteCredits(BigInt(runs), identity ?? undefined)
       .then((q) => {
         if (active) {
@@ -254,7 +257,7 @@ export function CronBuyPackModal({
             <div className="flex items-center justify-between border-t border-border/60 pt-2.5 text-xs text-muted-foreground">
               <div className="flex items-center gap-1.5">
                 <Icon icon={ClockGlassIcon} className="size-3.5 text-primary" />
-                <span>{t("estimatedRunway")}:</span>
+                <span>{t("estimatedRunway")}</span>
               </div>
               <Badge variant="secondary" className="font-normal text-[11px]">
                 {formatRunway(runs)}
