@@ -448,7 +448,13 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Simbol",
+    "colName": "Nama",
+    "colQuantity": "Jumlah",
+    "colValue": "Nilai",
+    "totalIcpBalance": "Total Saldo ICP",
+    "yourAssets": "Aset Anda"
   },
   "token": {
     "back": "Dompet",
@@ -456,7 +462,7 @@
     "send": "Mengirim",
     "deposit": "Deposito",
     "swap": "Menukar",
-    "depositTitle": "Alamat penyetoran",
+    "depositTitle": "Setoran",
     "depositSubtitle": "Kirim {symbol} ke sini untuk mengisi dompet Anda.",
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Alamat pribadi Anda — hanya Anda yang dapat menyetor di sini. Kirim {symbol} untuk mengisi saldo Anda.",
@@ -472,7 +478,7 @@
     "selfCustodyNet": "Anda menerima",
     "selfCustodyDust": "Ini di bawah biaya jaringan {symbol}, jadi tidak bisa dipindahkan.",
     "selfCustodyEmpty": "Tidak ada yang perlu dipindahkan — token ini belum dikirim ke kepala sekolah Anda.",
-    "historyTitle": "Sejarah on-chain",
+    "historyTitle": "Riwayat",
     "snsLink": "Lihat SNS",
     "snsDashboard": "Dasbor SNS",
     "snsSwap": "pertukaran SNS",

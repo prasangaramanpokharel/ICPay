@@ -10,6 +10,7 @@ import { sweepToCustody } from "@/services/sweep/sweep"
 import { syncDeposits } from "@/services/deposit/deposit"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useDepositAddress, useLedgerSupported, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import type { TokenHolding } from "@/services/tokens"
 
 export function SelfCustodyCard({
@@ -25,6 +26,7 @@ export function SelfCustodyCard({
   const { data: deposit } = useDepositAddress()
   const refreshWallet = useRefreshWallet()
   const { supported, isLoading: checkingSupport } = useLedgerSupported(token.ledgerId)
+  const { hidden } = useBalanceVisibility()
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -32,6 +34,7 @@ export function SelfCustodyCard({
 
   const net = balance > token.fee ? balance - token.fee : 0n
   const full = (v: bigint) => formatTokenAmount(v, token.decimals, token.decimals)
+  const displayAmount = (v: bigint) => (hidden ? "••••••" : full(v))
   const canMove = supported === true && net > 0n
 
   const handleSweep = async () => {
@@ -72,13 +75,13 @@ export function SelfCustodyCard({
         <div className="flex items-baseline justify-between gap-3">
           <h3 className="text-sm font-semibold">{t("selfCustodyTitle")}</h3>
           <span className="shrink-0 text-sm tabular-nums">
-            {full(balance)} {token.symbol}
+            {displayAmount(balance)} {token.symbol}
           </span>
         </div>
         <p className="text-xs leading-relaxed text-muted-foreground">
           {balance === 0n
             ? t("selfCustodyEmpty")
-            : t("selfCustodyBody", { amount: full(balance), symbol: token.symbol })}
+            : t("selfCustodyBody", { amount: displayAmount(balance), symbol: token.symbol })}
         </p>
       </div>
 
@@ -88,7 +91,7 @@ export function SelfCustodyCard({
             <Row label={tc("fee")} value={`${full(token.fee)} ${token.symbol}`} />
             <Row
               label={t("selfCustodyNet")}
-              value={`${full(net)} ${token.symbol}`}
+              value={`${displayAmount(net)} ${token.symbol}`}
               emphasis
             />
           </div>

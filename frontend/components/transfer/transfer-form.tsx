@@ -32,11 +32,12 @@ import {
   ICP_FEE,
   E8S,
 } from "@/lib/wallet/utils"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { BookmarkAdd01Icon, QrCodeScanIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { BookmarkGlassIcon, QrCodeGlassIcon } from "@thesvg/ui-react"
 import { AmountInput } from "@/components/shared/amount-input"
 import { RecipientCard, RecipientLookup } from "@/components/transfer/recipient-card"
 import { BookmarkDrawer, BookmarkButton } from "@/components/bookmark/bookmark-drawer"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { useResolvedUsername, useRecipientProfile } from "@/hooks/wallet/useWalletData"
 import { useDebounced } from "@/hooks/ui/useDebounced"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
@@ -111,6 +112,7 @@ export function TransferForm({
 }) {
   const t = useTranslations("transfer")
   const tc = useTranslations("common")
+  const { hidden } = useBalanceVisibility()
   const [mode, setMode] = useState<TransferMode>(() =>
     initialTo ? classifyMode(initialTo) : "username"
   )
@@ -246,7 +248,7 @@ export function TransferForm({
               aria-label={t("bookmarks")}
               className="size-8 rounded-lg text-muted-foreground hover:text-foreground"
             >
-              <HugeiconsIcon icon={BookmarkAdd01Icon} className="size-4" strokeWidth={1.75} />
+              <Icon icon={BookmarkGlassIcon} className="size-4" strokeWidth={1.75} />
             </Button>
             <Button
               variant="ghost"
@@ -255,7 +257,7 @@ export function TransferForm({
               aria-label={t("scanQr")}
               className="size-8 rounded-lg text-muted-foreground hover:text-foreground"
             >
-              <HugeiconsIcon icon={QrCodeScanIcon} className="size-4" strokeWidth={1.75} />
+              <Icon icon={QrCodeGlassIcon} className="size-4" strokeWidth={1.75} />
             </Button>
           </div>
         </div>
@@ -281,7 +283,7 @@ export function TransferForm({
         size="default"
         description={
           sendable !== undefined
-            ? t("maxSendable", { amount: formatAmount(sendable), fee: formatAmount(ICP_FEE) })
+            ? t("maxSendable", { amount: hidden ? "••••••" : formatAmount(sendable), fee: formatAmount(ICP_FEE) })
             : undefined
         }
       />

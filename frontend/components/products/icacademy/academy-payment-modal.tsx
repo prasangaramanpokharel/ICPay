@@ -12,10 +12,11 @@ import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { ShineBorder } from "@/components/ui/shine-border"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { CheckmarkCircle02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CircleCheckGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useLiveBalance } from "@/hooks/wallet/useWalletData"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { purchaseCourse } from "@/services/academy/client"
 import { formatAmount, ICP_FEE } from "@/lib/wallet/utils"
 import { cn } from "@/lib/ui/utils"
@@ -36,6 +37,7 @@ export function AcademyPaymentModal({
 }: AcademyPaymentModalProps) {
   const { identity, isAuthenticated, login, isLoading: isAuthLoading } = useAuth()
   const liveBalance = useLiveBalance()
+  const { hidden } = useBalanceVisibility()
 
   const [isProcessing, setIsProcessing] = useState(false)
   const [step, setStep] = useState<"ready" | "processing" | "success" | "error">("ready")
@@ -110,8 +112,8 @@ export function AcademyPaymentModal({
 
           {step === "success" ? (
             <div className="space-y-4 py-4 text-center">
-              <HugeiconsIcon
-                icon={CheckmarkCircle02Icon}
+              <Icon
+                icon={CircleCheckGlassIcon}
                 className="mx-auto size-10 text-success"
                 strokeWidth={1.75}
               />
@@ -154,7 +156,7 @@ export function AcademyPaymentModal({
                 <PaymentRow label="Network Fee" value={`${formatAmount(ICP_FEE)} ICP`} />
                 <PaymentRow
                   label="Wallet Balance"
-                  value={isAuthenticated ? `${formatAmount(userBalanceE8s)} ICP` : "Not connected"}
+                  value={isAuthenticated ? (hidden ? "••••••" : `${formatAmount(userBalanceE8s)} ICP`) : "Not connected"}
                 />
                 <PaymentRow
                   label="Total Deducted"

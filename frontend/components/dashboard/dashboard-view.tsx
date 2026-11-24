@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { BalanceCard } from "@/components/dashboard/balance-card"
 import { DashboardActions } from "@/components/dashboard/dashboard-actions"
@@ -15,13 +14,14 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { formatE8s } from "@/lib/wallet/utils"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 import { useDashboard, useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 
 export function DashboardView() {
   const { price, refresh: refreshPrice } = useIcpPrice()
   const { data, error, isLoading, refresh: refreshDashboard } = useDashboard()
   const liveBalance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
-  const [hidden, setHidden] = useState(false)
+  const { hidden, toggleVisibility } = useBalanceVisibility()
   const t = useTranslations()
 
   const handleRefreshBalanceAndPrice = async () => {
@@ -59,7 +59,7 @@ export function DashboardView() {
           balanceE8s={liveBalance ?? 0n}
           price={price}
           hidden={hidden}
-          onToggleHidden={() => setHidden((v) => !v)}
+          onToggleHidden={toggleVisibility}
           onRefreshPrice={handleRefreshBalanceAndPrice}
           username={username}
         />
@@ -74,14 +74,13 @@ export function DashboardView() {
             balanceE8s={liveBalance ?? 0n}
             price={price}
             hidden={hidden}
-            onToggleHidden={() => setHidden((v) => !v)}
+            onToggleHidden={toggleVisibility}
             onRefreshPrice={handleRefreshBalanceAndPrice}
             username={username}
           />
           <HomeHoldingsCard hidden={hidden} />
         </div>
         <div className="space-y-6">
-          <DashboardActions />
           <HomeRecentCard transactions={data.recentTransactions} />
         </div>
       </div>
@@ -93,21 +92,118 @@ function DashboardSkeleton() {
   return (
     <AppPage>
       <div className="space-y-6 md:hidden">
-        <Skeleton className="h-40 w-full rounded-3xl" />
-        <div className="flex justify-around px-6">
-          <Skeleton className="size-11 rounded-full" />
-          <Skeleton className="size-11 rounded-full" />
-          <Skeleton className="size-11 rounded-full" />
+        <div className="rounded-(--radius) border border-border/70 bg-card/60 p-6 shadow-xs">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-4 w-24 rounded-md" />
+            <Skeleton className="size-6 rounded-md" />
+          </div>
+          <div className="mt-5 space-y-2">
+            <Skeleton className="h-10 w-44 rounded-lg" />
+            <Skeleton className="h-4 w-28 rounded-md" />
+          </div>
+          <div className="mt-8 flex justify-around px-2">
+            <div className="flex flex-col items-center gap-2">
+              <Skeleton className="size-11 rounded-full" />
+              <Skeleton className="h-3 w-10 rounded-md" />
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Skeleton className="size-11 rounded-full" />
+              <Skeleton className="h-3 w-12 rounded-md" />
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <Skeleton className="size-11 rounded-full" />
+              <Skeleton className="h-3 w-10 rounded-md" />
+            </div>
+          </div>
         </div>
-        <Skeleton className="h-48 w-full rounded-2xl" />
+        <div className="grid grid-cols-4 gap-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Skeleton key={i} className="h-20 rounded-(--radius)" />
+          ))}
+        </div>
+        <div className="rounded-(--radius) border border-border/70 bg-card/60 p-4 space-y-3">
+          <div className="flex items-center justify-between pb-2 border-b border-border/40">
+            <Skeleton className="h-4 w-32 rounded-md" />
+            <Skeleton className="h-4 w-16 rounded-md" />
+          </div>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center justify-between py-1.5">
+              <div className="flex items-center gap-3">
+                <Skeleton className="size-9 rounded-full" />
+                <div className="space-y-1.5">
+                  <Skeleton className="h-3.5 w-24 rounded-md" />
+                  <Skeleton className="h-3 w-16 rounded-md" />
+                </div>
+              </div>
+              <Skeleton className="h-4 w-16 rounded-md" />
+            </div>
+          ))}
+        </div>
       </div>
+
       <div className="hidden gap-6 md:grid md:grid-cols-3">
-        <Skeleton className="col-span-2 h-56 rounded-2xl" />
-        <div className="space-y-6">
-          <Skeleton className="h-44 rounded-2xl" />
-          <Skeleton className="h-64 rounded-2xl" />
+        <div className="col-span-2 space-y-6">
+          <div className="rounded-(--radius) border border-border/70 bg-card/60 p-6 shadow-xs">
+            <div className="flex items-center justify-between border-b border-border/40 pb-4">
+              <div className="space-y-2">
+                <Skeleton className="h-3.5 w-28 rounded-md" />
+                <Skeleton className="h-8 w-48 rounded-lg" />
+                <Skeleton className="h-4 w-32 rounded-md" />
+              </div>
+              <Skeleton className="size-28 rounded-full" />
+            </div>
+            <div className="mt-4 flex items-center justify-between pt-1">
+              <Skeleton className="h-8 w-36 rounded-lg" />
+              <Skeleton className="h-8 w-44 rounded-lg" />
+            </div>
+          </div>
+
+          <div className="rounded-(--radius) border border-border/70 bg-card/60 overflow-hidden shadow-xs">
+            <div className="flex items-center justify-between border-b border-border/40 px-5 py-4">
+              <Skeleton className="h-4 w-28 rounded-md" />
+              <Skeleton className="h-7 w-20 rounded-md" />
+            </div>
+            <div className="p-3 space-y-2">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between rounded-lg p-2.5">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="size-8 rounded-full" />
+                    <div className="space-y-1.5">
+                      <Skeleton className="h-4 w-20 rounded-md" />
+                      <Skeleton className="h-3 w-28 rounded-md" />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5 text-right flex flex-col items-end">
+                    <Skeleton className="h-4 w-24 rounded-md" />
+                    <Skeleton className="h-3 w-16 rounded-md" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        <Skeleton className="col-span-2 h-56 rounded-2xl" />
+
+        <div className="space-y-6">
+          <div className="rounded-(--radius) border border-border/70 bg-card/60 overflow-hidden shadow-xs">
+            <div className="flex items-center justify-between border-b border-border/40 px-5 py-4">
+              <Skeleton className="h-4 w-32 rounded-md" />
+            </div>
+            <div className="p-3 space-y-2">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between rounded-lg p-2.5">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="size-8 rounded-full" />
+                    <div className="space-y-1.5">
+                      <Skeleton className="h-3.5 w-24 rounded-md" />
+                      <Skeleton className="h-3 w-16 rounded-md" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-4 w-16 rounded-md" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </AppPage>
   )

@@ -40,6 +40,7 @@ import { useResolvedUsername } from "@/hooks/wallet/useWalletData"
 import { useAuth } from "@/components/auth/auth-provider"
 import { fetchTransferConsentMessage } from "@/services/ledger/consent"
 import { useDebounced } from "@/hooks/ui/useDebounced"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { cn } from "@/lib/ui/utils"
 import type { TokenHolding } from "@/services/tokens"
 import { ICP_LEDGER_ID } from "@/services/tokens"
@@ -76,6 +77,7 @@ export function SendTokenDrawer({
   const locale = useLocale()
   const { identity } = useAuth()
   const tt = useTranslations("transfer")
+  const { hidden } = useBalanceVisibility()
   const [username, setUsername] = useState("")
   const [value, setValue] = useState("")
   const [memo, setMemo] = useState("")
@@ -288,7 +290,7 @@ export function SendTokenDrawer({
               <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
                 {tc("balance")}{" "}
                 <span className="font-semibold text-foreground">
-                  {full(token.balance)}
+                  {hidden ? "••••••" : full(token.balance)}
                 </span>
               </Badge>
             </div>

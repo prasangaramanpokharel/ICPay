@@ -2,11 +2,12 @@
 
 import { useEffect, useMemo, useRef } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Tick02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { requiredWalletDebit } from "@/lib/trade/fees"
 import { formatTokenAmount } from "@/lib/wallet/utils"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { playSuccessChime } from "@/lib/ui/successChime"
 import type { TokenHolding } from "@/services/tokens"
 
@@ -52,7 +53,7 @@ export function TradeSuccessView({
     <div className="flex flex-col items-center px-1 pt-4 text-center sm:pt-6">
       <div className="animate-in fade-in zoom-in-75 mb-5 flex size-18 items-center justify-center rounded-full bg-success/10 duration-300 ease-out">
         <span className="flex size-13 items-center justify-center rounded-full bg-success text-background shadow-sm">
-          <HugeiconsIcon icon={Tick02Icon} className="size-8" strokeWidth={3} />
+          <Icon icon={CheckGlassIcon} className="size-8" strokeWidth={3} />
         </span>
       </div>
 
@@ -105,12 +106,13 @@ function BalanceLine({
   before: bigint
   after: bigint
 }) {
+  const { hidden } = useBalanceVisibility()
   return (
     <div className="flex items-center justify-between gap-3 text-sm">
       <span className="font-medium">{symbol}</span>
       <span className="tabular-nums text-muted-foreground">
-        {formatTokenAmount(before, decimals)} →{" "}
-        <span className="font-medium text-foreground">{formatTokenAmount(after, decimals)}</span>
+        {hidden ? "••••••" : formatTokenAmount(before, decimals)} →{" "}
+        <span className="font-medium text-foreground">{hidden ? "••••••" : formatTokenAmount(after, decimals)}</span>
       </span>
     </div>
   )

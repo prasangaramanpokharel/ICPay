@@ -448,7 +448,13 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Sembol",
+    "colName": "İsim",
+    "colQuantity": "Miktar",
+    "colValue": "Değer",
+    "totalIcpBalance": "Toplam ICP Bakiyesi",
+    "yourAssets": "Varlıklarınız"
   },
   "token": {
     "back": "Cüzdan",
@@ -456,7 +462,7 @@
     "send": "Gönder",
     "deposit": "Yatır",
     "swap": "Swap",
-    "depositTitle": "Yatırma adresi",
+    "depositTitle": "Yatırma",
     "depositSubtitle": "Cüzdanınızı doldurmak için {symbol} buraya gönderin.",
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Kişisel adresiniz — yalnızca siz buraya yatırabilirsiniz. Bakiyenizi doldurmak için {symbol} gönderin.",
@@ -472,7 +478,7 @@
     "selfCustodyNet": "Alacağınız",
     "selfCustodyDust": "Bu, {symbol} ağ ücretinin altında; taşınamaz.",
     "selfCustodyEmpty": "Taşınacak bir şey yok — bu token Principal'inize gönderilmemiş.",
-    "historyTitle": "Zincir üstü geçmiş",
+    "historyTitle": "Geçmiş",
     "snsLink": "SNS'i görüntüle",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",

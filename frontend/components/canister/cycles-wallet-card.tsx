@@ -5,8 +5,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { LinkSquare02Icon, ZapIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ExternalLinkGlassIcon, ZapGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -20,6 +20,7 @@ import { AmountInput } from "@/components/shared/amount-input"
 import { CanisterIdField } from "@/components/canister/canister-id-field"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useLiveBalance, useRefreshWallet } from "@/hooks/wallet/useWalletData"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { formatAmount, parseIcp } from "@/lib/wallet/utils"
 import { cyclesToTInput, parseCyclesT } from "@/lib/canister/format"
 import { rememberCanister } from "@/lib/canister/savedCanisters"
@@ -50,6 +51,7 @@ export function CyclesWalletCard() {
   const { identity, isAuthenticated, isLoading, login } = useAuth()
   const walletBalance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
+  const { hidden } = useBalanceVisibility()
   const [connecting, setConnecting] = useState(false)
   const [tab, setTab] = useState("mint")
   const [amountText, setAmountText] = useState("")
@@ -286,8 +288,8 @@ export function CyclesWalletCard() {
                     {cyclesBal != null && (
                       <p className="text-[11px] tabular-nums text-muted-foreground">
                         {t("availableCycles", {
-                          pretty: formatCycles(cyclesBal),
-                          tAmount: availableT ?? "0",
+                          pretty: hidden ? "••••••" : formatCycles(cyclesBal),
+                          tAmount: hidden ? "••••••" : availableT ?? "0",
                         })}
                       </p>
                     )}
@@ -344,7 +346,7 @@ export function CyclesWalletCard() {
           loading={loadingMeta && rate == null}
           highlight={{
             label: t("ledgerBalance"),
-            value: cyclesBal != null ? formatCycles(cyclesBal) : "—",
+            value: cyclesBal != null ? (hidden ? "••••••" : formatCycles(cyclesBal)) : "—",
           }}
           rows={[
             {
@@ -371,7 +373,7 @@ export function CyclesWalletCard() {
           ) : (
             <div className="mt-1 flex items-center gap-1.5">
               <span className="text-xl font-semibold tabular-nums">
-                {cyclesBal != null ? formatCycles(cyclesBal) : "—"}
+                {cyclesBal != null ? (hidden ? "••••••" : formatCycles(cyclesBal)) : "—"}
               </span>
               {cyclesBal != null && (
                 <Image
@@ -428,7 +430,7 @@ export function CyclesWalletCard() {
                 nativeButton={false}
                 render={<Link href="/canister" />}
               >
-                <HugeiconsIcon icon={ZapIcon} className="size-3.5" />
+                <Icon icon={ZapGlassIcon} className="size-3.5" />
                 {t("viewMine")}
               </Button>
               <Button
@@ -444,7 +446,7 @@ export function CyclesWalletCard() {
                   />
                 }
               >
-                <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5" />
+                <Icon icon={ExternalLinkGlassIcon} className="size-3.5" />
                 {t("viewOnDashboard")}
               </Button>
             </>

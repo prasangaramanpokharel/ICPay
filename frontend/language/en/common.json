@@ -448,7 +448,13 @@
     "addTokenAction": "Add token",
     "customToken": "Custom token",
     "swapCta": "Swap",
-    "selfCustodyNotice": "You hold funds outside ICPay. Open the token to move them in."
+    "selfCustodyNotice": "You hold funds outside ICPay. Open the token to move them in.",
+    "colSymbol": "Symbol",
+    "colName": "Name",
+    "colQuantity": "Quantity",
+    "colValue": "Value",
+    "totalIcpBalance": "Total ICP Balance",
+    "yourAssets": "Your assets"
   },
   "token": {
     "back": "Wallet",
@@ -456,7 +462,7 @@
     "send": "Send",
     "deposit": "Deposit",
     "swap": "Swap",
-    "depositTitle": "Deposit address",
+    "depositTitle": "Deposit",
     "depositSubtitle": "Send {symbol} here to top up your wallet.",
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
@@ -472,7 +478,7 @@
     "selfCustodyNet": "You receive",
     "selfCustodyDust": "This is below the {symbol} network fee, so it cannot be moved.",
     "selfCustodyEmpty": "Nothing to move in — this token has not been sent to your principal.",
-    "historyTitle": "On-chain history",
+    "historyTitle": "History",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",

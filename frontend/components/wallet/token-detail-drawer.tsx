@@ -3,11 +3,11 @@
 import { useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Cancel01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { XGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Drawer,
@@ -18,6 +18,7 @@ import {
 import { TokenLogo } from "@/components/token/token-logo"
 import { TokenFiatHint } from "@/components/token/token-fiat-hint"
 import { TokenStandardsBadge } from "@/components/token/token-standards-badge"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { useIsMobile } from "@/hooks/use-mobile"
 import { formatTokenAmount, copyText, resolveTokenDisplayName } from "@/lib/wallet/utils"
 import { icrc1Account } from "@/lib/wallet/accountId"
@@ -70,6 +71,7 @@ export function TokenDetailDrawer({
   const { identity } = useAuth()
   const refreshWallet = useRefreshWallet()
   const registry = useTokenRegistry()
+  const { hidden } = useBalanceVisibility()
 
   const [activeTab, setActiveTab] = useState<"activity" | "deposit">(initialTab)
   const [sendOpen, setSendOpen] = useState(false)
@@ -148,7 +150,7 @@ export function TokenDetailDrawer({
               onClick={handleClose}
               aria-label="Close drawer"
             >
-              <HugeiconsIcon icon={Cancel01Icon} className="size-4" strokeWidth={2} />
+              <Icon icon={XGlassIcon} className="size-4" strokeWidth={2} />
             </Button>
           </div>
 
@@ -169,7 +171,7 @@ export function TokenDetailDrawer({
                   <TokenLogo token={token} className="size-16 shadow-xs" />
                   <div className="space-y-0.5">
                     <p className="text-3xl font-extrabold tracking-tight tabular-nums text-foreground sm:text-4xl">
-                      {formatTokenAmount(token.balance, token.decimals, token.decimals)}
+                      {hidden ? "••••••" : formatTokenAmount(token.balance, token.decimals, token.decimals)}
                     </p>
                     <p className="text-xs font-medium text-muted-foreground">
                       {displayName} · {token.symbol}
@@ -265,15 +267,20 @@ export function TokenDetailDrawer({
                       <BtcWithdrawalList ledgerId={token.ledgerId} />
                     ) : null}
 
-                    <div className="rounded-2xl border border-border/60 bg-muted/15 overflow-hidden">
+                    <div className="rounded-(--radius) border border-border/60 bg-muted/15 overflow-hidden">
                       <TokenHistoryList key={token.ledgerId} token={token} />
                     </div>
                   </TabsContent>
 
                   <TabsContent value="deposit" className="mt-4 space-y-4">
                     {depositLoading || !icrcAddress ? (
-                      <div className="flex justify-center py-12">
-                        <Spinner className="size-5 text-muted-foreground" />
+                      <div className="flex flex-col items-center gap-4 rounded-(--radius) border border-border/60 bg-card p-6 shadow-xs">
+                        <Skeleton className="size-44 rounded-(--radius)" />
+                        <div className="w-full space-y-2">
+                          <Skeleton className="h-3.5 w-24 rounded-md" />
+                          <Skeleton className="h-10 w-full rounded-(--radius)" />
+                        </div>
+                        <Skeleton className="h-3.5 w-56 rounded-md" />
                       </div>
                     ) : chainKeyDeposit ? (
                       <Tabs defaultValue="icpay" className="w-full gap-0">

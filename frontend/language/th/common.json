@@ -448,7 +448,13 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "สัญลักษณ์",
+    "colName": "ชื่อ",
+    "colQuantity": "จำนวน",
+    "colValue": "มูลค่า",
+    "totalIcpBalance": "ยอดคงเหลือ ICP ทั้งหมด",
+    "yourAssets": "สินทรัพย์ของคุณ"
   },
   "token": {
     "back": "กระเป๋าเงิน",
@@ -456,7 +462,7 @@
     "send": "ส่ง",
     "deposit": "ฝาก",
     "swap": "Swap",
-    "depositTitle": "ที่อยู่ฝาก",
+    "depositTitle": "ฝาก",
     "depositSubtitle": "ส่ง {symbol} มาที่นี่เพื่อเติมกระเป๋า",
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "ที่อยู่ส่วนตัว — มีเพียงคุณฝากได้ที่นี่ ส่ง {symbol} เพื่อเติมยอด",
@@ -472,7 +478,7 @@
     "selfCustodyNet": "คุณได้รับ",
     "selfCustodyDust": "ต่ำกว่าค่าธรรมเนียมเครือข่าย {symbol} จึงย้ายไม่ได้",
     "selfCustodyEmpty": "ไม่มีอะไรให้ย้าย — โทเคนนี้ยังไม่ถูกส่งไป Principal ของคุณ",
-    "historyTitle": "ประวัติบน chain",
+    "historyTitle": "ประวัติ",
     "snsLink": "ดู SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
