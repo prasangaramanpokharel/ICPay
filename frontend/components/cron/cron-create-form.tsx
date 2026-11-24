@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
+import { CopyButton } from "@/components/ui/copy-button"
 import { Badge } from "@/components/ui/badge"
 import { Spinner } from "@/components/ui/spinner"
 import { Icon } from "@/components/ui/icon"
@@ -299,7 +300,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                       >
                         <Icon icon={InfoGlassIcon} className="size-3.5" />
                       </HoverCardTrigger>
-                      <HoverCardContent side="top" align="center" className="w-84 sm:w-88 space-y-2.5 p-3.5 text-xs">
+                      <HoverCardContent side="top" align="center" className="w-84 sm:w-96 space-y-2.5 p-3.5 text-xs bg-popover text-popover-foreground shadow-xl border border-border">
                         <div className="flex items-center justify-between border-b border-border/60 pb-2">
                           <div className="flex items-center gap-2 font-semibold text-foreground">
                             <DiscordIcon size={14} className="size-3.5" />
@@ -313,20 +314,34 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                           <div>
                             <span className="font-semibold text-foreground">Discord Setup:</span>
                             <div className="text-[10px] text-muted-foreground mt-0.5">
-                              Server Settings &rarr; Integrations &rarr; Webhooks &rarr; New Webhook &rarr; Copy Webhook URL.
+                              Server Settings &rarr; Integrations &rarr; Webhooks &rarr; New Webhook &rarr; Copy URL.
                             </div>
                           </div>
                           <div>
-                            <span className="font-semibold text-foreground">Telegram Setup:</span>
-                            <div className="text-[10px] text-muted-foreground mt-0.5">
-                              Message <code className="text-foreground font-mono">@BotFather</code> on Telegram to get your Bot Token, then target:
-                            </div>
-                            <div className="font-mono text-[10px] bg-muted/80 p-1.5 rounded border border-border/50 text-foreground mt-0.5 select-all truncate">
-                              https://api.telegram.org/bot&lt;TOKEN&gt;/sendMessage
+                            <span className="font-semibold text-foreground">Telegram Endpoint:</span>
+                            <div className="flex items-center justify-between gap-1.5 font-mono text-[10px] bg-muted/80 px-2 py-1 rounded border border-border/50 text-foreground mt-0.5">
+                              <span className="truncate">https://api.telegram.org/bot&lt;TOKEN&gt;/sendMessage</span>
+                              <CopyButton text="https://api.telegram.org/bot<TOKEN>/sendMessage" successMessage="Copied Telegram URL template" />
                             </div>
                           </div>
                           <div>
-                            <span className="font-semibold text-foreground">Payload:</span> icCron automatically sets <code className="text-foreground font-mono">POST</code> and <code className="text-foreground font-mono">application/json</code>. Pass your chat ID and message text below.
+                            <span className="font-semibold text-foreground">Sample Payload:</span>
+                            <div className="flex items-center justify-between gap-1.5 font-mono text-[10px] bg-muted/80 px-2 py-1 rounded border border-border/50 text-foreground mt-0.5">
+                              <span className="truncate">{`{"content":"Automated update from icCron"}`}</span>
+                              <CopyButton text={`{"content":"Automated update from icCron"}`} successMessage="Copied sample JSON payload" />
+                            </div>
+                          </div>
+                          <div className="pt-1 border-t border-border/50">
+                            <div className="flex items-center justify-between">
+                              <span className="font-semibold text-foreground">AI / Cursor Prompt:</span>
+                              <CopyButton
+                                text="Write a TypeScript webhook payload generator for Discord and Telegram bot messages with custom embeds and markdown formatting."
+                                successMessage="Copied AI prompt to clipboard"
+                              />
+                            </div>
+                            <div className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5 italic">
+                              &quot;Write a TypeScript webhook payload generator for Discord and Telegram...&quot;
+                            </div>
                           </div>
                         </div>
                       </HoverCardContent>
@@ -371,11 +386,11 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                       >
                         <Icon icon={InfoGlassIcon} className="size-3.5" />
                       </HoverCardTrigger>
-                      <HoverCardContent side="top" align="center" className="w-84 sm:w-88 space-y-2.5 p-3.5 text-xs">
+                      <HoverCardContent side="top" align="center" className="w-84 sm:w-96 space-y-2.5 p-3.5 text-xs bg-popover text-popover-foreground shadow-xl border border-border">
                         <div className="flex items-center justify-between border-b border-border/60 pb-2">
                           <div className="flex items-center gap-2 font-semibold text-foreground">
                             <NextjsIcon size={14} className="size-3.5 dark:invert" />
-                            <span>Vercel Cron Setup Guide</span>
+                            <span>Vercel Cron Setup</span>
                           </div>
                           <span className="text-[10px] font-mono text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
                             CRON_SECRET
@@ -384,8 +399,9 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                         <div className="space-y-2 text-[11px] text-muted-foreground leading-relaxed">
                           <div>
                             <span className="font-semibold text-foreground">1. Generate Secret (Terminal):</span>
-                            <div className="font-mono text-[10px] bg-muted/80 p-1.5 rounded border border-border/50 text-foreground mt-0.5 select-all">
-                              openssl rand -hex 32
+                            <div className="flex items-center justify-between gap-1.5 font-mono text-[10px] bg-muted/80 px-2 py-1 rounded border border-border/50 text-foreground mt-0.5">
+                              <span className="truncate">openssl rand -hex 32</span>
+                              <CopyButton text="openssl rand -hex 32" successMessage="Copied terminal command" />
                             </div>
                           </div>
                           <div>
@@ -396,12 +412,25 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                           </div>
                           <div>
                             <span className="font-semibold text-foreground">3. Next.js Guard (app/api/cron/sync/route.ts):</span>
-                            <div className="font-mono text-[10px] bg-muted/80 p-1.5 rounded border border-border/50 text-foreground mt-0.5 overflow-x-auto">
-                              req.headers.get(&quot;authorization&quot;) === `Bearer ${process.env.CRON_SECRET}`
+                            <div className="flex items-center justify-between gap-1.5 font-mono text-[10px] bg-muted/80 px-2 py-1 rounded border border-border/50 text-foreground mt-0.5">
+                              <span className="truncate">req.headers.get(&quot;authorization&quot;) === `Bearer ${"$"}{"{"}process.env.CRON_SECRET{"}"}`</span>
+                              <CopyButton
+                                text={`if (req.headers.get("authorization") !== \`Bearer \${process.env.CRON_SECRET}\`) return new Response("Unauthorized", { status: 401 });`}
+                                successMessage="Copied Next.js route guard snippet"
+                              />
                             </div>
                           </div>
-                          <div>
-                            <span className="font-semibold text-foreground">4. In Form Below:</span> Enter <code className="text-foreground font-mono">Bearer &lt;secret&gt;</code> in the Authorization field.
+                          <div className="pt-1.5 border-t border-border/50">
+                            <div className="flex items-center justify-between">
+                              <span className="font-semibold text-foreground text-[11px]">AI / Cursor Prompt:</span>
+                              <CopyButton
+                                text="Create a protected Next.js App Router API route at app/api/cron/sync/route.ts that verifies request.headers.get('authorization') === 'Bearer ' + process.env.CRON_SECRET and executes my scheduled task."
+                                successMessage="Copied AI prompt to clipboard"
+                              />
+                            </div>
+                            <div className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5 italic">
+                              &quot;Create a protected Next.js App Router API route verifying Bearer CRON_SECRET...&quot;
+                            </div>
                           </div>
                         </div>
                       </HoverCardContent>
@@ -446,7 +475,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                       >
                         <Icon icon={InfoGlassIcon} className="size-3.5" />
                       </HoverCardTrigger>
-                      <HoverCardContent side="top" align="center" className="w-84 sm:w-88 space-y-2.5 p-3.5 text-xs">
+                      <HoverCardContent side="top" align="center" className="w-84 sm:w-96 space-y-2.5 p-3.5 text-xs bg-popover text-popover-foreground shadow-xl border border-border">
                         <div className="flex items-center justify-between border-b border-border/60 pb-2">
                           <div className="flex items-center gap-2 font-semibold text-foreground">
                             <Icon icon={CodeGlassIcon} className="size-3.5" />
@@ -459,20 +488,28 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                         <div className="space-y-2 text-[11px] text-muted-foreground leading-relaxed">
                           <div>
                             <span className="font-semibold text-foreground">Target Format:</span>
-                            <div className="font-mono text-[10px] bg-muted/80 p-1.5 rounded border border-border/50 text-foreground mt-0.5 select-all">
-                              &lt;canister_id&gt;::&lt;method_name&gt;
+                            <div className="flex items-center justify-between gap-1.5 font-mono text-[10px] bg-muted/80 px-2 py-1 rounded border border-border/50 text-foreground mt-0.5">
+                              <span className="truncate">ryjl3-tyaaa-aaaaa-aaaba-cai::get_account_identifier</span>
+                              <CopyButton text="ryjl3-tyaaa-aaaaa-aaaba-cai::get_account_identifier" successMessage="Copied sample target format" />
                             </div>
                           </div>
                           <div>
-                            <span className="font-semibold text-foreground">Supported Methods:</span>
-                            <div className="text-[10px] text-muted-foreground mt-0.5">
-                              Any public query or update method on the Internet Computer accepting empty Candid arguments.
+                            <span className="font-semibold text-foreground">Motoko Trigger Method:</span>
+                            <div className="flex items-center justify-between gap-1.5 font-mono text-[10px] bg-muted/80 px-2 py-1 rounded border border-border/50 text-foreground mt-0.5">
+                              <span className="truncate">public shared func cronTrigger() : async ()</span>
+                              <CopyButton text="public shared ({ caller }) func cronTrigger() : async () { return; }" successMessage="Copied Motoko snippet" />
                             </div>
                           </div>
-                          <div>
-                            <span className="font-semibold text-foreground">Zero Off-Chain Keepers:</span>
-                            <div className="text-[10px] text-muted-foreground mt-0.5">
-                              Autonomous on-chain timer execution with no hot private keys, AWS bots, or seed phrases.
+                          <div className="pt-1.5 border-t border-border/50">
+                            <div className="flex items-center justify-between">
+                              <span className="font-semibold text-foreground text-[11px]">AI / Motoko Prompt:</span>
+                              <CopyButton
+                                text="Write a secure Motoko canister method that can be triggered periodically by an autonomous ICP timer with caller verification and zero cycles drain."
+                                successMessage="Copied AI prompt to clipboard"
+                              />
+                            </div>
+                            <div className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5 italic">
+                              &quot;Write a secure Motoko canister method triggered periodically by autonomous ICP timer...&quot;
                             </div>
                           </div>
                         </div>
@@ -518,7 +555,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                       >
                         <Icon icon={InfoGlassIcon} className="size-3.5" />
                       </HoverCardTrigger>
-                      <HoverCardContent side="top" align="center" className="w-84 sm:w-88 space-y-2.5 p-3.5 text-xs">
+                      <HoverCardContent side="top" align="center" className="w-84 sm:w-96 space-y-2.5 p-3.5 text-xs bg-popover text-popover-foreground shadow-xl border border-border">
                         <div className="flex items-center justify-between border-b border-border/60 pb-2">
                           <div className="flex items-center gap-2 font-semibold text-foreground">
                             <Icon icon={SettingsGlassIcon} className="size-3.5" />
@@ -530,18 +567,29 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
                         </div>
                         <div className="space-y-2 text-[11px] text-muted-foreground leading-relaxed">
                           <div>
-                            <span className="font-semibold text-foreground">Target Endpoint:</span> Any public REST API or HTTP/HTTPS webhook URL.
-                          </div>
-                          <div>
-                            <span className="font-semibold text-foreground">Configurable Options:</span>
-                            <div className="text-[10px] text-muted-foreground mt-0.5">
-                              Toggle GET/POST methods, attach custom Bearer or API key headers, and pass formatted JSON bodies.
+                            <span className="font-semibold text-foreground">cURL Test Command:</span>
+                            <div className="flex items-center justify-between gap-1.5 font-mono text-[10px] bg-muted/80 px-2 py-1 rounded border border-border/50 text-foreground mt-0.5">
+                              <span className="truncate">curl -X POST https://api.example.com/webhook ...</span>
+                              <CopyButton text={`curl -X POST https://api.example.com/webhook -H "Content-Type: application/json" -d '{"cron":"ping"}'`} successMessage="Copied cURL command" />
                             </div>
                           </div>
                           <div>
-                            <span className="font-semibold text-foreground">Consensus &amp; Logs:</span>
-                            <div className="text-[10px] text-muted-foreground mt-0.5">
-                              Runs through ICP subnet consensus with execution logs recording status codes, duration (ms), and errors.
+                            <span className="font-semibold text-foreground">Sample Auth Header:</span>
+                            <div className="flex items-center justify-between gap-1.5 font-mono text-[10px] bg-muted/80 px-2 py-1 rounded border border-border/50 text-foreground mt-0.5">
+                              <span className="truncate">Authorization: Bearer your_api_secret</span>
+                              <CopyButton text="Bearer your_api_secret_here" successMessage="Copied auth header sample" />
+                            </div>
+                          </div>
+                          <div className="pt-1.5 border-t border-border/50">
+                            <div className="flex items-center justify-between">
+                              <span className="font-semibold text-foreground text-[11px]">AI / Webhook Prompt:</span>
+                              <CopyButton
+                                text="Write a resilient webhook handler in TypeScript that verifies incoming cron payloads, handles idempotency, and logs execution timing."
+                                successMessage="Copied AI prompt to clipboard"
+                              />
+                            </div>
+                            <div className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5 italic">
+                              &quot;Write a resilient webhook handler in TypeScript that verifies incoming cron payloads...&quot;
                             </div>
                           </div>
                         </div>
