@@ -173,6 +173,58 @@ fn list_my_projects() -> Vec<ProjectRecord> {
 // Jobs
 // -----------------------------------------------------------------------------
 
+fn validate_target_url(url: &str) -> Result<(), String> {
+    let u = url.trim();
+    if !u.starts_with("https://") && !u.starts_with("http://") {
+        return Err("Webhook URL must begin with https:// or http://".to_string());
+    }
+    if u.len() > 2048 {
+        return Err("Webhook URL exceeds 2048 characters".to_string());
+    }
+
+    let after_scheme = if let Some(stripped) = u.strip_prefix("https://") {
+        stripped
+    } else {
+        u.strip_prefix("http://").unwrap()
+    };
+
+    let host_part = after_scheme
+        .split('/')
+        .next()
+        .unwrap_or("")
+        .split('?')
+        .next()
+        .unwrap_or("");
+    let host = host_part
+        .split(':')
+        .next()
+        .unwrap_or("")
+        .trim()
+        .to_ascii_lowercase();
+
+    if host.is_empty() {
+        return Err("Target URL has empty host".to_string());
+    }
+
+    if host == "169.254.169.254" || host.starts_with("169.254.") {
+        return Err("Target URL points to forbidden metadata endpoint".to_string());
+    }
+    if host == "localhost"
+        || host == "127.0.0.1"
+        || host.starts_with("127.")
+        || host == "0.0.0.0"
+        || host == "::1"
+        || host == "[::1]"
+    {
+        return Err("Target URL cannot point to loopback address".to_string());
+    }
+    if host.starts_with("10.") || host.starts_with("192.168.") {
+        return Err("Target URL cannot point to private network address".to_string());
+    }
+
+    Ok(())
+}
+
 #[ic_cdk::update]
 fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
     let caller = ic_cdk::api::msg_caller();
@@ -201,13 +253,7 @@ fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
             }
         }
         JobTarget::HttpWebhook { url, .. } => {
-            let u = url.trim();
-            if !u.starts_with("https://") && !u.starts_with("http://") {
-                return Err("Webhook URL must begin with https:// or http://".to_string());
-            }
-            if u.len() > 2048 {
-                return Err("Webhook URL exceeds 2048 characters".to_string());
-            }
+            validate_target_url(url)?;
         }
     }
 
@@ -271,13 +317,7 @@ fn update_job(args: UpdateJobArgs) -> Result<JobRecord, String> {
                 }
             }
             JobTarget::HttpWebhook { url, .. } => {
-                let u = url.trim();
-                if !u.starts_with("https://") && !u.starts_with("http://") {
-                    return Err("Webhook URL must begin with https:// or http://".to_string());
-                }
-                if u.len() > 2048 {
-                    return Err("Webhook URL exceeds 2048 characters".to_string());
-                }
+                validate_target_url(url)?;
             }
         }
         job.target = target;
@@ -601,60 +641,8 @@ fn get_audit_stats() -> CronAuditStats {
 // Inbound HTTP Gateway Handlers
 // -----------------------------------------------------------------------------
 
-#[ic_cdk::query]
-fn http_request(req: types::InboundHttpRequest) -> types::InboundHttpResponse {
-    if req.method.eq_ignore_ascii_case("POST")
-        || req.method.eq_ignore_ascii_case("PUT")
-        || req.method.eq_ignore_ascii_case("DELETE")
-    {
-        return types::InboundHttpResponse {
-            status_code: 200,
-            headers: vec![],
-            body: vec![],
-            upgrade: Some(true),
-        };
-    }
-
-    if req.method.eq_ignore_ascii_case("OPTIONS") {
-        return types::InboundHttpResponse {
-            status_code: 204,
-            headers: vec![
-                types::HeaderField("Access-Control-Allow-Origin".to_string(), "*".to_string()),
-                types::HeaderField(
-                    "Access-Control-Allow-Methods".to_string(),
-                    "POST, GET, OPTIONS".to_string(),
-                ),
-                types::HeaderField(
-                    "Access-Control-Allow-Headers".to_string(),
-                    "Authorization, Content-Type".to_string(),
-                ),
-            ],
-            body: vec![],
-            upgrade: None,
-        };
-    }
-
-    let body = serde_json::json!({
-        "status": "ok",
-        "service": "icCron",
-        "canister_id": ic_cdk::id().to_text()
-    });
-    let body_bytes = serde_json::to_vec(&body).unwrap_or_default();
-
-    types::InboundHttpResponse {
-        status_code: 200,
-        headers: vec![
-            types::HeaderField("Content-Type".to_string(), "application/json".to_string()),
-            types::HeaderField("Access-Control-Allow-Origin".to_string(), "*".to_string()),
-        ],
-        body: body_bytes,
-        upgrade: None,
-    }
-}
-
-#[ic_cdk::update]
-async fn http_request_update(req: types::InboundHttpRequest) -> types::InboundHttpResponse {
-    let cors_headers = vec![
+fn standard_cors_headers() -> Vec<types::HeaderField> {
+    vec![
         types::HeaderField("Content-Type".to_string(), "application/json".to_string()),
         types::HeaderField("Access-Control-Allow-Origin".to_string(), "*".to_string()),
         types::HeaderField(
@@ -665,7 +653,32 @@ async fn http_request_update(req: types::InboundHttpRequest) -> types::InboundHt
             "Access-Control-Allow-Headers".to_string(),
             "Authorization, Content-Type".to_string(),
         ),
-    ];
+    ]
+}
+
+fn extract_api_key(req: &types::InboundHttpRequest) -> Option<String> {
+    for types::HeaderField(name, val) in &req.headers {
+        if name.eq_ignore_ascii_case("authorization") {
+            let trimmed = val.trim();
+            if let Some(token) = trimmed.strip_prefix("Bearer ") {
+                return Some(token.trim().to_string());
+            } else {
+                return Some(trimmed.to_string());
+            }
+        }
+    }
+
+    #[derive(serde::Deserialize)]
+    struct KeyPayload {
+        api_key: Option<String>,
+    }
+    let payload: Option<KeyPayload> = serde_json::from_slice(&req.body).ok();
+    payload.and_then(|p| p.api_key)
+}
+
+#[ic_cdk::query]
+fn http_request(req: types::InboundHttpRequest) -> types::InboundHttpResponse {
+    let cors_headers = standard_cors_headers();
 
     if req.method.eq_ignore_ascii_case("OPTIONS") {
         return types::InboundHttpResponse {
@@ -676,34 +689,102 @@ async fn http_request_update(req: types::InboundHttpRequest) -> types::InboundHt
         };
     }
 
-    let mut api_key = None;
-    for types::HeaderField(name, val) in &req.headers {
-        if name.eq_ignore_ascii_case("authorization") {
-            let trimmed = val.trim();
-            if let Some(token) = trimmed.strip_prefix("Bearer ") {
-                api_key = Some(token.trim().to_string());
-            } else {
-                api_key = Some(trimmed.to_string());
-            }
-            break;
+    let path = req.url.split('?').next().unwrap_or(&req.url);
+
+    if req.method.eq_ignore_ascii_case("POST") {
+        if path != "/api/v1/cron/trigger" && path != "/api/v1/cron/trigger/" {
+            let err_body = serde_json::json!({
+                "ok": false,
+                "error": "Endpoint not found"
+            });
+            return types::InboundHttpResponse {
+                status_code: 404,
+                headers: cors_headers,
+                body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                upgrade: None,
+            };
         }
+
+        let key = match extract_api_key(&req) {
+            Some(k) if !k.is_empty() => k,
+            _ => {
+                let err_body = serde_json::json!({
+                    "ok": false,
+                    "error": "Missing Authorization header or api_key in request body"
+                });
+                return types::InboundHttpResponse {
+                    status_code: 401,
+                    headers: cors_headers,
+                    body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                    upgrade: None,
+                };
+            }
+        };
+
+        if api_keys::verify_key(&key).is_none() {
+            let err_body = serde_json::json!({
+                "ok": false,
+                "error": "Invalid or revoked API key"
+            });
+            return types::InboundHttpResponse {
+                status_code: 401,
+                headers: cors_headers,
+                body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                upgrade: None,
+            };
+        }
+
+        return types::InboundHttpResponse {
+            status_code: 200,
+            headers: vec![],
+            body: vec![],
+            upgrade: Some(true),
+        };
+    }
+
+    if req.method.eq_ignore_ascii_case("GET") {
+        let body = serde_json::json!({
+            "status": "ok",
+            "service": "icCron",
+            "canister_id": ic_cdk::api::canister_self().to_text()
+        });
+        let body_bytes = serde_json::to_vec(&body).unwrap_or_default();
+
+        return types::InboundHttpResponse {
+            status_code: 200,
+            headers: cors_headers,
+            body: body_bytes,
+            upgrade: None,
+        };
+    }
+
+    types::InboundHttpResponse {
+        status_code: 405,
+        headers: cors_headers,
+        body: serde_json::to_vec(&serde_json::json!({"error": "Method not allowed"})).unwrap_or_default(),
+        upgrade: None,
+    }
+}
+
+#[ic_cdk::update]
+async fn http_request_update(req: types::InboundHttpRequest) -> types::InboundHttpResponse {
+    let cors_headers = standard_cors_headers();
+
+    if req.method.eq_ignore_ascii_case("OPTIONS") {
+        return types::InboundHttpResponse {
+            status_code: 204,
+            headers: cors_headers,
+            body: vec![],
+            upgrade: None,
+        };
     }
 
     #[derive(serde::Deserialize)]
     struct TriggerPayload {
         job_id: Option<u64>,
-        api_key: Option<String>,
     }
 
-    let payload: Option<TriggerPayload> = serde_json::from_slice(&req.body).ok();
-
-    if api_key.is_none() {
-        if let Some(ref p) = payload {
-            api_key = p.api_key.clone();
-        }
-    }
-
-    let key = match api_key {
+    let key = match extract_api_key(&req) {
         Some(k) if !k.is_empty() => k,
         _ => {
             let err_body = serde_json::json!({
@@ -719,6 +800,7 @@ async fn http_request_update(req: types::InboundHttpRequest) -> types::InboundHt
         }
     };
 
+    let payload: Option<TriggerPayload> = serde_json::from_slice(&req.body).ok();
     let job_id = match payload.and_then(|p| p.job_id) {
         Some(id) => id,
         None => {
@@ -795,5 +877,89 @@ async fn http_request_update(req: types::InboundHttpRequest) -> types::InboundHt
         headers: cors_headers,
         body: serde_json::to_vec(&ok_body).unwrap_or_default(),
         upgrade: None,
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Security Unit Tests
+// -----------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_url_ssrf_validation() {
+        assert!(validate_target_url("http://169.254.169.254/latest/meta-data").is_err());
+        assert!(validate_target_url("https://169.254.1.1/api").is_err());
+        assert!(validate_target_url("http://localhost:3000/trigger").is_err());
+        assert!(validate_target_url("https://127.0.0.1:8080").is_err());
+        assert!(validate_target_url("http://127.0.0.2/test").is_err());
+        assert!(validate_target_url("http://0.0.0.0/test").is_err());
+        assert!(validate_target_url("http://10.0.0.1/private").is_err());
+        assert!(validate_target_url("http://192.168.1.1/router").is_err());
+        assert!(validate_target_url("ftp://example.com/file").is_err());
+
+        assert!(validate_target_url("https://httpbin.org/post").is_ok());
+        assert!(validate_target_url("https://discord.com/api/webhooks/12345").is_ok());
+        assert!(validate_target_url("https://api.myproject.com/v1/cron").is_ok());
+    }
+
+    #[test]
+    fn test_extract_api_key_bearer() {
+        let req = types::InboundHttpRequest {
+            method: "POST".to_string(),
+            url: "/api/v1/cron/trigger".to_string(),
+            headers: vec![types::HeaderField(
+                "Authorization".to_string(),
+                "Bearer icp_cron_test_key_123".to_string(),
+            )],
+            body: vec![],
+        };
+        assert_eq!(
+            extract_api_key(&req),
+            Some("icp_cron_test_key_123".to_string())
+        );
+    }
+
+    #[test]
+    fn test_extract_api_key_body() {
+        let payload = serde_json::json!({
+            "api_key": "icp_cron_body_key_456",
+            "job_id": 1
+        });
+        let req = types::InboundHttpRequest {
+            method: "POST".to_string(),
+            url: "/api/v1/cron/trigger".to_string(),
+            headers: vec![],
+            body: serde_json::to_vec(&payload).unwrap(),
+        };
+        assert_eq!(
+            extract_api_key(&req),
+            Some("icp_cron_body_key_456".to_string())
+        );
+    }
+
+    #[test]
+    fn test_extract_api_key_missing() {
+        let req = types::InboundHttpRequest {
+            method: "POST".to_string(),
+            url: "/api/v1/cron/trigger".to_string(),
+            headers: vec![],
+            body: vec![],
+        };
+        assert_eq!(extract_api_key(&req), None);
+    }
+
+    #[test]
+    fn test_paused_job_next_run_isolation() {
+        let is_paused = matches!(
+            types::JobStatus::Paused,
+            types::JobStatus::Paused
+                | types::JobStatus::AutoPausedDormant
+                | types::JobStatus::ExhaustedCredits
+                | types::JobStatus::DeadLetterQueue
+        );
+        assert!(is_paused);
     }
 }

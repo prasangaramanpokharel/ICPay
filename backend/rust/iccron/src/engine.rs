@@ -202,9 +202,19 @@ pub async fn execute_single_job(mut job: JobRecord) {
         job.consecutive_failures = job.consecutive_failures.saturating_add(1);
     }
 
+    let is_paused = matches!(
+        job.status,
+        JobStatus::Paused
+            | JobStatus::AutoPausedDormant
+            | JobStatus::ExhaustedCredits
+            | JobStatus::DeadLetterQueue
+    );
+
     let max_retries = job.max_retries.max(10);
     if job.consecutive_failures >= max_retries {
         job.status = JobStatus::DeadLetterQueue;
+        job.next_run_at = None;
+    } else if is_paused {
         job.next_run_at = None;
     } else {
         job.next_run_at = cron::next_run_timestamp(&job.compiled_cron, now_sec);
