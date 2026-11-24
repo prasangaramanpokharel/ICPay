@@ -63,6 +63,15 @@ export function HeroSection() {
               >
                 Docs
               </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="rounded-full px-5 cursor-pointer font-medium"
+                nativeButton={false}
+                render={<Link href="/icbucket/pricing" />}
+              >
+                Pricing
+              </Button>
             </div>
             <HeroSignOptions />
           </div>

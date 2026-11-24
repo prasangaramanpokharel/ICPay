@@ -44,12 +44,8 @@ function loadAllPublicPaths(): string[] {
   const staticPublicPages = [
     "/",
     "/icfalcon",
-    "/products/icFalcon",
-    "/products/icFalcon/packages",
-    "/products/icFalcon/commands",
     "/icbucket",
-    "/products/icBucket",
-    "/products/icBucket/packages",
+    "/icbucket/pricing",
     "/bucket/docs",
     "/bucket/docs/getting-started/overview",
     "/bucket/docs/getting-started/quickstart",

@@ -3,9 +3,9 @@ import Link from "next/link"
 import { Section, Bullets } from "@/components/legal/prose"
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About ICPay: Gasless Crypto Payments & On-Chain Cloud Infrastructure",
   description:
-    "ICPay is an open-source ICP wallet that lets you send Internet Computer tokens to a username instead of a 63-character principal. Built on a canister, signed in with Internet Identity, no seed phrase.",
+    "ICPay is the custodial ICP wallet and decentralized S3 storage provider built on the Internet Computer. Learn about our architecture, security model, and team. We are not IC Pay Cyprus.",
   alternates: { canonical: "/about" },
 }
 
@@ -128,6 +128,15 @@ export default function AboutPage() {
             GitLab issues
           </a>
           , in public.
+        </p>
+      </Section>
+
+      <Section title="Brand clarification">
+        <p>
+          ICPay (icpay.app) is an independent decentralized application and custodial
+          wallet built natively on the Internet Computer Protocol. We are not affiliated,
+          associated, or connected with IC Pay (Cyprus), IC Pay Group, or any other legacy
+          payment gateway operating under similar naming conventions.
         </p>
       </Section>
 

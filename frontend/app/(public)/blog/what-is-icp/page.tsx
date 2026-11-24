@@ -3,9 +3,9 @@ import { IcpLiveData } from "@/components/blog/icp-live-data"
 import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
 
 const SLUG = "what-is-icp"
-const TITLE = "What is ICP? A Plain-Language Guide to the Internet Computer | ICPay"
+const TITLE = "What is ICP? The Internet Computer Explained in Simple Terms (2026 Guide)"
 const DESCRIPTION =
-  "A plain-language guide to the Internet Computer Protocol — how it works, why it exists, and what makes it different from other blockchains."
+  "What is ICP and how does it work? Learn how the Internet Computer runs full-stack web applications on-chain with zero gas fees, reverse gas, and canister smart contracts."
 const PUBLISHED_AT = "2026-08-09"
 const READING_MINUTES = 6
 

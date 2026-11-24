@@ -98,6 +98,18 @@ export function PublicProfile() {
     }
   }
 
+  useEffect(() => {
+    if (!claimable || (!isLoading && !principal)) {
+      let meta = document.querySelector('meta[name="robots"]')
+      if (!meta) {
+        meta = document.createElement("meta")
+        meta.setAttribute("name", "robots")
+        document.head.appendChild(meta)
+      }
+      meta.setAttribute("content", "noindex, follow")
+    }
+  }, [claimable, isLoading, principal])
+
   if (!read || !username || (claimable && isLoading)) {
     return (
       <ProfileShell>
@@ -107,7 +119,14 @@ export function PublicProfile() {
   }
 
   if (!claimable || !principal) {
-    return <Custom404Page />
+    return (
+      <>
+        <head>
+          <meta name="robots" content="noindex, follow" />
+        </head>
+        <Custom404Page />
+      </>
+    )
   }
 
   const isSelf = principal === identity?.getPrincipal().toText()

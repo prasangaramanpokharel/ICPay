@@ -3,9 +3,14 @@ import { NotFoundView } from "@/components/error/not-found-view"
 
 export function Custom404Page() {
   return (
-    <PublicLayout variant="content">
-      <NotFoundView />
-    </PublicLayout>
+    <>
+      <head>
+        <meta name="robots" content="noindex, nofollow" />
+      </head>
+      <PublicLayout variant="content">
+        <NotFoundView />
+      </PublicLayout>
+    </>
   )
 }
 
