@@ -546,7 +546,8 @@
     "suggested": "Disarankan untuk Anda",
     "noneFound": "Tidak ada yang ditemukan untuk “{query}”.",
     "empty": "Belum ada akun dengan nama pengguna. Jadilah yang pertama.",
-    "premium": "Pegangan premium terverifikasi"
+    "premium": "Pegangan premium terverifikasi",
+    "subtitle": "Jelajahi profil pengguna di seluruh jaringan"
   },
   "success": {
     "send": "Kirim Sukses",

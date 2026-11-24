@@ -5,20 +5,8 @@ import { useTranslations } from "next-intl"
 import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useSWRConfig } from "swr"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowLeft01Icon,
-  ArrowRight01Icon,
-  BellIcon,
-  Book02Icon,
-  Coins01Icon,
-  Folder02Icon,
-  Key01Icon,
-  MoreVerticalIcon,
-  Plug01Icon,
-  RefreshIcon,
-  Alert02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowLeftGlassIcon, BellGlassIcon, BookGlassIcon, CoinsGlassIcon, FolderGlassIcon, KeyGlassIcon, EllipsisVerticalGlassIcon, PlugGlassIcon, RefreshCwGlassIcon, TriangleAlertGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -301,11 +289,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
     return null
   }
 
-  const sep = (
-    <BreadcrumbSeparator>
-      <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" strokeWidth={1.75} />
-    </BreadcrumbSeparator>
-  )
+  const sep = <BreadcrumbSeparator />
 
   const bucketDisplayName = stats?.name ?? listBucket?.name
 
@@ -403,7 +387,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
             onClick={() => setConnectOpen(true)}
             className="gap-1.5"
           >
-            <HugeiconsIcon icon={Plug01Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={PlugGlassIcon} className="size-4" strokeWidth={1.75} />
             <span>Connect</span>
           </Button>
         ) : null}
@@ -415,7 +399,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
             onClick={() => setFolderOpen(true)}
             className="gap-1.5"
           >
-            <HugeiconsIcon icon={Folder02Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={FolderGlassIcon} className="size-4" strokeWidth={1.75} />
             <span>{t("createFolder")}</span>
           </Button>
         ) : null}
@@ -431,33 +415,33 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
               />
             }
           >
-            <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={EllipsisVerticalGlassIcon} className="size-4" strokeWidth={1.75} />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44">
             {stats ? (
               <>
                 <DropdownMenuItem onClick={() => setNotifOpen(true)} className="gap-2">
-                  <HugeiconsIcon icon={BellIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+                  <Icon icon={BellGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
                   <span>Alerts</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => router.push(`/bucket/api?bucket=${encodeURIComponent(bucketId)}`)} className="gap-2">
-                  <HugeiconsIcon icon={Key01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+                  <Icon icon={KeyGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
                   <span>{t("apiKeysShort")}</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
               </>
             ) : null}
             <DropdownMenuItem onClick={() => router.push("/bucket/docs")} className="gap-2">
-              <HugeiconsIcon
-                icon={Book02Icon}
+              <Icon
+                icon={BookGlassIcon}
                 className="size-4 text-muted-foreground"
                 strokeWidth={1.75}
               />
               <span>{t("docs")}</span>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/bucket/pricing")} className="gap-2">
-              <HugeiconsIcon
-                icon={Coins01Icon}
+              <Icon
+                icon={CoinsGlassIcon}
                 className="size-4 text-muted-foreground"
                 strokeWidth={1.75}
               />
@@ -465,8 +449,8 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => void handleManualRefresh()} className="gap-2">
-              <HugeiconsIcon
-                icon={RefreshIcon}
+              <Icon
+                icon={RefreshCwGlassIcon}
                 className="size-4 text-muted-foreground"
                 strokeWidth={1.75}
               />
@@ -500,7 +484,47 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
         <div className="flex items-center justify-between gap-2">
           {trail}
         </div>
-        <Skeleton className="h-40 w-full rounded-2xl" />
+        <div className="space-y-6">
+          <div className="rounded-(--radius) border border-border/70 bg-card/60 p-5 space-y-4 shadow-xs">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1.5">
+                <Skeleton className="h-5 w-36 rounded-md" />
+                <Skeleton className="h-3.5 w-64 rounded-md" />
+              </div>
+              <Skeleton className="h-8 w-24 rounded-(--radius)" />
+            </div>
+            <div className="space-y-2">
+              <div className="flex justify-between">
+                <Skeleton className="h-3 w-20 rounded-md" />
+                <Skeleton className="h-3 w-28 rounded-md" />
+              </div>
+              <Skeleton className="h-2 w-full rounded-full" />
+            </div>
+          </div>
+          <div className="rounded-(--radius) border border-border/70 bg-card/60 overflow-hidden shadow-xs">
+            <div className="flex items-center justify-between border-b border-border/40 p-4">
+              <Skeleton className="h-9 w-60 rounded-(--radius)" />
+              <div className="flex gap-2">
+                <Skeleton className="h-9 w-24 rounded-(--radius)" />
+                <Skeleton className="h-9 w-24 rounded-(--radius)" />
+              </div>
+            </div>
+            <div className="p-4 space-y-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between py-2">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="size-8 rounded-lg" />
+                    <div className="space-y-1">
+                      <Skeleton className="h-4 w-32 rounded-md" />
+                      <Skeleton className="h-3 w-20 rounded-md" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-4 w-16 rounded-md" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </AppPage>
     )
   }
@@ -521,7 +545,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
                 <span className="text-xs text-muted-foreground">Day 21+ Past Expiry</span>
               </div>
               <CardTitle className="flex items-center gap-2.5 text-lg font-semibold text-foreground">
-                <HugeiconsIcon icon={Alert02Icon} className="size-5 text-destructive shrink-0" strokeWidth={1.75} />
+                <Icon icon={TriangleAlertGlassIcon} className="size-5 text-destructive shrink-0" strokeWidth={1.75} />
                 <span>{listBucket.name} — Bucket Permanently Purged</span>
               </CardTitle>
               <CardDescription className="text-sm text-muted-foreground leading-relaxed">
@@ -546,7 +570,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
             </CardContent>
             <CardFooter className="flex flex-wrap items-center gap-2.5 border-t border-border/40 pt-4">
               <Button nativeButton={false} render={<Link href="/bucket" />}>
-                <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4 mr-1.5" strokeWidth={1.75} />
+                <Icon icon={ArrowLeftGlassIcon} className="size-4 mr-1.5" strokeWidth={1.75} />
                 <span>Back to Buckets</span>
               </Button>
               <Button
@@ -559,7 +583,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
                 {isCheckingCanister ? (
                   <Spinner className="size-4" />
                 ) : (
-                  <HugeiconsIcon icon={RefreshIcon} className="size-4" strokeWidth={1.75} />
+                  <Icon icon={RefreshCwGlassIcon} className="size-4" strokeWidth={1.75} />
                 )}
                 <span>{isCheckingCanister ? "Checking Canister..." : "Check Live Status"}</span>
               </Button>
@@ -579,8 +603,8 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
         </div>
         <Card className="border-border/80 bg-card/60">
           <CardContent className="flex flex-col items-center justify-center p-8 text-center sm:p-12">
-            <div className="mb-4 flex size-12 items-center justify-center rounded-2xl bg-destructive/10 text-destructive">
-              <HugeiconsIcon icon={Alert02Icon} className="size-6" strokeWidth={1.75} />
+            <div className="mb-4 flex size-12 items-center justify-center rounded-(--radius) bg-destructive/10 text-destructive">
+              <Icon icon={TriangleAlertGlassIcon} className="size-6" strokeWidth={1.75} />
             </div>
             <CardTitle className="text-lg font-semibold text-foreground">{t("notFound")}</CardTitle>
             <CardDescription className="mt-1.5 max-w-md text-sm text-muted-foreground">
@@ -593,7 +617,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
             ) : null}
             <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
               <Button nativeButton={false} render={<Link href="/bucket" />}>
-                <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4 mr-1.5" strokeWidth={1.75} />
+                <Icon icon={ArrowLeftGlassIcon} className="size-4 mr-1.5" strokeWidth={1.75} />
                 <span>Back to Buckets</span>
               </Button>
               <Button
@@ -606,7 +630,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
                 {isCheckingCanister ? (
                   <Spinner className="size-4" />
                 ) : (
-                  <HugeiconsIcon icon={RefreshIcon} className="size-4" strokeWidth={1.75} />
+                  <Icon icon={RefreshCwGlassIcon} className="size-4" strokeWidth={1.75} />
                 )}
                 <span>{isCheckingCanister ? "Checking Canister..." : "Check Live Status"}</span>
               </Button>
@@ -642,7 +666,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
           return (
             <Alert variant="destructive" className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-start gap-3">
-                <HugeiconsIcon icon={Alert02Icon} className="size-5 shrink-0 mt-0.5" />
+                <Icon icon={TriangleAlertGlassIcon} className="size-5 shrink-0 mt-0.5" />
                 <div className="space-y-1">
                   <div className="text-xs font-semibold tracking-tight">Bucket Tombstoned (Day 31+)</div>
                   <AlertDescription className="text-xs">
@@ -657,7 +681,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
           return (
             <Alert className="border-warning/40 bg-warning/10 text-warning flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-start gap-3">
-                <HugeiconsIcon icon={Alert02Icon} className="size-5 shrink-0 text-warning mt-0.5" />
+                <Icon icon={TriangleAlertGlassIcon} className="size-5 shrink-0 text-warning mt-0.5" />
                 <div className="space-y-1">
                   <div className="text-xs font-semibold tracking-tight text-warning">
                     Bucket Frozen (Day 8–30)
@@ -673,7 +697,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
                 onClick={() => setRenewOpen(true)}
                 className="shrink-0 h-8 gap-1.5 text-xs font-semibold"
               >
-                <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
+                <Icon icon={RefreshCwGlassIcon} className="size-3.5" />
                 <span>Renew to Unfreeze</span>
               </Button>
             </Alert>
@@ -682,7 +706,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
         return (
           <Alert className="border-warning/30 bg-warning/10 text-warning flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="flex items-start gap-3">
-              <HugeiconsIcon icon={Alert02Icon} className="size-5 shrink-0 text-warning mt-0.5" />
+              <Icon icon={TriangleAlertGlassIcon} className="size-5 shrink-0 text-warning mt-0.5" />
               <div className="space-y-1">
                 <div className="text-xs font-semibold tracking-tight text-warning">
                   Plan Expired · Read-Only Grace Period (Day 1–7)
@@ -698,7 +722,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
               onClick={() => setRenewOpen(true)}
               className="shrink-0 h-8 gap-1.5 text-xs font-semibold"
             >
-              <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
+              <Icon icon={RefreshCwGlassIcon} className="size-3.5" />
               <span>Renew Bucket</span>
             </Button>
           </Alert>

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   DepositAddressCard,
@@ -23,6 +23,26 @@ import { copyText } from "@/lib/wallet/utils"
 import { isChainKeyLedger } from "@/services/chainkey/deposits"
 import { ICP_LEDGER_ID } from "@/services/tokens"
 
+function TokenDepositSkeleton() {
+  return (
+    <div className="space-y-6 pt-2">
+      <Skeleton className="h-8 w-24 rounded-lg" />
+      <div className="flex items-center justify-center gap-2.5">
+        <Skeleton className="size-10 rounded-full" />
+        <Skeleton className="h-6 w-20 rounded-md" />
+      </div>
+      <div className="flex flex-col items-center gap-4 rounded-(--radius) border border-border/60 bg-card p-6 shadow-xs">
+        <Skeleton className="size-48 rounded-(--radius)" />
+        <div className="w-full space-y-2">
+          <Skeleton className="h-3.5 w-24 rounded-md" />
+          <Skeleton className="h-10 w-full rounded-(--radius)" />
+        </div>
+        <Skeleton className="h-3.5 w-64 rounded-md" />
+      </div>
+    </div>
+  )
+}
+
 export function TokenDepositView() {
   const t = useTranslations("token")
   const router = useRouter()
@@ -35,11 +55,7 @@ export function TokenDepositView() {
   const { deposit: chainKeyDeposit } = useChainKeyDeposit(ledgerId || null)
 
   if (isLoading || !ledgerId) {
-    return (
-      <div className="flex justify-center py-24">
-        <Spinner className="size-6 text-muted-foreground" />
-      </div>
-    )
+    return <TokenDepositSkeleton />
   }
 
   if (!token) {
@@ -72,8 +88,13 @@ export function TokenDepositView() {
       </div>
 
       {depositLoading || !icrcAddress ? (
-        <div className="flex justify-center py-12">
-          <Spinner className="size-5 text-muted-foreground" />
+        <div className="flex flex-col items-center gap-4 rounded-(--radius) border border-border/60 bg-card p-6 shadow-xs">
+          <Skeleton className="size-48 rounded-(--radius)" />
+          <div className="w-full space-y-2">
+            <Skeleton className="h-3.5 w-24 rounded-md" />
+            <Skeleton className="h-10 w-full rounded-(--radius)" />
+          </div>
+          <Skeleton className="h-3.5 w-64 rounded-md" />
         </div>
       ) : chainKeyDeposit ? (
         <Tabs defaultValue="icpay" className="w-full gap-0">

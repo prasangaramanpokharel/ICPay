@@ -9,34 +9,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  AlertCircleIcon,
-  CheckmarkCircle02Icon,
-  CloudIcon,
-  MoneyBag02Icon,
-  DatabaseIcon,
-  ShieldIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CircleAlertGlassIcon, CircleCheckGlassIcon, CloudGlassIcon, HandCoinsGlassIcon, DatabaseGlassIcon, ShieldGlassIcon } from "@thesvg/ui-react"
 
 const ROW_IDS = ["0", "1", "2", "3"] as const
 
 const ROW_ICONS = [
   {
-    problem: MoneyBag02Icon,
-    solution: MoneyBag02Icon,
+    problem: HandCoinsGlassIcon,
+    solution: HandCoinsGlassIcon,
   },
   {
-    problem: DatabaseIcon,
-    solution: ShieldIcon,
+    problem: DatabaseGlassIcon,
+    solution: ShieldGlassIcon,
   },
   {
-    problem: AlertCircleIcon,
-    solution: CheckmarkCircle02Icon,
+    problem: CircleAlertGlassIcon,
+    solution: CircleCheckGlassIcon,
   },
   {
-    problem: CloudIcon,
-    solution: CloudIcon,
+    problem: CloudGlassIcon,
+    solution: CloudGlassIcon,
   },
 ] as const
 
@@ -46,7 +39,7 @@ function TopicCell({
   description,
   tone,
 }: {
-  icon: typeof MoneyBag02Icon
+  icon: typeof HandCoinsGlassIcon
   title: string
   description: string
   tone: "problem" | "solution"
@@ -55,7 +48,7 @@ function TopicCell({
 
   return (
     <div className="flex gap-3 py-1">
-      <HugeiconsIcon icon={icon} className={`mt-0.5 size-5 shrink-0 ${iconClass}`} />
+      <Icon icon={icon} className={`mt-0.5 size-5 shrink-0 ${iconClass}`} />
       <div className="min-w-0 space-y-1">
         <p className="font-medium leading-snug">{title}</p>
         <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>

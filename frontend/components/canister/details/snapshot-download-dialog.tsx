@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Download01Icon, CheckmarkCircle01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { DownloadGlassIcon, CircleCheckGlassIcon } from "@thesvg/ui-react"
 import {
   Dialog,
   DialogContent,
@@ -103,7 +103,7 @@ export function SnapshotDownloadDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={Download01Icon} className="size-4 text-primary" strokeWidth={1.75} />
+            <Icon icon={DownloadGlassIcon} className="size-4 text-primary" strokeWidth={1.75} />
             <DialogTitle className="text-base font-semibold">Download Snapshot</DialogTitle>
           </div>
           <DialogDescription className="text-xs">
@@ -129,7 +129,7 @@ export function SnapshotDownloadDialog({
                 <span className="flex items-center gap-1.5 font-medium text-foreground">
                   {downloading && <Spinner className="size-3.5" />}
                   {completed && (
-                    <HugeiconsIcon icon={CheckmarkCircle01Icon} className="size-3.5 text-success" />
+                    <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-success" />
                   )}
                   {phaseLabel(progress.phase)}
                 </span>

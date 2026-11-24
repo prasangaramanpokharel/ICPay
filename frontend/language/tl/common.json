@@ -546,7 +546,8 @@
     "suggested": "Iminungkahi para sa iyo",
     "noneFound": "Walang nahanap para sa “{query}”.",
     "empty": "Wala pang mga account na may mga username. Maging una.",
-    "premium": "Na-verify na premium handle"
+    "premium": "Na-verify na premium handle",
+    "subtitle": "Galugarin ang mga profile ng user sa buong network"
   },
   "success": {
     "send": "Ipadala ang Tagumpay",

@@ -4,32 +4,27 @@ import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { CodeBlock } from "@/components/ui/code-block"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  FingerPrintIcon,
-  SmartPhone01Icon,
-  Globe02Icon,
-  RefreshIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { FingerprintPatternGlassIcon, SmartphoneGlassIcon, GlobeGlassIcon, RefreshCwGlassIcon } from "@thesvg/ui-react"
 
 const AUTH_PILLARS = [
   {
-    icon: FingerPrintIcon,
+    icon: FingerprintPatternGlassIcon,
     title: "Passkeys & Internet Identity",
     description: "Hardware-level biometric sign-in via WebAuthn (TouchID, FaceID, YubiKey) with zero seed phrases or passwords.",
   },
   {
-    icon: Globe02Icon,
+    icon: GlobeGlassIcon,
     title: "Federated Web3 OpenID",
     description: "Frictionless onboarding for non-crypto users via Google, Apple, and Microsoft single sign-on backed by Internet Identity.",
   },
   {
-    icon: SmartPhone01Icon,
+    icon: SmartphoneGlassIcon,
     title: "Dual-Transport Architecture",
     description: "Desktop popups (window) and mobile redirects (redirect) with automatic URL-hash session resumption on iOS Safari and Android Chrome.",
   },
   {
-    icon: RefreshIcon,
+    icon: RefreshCwGlassIcon,
     title: "Self-Healing Session Hydration",
     description: "Probes the backend canister on mount. If a stored delegation has expired or network changed, it gracefully refreshes or clears.",
   },
@@ -90,7 +85,7 @@ export function AuthSection() {
             <Card key={idx} className="border-border/60 bg-card/60 backdrop-blur-xs transition-colors hover:border-primary/40 hover:bg-card/90">
               <CardHeader>
                 <div className="flex size-9 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary mb-2">
-                  <HugeiconsIcon icon={pillar.icon} className="size-5" />
+                  <Icon icon={pillar.icon} className="size-5" />
                 </div>
                 <CardTitle className="text-base">{pillar.title}</CardTitle>
                 <CardDescription className="text-xs leading-relaxed mt-1">

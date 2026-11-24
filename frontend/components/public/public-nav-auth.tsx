@@ -5,18 +5,9 @@ import Link from "next/link"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { useTheme } from "next-themes"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  CheckmarkCircle02Icon,
-  Clock01Icon,
-  Copy01Icon,
-  Logout01Icon,
-  Moon02Icon,
-  Settings01Icon,
-  Sun01Icon,
-  UserIcon,
-  Wallet01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ClockGlassIcon, LogOutGlassIcon, MoonGlassIcon, SettingsGlassIcon, SunGlassIcon, UserGlassIcon, WalletBalanceGlassIcon } from "@thesvg/ui-react"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -146,10 +137,7 @@ function NavUserMenuItems({
               title="Copy address"
               aria-label="Copy address"
             >
-              <HugeiconsIcon
-                icon={copied ? CheckmarkCircle02Icon : Copy01Icon}
-                className={cn("size-3", copied && "text-success")}
-              />
+              <CopyIconIndicator copied={copied} iconClassName="size-3" />
             </button>
           </div>
         </div>
@@ -159,19 +147,19 @@ function NavUserMenuItems({
 
       <DropdownMenuGroup>
         <DropdownMenuItem render={<Link href="/home" />} className="cursor-pointer gap-2.5 text-xs py-2">
-          <HugeiconsIcon icon={Wallet01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+          <Icon icon={WalletBalanceGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
           <span>{tNav("wallet")}</span>
         </DropdownMenuItem>
         <DropdownMenuItem render={<Link href="/transactions" />} className="cursor-pointer gap-2.5 text-xs py-2">
-          <HugeiconsIcon icon={Clock01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+          <Icon icon={ClockGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
           <span>{tNavRoot("history")}</span>
         </DropdownMenuItem>
         <DropdownMenuItem render={<Link href="/profile" />} className="cursor-pointer gap-2.5 text-xs py-2">
-          <HugeiconsIcon icon={UserIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+          <Icon icon={UserGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
           <span>{tSettings("items.profile")}</span>
         </DropdownMenuItem>
         <DropdownMenuItem render={<Link href="/settings" />} className="cursor-pointer gap-2.5 text-xs py-2">
-          <HugeiconsIcon icon={Settings01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+          <Icon icon={SettingsGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
           <span>{tSettings("items.settings")}</span>
         </DropdownMenuItem>
       </DropdownMenuGroup>
@@ -182,7 +170,7 @@ function NavUserMenuItems({
         <LanguageSwitch variant="row" />
         <div className="flex items-center justify-between px-2.5 py-1 text-xs text-foreground">
           <div className="flex items-center gap-2.5">
-            <HugeiconsIcon icon={Moon02Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+            <Icon icon={MoonGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
             <span>Theme</span>
           </div>
           <div className="flex items-center gap-0.5 rounded-full border border-border/60 bg-muted/40 p-0.5">
@@ -195,7 +183,7 @@ function NavUserMenuItems({
               )}
               aria-label="Light mode"
             >
-              <HugeiconsIcon icon={Sun01Icon} className="size-3.5" />
+              <Icon icon={SunGlassIcon} className="size-3.5" />
             </button>
             <button
               type="button"
@@ -206,7 +194,7 @@ function NavUserMenuItems({
               )}
               aria-label="Dark mode"
             >
-              <HugeiconsIcon icon={Moon02Icon} className="size-3.5" />
+              <Icon icon={MoonGlassIcon} className="size-3.5" />
             </button>
           </div>
         </div>
@@ -218,7 +206,7 @@ function NavUserMenuItems({
         onClick={() => void logout()}
         className="cursor-pointer gap-2.5 text-destructive focus:bg-destructive/10 focus:text-destructive text-xs py-2"
       >
-        <HugeiconsIcon icon={Logout01Icon} className="size-4 text-destructive" strokeWidth={1.75} />
+        <Icon icon={LogOutGlassIcon} className="size-4 text-destructive" strokeWidth={1.75} />
         <span>{tSettings("signOut")}</span>
       </DropdownMenuItem>
     </>

@@ -12,15 +12,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Separator } from "@/components/ui/separator"
 import { PremiumBadge } from "@/components/verified/premium-badge"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  UserIcon,
-  Tick02Icon,
-  Cancel01Icon,
-  ShoppingBag01Icon,
-  ArrowRight01Icon,
-  LinkSquare02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { UserGlassIcon, CheckGlassOutlineIcon, XGlassIcon, ShoppingBagGlassIcon, ArrowRightGlassIcon, ExternalLinkGlassIcon } from "@thesvg/ui-react"
 import type { UserPublic } from "@/services/types"
 import Link from "next/link"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -97,7 +90,7 @@ export function ProfileCard({ user, onUpdateUsername }: ProfileCardProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <HugeiconsIcon icon={UserIcon} className="h-5 w-5" />
+          <Icon icon={UserGlassIcon} className="h-5 w-5" />
           {t("title")}
         </CardTitle>
         <CardDescription>{t("cardDescription")}</CardDescription>
@@ -152,7 +145,7 @@ export function ProfileCard({ user, onUpdateUsername }: ProfileCardProps) {
                         nativeButton={false}
                         render={<Link href={`/@${handle}`} aria-label={`View @${handle} profile`} />}
                       >
-                        <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5 text-muted-foreground" />
+                        <Icon icon={ExternalLinkGlassIcon} className="size-3.5 text-muted-foreground" />
                       </Button>
                     </div>
                   </div>
@@ -182,10 +175,10 @@ export function ProfileCard({ user, onUpdateUsername }: ProfileCardProps) {
                   spellCheck={false}
                 />
                 {trimmed !== "" && !tooShortToClaim && !checking && available === true && (
-                  <HugeiconsIcon icon={Tick02Icon} className="h-5 w-5 text-success" />
+                  <Icon icon={CheckGlassOutlineIcon} className="h-5 w-5 text-success" strokeWidth={2.5} />
                 )}
                 {trimmed !== "" && !tooShortToClaim && !checking && available === false && (
-                  <HugeiconsIcon icon={Cancel01Icon} className="h-5 w-5 text-destructive" />
+                  <Icon icon={XGlassIcon} className="h-5 w-5 text-destructive" />
                 )}
               </div>
               {trimmed !== "" && !tooShortToClaim && !checking && available === true && (
@@ -224,10 +217,10 @@ export function ProfileCard({ user, onUpdateUsername }: ProfileCardProps) {
           className="flex items-center justify-between gap-3 rounded-xl border border-dashed px-3 py-2.5 transition-colors hover:bg-accent"
         >
           <span className="flex items-center gap-2 text-xs text-muted-foreground">
-            <HugeiconsIcon icon={ShoppingBag01Icon} className="size-4 shrink-0" />
+            <Icon icon={ShoppingBagGlassIcon} className="size-4 shrink-0" />
             {t("upsell")}
           </span>
-          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 shrink-0 text-muted-foreground" />
+          <Icon icon={ArrowRightGlassIcon} className="size-4 shrink-0 text-muted-foreground" />
         </Link>
       </CardContent>
     </Card>

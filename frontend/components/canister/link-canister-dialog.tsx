@@ -2,12 +2,8 @@
 
 import { useMemo, useState } from "react"
 import { AnimatePresence, motion } from "motion/react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Cancel01Icon,
-  ConnectIcon,
-  Tick02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { XGlassIcon, LinkGlassIcon, CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import {
   Dialog,
   DialogContent,
@@ -279,8 +275,8 @@ export function LinkCanisterDialog({
                         />
                         {draftTouched && (
                           <span className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2">
-                            <HugeiconsIcon
-                              icon={draftValid ? Tick02Icon : Cancel01Icon}
+                            <Icon
+                              icon={draftValid ? CheckGlassOutlineIcon : XGlassIcon}
                               className={cn(
                                 "size-3.5",
                                 draftValid ? "text-success" : "text-destructive"
@@ -376,7 +372,7 @@ export function LinkCanisterDialog({
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between text-xs">
                     <span className="font-medium text-foreground flex items-center gap-1.5">
-                      <HugeiconsIcon icon={ConnectIcon} className="size-3.5 text-primary" />
+                      <Icon icon={LinkGlassIcon} className="size-3.5 text-primary" />
                       Add Controller via CLI
                     </span>
                     <span className="text-[11px] text-muted-foreground">bash</span>
@@ -448,7 +444,7 @@ export function LinkCanisterDialog({
                 className="flex flex-col items-center justify-center text-center py-2"
               >
                 <div className="animate-in fade-in zoom-in-75 mb-3 flex items-center justify-center text-success duration-200">
-                  <HugeiconsIcon icon={Tick02Icon} className="size-12" strokeWidth={2.5} />
+                  <Icon icon={CheckGlassOutlineIcon} className="size-12" strokeWidth={2.5} />
                 </div>
 
                 <h3 className="text-lg font-semibold tracking-tight text-foreground">

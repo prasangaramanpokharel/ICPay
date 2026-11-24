@@ -546,7 +546,8 @@
     "suggested": "Gợi ý cho bạn",
     "noneFound": "Không tìm thấy ai với “{query}”.",
     "empty": "Chưa có tài khoản có tên. Hãy là người đầu tiên.",
-    "premium": "Handle premium đã xác minh"
+    "premium": "Handle premium đã xác minh",
+    "subtitle": "Khám phá hồ sơ người dùng trên toàn mạng lưới"
   },
   "success": {
     "send": "Gửi thành công",

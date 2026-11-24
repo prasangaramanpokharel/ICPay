@@ -4,16 +4,8 @@ import { useState, useSyncExternalStore } from "react"
 import Image from "next/image"
 import { motion } from "motion/react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Download01Icon,
-  ArrowDown01Icon,
-  SecurityCheckIcon,
-  CpuIcon,
-  File01Icon,
-  LinkSquare02Icon,
-  ArrowRight01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { DownloadGlassIcon, ArrowDownGlassIcon, ShieldCheckGlassIcon, CpuGlassIcon, FileGlassIcon, ExternalLinkGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -149,7 +141,7 @@ export function DownloadsView() {
                 </span>
               </AnimatedShinyText>
               <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground transition-transform duration-200 group-hover:translate-x-0.5">
-                <HugeiconsIcon icon={ArrowRight01Icon} className="size-3" />
+                <Icon icon={ArrowRightGlassIcon} className="size-3" />
               </span>
             </a>
           </motion.div>
@@ -205,7 +197,7 @@ export function DownloadsView() {
                       className="size-11 rounded-full cursor-pointer hover:bg-muted"
                       aria-label={t("dropdown.ariaLabel")}
                     >
-                      <HugeiconsIcon icon={ArrowDown01Icon} className="size-4" />
+                      <Icon icon={ArrowDownGlassIcon} className="size-4" />
                     </Button>
                   }
                 />
@@ -389,7 +381,7 @@ export function DownloadsView() {
                           />
                         }
                       >
-                        <HugeiconsIcon icon={Download01Icon} className="size-3.5" />
+                        <Icon icon={DownloadGlassIcon} className="size-3.5" />
                         <span>96 MB</span>
                       </Button>
                     </motion.div>
@@ -414,7 +406,7 @@ export function DownloadsView() {
                           />
                         }
                       >
-                        <HugeiconsIcon icon={Download01Icon} className="size-3.5" />
+                        <Icon icon={DownloadGlassIcon} className="size-3.5" />
                         <span>100 MB</span>
                       </Button>
                     </motion.div>
@@ -439,7 +431,7 @@ export function DownloadsView() {
                           />
                         }
                       >
-                        <HugeiconsIcon icon={Download01Icon} className="size-3.5" />
+                        <Icon icon={DownloadGlassIcon} className="size-3.5" />
                         <span>92 MB</span>
                       </Button>
                     </motion.div>
@@ -499,7 +491,7 @@ export function DownloadsView() {
                           />
                         }
                       >
-                        <HugeiconsIcon icon={Download01Icon} className="size-3.5" />
+                        <Icon icon={DownloadGlassIcon} className="size-3.5" />
                         <span>84 MB</span>
                       </Button>
                     </motion.div>
@@ -524,7 +516,7 @@ export function DownloadsView() {
                           />
                         }
                       >
-                        <HugeiconsIcon icon={Download01Icon} className="size-3.5" />
+                        <Icon icon={DownloadGlassIcon} className="size-3.5" />
                         <span>106 MB</span>
                       </Button>
                     </motion.div>
@@ -594,7 +586,7 @@ export function DownloadsView() {
                           />
                         }
                       >
-                        <HugeiconsIcon icon={Download01Icon} className="size-3.5" />
+                        <Icon icon={DownloadGlassIcon} className="size-3.5" />
                         <span>98 MB</span>
                       </Button>
                     </motion.div>
@@ -619,7 +611,7 @@ export function DownloadsView() {
                           />
                         }
                       >
-                        <HugeiconsIcon icon={Download01Icon} className="size-3.5" />
+                        <Icon icon={DownloadGlassIcon} className="size-3.5" />
                         <span>98 MB</span>
                       </Button>
                     </motion.div>
@@ -644,7 +636,7 @@ export function DownloadsView() {
                           />
                         }
                       >
-                        <HugeiconsIcon icon={Download01Icon} className="size-3.5" />
+                        <Icon icon={DownloadGlassIcon} className="size-3.5" />
                         <span>98 MB</span>
                       </Button>
                     </motion.div>
@@ -666,7 +658,7 @@ export function DownloadsView() {
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <HugeiconsIcon icon={SecurityCheckIcon} className="size-5 text-primary" />
+                <Icon icon={ShieldCheckGlassIcon} className="size-5 text-primary" />
                 <h2 className="text-xl font-bold tracking-tight text-foreground">
                   {t("hashes.title")}
                 </h2>
@@ -689,9 +681,9 @@ export function DownloadsView() {
                 />
               }
             >
-              <HugeiconsIcon icon={File01Icon} className="size-4" />
+              <Icon icon={FileGlassIcon} className="size-4" />
               <span>{t("hashes.viewAll")}</span>
-              <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5 opacity-70" />
+              <Icon icon={ExternalLinkGlassIcon} className="size-3.5 opacity-70" />
             </Button>
           </div>
 
@@ -724,7 +716,7 @@ export function DownloadsView() {
                         className="gap-1.5 rounded-full px-3.5 h-8 text-xs font-medium self-start sm:self-auto shrink-0 cursor-pointer border-border/80 bg-card hover:bg-muted text-foreground transition-all duration-150"
                       >
                         <CopyIconIndicator copied={isCopied} iconClassName="size-3.5" />
-                        <span>{isCopied ? t("hashes.copied") : t("hashes.copy")}</span>
+                        <span className={cn(isCopied && "text-success font-medium")}>{isCopied ? t("hashes.copied") : t("hashes.copy")}</span>
                       </Button>
                     </motion.div>
                   </div>
@@ -744,7 +736,7 @@ export function DownloadsView() {
           <motion.div whileHover={{ y: -3 }} transition={{ type: "spring", stiffness: 350 }}>
             <Card className="border-border/60 bg-card p-6 shadow-sm space-y-2.5 h-full hover:border-primary/40 transition-colors">
               <div className="flex size-10 items-center justify-center rounded-xl border border-border/60 bg-muted/40">
-                <HugeiconsIcon icon={SecurityCheckIcon} className="size-5 text-primary" />
+                <Icon icon={ShieldCheckGlassIcon} className="size-5 text-primary" />
               </div>
               <h3 className="text-base font-semibold text-foreground">
                 {t("features.custodyTitle")}
@@ -758,7 +750,7 @@ export function DownloadsView() {
           <motion.div whileHover={{ y: -3 }} transition={{ type: "spring", stiffness: 350 }}>
             <Card className="border-border/60 bg-card p-6 shadow-sm space-y-2.5 h-full hover:border-primary/40 transition-colors">
               <div className="flex size-10 items-center justify-center rounded-xl border border-border/60 bg-muted/40">
-                <HugeiconsIcon icon={CpuIcon} className="size-5 text-primary" />
+                <Icon icon={CpuGlassIcon} className="size-5 text-primary" />
               </div>
               <h3 className="text-base font-semibold text-foreground">
                 {t("features.perfTitle")}
@@ -772,7 +764,7 @@ export function DownloadsView() {
           <motion.div whileHover={{ y: -3 }} transition={{ type: "spring", stiffness: 350 }} className="sm:col-span-2 lg:col-span-1">
             <Card className="border-border/60 bg-card p-6 shadow-sm space-y-2.5 h-full hover:border-primary/40 transition-colors">
               <div className="flex size-10 items-center justify-center rounded-xl border border-border/60 bg-muted/40">
-                <HugeiconsIcon icon={Download01Icon} className="size-5 text-primary" />
+                <Icon icon={DownloadGlassIcon} className="size-5 text-primary" />
               </div>
               <h3 className="text-base font-semibold text-foreground">
                 {t("features.edgeTitle")}

@@ -2,8 +2,8 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { LinkSquare01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ExternalLinkGlassIcon } from "@thesvg/ui-react"
 import type { CharityCampaign } from "@/lib/public/charity/campaigns"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -80,7 +80,7 @@ export function CharityDonateSection({ campaign }: CharityDonateSectionProps) {
             className="rounded-full px-6"
           >
             Open official donation portal
-            <HugeiconsIcon icon={LinkSquare01Icon} className="size-4" />
+            <Icon icon={ExternalLinkGlassIcon} className="size-4" />
           </Button>
           <p className="text-xs leading-relaxed text-muted-foreground">
             Cards, SWIFT, and international donations are available on the official Government of

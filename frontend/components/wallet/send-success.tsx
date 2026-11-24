@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { LinkSquare02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { motion, type Variants } from "motion/react"
+import { Icon } from "@/components/ui/icon"
+import { ExternalLinkGlassIcon, CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { formatTokenAmount, explorerTxUrl } from "@/lib/wallet/utils"
@@ -13,14 +14,62 @@ import { playSuccessChime } from "@/lib/ui/successChime"
 import { avatarUriFor } from "@/lib/profile/avatar"
 import { cn } from "@/lib/ui/utils"
 
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.04,
+    },
+  },
+}
+
+const checkBadgeVariants: Variants = {
+  hidden: { scale: 0.4, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 420,
+      damping: 24,
+    },
+  },
+}
+
+const checkIconVariants: Variants = {
+  hidden: { scale: 0 },
+  visible: {
+    scale: 1,
+    transition: {
+      delay: 0.08,
+      type: "spring",
+      stiffness: 500,
+      damping: 25,
+    },
+  },
+}
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 380,
+      damping: 30,
+    },
+  },
+}
+
 type SendSuccessProps = {
   amount: bigint
   recipient: string
   blockIndex: bigint
   memo?: string
   kind?: "send" | "tip" | "purchase" | "icpayBuy"
-  // Default to ICP: every caller but the token page sends ICP, and its ledger
-  // ships no metadata to read a symbol from.
   symbol?: string
   decimals?: number
   onDone: () => void
@@ -41,8 +90,6 @@ export function SendSuccess({
   const [previewOpen, setPreviewOpen] = useState(false)
   const { price } = useIcpPrice()
 
-  // Ref-guarded so the chime belongs to the payment, not to the render: a dev
-  // remount or parent state change would otherwise replay it on-screen.
   const chimed = useRef(false)
   useEffect(() => {
     if (chimed.current) return
@@ -55,9 +102,6 @@ export function SendSuccess({
     [recipient]
   )
 
-  // Identity-stable so the preview does not re-render the card on every parent
-  // render; the price settling is a real change and should refresh it. The ICP
-  // quote only applies to ICP, so another token's card carries no fiat row.
   const receipt = useMemo(
     () => ({
       amount,
@@ -78,24 +122,39 @@ export function SendSuccess({
       : recipient
 
   return (
-    <div className="flex flex-col items-center pt-6 text-center">
-      <div className="animate-in fade-in zoom-in-75 mb-5 flex size-18 items-center justify-center rounded-full bg-success/10 duration-300 ease-out">
-        <span className="flex size-13 items-center justify-center rounded-full bg-success text-background shadow-sm">
-          <HugeiconsIcon icon={Tick02Icon} className="size-8" strokeWidth={3} />
-        </span>
-      </div>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="flex flex-col items-center pt-6 text-center"
+    >
+      <motion.div
+        variants={checkBadgeVariants}
+        className="mb-5 flex size-18 items-center justify-center rounded-full bg-success/10"
+      >
+        <motion.span
+          variants={checkIconVariants}
+          className="flex size-13 items-center justify-center rounded-full bg-success text-success-foreground shadow-sm"
+        >
+          <Icon icon={CheckGlassOutlineIcon} className="size-8 text-success-foreground" strokeWidth={3} />
+        </motion.span>
+      </motion.div>
 
-      <h1 className="mt-6 text-2xl font-bold tracking-tight">{t(kind)}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">
-        {t(`${kind}Body`, { name: label, symbol })}
-      </p>
+      <motion.div variants={itemVariants}>
+        <h1 className="mt-2 text-2xl font-bold tracking-tight">{t(kind)}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {t(`${kind}Body`, { name: label, symbol })}
+        </p>
+      </motion.div>
 
-      <p className="mt-8 text-xs text-muted-foreground">{t("total")}</p>
-      <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums">
-        {formatTokenAmount(amount, decimals, decimals)} {symbol}
-      </p>
+      <motion.div variants={itemVariants} className="mt-8">
+        <p className="text-xs text-muted-foreground">{t("total")}</p>
+        <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums">
+          {formatTokenAmount(amount, decimals, decimals)} {symbol}
+        </p>
+      </motion.div>
 
-      <div className="mt-8 w-full border-t border-dashed pt-6 text-left">
+      <motion.div variants={itemVariants} className="mt-8 w-full border-t border-dashed pt-6 text-left">
         <p className="text-xs text-muted-foreground">
           {kind === "purchase"
             ? t("username")
@@ -121,18 +180,16 @@ export function SendSuccess({
               className="mt-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground underline underline-offset-2"
             >
               {t("viewOnDashboard")}
-              <HugeiconsIcon icon={LinkSquare02Icon} className="size-3" />
+              <Icon icon={ExternalLinkGlassIcon} className="size-3" />
             </a>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="mt-8 flex w-full items-center gap-2">
+      <motion.div variants={itemVariants} className="mt-8 flex w-full items-center gap-2">
         <Button className="flex-1" onClick={onDone}>
           {tc("done")}
         </Button>
-        {/* A purchase pays the treasury, so the receipt card -- which is framed
-            around who received the money -- would read as a transfer to us. */}
         {kind !== "purchase" && (
           <>
             <Button
@@ -150,7 +207,7 @@ export function SendSuccess({
             />
           </>
         )}
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   )
 }

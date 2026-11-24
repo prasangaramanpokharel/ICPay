@@ -6,11 +6,8 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowRight01Icon,
-  CheckmarkCircle02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon, CircleCheckGlassIcon } from "@thesvg/ui-react"
 
 const FREQUENCIES = [
   { label: "Every 5 min", multiplier: 105120 },
@@ -163,19 +160,19 @@ export function PricingCalculator() {
 
               <div className="space-y-3 rounded-2xl border border-border/60 bg-background/60 p-4 text-xs">
                 <div className="flex items-start gap-2.5">
-                  <HugeiconsIcon icon={CheckmarkCircle02Icon} className="mt-0.5 size-4 text-primary shrink-0" />
+                  <Icon icon={CircleCheckGlassIcon} className="mt-0.5 size-4 text-primary shrink-0" />
                   <span>
                     <strong className="text-foreground">60 Free Runs Monthly:</strong> Permanent baseline without credit card requirement.
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <HugeiconsIcon icon={CheckmarkCircle02Icon} className="mt-0.5 size-4 text-primary shrink-0" />
+                  <Icon icon={CircleCheckGlassIcon} className="mt-0.5 size-4 text-primary shrink-0" />
                   <span>
                     <strong className="text-foreground">$0.0005 per Run:</strong> Ultra-predictable prepaid credits that never expire.
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <HugeiconsIcon icon={CheckmarkCircle02Icon} className="mt-0.5 size-4 text-primary shrink-0" />
+                  <Icon icon={CircleCheckGlassIcon} className="mt-0.5 size-4 text-primary shrink-0" />
                   <span>
                     <strong className="text-foreground">No Minimum Spend:</strong> Top up with ICP or credit card only when you need.
                   </span>
@@ -190,7 +187,7 @@ export function PricingCalculator() {
                   render={<Link href="/login" />}
                 >
                   Claim 60 Free Monthly Runs
-                  <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                  <Icon icon={ArrowRightGlassIcon} className="size-4" />
                 </Button>
                 <p className="text-center text-[11px] text-muted-foreground">
                   Login with Internet Identity · No credit card required
@@ -212,15 +209,15 @@ export function PricingCalculator() {
             </div>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Webhook & Candid targets
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Sub-second precision
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 7-day execution logs
               </li>
             </ul>
@@ -240,19 +237,19 @@ export function PricingCalculator() {
             </div>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Never-expiring credits
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Automated exponential retries
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Dead Letter Queue (DLQ)
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 30-day execution audit logs
               </li>
             </ul>
@@ -269,15 +266,15 @@ export function PricingCalculator() {
             </div>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Dedicated subnet scheduling
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Custom cycle reserve management
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Priority SLA support & Discord bridge
               </li>
             </ul>

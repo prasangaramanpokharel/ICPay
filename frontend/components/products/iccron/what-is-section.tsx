@@ -3,39 +3,33 @@
 import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Clock01Icon,
-  GlobalIcon,
-  ZapIcon,
-  ShieldIcon,
-  Analytics02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ClockGlassIcon, GlobeGlassIcon, ZapGlassIcon, ShieldGlassIcon, ChartLineGlassIcon } from "@thesvg/ui-react"
 
 const PILLARS = [
   {
-    icon: Clock01Icon,
+    icon: ClockGlassIcon,
     title: "Canister Timers vs. Legacy Heartbeats",
     badge: "99.4% Cycle Efficiency",
     description:
       "Legacy ICP canisters executed heartbeat calls on every single consensus round (~1 second), wasting millions of cycles even when idle. icCron utilizes native IC Canister Timers with 64-bit nanosecond scheduling that sleep at 0 cycle burn until the exact scheduled second.",
   },
   {
-    icon: GlobalIcon,
+    icon: GlobeGlassIcon,
     title: "Dual-Dispatch: HTTPS Outcalls & Candid",
     badge: "Universal Reach",
     description:
       "Dispatch triggers anywhere. Make secure HTTPS outcalls signed by subnet consensus to trigger Vercel API routes, Supabase webhooks, AWS Lambdas, or call smart contract update methods directly across any ICP canister.",
   },
   {
-    icon: ZapIcon,
+    icon: ZapGlassIcon,
     title: "O(1) Bitmask Cron Engine",
     badge: "Microsecond Matching",
     description:
       "Standard 5-field cron expressions are compiled into in-memory bitmask records (minutes: u64, hours: u32, days: u32, months: u16, weekdays: u8). The scheduler evaluates upcoming ticks in O(1) bitwise operations with zero regex parsing overhead.",
   },
   {
-    icon: ShieldIcon,
+    icon: ShieldGlassIcon,
     title: "Automated Retries & Dead Letter Queue",
     badge: "Fault-Tolerant",
     description:
@@ -71,7 +65,7 @@ export function WhatIsSection() {
             </div>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="gap-1 border-primary/20 bg-primary/5 text-xs text-primary">
-                <HugeiconsIcon icon={Analytics02Icon} className="size-3.5" />
+                <Icon icon={ChartLineGlassIcon} className="size-3.5" />
                 Deterministic Consensus
               </Badge>
             </div>
@@ -96,7 +90,7 @@ export function WhatIsSection() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
                     <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <HugeiconsIcon icon={pillar.icon} className="size-4" />
+                      <Icon icon={pillar.icon} className="size-4" />
                     </div>
                     <span className="text-[11px] font-semibold text-primary">
                       {pillar.badge}

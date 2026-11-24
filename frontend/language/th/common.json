@@ -546,7 +546,8 @@
     "suggested": "แนะนำสำหรับคุณ",
     "noneFound": "ไม่พบใครสำหรับ “{query}”",
     "empty": "ยังไม่มีบัญชีที่มีชื่อผู้ใช้ เป็นคนแรกเลย",
-    "premium": "Verified premium handle"
+    "premium": "Verified premium handle",
+    "subtitle": "สำรวจโปรไฟล์ผู้ใช้ทั่วทั้งเครือข่าย"
   },
   "success": {
     "send": "ส่งสำเร็จ",

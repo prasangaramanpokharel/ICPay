@@ -3,8 +3,8 @@
 import { useState } from "react"
 import type { Identity } from "@icp-sdk/core/agent"
 import { useTranslations } from "next-intl"
-import { ArrowDown01Icon, ArrowUpDownIcon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { ChevronDownGlassIcon, ArrowUpDownGlassIcon } from "@thesvg/ui-react"
+import { Icon } from "@/components/ui/icon"
 import { LocaleFlag } from "@/components/i18n/locale-flag"
 import { Button } from "@/components/ui/button"
 import {
@@ -104,7 +104,7 @@ export function SubnetPicker({
         }
       >
         <TriggerLabel value={value} selected={selected} defaultLabel={t("subnetDefault")} />
-        <HugeiconsIcon icon={ArrowDown01Icon} className="size-4 shrink-0 opacity-50" />
+        <Icon icon={ChevronDownGlassIcon} className="size-4 shrink-0 opacity-50" />
       </PopoverTrigger>
 
       <PopoverContent
@@ -184,7 +184,7 @@ export function SubnetPicker({
                         />
                       }
                     >
-                      <HugeiconsIcon icon={ArrowUpDownIcon} className="size-3.5" />
+                      <Icon icon={ArrowUpDownGlassIcon} className="size-3.5" />
                     </CollapsibleTrigger>
                   </div>
 

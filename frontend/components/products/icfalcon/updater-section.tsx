@@ -4,8 +4,8 @@ import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { CodeBlock } from "@/components/ui/code-block"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { RefreshIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { RefreshCwGlassIcon } from "@thesvg/ui-react"
 
 const GUARANTEES = [
   {
@@ -69,7 +69,7 @@ export function UpdaterSection() {
             <Card className="border-border/60 bg-card/70 backdrop-blur-xs">
               <CardHeader>
                 <div className="flex items-center gap-2 text-primary text-xs font-semibold uppercase tracking-wider">
-                  <HugeiconsIcon icon={RefreshIcon} className="size-4" />
+                  <Icon icon={RefreshCwGlassIcon} className="size-4" />
                   <span>One-Command Sync</span>
                 </div>
                 <CardTitle className="text-lg">Stay on Latest Standards</CardTitle>

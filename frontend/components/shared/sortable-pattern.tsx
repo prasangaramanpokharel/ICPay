@@ -2,14 +2,8 @@
 
 import { useState } from "react"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  File01Icon,
-  GripVerticalIcon,
-  Image01Icon,
-  MusicNote01Icon,
-  Video01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { FileGlassIcon, GripVerticalGlassIcon, FileImageGlassIcon, AudioLinesGlassIcon, VideoGlassIcon } from "@thesvg/ui-react"
 import { Badge } from "@/components/ui/badge"
 import {
   Sortable,
@@ -67,13 +61,13 @@ const defaultItems: SortableMediaItem[] = [
 function getTypeIcon(type: SortableMediaItem["type"]) {
   switch (type) {
     case "image":
-      return <HugeiconsIcon icon={Image01Icon} className="size-4 shrink-0" strokeWidth={1.75} />
+      return <Icon icon={FileImageGlassIcon} className="size-4 shrink-0" strokeWidth={1.75} />
     case "document":
-      return <HugeiconsIcon icon={File01Icon} className="size-4 shrink-0" strokeWidth={1.75} />
+      return <Icon icon={FileGlassIcon} className="size-4 shrink-0" strokeWidth={1.75} />
     case "audio":
-      return <HugeiconsIcon icon={MusicNote01Icon} className="size-4 shrink-0" strokeWidth={1.75} />
+      return <Icon icon={AudioLinesGlassIcon} className="size-4 shrink-0" strokeWidth={1.75} />
     case "video":
-      return <HugeiconsIcon icon={Video01Icon} className="size-4 shrink-0" strokeWidth={1.75} />
+      return <Icon icon={VideoGlassIcon} className="size-4 shrink-0" strokeWidth={1.75} />
   }
 }
 
@@ -115,7 +109,7 @@ export function Pattern() {
           <SortableItem key={item.id} value={item.id}>
             <div className="flex cursor-pointer items-center gap-3 rounded-xl border border-border/80 bg-card p-3 shadow-xs transition-colors hover:border-border hover:bg-muted/40">
               <SortableItemHandle className="text-muted-foreground transition-colors hover:text-foreground">
-                <HugeiconsIcon icon={GripVerticalIcon} className="size-4" strokeWidth={1.75} />
+                <Icon icon={GripVerticalGlassIcon} className="size-4" strokeWidth={1.75} />
               </SortableItemHandle>
 
               <div className="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border/60 bg-muted/40 text-muted-foreground">

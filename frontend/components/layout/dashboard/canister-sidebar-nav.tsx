@@ -5,24 +5,8 @@ import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import useSWR from "swr"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Add01Icon,
-  ArrowUpDownIcon,
-  Search01Icon,
-  DashboardSquare01Icon,
-  TerminalIcon,
-  Layers01Icon,
-  Folder01Icon,
-  SecurityCheckIcon,
-  Settings02Icon,
-  Tick02Icon,
-  UserGroupIcon,
-  CpuIcon,
-  ViewIcon,
-  PowerIcon,
-  LinkSquare01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { PlusGlassIcon, ArrowUpDownGlassIcon, SearchGlassIcon, LayoutDashboardGlassIcon, TerminalGlassIcon, LayersGlassIcon, FolderGlassIcon, ShieldCheckGlassIcon, SettingsGlassIcon, CheckGlassIcon, UsersCollaborationGlassIcon, CpuGlassIcon, EyeGlassIcon, PowerGlassIcon, ExternalLinkGlassIcon } from "@thesvg/ui-react"
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -120,70 +104,70 @@ export function CanisterSidebarNav({ canisterId }: { canisterId: string }) {
       {
         id: "overview",
         label: t("overview"),
-        icon: DashboardSquare01Icon,
+        icon: LayoutDashboardGlassIcon,
         href: buildCanisterHref(canisterId, { tab: "overview" }),
         isActive: activeTab === "overview",
       },
       {
         id: "logs",
         label: t("logs"),
-        icon: TerminalIcon,
+        icon: TerminalGlassIcon,
         href: buildCanisterHref(canisterId, { tab: "logs" }),
         isActive: activeTab === "logs",
       },
       {
         id: "snapshots",
         label: t("snapshots"),
-        icon: Layers01Icon,
+        icon: LayersGlassIcon,
         href: buildCanisterHref(canisterId, { tab: "snapshots" }),
         isActive: activeTab === "snapshots",
       },
       {
         id: "assets",
         label: t("assets"),
-        icon: Folder01Icon,
+        icon: FolderGlassIcon,
         href: buildCanisterHref(canisterId, { tab: "assets" }),
         isActive: activeTab === "assets",
       },
       {
         id: "audit",
         label: t("audit"),
-        icon: SecurityCheckIcon,
+        icon: ShieldCheckGlassIcon,
         href: buildCanisterHref(canisterId, { tab: "audit" }),
         isActive: activeTab === "audit",
       },
       {
         id: "settings",
         label: t("settings"),
-        icon: Settings02Icon,
+        icon: SettingsGlassIcon,
         href: buildCanisterHref(canisterId, { tab: "settings", section: activeSection }),
         isActive: activeTab === "settings",
         subItems: [
           {
             id: "controllers",
             label: t("controllers"),
-            icon: UserGroupIcon,
+            icon: UsersCollaborationGlassIcon,
             href: buildCanisterHref(canisterId, { tab: "settings", section: "controllers" }),
             isActive: activeTab === "settings" && activeSection === "controllers",
           },
           {
             id: "resources",
             label: t("resources"),
-            icon: CpuIcon,
+            icon: CpuGlassIcon,
             href: buildCanisterHref(canisterId, { tab: "settings", section: "resources" }),
             isActive: activeTab === "settings" && activeSection === "resources",
           },
           {
             id: "visibility",
             label: t("visibility"),
-            icon: ViewIcon,
+            icon: EyeGlassIcon,
             href: buildCanisterHref(canisterId, { tab: "settings", section: "visibility" }),
             isActive: activeTab === "settings" && activeSection === "visibility",
           },
           {
             id: "lifecycle",
             label: t("lifecycle"),
-            icon: PowerIcon,
+            icon: PowerGlassIcon,
             href: buildCanisterHref(canisterId, { tab: "settings", section: "lifecycle" }),
             isActive: activeTab === "settings" && activeSection === "lifecycle",
           },
@@ -236,8 +220,8 @@ export function CanisterSidebarNav({ canisterId }: { canisterId: string }) {
               </span>
             </div>
 
-            <HugeiconsIcon
-              icon={ArrowUpDownIcon}
+            <Icon
+              icon={ArrowUpDownGlassIcon}
               className="size-3.5 text-muted-foreground group-hover:text-foreground transition-colors shrink-0 ml-1.5"
             />
           </DropdownMenuTrigger>
@@ -274,7 +258,7 @@ export function CanisterSidebarNav({ canisterId }: { canisterId: string }) {
                       </div>
                     </div>
                     {isCurrent && (
-                      <HugeiconsIcon icon={Tick02Icon} className="size-3.5 text-primary shrink-0" />
+                      <Icon icon={CheckGlassIcon} className="size-3.5 text-primary shrink-0" />
                     )}
                   </DropdownMenuItem>
                 )
@@ -286,14 +270,14 @@ export function CanisterSidebarNav({ canisterId }: { canisterId: string }) {
                 onClick={() => router.push("/canister")}
                 className="flex items-center gap-2 px-2 py-1.5 cursor-pointer text-xs"
               >
-                <HugeiconsIcon icon={Folder01Icon} className="size-3.5 text-muted-foreground shrink-0" />
+                <Icon icon={FolderGlassIcon} className="size-3.5 text-muted-foreground shrink-0" />
                 <span>{t("allCanisters")}</span>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => router.push("/canister/create")}
                 className="flex items-center gap-2 px-2 py-1.5 cursor-pointer text-xs"
               >
-                <HugeiconsIcon icon={Add01Icon} className="size-3.5 text-muted-foreground shrink-0" />
+                <Icon icon={PlusGlassIcon} className="size-3.5 text-muted-foreground shrink-0" />
                 <span>{t("createCanister")}</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -308,7 +292,7 @@ export function CanisterSidebarNav({ canisterId }: { canisterId: string }) {
           className="flex h-9 w-full items-center justify-between gap-2 rounded-lg border border-sidebar-border/70 bg-sidebar-accent/20 px-2.5 text-xs text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground transition-colors cursor-pointer"
         >
           <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={Search01Icon} className="size-3.5" />
+            <Icon icon={SearchGlassIcon} className="size-3.5" />
             <span>{t("quickSearch")}</span>
           </div>
           <kbd className="pointer-events-none rounded border border-border/50 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium font-mono text-muted-foreground">
@@ -329,27 +313,27 @@ export function CanisterSidebarNav({ canisterId }: { canisterId: string }) {
 
               <CommandGroup heading={t("navigation")}>
                 <CommandItem onSelect={() => handleSelectTab("overview")}>
-                  <HugeiconsIcon icon={DashboardSquare01Icon} className="size-4" />
+                  <Icon icon={LayoutDashboardGlassIcon} className="size-4" />
                   <span>{t("overview")}</span>
                   <CommandShortcut>⌘1</CommandShortcut>
                 </CommandItem>
                 <CommandItem onSelect={() => handleSelectTab("logs")}>
-                  <HugeiconsIcon icon={TerminalIcon} className="size-4" />
+                  <Icon icon={TerminalGlassIcon} className="size-4" />
                   <span>{t("logs")}</span>
                   <CommandShortcut>⌘2</CommandShortcut>
                 </CommandItem>
                 <CommandItem onSelect={() => handleSelectTab("snapshots")}>
-                  <HugeiconsIcon icon={Layers01Icon} className="size-4" />
+                  <Icon icon={LayersGlassIcon} className="size-4" />
                   <span>{t("snapshots")}</span>
                   <CommandShortcut>⌘3</CommandShortcut>
                 </CommandItem>
                 <CommandItem onSelect={() => handleSelectTab("assets")}>
-                  <HugeiconsIcon icon={Folder01Icon} className="size-4" />
+                  <Icon icon={FolderGlassIcon} className="size-4" />
                   <span>{t("assetsExplorer")}</span>
                   <CommandShortcut>⌘4</CommandShortcut>
                 </CommandItem>
                 <CommandItem onSelect={() => handleSelectTab("audit")}>
-                  <HugeiconsIcon icon={SecurityCheckIcon} className="size-4" />
+                  <Icon icon={ShieldCheckGlassIcon} className="size-4" />
                   <span>{t("auditLog")}</span>
                   <CommandShortcut>⌘5</CommandShortcut>
                 </CommandItem>
@@ -359,19 +343,19 @@ export function CanisterSidebarNav({ canisterId }: { canisterId: string }) {
 
               <CommandGroup heading={t("settings")}>
                 <CommandItem onSelect={() => handleSelectSection("controllers")}>
-                  <HugeiconsIcon icon={UserGroupIcon} className="size-4" />
+                  <Icon icon={UsersCollaborationGlassIcon} className="size-4" />
                   <span>{t("controllers")}</span>
                 </CommandItem>
                 <CommandItem onSelect={() => handleSelectSection("resources")}>
-                  <HugeiconsIcon icon={CpuIcon} className="size-4" />
+                  <Icon icon={CpuGlassIcon} className="size-4" />
                   <span>{t("resourcesLimits")}</span>
                 </CommandItem>
                 <CommandItem onSelect={() => handleSelectSection("visibility")}>
-                  <HugeiconsIcon icon={ViewIcon} className="size-4" />
+                  <Icon icon={EyeGlassIcon} className="size-4" />
                   <span>{t("visibilityLogs")}</span>
                 </CommandItem>
                 <CommandItem onSelect={() => handleSelectSection("lifecycle")}>
-                  <HugeiconsIcon icon={PowerIcon} className="size-4 text-destructive" />
+                  <Icon icon={PowerGlassIcon} className="size-4 text-destructive" />
                   <span>{t("lifecycleDanger")}</span>
                 </CommandItem>
               </CommandGroup>
@@ -380,11 +364,11 @@ export function CanisterSidebarNav({ canisterId }: { canisterId: string }) {
 
               <CommandGroup heading={t("actions")}>
                 <CommandItem onSelect={() => handleOpenUrl(`https://${canisterId}.icp0.io`)}>
-                  <HugeiconsIcon icon={LinkSquare01Icon} className="size-4" />
+                  <Icon icon={ExternalLinkGlassIcon} className="size-4" />
                   <span>{t("visitLiveDapp")}</span>
                 </CommandItem>
                 <CommandItem onSelect={() => handleOpenUrl(`https://${canisterId}.raw.icp0.io`)}>
-                  <HugeiconsIcon icon={LinkSquare01Icon} className="size-4" />
+                  <Icon icon={ExternalLinkGlassIcon} className="size-4" />
                   <span>{t("visitRawGateway")}</span>
                 </CommandItem>
                 <CommandItem
@@ -392,7 +376,7 @@ export function CanisterSidebarNav({ canisterId }: { canisterId: string }) {
                     handleOpenUrl(`https://dashboard.internetcomputer.org/canister/${canisterId}`)
                   }
                 >
-                  <HugeiconsIcon icon={LinkSquare01Icon} className="size-4" />
+                  <Icon icon={ExternalLinkGlassIcon} className="size-4" />
                   <span>{t("viewOnDashboard")}</span>
                 </CommandItem>
               </CommandGroup>
@@ -444,7 +428,7 @@ export function CanisterSidebarNav({ canisterId }: { canisterId: string }) {
                         item.isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                       )}
                     >
-                      <HugeiconsIcon
+                      <Icon
                         icon={item.icon}
                         className={cn(
                           "size-4 shrink-0 transition-colors",

@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button"
 import { PricingSection } from "@/components/products/icbucket/pricing-section"
 import { ComparisonSection } from "@/components/products/icbucket/comparison-section"
 import { FaqSection } from "@/components/products/icbucket/faq-section"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowLeftGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { PAGE_IMAGES, pageImageUrl } from "@/lib/public/page-images"
 
 export const metadata: Metadata = {
@@ -111,7 +111,7 @@ export default function IcBucketPricingPage() {
               nativeButton={false}
               render={
                 <Link href="/icbucket" className="flex items-center gap-1.5">
-                  <HugeiconsIcon icon={ArrowLeft01Icon} className="size-3.5" />
+                  <Icon icon={ArrowLeftGlassIcon} className="size-3.5" />
                   <span>Back to icBucket Overview</span>
                 </Link>
               }
@@ -168,7 +168,7 @@ export default function IcBucketPricingPage() {
               render={
                 <Link href="/bucket" className="flex items-center gap-2">
                   <span>Launch Bucket Console</span>
-                  <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                  <Icon icon={ArrowRightGlassIcon} className="size-4" />
                 </Link>
               }
             />

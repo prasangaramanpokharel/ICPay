@@ -1,14 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  SourceCodeIcon,
-  Tick02Icon,
-  Copy01Icon,
-  ReloadIcon,
-  ArrowRight01Icon,
-} from "@hugeicons/core-free-icons"
+import { cn } from "@/lib/ui/utils"
+import { Icon } from "@/components/ui/icon"
+import { CodeGlassIcon, CheckGlassOutlineIcon, CopyGlassIcon, RefreshCwGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
@@ -91,7 +86,7 @@ export function LessonCodeLabPlayer({
             variant="outline"
             className="gap-1.5 border-info/40 bg-info/10 text-info text-xs"
           >
-            <HugeiconsIcon icon={SourceCodeIcon} className="size-3.5" />
+            <Icon icon={CodeGlassIcon} className="size-3.5" />
             <span>Hands-On Canister Code Lab</span>
           </Badge>
           <span className="font-mono text-[11px] text-muted-foreground hidden sm:inline">
@@ -106,7 +101,7 @@ export function LessonCodeLabPlayer({
             onClick={handleCopyCode}
             className="gap-1 text-xs text-muted-foreground hover:text-foreground"
           >
-            <HugeiconsIcon icon={copiedCode ? Tick02Icon : Copy01Icon} className="size-3" />
+            <Icon icon={copiedCode ? CheckGlassOutlineIcon : CopyGlassIcon} className={cn("size-3", copiedCode && "text-success")} strokeWidth={copiedCode ? 2.5 : 1.75} />
             <span>{copiedCode ? "Copied" : "Copy Code"}</span>
           </Button>
         </div>
@@ -122,7 +117,7 @@ export function LessonCodeLabPlayer({
         <div className="flex items-center gap-2 text-xs">
           {hasRun ? (
             <span className="flex items-center gap-1.5 text-success font-semibold">
-              <HugeiconsIcon icon={Tick02Icon} className="size-4" />
+              <Icon icon={CheckGlassOutlineIcon} className="size-4" strokeWidth={2.5} />
               <span>All 4 Canister Assertions Passed</span>
             </span>
           ) : (
@@ -146,12 +141,12 @@ export function LessonCodeLabPlayer({
               </>
             ) : hasRun ? (
               <>
-                <HugeiconsIcon icon={ReloadIcon} className="size-3.5" />
+                <Icon icon={RefreshCwGlassIcon} className="size-3.5" />
                 <span>Re-run Tests</span>
               </>
             ) : (
               <>
-                <HugeiconsIcon icon={SourceCodeIcon} className="size-3.5" />
+                <Icon icon={CodeGlassIcon} className="size-3.5" />
                 <span>Run Test Suite</span>
               </>
             )}
@@ -165,7 +160,7 @@ export function LessonCodeLabPlayer({
               className="gap-1.5 text-xs font-semibold"
             >
               <span>Next Lesson</span>
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+              <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
             </Button>
           )}
         </div>

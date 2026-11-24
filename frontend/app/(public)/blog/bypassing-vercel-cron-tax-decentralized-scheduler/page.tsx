@@ -6,12 +6,8 @@ import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  CheckmarkCircle02Icon,
-  AlertCircleIcon,
-  ArrowRight01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CircleCheckGlassIcon, CircleAlertGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 
 const SLUG = "bypassing-vercel-cron-tax-decentralized-scheduler"
 const TITLE = "Bypassing the Vercel $20/Month Cron Tax: How to Trigger Next.js Scheduled Jobs with Decentralized On-Chain Timers"
@@ -168,7 +164,7 @@ export default function BypassingVercelCronTaxPage() {
 
         <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-5 space-y-2">
           <div className="flex items-center gap-2 text-destructive font-semibold text-sm">
-            <HugeiconsIcon icon={AlertCircleIcon} className="size-4 shrink-0" />
+            <Icon icon={CircleAlertGlassIcon} className="size-4 shrink-0" />
             Vercel Hobby Plan Cron Restriction
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed">
@@ -331,15 +327,15 @@ export async function POST(req: NextRequest) {
         </h2>
         <ul className="space-y-2 text-sm text-muted-foreground pl-2">
           <li className="flex items-center gap-2">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 text-primary shrink-0" />
+            <Icon icon={CircleCheckGlassIcon} className="size-4 text-primary shrink-0" />
             <span>Eliminates the $240/yr Vercel Pro requirement for sub-daily cron jobs.</span>
           </li>
           <li className="flex items-center gap-2">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 text-primary shrink-0" />
+            <Icon icon={CircleCheckGlassIcon} className="size-4 text-primary shrink-0" />
             <span>Consensus-backed 1-second precision with zero cold starts or cron delays.</span>
           </li>
           <li className="flex items-center gap-2">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 text-primary shrink-0" />
+            <Icon icon={CircleCheckGlassIcon} className="size-4 text-primary shrink-0" />
             <span>60 free executions every month with simple $0.0005/run prepaid credits.</span>
           </li>
         </ul>
@@ -360,7 +356,7 @@ export async function POST(req: NextRequest) {
             render={<Link href="/iccron" />}
           >
             Launch icCron Scheduler
-            <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+            <Icon icon={ArrowRightGlassIcon} className="size-4" />
           </Button>
         </div>
       </section>

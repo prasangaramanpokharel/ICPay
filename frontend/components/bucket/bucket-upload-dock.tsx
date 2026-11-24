@@ -1,13 +1,8 @@
 "use client"
 
 import { motion, AnimatePresence } from "motion/react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowDown01Icon,
-  ArrowUp01Icon,
-  Cancel01Icon,
-  RefreshIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ChevronDownGlassIcon, ChevronUpGlassIcon, XGlassIcon, RefreshCwGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { formatBytes } from "@/lib/bucket/bucket"
 import { cn } from "@/lib/ui/utils"
@@ -164,14 +159,14 @@ export function BucketUploadDock({
             {uploadedLabel}
           </p>
           <Button type="button" variant="ghost" size="icon-sm" onClick={onToggle}>
-            <HugeiconsIcon
-              icon={expanded ? ArrowDown01Icon : ArrowUp01Icon}
+            <Icon
+              icon={expanded ? ChevronDownGlassIcon : ChevronUpGlassIcon}
               className="size-4"
               strokeWidth={1.75}
             />
           </Button>
           <Button type="button" variant="ghost" size="icon-sm" disabled={busy} onClick={onDismiss}>
-            <HugeiconsIcon icon={Cancel01Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={XGlassIcon} className="size-4" strokeWidth={1.75} />
           </Button>
         </div>
 
@@ -224,7 +219,7 @@ export function BucketUploadDock({
                           title="Retry upload"
                           className="size-5 text-muted-foreground hover:text-foreground"
                         >
-                          <HugeiconsIcon icon={RefreshIcon} className="size-3" strokeWidth={1.75} />
+                          <Icon icon={RefreshCwGlassIcon} className="size-3" strokeWidth={1.75} />
                         </Button>
                       ) : null}
                     </div>

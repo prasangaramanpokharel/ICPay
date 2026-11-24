@@ -7,13 +7,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { FileTree } from "@/components/ui/file-tree"
 import type { FileTreeFile, FileTreeNode } from "@/lib/file-tree"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Folder01Icon,
-  File01Icon,
-  CheckmarkCircle02Icon,
-  Layers01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { FolderGlassIcon, FileGlassIcon, CircleCheckGlassIcon, LayersGlassIcon } from "@thesvg/ui-react"
 
 type FileMetadata = {
   tag: string
@@ -322,7 +317,7 @@ export function DirectoryLayoutSection() {
             <CardHeader className="pb-3 border-b border-border/50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <HugeiconsIcon icon={Folder01Icon} className="size-4 text-primary" />
+                  <Icon icon={FolderGlassIcon} className="size-4 text-primary" />
                   <CardTitle className="text-sm font-semibold">Repository Explorer</CardTitle>
                 </div>
                 <Badge variant="secondary" className="font-mono text-[10px]">
@@ -355,7 +350,7 @@ export function DirectoryLayoutSection() {
                   </span>
                 </div>
                 <CardTitle className="text-lg flex items-center gap-2">
-                  <HugeiconsIcon icon={File01Icon} className="size-5 text-primary" />
+                  <Icon icon={FileGlassIcon} className="size-5 text-primary" />
                   <span>{selectedFile.name}</span>
                 </CardTitle>
               </CardHeader>
@@ -371,7 +366,7 @@ export function DirectoryLayoutSection() {
 
                 <div className="rounded-xl border border-border/60 bg-muted/30 p-4 space-y-2">
                   <div className="flex items-center gap-2 text-xs font-semibold text-foreground">
-                    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 text-success" />
+                    <Icon icon={CircleCheckGlassIcon} className="size-4 text-success" />
                     <span>Layer Invariant:</span>
                   </div>
                   <p className="text-xs text-muted-foreground leading-relaxed pl-6">
@@ -381,7 +376,7 @@ export function DirectoryLayoutSection() {
 
                 <div className="rounded-xl border border-border/60 bg-card/90 p-4">
                   <div className="flex items-center gap-2 text-xs font-semibold text-primary mb-1">
-                    <HugeiconsIcon icon={Layers01Icon} className="size-4" />
+                    <Icon icon={LayersGlassIcon} className="size-4" />
                     <span>Scaffold Generator</span>
                   </div>
                   <p className="text-xs font-mono text-muted-foreground">

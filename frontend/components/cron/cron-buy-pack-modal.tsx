@@ -17,8 +17,8 @@ import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ZapIcon, Coins01Icon, Clock01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ZapGlassIcon, CoinsGlassIcon, ClockGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import { buyCredits, quoteCredits } from "@/services/cron/client"
 import { getWalletActor } from "@/services/wallet/actor"
@@ -168,7 +168,7 @@ export function CronBuyPackModal({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <HugeiconsIcon icon={ZapIcon} className="size-5 text-primary" />
+            <Icon icon={ZapGlassIcon} className="size-5 text-primary" />
             {t("topUpTitle")}
           </DialogTitle>
           <DialogDescription>
@@ -245,7 +245,7 @@ export function CronBuyPackModal({
               <div className="text-right flex flex-col items-end">
                 <span className="text-xs text-muted-foreground">{t("estimatedIcp")}</span>
                 <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground tabular-nums">
-                  <HugeiconsIcon icon={Coins01Icon} className="size-4 text-primary" />
+                  <Icon icon={CoinsGlassIcon} className="size-4 text-primary" />
                   {loadingQuote ? <Spinner className="size-3.5" /> : `${icpFormatted} ICP`}
                 </div>
               </div>
@@ -253,7 +253,7 @@ export function CronBuyPackModal({
 
             <div className="flex items-center justify-between border-t border-border/60 pt-2.5 text-xs text-muted-foreground">
               <div className="flex items-center gap-1.5">
-                <HugeiconsIcon icon={Clock01Icon} className="size-3.5 text-primary" />
+                <Icon icon={ClockGlassIcon} className="size-3.5 text-primary" />
                 <span>{t("estimatedRunway")}:</span>
               </div>
               <Badge variant="secondary" className="font-normal text-[11px]">

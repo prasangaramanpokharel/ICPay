@@ -26,10 +26,16 @@ export function DepositView() {
   return (
     <AppPage title={t("title")} description={t("subtitle")}>
       {isLoading ? (
-        <div className="space-y-4">
-          <Skeleton className="h-10 w-full rounded-xl" />
-          <Skeleton className="mx-auto size-52 rounded-2xl" />
-          <Skeleton className="h-16 w-full rounded-2xl" />
+        <div className="mx-auto w-full max-w-md space-y-4 rounded-(--radius) border border-border/70 bg-card p-6 shadow-xs">
+          <Skeleton className="h-9 w-full rounded-(--radius)" />
+          <div className="flex flex-col items-center justify-center p-4">
+            <Skeleton className="size-48 rounded-(--radius)" />
+          </div>
+          <div className="space-y-2 rounded-(--radius) bg-muted/40 p-3.5">
+            <Skeleton className="h-3.5 w-24 rounded-md" />
+            <Skeleton className="h-4 w-full rounded-md" />
+          </div>
+          <Skeleton className="h-9 w-full rounded-(--radius)" />
         </div>
       ) : error ? (
         <Alert variant="destructive">

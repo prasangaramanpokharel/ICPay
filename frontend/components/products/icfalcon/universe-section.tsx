@@ -4,27 +4,22 @@ import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { CodeBlock } from "@/components/ui/code-block"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  GlobalIcon,
-  Message01Icon,
-  CpuIcon,
-  CheckmarkCircle02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { GlobeGlassIcon, MessageSquareGlassIcon, CpuGlassIcon, CircleCheckGlassIcon } from "@thesvg/ui-react"
 
 const MESH_PRIMITIVES = [
   {
-    icon: Message01Icon,
+    icon: MessageSquareGlassIcon,
     title: "Transactional Outbox Pattern",
     description: "Mutations and outgoing event notifications commit atomically inside the same canister update call, preventing lost events.",
   },
   {
-    icon: CheckmarkCircle02Icon,
+    icon: CircleCheckGlassIcon,
     title: "Idempotent Inboxes",
     description: "Every incoming event carries deterministic deduplication IDs, ensuring zero double-processing during transient subnet retries.",
   },
   {
-    icon: CpuIcon,
+    icon: CpuGlassIcon,
     title: "Decoupled Micro-Canisters",
     description: "Split billing, order books, heavy analytics, and storage into isolated specialized canisters without coupling storage schemas.",
   },
@@ -69,7 +64,7 @@ export function UniverseSection() {
             <Card key={idx} className="border-border/60 bg-card/60 backdrop-blur-xs transition-colors hover:border-primary/40 hover:bg-card/90">
               <CardHeader>
                 <div className="flex size-9 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary mb-2">
-                  <HugeiconsIcon icon={item.icon} className="size-5" />
+                  <Icon icon={item.icon} className="size-5" />
                 </div>
                 <CardTitle className="text-base">{item.title}</CardTitle>
                 <CardDescription className="text-xs leading-relaxed mt-1">
@@ -89,7 +84,7 @@ export function UniverseSection() {
           <Card className="border-border/60 bg-card/70 backdrop-blur-xs">
           <CardHeader>
             <div className="flex items-center gap-2 text-primary text-xs font-semibold uppercase tracking-wider">
-              <HugeiconsIcon icon={GlobalIcon} className="size-4" />
+              <Icon icon={GlobeGlassIcon} className="size-4" />
               <span>Micro-Canister Scaffolding</span>
             </div>
             <CardTitle className="text-lg">Spawn New Canisters in Seconds</CardTitle>

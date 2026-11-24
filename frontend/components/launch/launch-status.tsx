@@ -3,18 +3,9 @@
 import { useState } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Coins01Icon,
-  Alert02Icon,
-  Copy01Icon,
-  Tick02Icon,
-  ShieldKeyIcon,
-  LinkSquare02Icon,
-  FuelStationIcon,
-  ArrowUpDownIcon,
-  InformationCircleIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CoinsGlassIcon, TriangleAlertGlassIcon, ShieldGlassIcon, ExternalLinkGlassIcon, FuelGaugeGlassIcon, ArrowUpDownGlassIcon, InfoGlassIcon } from "@thesvg/ui-react"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -52,7 +43,7 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
           {logo ? (
             <Image src={logo} alt="" width={64} height={64} className="size-full object-cover" unoptimized />
           ) : (
-            <HugeiconsIcon icon={Coins01Icon} className="size-7 text-muted-foreground" strokeWidth={1.75} />
+            <Icon icon={CoinsGlassIcon} className="size-7 text-muted-foreground" strokeWidth={1.75} />
           )}
         </span>
 
@@ -79,7 +70,7 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
 
       {status === "failed" && (
         <Alert variant="destructive">
-          <HugeiconsIcon icon={Alert02Icon} className="size-4" strokeWidth={1.75} />
+          <Icon icon={TriangleAlertGlassIcon} className="size-4" strokeWidth={1.75} />
           <AlertDescription className="flex flex-col gap-1">
             <span className="block">{t("failedBody")}</span>
             {reason && <span className="block font-mono text-xs break-all">{reason}</span>}
@@ -109,7 +100,7 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
 
       {token.immutable && status === "active" && (
         <div className="flex items-start gap-2.5 rounded-2xl border border-border/40 bg-muted/20 p-4">
-          <HugeiconsIcon icon={ShieldKeyIcon} className="mt-0.5 size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
+          <Icon icon={ShieldGlassIcon} className="mt-0.5 size-4 shrink-0 text-muted-foreground" strokeWidth={1.75} />
           <p className="text-xs leading-relaxed text-muted-foreground">{t("immutableProof")}</p>
         </div>
       )}
@@ -148,7 +139,7 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
               className="justify-start text-xs font-medium cursor-pointer"
               onClick={() => setTopUpOpen(true)}
             >
-              <HugeiconsIcon icon={FuelStationIcon} data-icon="inline-start" strokeWidth={1.75} />
+              <Icon icon={FuelGaugeGlassIcon} data-icon="inline-start" strokeWidth={1.75} />
               Top Up Cycles
             </Button>
 
@@ -164,7 +155,7 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
                 />
               }
             >
-              <HugeiconsIcon icon={ArrowUpDownIcon} data-icon="inline-start" strokeWidth={1.75} />
+              <Icon icon={ArrowUpDownGlassIcon} data-icon="inline-start" strokeWidth={1.75} />
               Trade on ICPSwap
             </Button>
 
@@ -180,7 +171,7 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
                 />
               }
             >
-              <HugeiconsIcon icon={InformationCircleIcon} data-icon="inline-start" strokeWidth={1.75} />
+              <Icon icon={InfoGlassIcon} data-icon="inline-start" strokeWidth={1.75} />
               ICPSwap Token Analytics
             </Button>
 
@@ -196,7 +187,7 @@ export function LaunchStatus({ token }: { token: TokenPublic }) {
                 />
               }
             >
-              <HugeiconsIcon icon={LinkSquare02Icon} data-icon="inline-start" strokeWidth={1.75} />
+              <Icon icon={ExternalLinkGlassIcon} data-icon="inline-start" strokeWidth={1.75} />
               IC Dashboard Explorer
             </Button>
           </div>
@@ -249,11 +240,7 @@ function Row({
             onClick={handleCopy}
             className="-my-1 shrink-0 text-muted-foreground hover:text-foreground"
           >
-            <HugeiconsIcon
-              icon={copied ? Tick02Icon : Copy01Icon}
-              className={cn("size-3.5", copied && "text-primary")}
-              strokeWidth={1.75}
-            />
+            <CopyIconIndicator copied={copied} iconClassName="size-3.5" />
           </Button>
         )}
       </div>

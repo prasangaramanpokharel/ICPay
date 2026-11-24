@@ -1,11 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  CheckmarkCircle02Icon,
-  Folder02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CircleCheckGlassIcon, FolderGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -61,15 +58,15 @@ export function BlogSidebar({
 
           <ul className="space-y-1.5 text-xs text-muted-foreground">
             <li className="flex items-center gap-2">
-              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+              <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
               <span>Instant @username sends</span>
             </li>
             <li className="flex items-center gap-2">
-              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+              <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
               <span>Zero seed phrases required</span>
             </li>
             <li className="flex items-center gap-2">
-              <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+              <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
               <span>ICRC-1 &amp; canister management</span>
             </li>
           </ul>
@@ -142,7 +139,7 @@ export function BlogSidebar({
       {/* Topics & Categories */}
       <div className="space-y-3">
         <div className="flex items-center gap-1.5">
-          <HugeiconsIcon icon={Folder02Icon} className="size-3.5 text-muted-foreground" />
+          <Icon icon={FolderGlassIcon} className="size-3.5 text-muted-foreground" />
           <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground">
             Explore Topics
           </h4>

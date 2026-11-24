@@ -26,15 +26,16 @@ export function useFiatValue(usdValue: number | null) {
   )
 
   const meta = CURRENCIES.find((c) => c.code === currency)
+  const rate = data?.rates?.[currency] ?? 1
 
   let formatted: string | null = null
   if (usdValue !== null && data?.rates?.[currency] != null) {
     const value = usdValue * data.rates[currency]
     formatted = value.toLocaleString(undefined, {
-      minimumFractionDigits: value < 1 ? 3 : 2,
-      maximumFractionDigits: value < 1 ? 3 : 2,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     })
   }
 
-  return { currency, symbol: meta?.symbol ?? "", formatted }
+  return { currency, symbol: meta?.symbol ?? "", formatted, rate }
 }

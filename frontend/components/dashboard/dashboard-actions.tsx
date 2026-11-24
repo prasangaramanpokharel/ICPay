@@ -3,13 +3,9 @@
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { motion } from "motion/react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Coins01Icon,
-  ArrowDown01Icon,
-  ArrowUp01Icon,
-  Exchange01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import type { UiIcon } from "@thesvg/ui-react"
+import { CoinsGlassIcon, ArrowDownLeftGlassIcon, ArrowUpRightGlassIcon, ReplaceGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
@@ -26,17 +22,17 @@ const itemVariants = {
 type DashboardAction = {
   href: string
   labelKey: "common.send" | "common.receive" | "common.swap" | "wallet.tokens"
-  icon: typeof ArrowUp01Icon
+  icon: UiIcon
 }
 
 const actions: DashboardAction[] = [
-  { href: "/transfer", labelKey: "common.send", icon: ArrowUp01Icon },
-  { href: "/deposit", labelKey: "common.receive", icon: ArrowDown01Icon },
-  { href: "/trade", labelKey: "common.swap", icon: Exchange01Icon },
+  { href: "/transfer", labelKey: "common.send", icon: ArrowUpRightGlassIcon },
+  { href: "/deposit", labelKey: "common.receive", icon: ArrowDownLeftGlassIcon },
+  { href: "/trade", labelKey: "common.swap", icon: ReplaceGlassIcon },
   {
     href: "/wallet",
     labelKey: "wallet.tokens",
-    icon: Coins01Icon,
+    icon: CoinsGlassIcon,
   },
 ]
 
@@ -65,7 +61,7 @@ export function DashboardActions() {
                 transition={{ type: "spring", stiffness: 500, damping: 22 }}
                 className="flex size-11 items-center justify-center rounded-full bg-muted text-foreground"
               >
-                <HugeiconsIcon icon={item.icon} className="size-5 text-primary" strokeWidth={1.75} />
+                <Icon icon={item.icon} className="size-5 text-primary" strokeWidth={1.75} />
               </motion.span>
               <span className="text-[11px] font-medium lowercase text-foreground">
                 {t(item.labelKey)}
@@ -88,7 +84,7 @@ export function DashboardActions() {
               nativeButton={false}
               render={<Link href={item.href} />}
             >
-              <HugeiconsIcon icon={item.icon} className="size-4" strokeWidth={1.75} />
+              <Icon icon={item.icon} className="size-4" strokeWidth={1.75} />
               <span className="truncate text-sm font-medium">{t(item.labelKey)}</span>
             </Button>
           ))}

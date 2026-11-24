@@ -1,8 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Alert02Icon, ArrowLeft01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { TriangleAlertGlassIcon, ArrowLeftGlassIcon } from "@thesvg/ui-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -37,8 +37,8 @@ export function ErrorStateView({
             variant="icon"
             className="mb-1 size-11 rounded-2xl border border-destructive/20 bg-destructive/10"
           >
-            <HugeiconsIcon
-              icon={Alert02Icon}
+            <Icon
+              icon={TriangleAlertGlassIcon}
               className="size-5 text-destructive"
               strokeWidth={1.75}
             />
@@ -58,7 +58,7 @@ export function ErrorStateView({
             Try again
           </Button>
           <Button variant="outline" size="sm" nativeButton={false} render={<Link href={returnHref} />}>
-            <HugeiconsIcon icon={ArrowLeft01Icon} className="size-3.5" strokeWidth={1.75} />
+            <Icon icon={ArrowLeftGlassIcon} className="size-3.5" strokeWidth={1.75} />
             {returnLabel}
           </Button>
         </EmptyContent>

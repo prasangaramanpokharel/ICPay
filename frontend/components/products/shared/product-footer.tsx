@@ -1,8 +1,8 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Card, CardContent } from "@/components/ui/card"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Package01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { PackageGlassIcon } from "@thesvg/ui-react"
 import { PublicFooter } from "@/components/public/footer"
 import { ICPAY_TOKEN_ICON } from "@/lib/ui/brand-images"
 import { Npm, Python, Go, Gitlab } from "@dev.icons/react"
@@ -67,7 +67,7 @@ export function ProductOpenSourceBanner({
                       ) : link.label.toLowerCase().includes("go") ? (
                         <Go size={16} />
                       ) : (
-                        <HugeiconsIcon icon={Package01Icon} className="size-4" />
+                        <Icon icon={PackageGlassIcon} className="size-4" />
                       )}
                       {link.label}
                     </Link>

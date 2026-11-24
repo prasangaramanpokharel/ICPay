@@ -2,8 +2,8 @@
 
 import Image from "next/image"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Cancel01Icon, Coins01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { XGlassIcon, CoinsGlassIcon } from "@thesvg/ui-react"
 import {
   Drawer,
   DrawerContent,
@@ -63,7 +63,7 @@ export function LaunchTokenDrawer({
               {logo ? (
                 <Image src={logo} alt="" width={28} height={28} className="size-full object-cover" unoptimized />
               ) : (
-                <HugeiconsIcon icon={Coins01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+                <Icon icon={CoinsGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
               )}
             </span>
             <div className="min-w-0 flex items-center gap-2">
@@ -92,7 +92,7 @@ export function LaunchTokenDrawer({
             onClick={() => onOpenChange(false)}
             aria-label="Close drawer"
           >
-            <HugeiconsIcon icon={Cancel01Icon} className="size-4" strokeWidth={2} />
+            <Icon icon={XGlassIcon} className="size-4" strokeWidth={2} />
           </Button>
         </div>
 
@@ -100,13 +100,13 @@ export function LaunchTokenDrawer({
           {isLoading && !token ? (
             <div className="flex flex-col gap-4">
               <div className="flex items-center gap-3">
-                <Skeleton className="size-16 rounded-2xl" />
+                <Skeleton className="size-16 rounded-(--radius)" />
                 <div className="flex flex-col gap-2 flex-1">
                   <Skeleton className="h-6 w-32 rounded-lg" />
                   <Skeleton className="h-4 w-20 rounded-md" />
                 </div>
               </div>
-              <Skeleton className="h-48 w-full rounded-2xl" />
+              <Skeleton className="h-48 w-full rounded-(--radius)" />
             </div>
           ) : !token ? (
             <Alert variant="destructive">

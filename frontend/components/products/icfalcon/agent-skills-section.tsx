@@ -4,11 +4,8 @@ import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { CodeBlock } from "@/components/ui/code-block"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  AiBrain01Icon,
-  CheckmarkCircle02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { BrainGlassIcon, CircleCheckGlassIcon } from "@thesvg/ui-react"
 
 const SKILL_DOMAINS = [
   {
@@ -86,7 +83,7 @@ export function AgentSkillsSection() {
                 <Card key={domain.name} className="border-border/60 bg-card/60 backdrop-blur-xs transition-colors hover:border-primary/40">
                   <CardHeader className="p-4">
                     <div className="flex items-center gap-2 mb-1">
-                      <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 text-primary shrink-0" />
+                      <Icon icon={CircleCheckGlassIcon} className="size-4 text-primary shrink-0" />
                       <CardTitle className="font-mono text-xs font-bold text-foreground">
                         {domain.name}
                       </CardTitle>
@@ -110,7 +107,7 @@ export function AgentSkillsSection() {
             <Card className="border-border/60 bg-card/70 backdrop-blur-xs">
               <CardHeader>
                 <div className="flex items-center gap-2 text-primary text-xs font-semibold uppercase tracking-wider">
-                  <HugeiconsIcon icon={AiBrain01Icon} className="size-4" />
+                  <Icon icon={BrainGlassIcon} className="size-4" />
                   <span>Agent Linter & Validator</span>
                 </div>
                 <CardTitle className="text-lg">One-Command Quality Gate</CardTitle>

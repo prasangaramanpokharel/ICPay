@@ -3,8 +3,8 @@
 import { useRef, useState } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ImageAdd02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { FileImageGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { LOGO_MAX_BYTES } from "@/lib/token/launch"
@@ -77,7 +77,7 @@ export function LogoPicker({
           <Image src={value} alt="" width={SIZE} height={SIZE} className="size-full object-cover" unoptimized />
         ) : (
           <span className="flex size-10 items-center justify-center rounded-xl bg-muted">
-            <HugeiconsIcon icon={ImageAdd02Icon} className="size-5 text-muted-foreground" />
+            <Icon icon={FileImageGlassIcon} className="size-5 text-muted-foreground" />
           </span>
         )}
 

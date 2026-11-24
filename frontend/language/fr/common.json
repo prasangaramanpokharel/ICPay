@@ -457,7 +457,8 @@
     "suggested": "Suggestions pour vous",
     "noneFound": "Aucun résultat pour “{query}”.",
     "empty": "Aucun compte avec nom d'utilisateur. Soyez le premier.",
-    "premium": "Identifiant premium vérifié"
+    "premium": "Identifiant premium vérifié",
+    "subtitle": "Explorez les profils d'utilisateurs sur le réseau"
   },
   "success": {
     "send": "Envoi réussi",

@@ -3,13 +3,8 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  AiSecurity01Icon,
-  Coins01Icon,
-  ZapIcon,
-  SparklesIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ShieldCheckGlassIcon, CoinsGlassIcon, ZapGlassIcon, SparklesGlassIcon } from "@thesvg/ui-react"
 import { Badge } from "@/components/ui/badge"
 import { LaunchForm } from "@/components/launch/launch-form"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -51,13 +46,13 @@ export function PublicTokenCreate() {
           <div className="inline-flex items-center justify-center rounded-full border border-primary/30 bg-primary/5 px-3.5 py-1 backdrop-blur-xs">
             <AnimatedShinyText className="inline-flex items-center justify-center text-xs font-semibold text-primary">
               <span className="flex items-center gap-1.5">
-                <HugeiconsIcon icon={SparklesIcon} className="size-3.5 text-primary" />
+                <Icon icon={SparklesGlassIcon} className="size-3.5 text-primary" />
                 {t("title")}
               </span>
             </AnimatedShinyText>
           </div>
           <Badge variant="secondary" className="gap-1.5 rounded-full px-3 py-1 text-xs border border-border/60 bg-muted/60">
-            <HugeiconsIcon icon={Coins01Icon} className="size-3.5 text-primary" />
+            <Icon icon={CoinsGlassIcon} className="size-3.5 text-primary" />
             ICRC-1 Standard
           </Badge>
         </div>
@@ -74,8 +69,8 @@ export function PublicTokenCreate() {
         {/* 3 Pillar Guarantee Cards — Clean icon with text-primary, NO icon background box */}
         <div className="grid grid-cols-1 gap-3 pt-1 sm:grid-cols-3">
           <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/60 p-3.5 text-left backdrop-blur-md transition-all hover:border-primary/40">
-            <HugeiconsIcon
-              icon={AiSecurity01Icon}
+            <Icon
+              icon={ShieldCheckGlassIcon}
               className="size-5 shrink-0 text-primary"
               strokeWidth={1.75}
             />
@@ -86,8 +81,8 @@ export function PublicTokenCreate() {
           </div>
 
           <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/60 p-3.5 text-left backdrop-blur-md transition-all hover:border-primary/40">
-            <HugeiconsIcon
-              icon={Coins01Icon}
+            <Icon
+              icon={CoinsGlassIcon}
               className="size-5 shrink-0 text-primary"
               strokeWidth={1.75}
             />
@@ -98,8 +93,8 @@ export function PublicTokenCreate() {
           </div>
 
           <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-card/60 p-3.5 text-left backdrop-blur-md transition-all hover:border-primary/40">
-            <HugeiconsIcon
-              icon={ZapIcon}
+            <Icon
+              icon={ZapGlassIcon}
               className="size-5 shrink-0 text-primary"
               strokeWidth={1.75}
             />

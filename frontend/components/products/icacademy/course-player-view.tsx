@@ -24,18 +24,9 @@ import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Progress } from "@/components/ui/progress"
 import { ShineBorder } from "@/components/ui/shine-border"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Coins01Icon,
-  SecurityLockIcon,
-  Tick02Icon,
-  Copy01Icon,
-  NewTwitterIcon,
-  TelegramIcon,
-  Facebook02Icon,
-  ArrowRight01Icon,
-  Award01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CoinsGlassIcon, ShieldCheckGlassIcon, CheckGlassIcon, SocialXGlassIcon, SocialTelegramGlassIcon, SocialFacebookGlassIcon, ArrowRightGlassIcon, AwardGlassIcon } from "@thesvg/ui-react"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { Spinner } from "@/components/ui/spinner"
 import { useAuth } from "@/components/auth/auth-provider"
 import {
@@ -108,7 +99,7 @@ export function CoursePlayerView() {
         <p className="text-sm text-muted-foreground">The requested course could not be located in the on-chain catalog.</p>
         <Button nativeButton={false} render={<Link href="/academy#courses" />}>
           Browse All Courses
-          <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+          <Icon icon={ArrowRightGlassIcon} className="size-4" />
         </Button>
       </div>
     )
@@ -384,7 +375,7 @@ function CoursePlayerContent({ currentCourse }: { currentCourse: Course }) {
                 </Badge>
                 {isPaidCourse && isEnrolled && (
                   <Badge variant="outline" className="gap-1.5 text-xs">
-                    <HugeiconsIcon icon={Tick02Icon} className="size-3" />
+                    <Icon icon={CheckGlassIcon} className="size-3" />
                     Lifetime access
                   </Badge>
                 )}
@@ -429,7 +420,7 @@ function CoursePlayerContent({ currentCourse }: { currentCourse: Course }) {
                     className="size-7 rounded-full text-muted-foreground hover:text-foreground"
                     title={copied ? "Copied Link!" : "Copy Link"}
                   >
-                    <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-3.5" />
+                    <CopyIconIndicator copied={copied} iconClassName="size-3.5" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -445,7 +436,7 @@ function CoursePlayerContent({ currentCourse }: { currentCourse: Course }) {
                     }
                     className="size-7 rounded-full text-muted-foreground hover:text-foreground"
                   >
-                    <HugeiconsIcon icon={NewTwitterIcon} className="size-3.5" />
+                    <Icon icon={SocialXGlassIcon} className="size-3.5" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -461,7 +452,7 @@ function CoursePlayerContent({ currentCourse }: { currentCourse: Course }) {
                     }
                     className="size-7 rounded-full text-muted-foreground hover:text-foreground"
                   >
-                    <HugeiconsIcon icon={TelegramIcon} className="size-3.5" />
+                    <Icon icon={SocialTelegramGlassIcon} className="size-3.5" />
                   </Button>
                   <Button
                     variant="ghost"
@@ -477,7 +468,7 @@ function CoursePlayerContent({ currentCourse }: { currentCourse: Course }) {
                     }
                     className="size-7 rounded-full text-muted-foreground hover:text-foreground"
                   >
-                    <HugeiconsIcon icon={Facebook02Icon} className="size-3.5" />
+                    <Icon icon={SocialFacebookGlassIcon} className="size-3.5" />
                   </Button>
                 </ButtonGroup>
               </div>
@@ -503,7 +494,7 @@ function CoursePlayerContent({ currentCourse }: { currentCourse: Course }) {
                     shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
                   />
                   <span className="relative z-10 flex items-center gap-2">
-                    <HugeiconsIcon icon={isAuthenticated ? Coins01Icon : SecurityLockIcon} className="size-3.5" />
+                    <Icon icon={isAuthenticated ? CoinsGlassIcon : ShieldCheckGlassIcon} className="size-3.5" />
                     {isAuthenticated ? `Unlock Course (${currentCourse.price})` : "Connect Wallet to Unlock"}
                   </span>
                 </Button>
@@ -519,7 +510,7 @@ function CoursePlayerContent({ currentCourse }: { currentCourse: Course }) {
                   />
                   <div className="relative z-10 flex items-center justify-between text-xs">
                     <Badge variant="outline" className="gap-1 border-primary/40 bg-primary/10 text-primary text-[10px] font-semibold">
-                      <HugeiconsIcon icon={Award01Icon} className="size-3" />
+                      <Icon icon={AwardGlassIcon} className="size-3" />
                       Masterclass Completed
                     </Badge>
                     <span className="font-semibold text-primary">100%</span>
@@ -537,7 +528,7 @@ function CoursePlayerContent({ currentCourse }: { currentCourse: Course }) {
                     {isClaiming ? (
                       <Spinner className="size-3.5 text-primary-foreground" />
                     ) : (
-                      <HugeiconsIcon icon={Award01Icon} className="size-3.5" />
+                      <Icon icon={AwardGlassIcon} className="size-3.5" />
                     )}
                     <span>
                       {claimedCertificate
@@ -646,8 +637,8 @@ function CoursePlayerContent({ currentCourse }: { currentCourse: Course }) {
                             <div className="flex w-full items-center justify-between gap-2">
                               <div className="flex min-w-0 items-center gap-2">
                                 {isDone ? (
-                                  <HugeiconsIcon
-                                    icon={Tick02Icon}
+                                  <Icon
+                                    icon={CheckGlassIcon}
                                     className={`size-3 shrink-0 ${
                                       isCurrentActive
                                         ? "text-primary-foreground"
@@ -655,8 +646,8 @@ function CoursePlayerContent({ currentCourse }: { currentCourse: Course }) {
                                     }`}
                                   />
                                 ) : isLessonLocked ? (
-                                  <HugeiconsIcon
-                                    icon={SecurityLockIcon}
+                                  <Icon
+                                    icon={ShieldCheckGlassIcon}
                                     className={`size-3 shrink-0 ${
                                       isCurrentActive
                                         ? "text-primary-foreground/80"

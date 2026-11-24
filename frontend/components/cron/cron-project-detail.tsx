@@ -59,20 +59,8 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Add01Icon,
-  ArrowLeft01Icon,
-  Clock01Icon,
-  Delete02Icon,
-  Edit01Icon,
-  Folder01Icon,
-  MoreHorizontalIcon,
-  PauseIcon,
-  PlayIcon,
-  Search01Icon,
-  ViewIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { PlusGlassIcon, ArrowLeftGlassIcon, CronJobGlassIcon, DeleteGlassIcon, PencilGlassIcon, FolderGlassIcon, EllipsisGlassIcon, PauseGlassIcon, PlayGlassIcon, SearchGlassIcon, EyeGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import {
   deleteJob,
@@ -341,10 +329,10 @@ export function CronProjectDetail({
   if (!project) {
     return (
       <AppPage className="w-full space-y-6">
-        <Empty className="rounded-2xl border border-dashed py-14">
+        <Empty className="rounded-(--radius) border border-dashed py-14">
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <HugeiconsIcon icon={Folder01Icon} className="size-6 text-muted-foreground" />
+              <Icon icon={FolderGlassIcon} className="size-6 text-muted-foreground" />
             </EmptyMedia>
             <EmptyTitle>{t("projectNotFound")}</EmptyTitle>
             <EmptyDescription>
@@ -358,7 +346,7 @@ export function CronProjectDetail({
               onClick={() => router.push("/cron")}
               className="gap-1.5"
             >
-              <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
+              <Icon icon={ArrowLeftGlassIcon} className="size-4" />
               <span>{t("backToProjects")}</span>
             </Button>
           </EmptyContent>
@@ -413,7 +401,7 @@ export function CronProjectDetail({
                   aria-label="Project options"
                   disabled={actionLoading}
                 >
-                  <HugeiconsIcon icon={MoreHorizontalIcon} className="size-4" />
+                  <Icon icon={EllipsisGlassIcon} className="size-4" />
                 </Button>
               }
             />
@@ -425,7 +413,7 @@ export function CronProjectDetail({
                 }}
                 className="gap-2 text-xs cursor-pointer"
               >
-                <HugeiconsIcon icon={Edit01Icon} className="size-3.5" />
+                <Icon icon={PencilGlassIcon} className="size-3.5" />
                 <span>{t("rename")}</span>
               </DropdownMenuItem>
               {jobs.length > 0 && (
@@ -434,8 +422,8 @@ export function CronProjectDetail({
                   disabled={actionLoading}
                   className="gap-2 text-xs cursor-pointer"
                 >
-                  <HugeiconsIcon
-                    icon={hasActiveJobs ? PauseIcon : PlayIcon}
+                  <Icon
+                    icon={hasActiveJobs ? PauseGlassIcon : PlayGlassIcon}
                     className="size-3.5"
                   />
                   <span>{hasActiveJobs ? t("pauseAllJobs") : t("resumeAllJobs")}</span>
@@ -448,7 +436,7 @@ export function CronProjectDetail({
                 disabled={allProjects.length <= 1}
                 className="gap-2 text-xs text-destructive cursor-pointer"
               >
-                <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                <Icon icon={DeleteGlassIcon} className="size-3.5" />
                 <span>{t("delete")}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -460,7 +448,7 @@ export function CronProjectDetail({
             render={<Link href={`/cron/create?id=${encodeURIComponent(project.name)}&projectId=${formatProjectId(project.id)}`} />}
             className="gap-1.5"
           >
-            <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={PlusGlassIcon} className="size-4" strokeWidth={1.75} />
             <span>{t("createJob")}</span>
           </Button>
         </div>
@@ -470,8 +458,8 @@ export function CronProjectDetail({
         {jobs.length > 0 && (
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative flex-1">
-              <HugeiconsIcon
-                icon={Search01Icon}
+              <Icon
+                icon={SearchGlassIcon}
                 className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
               />
               <Input
@@ -500,10 +488,10 @@ export function CronProjectDetail({
         )}
 
         {jobs.length === 0 ? (
-          <Empty className="rounded-2xl border border-dashed py-16">
+          <Empty className="rounded-(--radius) border border-dashed py-16">
             <EmptyHeader>
               <EmptyMedia variant="icon" className="size-12 rounded-full bg-muted flex items-center justify-center">
-                <HugeiconsIcon icon={Clock01Icon} className="size-6 text-muted-foreground" />
+                <Icon icon={CronJobGlassIcon} className="size-6 text-muted-foreground" />
               </EmptyMedia>
               <EmptyTitle>{t("noJobsTitle")}</EmptyTitle>
               <EmptyDescription className="max-w-md">
@@ -512,10 +500,10 @@ export function CronProjectDetail({
             </EmptyHeader>
           </Empty>
         ) : filteredJobs.length === 0 ? (
-          <Empty className="rounded-2xl border border-dashed py-14">
+          <Empty className="rounded-(--radius) border border-dashed py-14">
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <HugeiconsIcon icon={Search01Icon} className="size-6 text-muted-foreground" />
+                <Icon icon={SearchGlassIcon} className="size-6 text-muted-foreground" />
               </EmptyMedia>
               <EmptyTitle>{t("noJobsMatch")}</EmptyTitle>
               <EmptyDescription>
@@ -633,8 +621,8 @@ export function CronProjectDetail({
                                     {isBusy ? (
                                       <Spinner className="size-3.5" />
                                     ) : (
-                                      <HugeiconsIcon
-                                        icon={job.status === "Active" ? PauseIcon : PlayIcon}
+                                      <Icon
+                                        icon={job.status === "Active" ? PauseGlassIcon : PlayGlassIcon}
                                         className="size-3.5 text-muted-foreground hover:text-foreground"
                                       />
                                     )}
@@ -657,7 +645,7 @@ export function CronProjectDetail({
                                     onClick={() => handleOpenDrawer(job)}
                                     aria-label={t("viewLogs")}
                                   >
-                                    <HugeiconsIcon icon={ViewIcon} className="size-3.5" />
+                                    <Icon icon={EyeGlassIcon} className="size-3.5" />
                                   </Button>
                                 }
                               />
@@ -676,7 +664,7 @@ export function CronProjectDetail({
                                     aria-label={t("deleteJob")}
                                     disabled={isBusy}
                                   >
-                                    <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                                    <Icon icon={DeleteGlassIcon} className="size-3.5" />
                                   </Button>
                                 }
                               />

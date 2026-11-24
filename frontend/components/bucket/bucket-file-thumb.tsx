@@ -4,8 +4,8 @@ import { useState } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { toast } from "sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CopyGlassIcon, CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -98,7 +98,7 @@ function TextContentPreview({
   const [wrapLines, setWrapLines] = useState(true)
 
   if (loading) {
-    return <Skeleton className="h-full w-full rounded-xl" />
+    return <Skeleton className="h-full w-full rounded-(--radius)" />
   }
 
   if (error || text === null) {
@@ -146,14 +146,19 @@ function TextContentPreview({
             variant="outline"
             size="xs"
             onClick={() => void handleCopyContent()}
-            className="h-6 gap-1 rounded-md px-2 text-[11px] font-medium cursor-pointer"
+            className="h-6 gap-1.5 rounded-md px-2 text-[11px] font-medium cursor-pointer"
           >
-            <HugeiconsIcon
-              icon={copied ? Tick02Icon : Copy01Icon}
-              className={cn("size-3", copied ? "text-success" : "text-muted-foreground")}
-              strokeWidth={1.75}
-            />
-            <span>{copied ? "Copied" : "Copy"}</span>
+            {copied ? (
+              <>
+                <Icon icon={CheckGlassOutlineIcon} className="size-3.5 text-success" strokeWidth={2.5} />
+                <span className="text-success font-medium">Copied</span>
+              </>
+            ) : (
+              <>
+                <Icon icon={CopyGlassIcon} className="size-3 text-muted-foreground" strokeWidth={1.75} />
+                <span>Copy</span>
+              </>
+            )}
           </Button>
         </div>
       </div>
@@ -202,8 +207,8 @@ export function BucketFilePreviewImage({
 
   if (!previewable) {
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border/70 bg-muted/15 p-6">
-        <div className="flex size-14 items-center justify-center rounded-2xl border border-border/60 bg-card shadow-xs">
+      <div className="flex h-full w-full flex-col items-center justify-center gap-3 rounded-(--radius) border border-dashed border-border/70 bg-muted/15 p-6">
+        <div className="flex size-14 items-center justify-center rounded-(--radius) border border-border/60 bg-card shadow-xs">
           <BucketFileIcon path={file.path} className="size-7" />
         </div>
         <div className="flex flex-col items-center gap-1 text-center">
@@ -223,7 +228,7 @@ export function BucketFilePreviewImage({
   }
 
   if (loading) {
-    return <Skeleton className={cn("h-full w-full rounded-xl", className)} />
+    return <Skeleton className={cn("h-full w-full rounded-(--radius)", className)} />
   }
 
   if (error || !previewUrl) {
@@ -238,7 +243,7 @@ export function BucketFilePreviewImage({
     return (
       <div
         className={cn(
-          "relative h-full w-full overflow-hidden rounded-xl bg-muted/20",
+          "relative h-full w-full overflow-hidden rounded-(--radius) bg-muted/20",
           className
         )}
       >
@@ -258,7 +263,7 @@ export function BucketFilePreviewImage({
     return (
       <div
         className={cn(
-          "flex h-full w-full items-center justify-center overflow-hidden rounded-xl bg-muted/20 p-2",
+          "flex h-full w-full items-center justify-center overflow-hidden rounded-(--radius) bg-muted/20 p-2",
           className
         )}
       >
@@ -277,11 +282,11 @@ export function BucketFilePreviewImage({
     return (
       <div
         className={cn(
-          "flex h-full w-full flex-col items-center justify-center gap-4 rounded-xl border border-border/60 bg-muted/15 p-6",
+          "flex h-full w-full flex-col items-center justify-center gap-4 rounded-(--radius) border border-border/60 bg-muted/15 p-6",
           className
         )}
       >
-        <div className="flex size-16 items-center justify-center rounded-2xl border border-border/60 bg-card shadow-xs">
+        <div className="flex size-16 items-center justify-center rounded-(--radius) border border-border/60 bg-card shadow-xs">
           <BucketFileIcon path={file.path} className="size-8" />
         </div>
         <Badge variant="secondary">{fileTypeChip(file.contentType, file.path)}</Badge>

@@ -9,8 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { CheckmarkCircle02Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CircleCheckGlassIcon, XGlassIcon } from "@thesvg/ui-react"
 
 const FEATURE_MATRIX = [
   { id: "0", icbucket: true, s3: false, gcs: false, azure: false },
@@ -25,12 +25,12 @@ const FEATURE_MATRIX = [
   { id: "9", icbucket: true, s3: true, gcs: true, azure: true },
 ] as const
 
-function CheckIcon() {
-  return <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-5 text-primary" strokeWidth={1.75} />
+function FeatureCheck() {
+  return <Icon icon={CircleCheckGlassIcon} className="size-5 text-primary" strokeWidth={1.75} />
 }
 
-function XIcon() {
-  return <HugeiconsIcon icon={Cancel01Icon} className="size-5 text-muted-foreground/60" strokeWidth={1.75} />
+function FeatureCross() {
+  return <Icon icon={XGlassIcon} className="size-5 text-muted-foreground/60" strokeWidth={1.75} />
 }
 
 export function ComparisonSection() {
@@ -65,22 +65,22 @@ export function ComparisonSection() {
                   </TableCell>
                   <TableCell className="text-center py-3.5 bg-primary/5">
                     <div className="flex justify-center">
-                      {feature.icbucket ? <CheckIcon /> : <XIcon />}
+                      {feature.icbucket ? <FeatureCheck /> : <FeatureCross />}
                     </div>
                   </TableCell>
                   <TableCell className="text-center py-3.5">
                     <div className="flex justify-center">
-                      {feature.s3 ? <CheckIcon /> : <XIcon />}
+                      {feature.s3 ? <FeatureCheck /> : <FeatureCross />}
                     </div>
                   </TableCell>
                   <TableCell className="text-center py-3.5">
                     <div className="flex justify-center">
-                      {feature.gcs ? <CheckIcon /> : <XIcon />}
+                      {feature.gcs ? <FeatureCheck /> : <FeatureCross />}
                     </div>
                   </TableCell>
                   <TableCell className="text-center py-3.5">
                     <div className="flex justify-center">
-                      {feature.azure ? <CheckIcon /> : <XIcon />}
+                      {feature.azure ? <FeatureCheck /> : <FeatureCross />}
                     </div>
                   </TableCell>
                 </TableRow>

@@ -3,14 +3,8 @@
 import { useState } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowDataTransferHorizontalIcon,
-  Cancel01Icon,
-  Coins01Icon,
-  ShoppingBag01Icon,
-  UserIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ReplaceGlassIcon, XGlassIcon, CoinsGlassIcon, ShoppingBagGlassIcon, UserGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -24,10 +18,10 @@ import { markPresaleGuideSeen } from "@/lib/icpay/presaleGuide"
 import { ICPAY_TOKEN_ICON } from "@/lib/ui/brand-images"
 
 const STEPS = [
-  { titleKey: "guideStep1Title", bodyKey: "guideStep1Body", icon: ShoppingBag01Icon },
-  { titleKey: "guideStep2Title", bodyKey: "guideStep2Body", icon: ArrowDataTransferHorizontalIcon },
-  { titleKey: "guideStep3Title", bodyKey: "guideStep3Body", icon: UserIcon },
-  { titleKey: "guideStep4Title", bodyKey: "guideStep4Body", icon: Coins01Icon },
+  { titleKey: "guideStep1Title", bodyKey: "guideStep1Body", icon: ShoppingBagGlassIcon },
+  { titleKey: "guideStep2Title", bodyKey: "guideStep2Body", icon: ReplaceGlassIcon },
+  { titleKey: "guideStep3Title", bodyKey: "guideStep3Body", icon: UserGlassIcon },
+  { titleKey: "guideStep4Title", bodyKey: "guideStep4Body", icon: CoinsGlassIcon },
 ] as const
 
 export function PresaleGuideDialog({
@@ -67,7 +61,7 @@ export function PresaleGuideDialog({
             onClick={dismiss}
             aria-label={t("guideClose")}
           >
-            <HugeiconsIcon icon={Cancel01Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={XGlassIcon} className="size-4" strokeWidth={1.75} />
           </Button>
           <div className="flex items-center gap-3 pr-8">
             <span className="relative flex size-12 shrink-0 overflow-hidden rounded-full ring-2 ring-primary-foreground/30">
@@ -94,7 +88,7 @@ export function PresaleGuideDialog({
         <div className="space-y-4 px-6 py-5">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <HugeiconsIcon icon={current.icon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+              <Icon icon={current.icon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
               <p className="text-base font-semibold">{t(current.titleKey)}</p>
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">{t(current.bodyKey)}</p>

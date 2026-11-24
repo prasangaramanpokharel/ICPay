@@ -4,7 +4,7 @@ import Link, { useLinkStatus } from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { motion } from "motion/react"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Icon } from "@/components/ui/icon"
 import { cn } from "@/lib/ui/utils"
 import { useAuth } from "@/components/auth/auth-provider"
 import { prefetchAppRoute } from "@/lib/navigation/prefetchRoute"
@@ -114,7 +114,7 @@ function NavTabContent({
           transition={{ type: "spring", stiffness: 500, damping: 20 }}
           className="relative flex size-8 items-center justify-center"
         >
-        <HugeiconsIcon
+        <Icon
           icon={icon}
           className="size-5 transition-transform duration-200 group-hover:scale-105"
           strokeWidth={active ? 2 : 1.75}

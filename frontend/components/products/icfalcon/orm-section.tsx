@@ -4,35 +4,30 @@ import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { CodeBlock } from "@/components/ui/code-block"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  DatabaseIcon,
-  Search01Icon,
-  Link01Icon,
-  SparklesIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { DatabaseGlassIcon, SearchGlassIcon, LinkGlassIcon, SparklesGlassIcon } from "@thesvg/ui-react"
 
 const ORM_FEATURES = [
   {
-    icon: DatabaseIcon,
+    icon: DatabaseGlassIcon,
     title: "Normalized 3NF Models",
     description:
       "Eliminates flat array scans and redundant fields. Strongly typed Motoko schemas with automatic primary key validation.",
   },
   {
-    icon: Search01Icon,
+    icon: SearchGlassIcon,
     title: "Auto-Synchronized Indices",
     description:
       "Secondary indices on foreign keys, statuses, and timestamps update atomically during inserts, updates, and deletes with zero manual sync.",
   },
   {
-    icon: SparklesIcon,
+    icon: SparklesGlassIcon,
     title: "Fluent Query Builder",
     description:
       "Chainable, type-safe API with .where(), .orderBy(), .limit(), and .offset() compiling to high-speed sub-millisecond lookups.",
   },
   {
-    icon: Link01Icon,
+    icon: LinkGlassIcon,
     title: "Relational Navigation",
     description:
       "Built-in support for belongsTo and hasMany relations, making relational canister architecture feel like Rails ActiveRecord or Prisma.",
@@ -91,7 +86,7 @@ export function OrmSection() {
             <Card key={idx} className="border-border/60 bg-card/60 backdrop-blur-xs transition-colors hover:border-primary/40 hover:bg-card/90">
               <CardHeader>
                 <div className="flex size-9 items-center justify-center rounded-lg border border-primary/20 bg-primary/10 text-primary mb-2">
-                  <HugeiconsIcon icon={feat.icon} className="size-5" />
+                  <Icon icon={feat.icon} className="size-5" />
                 </div>
                 <CardTitle className="text-base">{feat.title}</CardTitle>
                 <CardDescription className="text-xs leading-relaxed mt-1">

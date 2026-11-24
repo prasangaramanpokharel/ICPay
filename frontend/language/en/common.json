@@ -546,7 +546,8 @@
     "suggested": "Suggested for you",
     "noneFound": "No one found for “{query}”.",
     "empty": "No accounts with usernames yet. Be the first.",
-    "premium": "Verified premium handle"
+    "premium": "Verified premium handle",
+    "subtitle": "Explore user profiles across the network"
   },
   "success": {
     "send": "Send Success",

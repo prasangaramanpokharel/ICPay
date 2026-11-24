@@ -2,8 +2,8 @@
 
 import * as React from "react"
 import { motion, useReducedMotion } from "motion/react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CopyGlassIcon, CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import { toast } from "@/components/ui/toast"
 import { Button } from "@/components/ui/button"
 import { copyText } from "@/lib/wallet/utils"
@@ -37,7 +37,7 @@ export function CopyIconIndicator({
         transition={{ duration: 0.15 }}
         className="absolute inset-0 flex items-center justify-center"
       >
-        <HugeiconsIcon icon={Copy01Icon} className={iconClassName} strokeWidth={2} />
+        <Icon icon={CopyGlassIcon} className={iconClassName} strokeWidth={2} />
       </motion.span>
       <motion.span
         initial={false}
@@ -50,24 +50,9 @@ export function CopyIconIndicator({
               }
         }
         transition={{ type: "spring", stiffness: 380, damping: 20 }}
-        className="absolute inset-0 flex items-center justify-center rounded-full bg-success text-background"
+        className="absolute inset-0 flex items-center justify-center text-success"
       >
-        <svg
-          className="size-[55%]"
-          viewBox="0 0 16 16"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={3}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <motion.path
-            d="M3.5 8.5L6.5 11.5L12.5 5"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: copied ? 1 : 0 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-          />
-        </svg>
+        <Icon icon={CheckGlassOutlineIcon} className="size-full text-success" strokeWidth={2.5} />
       </motion.span>
     </span>
   )

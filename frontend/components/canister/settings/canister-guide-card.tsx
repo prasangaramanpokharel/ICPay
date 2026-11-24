@@ -1,15 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Book02Icon,
-  InformationCircleIcon,
-  AiSecurity01Icon,
-  CpuIcon,
-  EyeIcon,
-  ArrowDown01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { BookGlassIcon, InfoGlassIcon, ShieldCheckGlassIcon, CpuGlassIcon, EyeGlassIcon, ArrowDownGlassIcon } from "@thesvg/ui-react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { cn } from "@/lib/ui/utils"
 
@@ -33,7 +26,7 @@ export function CanisterGuideCard({
     >
       <CollapsibleTrigger className="flex w-full items-center justify-between p-4 sm:p-5 text-left hover:bg-muted/50 transition-colors cursor-pointer">
         <div className="flex items-center gap-3">
-          <HugeiconsIcon icon={Book02Icon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+          <Icon icon={BookGlassIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
           <div>
             <h3 className="text-sm font-semibold text-foreground">
               Internet Computer Canister Architecture Guide
@@ -43,8 +36,8 @@ export function CanisterGuideCard({
             </p>
           </div>
         </div>
-        <HugeiconsIcon
-          icon={ArrowDown01Icon}
+        <Icon
+          icon={ArrowDownGlassIcon}
           className={cn(
             "size-4 text-muted-foreground transition-transform duration-200 shrink-0",
             !open && "-rotate-90"
@@ -56,7 +49,7 @@ export function CanisterGuideCard({
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-1.5 rounded-xl border border-border/40 bg-card/60 p-3.5">
             <div className="flex items-center gap-2 text-foreground font-semibold">
-              <HugeiconsIcon icon={AiSecurity01Icon} className="size-4 text-primary" />
+              <Icon icon={ShieldCheckGlassIcon} className="size-4 text-primary" />
               <span>Controllers</span>
             </div>
             <p>
@@ -68,7 +61,7 @@ export function CanisterGuideCard({
 
           <div className="space-y-1.5 rounded-xl border border-border/40 bg-card/60 p-3.5">
             <div className="flex items-center gap-2 text-foreground font-semibold">
-              <HugeiconsIcon icon={InformationCircleIcon} className="size-4 text-destructive" />
+              <Icon icon={InfoGlassIcon} className="size-4 text-destructive" />
               <span>Freezing Threshold</span>
             </div>
             <p>
@@ -80,7 +73,7 @@ export function CanisterGuideCard({
 
           <div className="space-y-1.5 rounded-xl border border-border/40 bg-card/60 p-3.5">
             <div className="flex items-center gap-2 text-foreground font-semibold">
-              <HugeiconsIcon icon={CpuIcon} className="size-4 text-foreground" />
+              <Icon icon={CpuGlassIcon} className="size-4 text-foreground" />
               <span>Compute & Memory</span>
             </div>
             <p>
@@ -91,7 +84,7 @@ export function CanisterGuideCard({
 
           <div className="space-y-1.5 rounded-xl border border-border/40 bg-card/60 p-3.5">
             <div className="flex items-center gap-2 text-foreground font-semibold">
-              <HugeiconsIcon icon={EyeIcon} className="size-4 text-success" strokeWidth={1.75} />
+              <Icon icon={EyeGlassIcon} className="size-4 text-success" strokeWidth={1.75} />
               <span>Log Visibility</span>
             </div>
             <p>

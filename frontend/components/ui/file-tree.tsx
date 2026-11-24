@@ -1,13 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowRight01Icon,
-  File01Icon,
-  Folder01Icon,
-  FolderOpenIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon, FileGlassIcon, FolderGlassIcon } from "@thesvg/ui-react"
 
 import { cn } from "@/lib/ui/utils"
 import {
@@ -89,12 +84,12 @@ function FolderNode<T>({
         onFocus={() => ctx.onFocusItem(node.path)}
         className={ROW_CLASS}
       >
-        <HugeiconsIcon
-          icon={ArrowRight01Icon}
+        <Icon
+          icon={ArrowRightGlassIcon}
           className={cn("size-4 shrink-0 transition-transform", open && "rotate-90")}
         />
-        <HugeiconsIcon
-          icon={open ? FolderOpenIcon : Folder01Icon}
+        <Icon
+          icon={open ? FolderGlassIcon : FolderGlassIcon}
           className="size-4 shrink-0"
         />
         <span className="truncate">{node.name}</span>
@@ -126,7 +121,7 @@ function FileNode<T>({
   const content = (
     <>
       <span className="size-4 shrink-0" aria-hidden />
-      <HugeiconsIcon icon={File01Icon} className="size-4 shrink-0" />
+      <Icon icon={FileGlassIcon} className="size-4 shrink-0" />
       <span className="truncate">{node.name}</span>
     </>
   )

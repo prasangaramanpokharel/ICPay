@@ -3,8 +3,8 @@
 import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { LANDING_MEDIA } from "@/lib/public/landing-media"
@@ -148,7 +148,7 @@ export function LandingDownloads() {
                 render={<Link href="/downloads" />}
               >
                 <span>View all desktop downloads & checksums</span>
-                <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                <Icon icon={ArrowRightGlassIcon} className="size-4" />
               </Button>
             </div>
           </div>

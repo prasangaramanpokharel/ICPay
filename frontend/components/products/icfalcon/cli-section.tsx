@@ -6,12 +6,8 @@ import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Copy01Icon,
-  Tick02Icon,
-  ArrowRight01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CopyGlassIcon, CheckGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 
 const CLI_COMMANDS = [
   {
@@ -118,8 +114,8 @@ export function CliSection() {
                     onClick={() => handleCopy(item.short)}
                     aria-label={`Copy ${item.short}`}
                   >
-                    <HugeiconsIcon
-                      icon={copiedCmd === item.short ? Tick02Icon : Copy01Icon}
+                    <Icon
+                      icon={copiedCmd === item.short ? CheckGlassIcon : CopyGlassIcon}
                       className={`size-3.5 ${copiedCmd === item.short ? "text-success" : "text-muted-foreground"}`}
                     />
                   </Button>
@@ -146,7 +142,7 @@ export function CliSection() {
             render={
               <Link href="/products/icFalcon/commands" className="flex items-center gap-2">
                 <span>Explore All 24+ Falcon Commands</span>
-                <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                <Icon icon={ArrowRightGlassIcon} className="size-4" />
               </Link>
             }
           />

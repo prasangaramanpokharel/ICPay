@@ -3,8 +3,8 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { useTheme } from "next-themes"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CopyGlassIcon, CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import Image from "next/image"
 import { PAGE_IMAGES } from "@/lib/public/page-images"
 import Link from "next/link"
@@ -130,10 +130,11 @@ export function HeroSection() {
               className="size-7 shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer transition-colors"
               aria-label={t("copyCommand")}
             >
-              <HugeiconsIcon
-                icon={copied ? Tick02Icon : Copy01Icon}
-                className={`size-4 transition-colors ${copied ? "text-primary" : "text-muted-foreground"}`}
-              />
+              {copied ? (
+                <Icon icon={CheckGlassOutlineIcon} className="size-4 text-success" strokeWidth={2.5} />
+              ) : (
+                <Icon icon={CopyGlassIcon} className="size-4 text-muted-foreground" />
+              )}
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">

@@ -32,7 +32,7 @@ function WalletPageContent() {
   )
 
   return (
-    <AppPage title={t("tokens")}>
+    <AppPage title={t("tokens")} description={t("subtitle")}>
       <WalletBalanceCard balance={liveBalance} usdValue={usd} price={price} holdings={holdings} />
 
       <TokenList

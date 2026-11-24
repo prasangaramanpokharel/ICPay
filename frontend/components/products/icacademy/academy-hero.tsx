@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -56,8 +56,8 @@ export function AcademyHero() {
                   </span>
                 )}
               </AnimatedShinyText>
-              <HugeiconsIcon
-                icon={ArrowRight01Icon}
+              <Icon
+                icon={ArrowRightGlassIcon}
                 className="size-3 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5"
               />
             </Link>
@@ -83,7 +83,7 @@ export function AcademyHero() {
               render={<Link href="#courses" />}
             >
               <span>Explore Courses</span>
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+              <Icon icon={ArrowRightGlassIcon} className="size-4" />
             </Button>
 
             {isAuthenticated ? (
@@ -95,7 +95,7 @@ export function AcademyHero() {
                 render={<Link href="/courses" />}
               >
                 <span>My Courses</span>
-                <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+                <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
               </Button>
             ) : (
               <Button

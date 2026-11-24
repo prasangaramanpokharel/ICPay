@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
+import { motion } from "motion/react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -68,12 +69,18 @@ export function DepositAddressCard({
 
       {tabs.map((tab) => (
         <TabsContent key={tab.value} value={tab.value} className="mt-6">
-          <DepositQrBlock
-            value={tab.address}
-            hint={hideHint ? undefined : tab.hint}
-            onCopy={onCopy}
-            logo={logo}
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+          >
+            <DepositQrBlock
+              value={tab.address}
+              hint={hideHint ? undefined : tab.hint}
+              onCopy={onCopy}
+              logo={logo}
+            />
+          </motion.div>
         </TabsContent>
       ))}
     </Tabs>

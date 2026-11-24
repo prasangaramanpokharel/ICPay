@@ -4,20 +4,14 @@ import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  CodeIcon,
-  CheckmarkCircle02Icon,
-  Copy01Icon,
-  TerminalIcon,
-  CpuIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CodeGlassIcon, CheckGlassOutlineIcon, CopyGlassIcon, TerminalGlassIcon, CpuGlassIcon } from "@thesvg/ui-react"
 
 const CODE_TABS = [
   {
     id: "curl",
     label: "cURL Webhook",
-    icon: TerminalIcon,
+    icon: TerminalGlassIcon,
     snippet: `curl -X POST "https://iccron.icpay.app/api/v1/jobs" \\
   -H "Authorization: Bearer cr_live_9f82bc4e7d1a..." \\
   -H "Content-Type: application/json" \\
@@ -35,7 +29,7 @@ const CODE_TABS = [
   {
     id: "nextjs",
     label: "Next.js Route Handler",
-    icon: CodeIcon,
+    icon: CodeGlassIcon,
     snippet: `import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -52,7 +46,7 @@ export async function POST(req: NextRequest) {
   {
     id: "motoko",
     label: "Motoko Inter-Canister",
-    icon: CpuIcon,
+    icon: CpuGlassIcon,
     snippet: `import IcCron "canister:uzt4z-lp777-77774-qaabq-cai";
 
 actor MyCanister {
@@ -71,7 +65,7 @@ actor MyCanister {
   {
     id: "mcp",
     label: "Claude Code / AI MCP",
-    icon: TerminalIcon,
+    icon: TerminalGlassIcon,
     snippet: `# Connect icCron directly to Claude Code or Cursor AI
 claude mcp add iccron -- npx -y @icpay/iccron-mcp
 
@@ -122,7 +116,7 @@ export function QuickstartSection() {
                         : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                     }`}
                   >
-                    <HugeiconsIcon icon={tab.icon} className="size-3.5" />
+                    <Icon icon={tab.icon} className="size-3.5" />
                     {tab.label}
                   </button>
                 ))}
@@ -134,11 +128,17 @@ export function QuickstartSection() {
                 onClick={copyCode}
                 className="gap-1.5 rounded-lg text-xs font-medium"
               >
-                <HugeiconsIcon
-                  icon={copied ? CheckmarkCircle02Icon : Copy01Icon}
-                  className={`size-3.5 ${copied ? "text-primary" : ""}`}
-                />
-                {copied ? "Copied" : "Copy"}
+                {copied ? (
+                  <>
+                    <Icon icon={CheckGlassOutlineIcon} className="size-3.5 text-success" strokeWidth={2.5} />
+                    <span className="text-success font-medium">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <Icon icon={CopyGlassIcon} className="size-3.5" strokeWidth={2} />
+                    <span>Copy</span>
+                  </>
+                )}
               </Button>
             </div>
 

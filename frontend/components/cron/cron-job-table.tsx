@@ -15,14 +15,11 @@ import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Clock01Icon,
-  PlayIcon,
-  PlusSignIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CronJobGlassIcon, PlayGlassIcon, PlusGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import { deleteJob, pauseJob, resumeJob, triggerJob } from "@/services/cron/client"
 import type { RemoteJobSummary } from "@/services/cron/types"
@@ -124,21 +121,63 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
               }
               className="gap-1.5 text-xs h-8"
             >
-              <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
+              <Icon icon={PlusGlassIcon} className="size-3.5" />
               <span>New Cron Job</span>
             </Button>
           )}
         </CardHeader>
         <CardContent className="p-0">
           {loading ? (
-            <div className="flex h-48 items-center justify-center">
-              <Spinner className="size-6 text-primary" />
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border hover:bg-transparent">
+                    <TableHead className="text-muted-foreground font-semibold py-3.5 w-44">
+                      Time
+                    </TableHead>
+                    <TableHead className="text-muted-foreground font-semibold py-3.5">
+                      Command to Run
+                    </TableHead>
+                    <TableHead className="text-right text-muted-foreground font-semibold py-3.5 pr-6 w-72">
+                      Actions
+                    </TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <TableRow key={i} className="border-border/40">
+                      <TableCell className="py-4">
+                        <div className="space-y-1.5">
+                          <Skeleton className="h-4 w-28 rounded-md" />
+                          <Skeleton className="h-3 w-20 rounded-md" />
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-4">
+                        <div className="space-y-1.5">
+                          <div className="flex items-center gap-2">
+                            <Skeleton className="h-4 w-32 rounded-md" />
+                            <Skeleton className="h-5 w-16 rounded-full" />
+                          </div>
+                          <Skeleton className="h-3 w-56 rounded-md font-mono" />
+                        </div>
+                      </TableCell>
+                      <TableCell className="py-4 pr-6 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <Skeleton className="size-8 rounded-lg" />
+                          <Skeleton className="size-8 rounded-lg" />
+                          <Skeleton className="size-8 rounded-lg" />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
           ) : jobs.length === 0 ? (
             <Empty className="py-16 border-0">
               <EmptyHeader>
                 <EmptyMedia variant="icon" className="size-12 rounded-full bg-muted flex items-center justify-center">
-                  <HugeiconsIcon icon={Clock01Icon} className="size-6 text-muted-foreground" />
+                  <Icon icon={CronJobGlassIcon} className="size-6 text-muted-foreground" />
                 </EmptyMedia>
                 <EmptyTitle>No cron jobs yet</EmptyTitle>
                 <EmptyDescription className="max-w-sm">
@@ -156,7 +195,7 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
                   }
                   className="gap-1.5"
                 >
-                  <HugeiconsIcon icon={PlusSignIcon} className="size-3.5" />
+                  <Icon icon={PlusGlassIcon} className="size-3.5" />
                   <span>Create your first cron job</span>
                 </Button>
               </EmptyContent>
@@ -234,7 +273,7 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
                               {isRunning ? (
                                 <Spinner className="size-3.5" />
                               ) : (
-                                <HugeiconsIcon icon={PlayIcon} className="size-3.5 text-foreground" />
+                                <Icon icon={PlayGlassIcon} className="size-3.5 text-foreground" />
                               )}
                             </Button>
 

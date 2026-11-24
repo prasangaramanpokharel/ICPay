@@ -1,7 +1,7 @@
 "use client"
 
-import { HugeiconsIcon } from "@hugeicons/react"
-import { InformationCircleIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { InfoGlassIcon } from "@thesvg/ui-react"
 import {
   Popover,
   PopoverContent,
@@ -28,7 +28,7 @@ export function InfoTip({
         aria-label={label}
         className={`inline-flex shrink-0 text-muted-foreground transition-colors hover:text-foreground ${className ?? ""}`}
       >
-        <HugeiconsIcon icon={InformationCircleIcon} className="size-4" strokeWidth={1.75} />
+        <Icon icon={InfoGlassIcon} className="size-4" strokeWidth={1.75} />
       </PopoverTrigger>
       <PopoverContent align="start" className="max-w-xs gap-2">
         <PopoverHeader>

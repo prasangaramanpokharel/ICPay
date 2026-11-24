@@ -7,12 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { ShineBorder } from "@/components/ui/shine-border"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Copy01Icon,
-  Tick02Icon,
-  ArrowRight01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CopyGlassIcon, CheckGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { NpmIcon } from "@dev.icons/react"
 
 export function CtaSection() {
@@ -74,8 +70,8 @@ export function CtaSection() {
                     className="size-6 p-0 shrink-0 ml-2"
                     aria-label="Copy install command"
                   >
-                    <HugeiconsIcon
-                      icon={copiedCurl ? Tick02Icon : Copy01Icon}
+                    <Icon
+                      icon={copiedCurl ? CheckGlassIcon : CopyGlassIcon}
                       className={`size-3.5 ${copiedCurl ? "text-success" : "text-muted-foreground"}`}
                     />
                   </Button>
@@ -92,7 +88,7 @@ export function CtaSection() {
                       className="flex items-center gap-2"
                     >
                       <span>Read GitHub Docs</span>
-                      <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                      <Icon icon={ArrowRightGlassIcon} className="size-4" />
                     </Link>
                   }
                 />
@@ -105,8 +101,8 @@ export function CtaSection() {
                   onClick={handleCopyRaw}
                   className="gap-2 rounded-full border-border/60 text-xs"
                 >
-                  <HugeiconsIcon
-                    icon={copiedRaw ? Tick02Icon : Copy01Icon}
+                  <Icon
+                    icon={copiedRaw ? CheckGlassIcon : CopyGlassIcon}
                     className={`size-3.5 ${copiedRaw ? "text-success" : "text-muted-foreground"}`}
                   />
                   <span>Copy Raw Markdown API Endpoint</span>

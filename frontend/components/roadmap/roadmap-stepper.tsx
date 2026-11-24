@@ -1,14 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Tick02Icon,
-  ArrowDown01Icon,
-  InformationCircleIcon,
-  Alert02Icon,
-  LinkSquare02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassIcon, ArrowDownGlassIcon, InfoGlassIcon, TriangleAlertGlassIcon, ExternalLinkGlassIcon } from "@thesvg/ui-react"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -25,7 +19,7 @@ function MilestoneRow({ label, done, note }: { label: string; done: boolean; not
           done ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground/30"
         )}
       >
-        {done && <HugeiconsIcon icon={Tick02Icon} className="size-2.5" />}
+        {done && <Icon icon={CheckGlassIcon} className="size-2.5" />}
       </span>
       <span className={cn("text-xs leading-relaxed", !done && "text-muted-foreground")}>
         {label}
@@ -37,7 +31,7 @@ function MilestoneRow({ label, done, note }: { label: string; done: boolean; not
               aria-label={`Why: ${label}`}
               className="ml-1 inline-flex translate-y-0.5 text-muted-foreground transition-colors hover:text-foreground"
             >
-              <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5" />
+              <Icon icon={InfoGlassIcon} className="size-3.5" />
             </PopoverTrigger>
             <PopoverContent side="top" className="w-72 text-xs leading-relaxed">
               {note}
@@ -68,7 +62,7 @@ function PhaseCard({ phase, isLast }: { phase: Phase; isLast: boolean }) {
             phase.status === "planned" && "border-dashed border-muted-foreground/30 text-muted-foreground"
           )}
         >
-          <HugeiconsIcon icon={phase.icon} className="size-4" />
+          <Icon icon={phase.icon} className="size-4" />
         </span>
         {!isLast && (
           <span
@@ -92,8 +86,8 @@ function PhaseCard({ phase, isLast }: { phase: Phase; isLast: boolean }) {
             </div>
             <div className="flex shrink-0 items-center gap-1.5">
               <Badge variant={meta.badge}>{meta.label}</Badge>
-              <HugeiconsIcon
-                icon={ArrowDown01Icon}
+              <Icon
+                icon={ArrowDownGlassIcon}
                 className="size-4 text-muted-foreground transition-transform group-data-open/trigger:rotate-180"
               />
             </div>
@@ -112,7 +106,7 @@ function PhaseCard({ phase, isLast }: { phase: Phase; isLast: boolean }) {
           <div className="mt-3.5 space-y-3.5 rounded-xl border bg-muted/30 p-3.5">
             {phase.dependsOn && (
               <div className="flex flex-wrap items-center gap-1.5">
-                <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5 text-muted-foreground" />
+                <Icon icon={ExternalLinkGlassIcon} className="size-3.5 text-muted-foreground" />
                 <span className="text-[10px] uppercase tracking-wider text-muted-foreground">
                   Needs
                 </span>
@@ -133,7 +127,7 @@ function PhaseCard({ phase, isLast }: { phase: Phase; isLast: boolean }) {
             {phase.risks && (
               <div className="space-y-1.5 rounded-lg border border-destructive/20 bg-destructive/5 p-2.5">
                 <p className="flex items-center gap-1.5 text-[10px] font-medium uppercase tracking-wider text-destructive">
-                  <HugeiconsIcon icon={Alert02Icon} className="size-3" />
+                  <Icon icon={TriangleAlertGlassIcon} className="size-3" />
                   Known risks
                 </p>
                 {phase.risks.map((r) => (

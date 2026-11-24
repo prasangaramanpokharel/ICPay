@@ -4,19 +4,8 @@ import { useState, useMemo } from "react"
 import { useTranslations } from "next-intl"
 import { mutate } from "swr"
 import { toast } from "@/components/ui/sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Folder01Icon,
-  Download01Icon,
-  Upload01Icon,
-  Search01Icon,
-  InformationCircleIcon,
-  Copy01Icon,
-  Delete02Icon,
-  MoreHorizontalIcon,
-  HierarchyFilesIcon,
-  Table01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { FolderGlassIcon, DownloadGlassIcon, UploadGlassIcon, SearchGlassIcon, InfoGlassIcon, CopyGlassIcon, DeleteGlassIcon, EllipsisGlassIcon, FolderTreeGlassIcon, SpreadsheetGlassIcon } from "@thesvg/ui-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -167,7 +156,7 @@ export function AssetExplorerCard({
         <CardHeader className="flex flex-col gap-4 border-b border-border/40 pb-4 sm:flex-row sm:items-center sm:justify-between p-0">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <HugeiconsIcon icon={Folder01Icon} className="size-4 text-muted-foreground" strokeWidth={1.5} />
+              <Icon icon={FolderGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.5} />
               <CardTitle className="text-base font-semibold text-foreground">
                 {t("assetsTitle")}
               </CardTitle>
@@ -185,8 +174,8 @@ export function AssetExplorerCard({
               onClick={() => setViewMode(viewMode === "tree" ? "table" : "tree")}
               className="h-8 gap-1.5 text-xs cursor-pointer"
             >
-              <HugeiconsIcon
-                icon={viewMode === "tree" ? Table01Icon : HierarchyFilesIcon}
+              <Icon
+                icon={viewMode === "tree" ? SpreadsheetGlassIcon : FolderTreeGlassIcon}
                 className="size-3.5"
               />
               <span>{viewMode === "tree" ? t("table") : t("playground")}</span>
@@ -198,7 +187,7 @@ export function AssetExplorerCard({
                 onClick={() => setUploadOpen(true)}
                 className="h-8 gap-1.5 text-xs cursor-pointer"
               >
-                <HugeiconsIcon icon={Upload01Icon} className="size-3.5" />
+                <Icon icon={UploadGlassIcon} className="size-3.5" />
                 <span>Upload</span>
               </Button>
             )}
@@ -208,7 +197,7 @@ export function AssetExplorerCard({
         <CardContent className="space-y-4 p-0">
           {state.kind === "unsupported" && (
             <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center space-y-2">
-              <HugeiconsIcon icon={InformationCircleIcon} className="size-5 text-muted-foreground mx-auto" />
+              <Icon icon={InfoGlassIcon} className="size-5 text-muted-foreground mx-auto" />
               <p className="text-xs font-medium text-foreground">{t("standardCanister")}</p>
               <p className="text-xs text-muted-foreground max-w-md mx-auto">
                 {t("unsupportedAssets")}
@@ -251,8 +240,8 @@ export function AssetExplorerCard({
                 <>
                   <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div className="relative w-full max-w-sm">
-                  <HugeiconsIcon
-                    icon={Search01Icon}
+                  <Icon
+                    icon={SearchGlassIcon}
                     className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground"
                     strokeWidth={1.75}
                   />
@@ -364,7 +353,7 @@ export function AssetExplorerCard({
                                         className="size-7 cursor-pointer text-muted-foreground hover:text-foreground"
                                         aria-label="Actions"
                                       >
-                                        <HugeiconsIcon icon={MoreHorizontalIcon} className="size-3.5" />
+                                        <Icon icon={EllipsisGlassIcon} className="size-3.5" />
                                       </Button>
                                     }
                                   />
@@ -374,7 +363,7 @@ export function AssetExplorerCard({
                                       disabled={isDownloading || deleting}
                                       className="cursor-pointer gap-2 text-xs"
                                     >
-                                      <HugeiconsIcon icon={Download01Icon} className="size-3.5" />
+                                      <Icon icon={DownloadGlassIcon} className="size-3.5" />
                                       <span>{t("download")}</span>
                                     </DropdownMenuItem>
                                     {file.sha256Hex && file.sha256Hex !== "—" && (
@@ -385,7 +374,7 @@ export function AssetExplorerCard({
                                         }}
                                         className="cursor-pointer gap-2 text-xs"
                                       >
-                                        <HugeiconsIcon icon={Copy01Icon} className="size-3.5" />
+                                        <Icon icon={CopyGlassIcon} className="size-3.5" />
                                         <span>{t("copyHash")}</span>
                                       </DropdownMenuItem>
                                     )}
@@ -397,7 +386,7 @@ export function AssetExplorerCard({
                                           disabled={isDownloading || deleting}
                                           className="cursor-pointer gap-2 text-xs text-destructive focus:text-destructive focus:bg-destructive/10"
                                         >
-                                          <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                                          <Icon icon={DeleteGlassIcon} className="size-3.5" />
                                           <span>{t("clear")}</span>
                                         </DropdownMenuItem>
                                       </>

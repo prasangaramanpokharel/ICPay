@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { LinkSquare02Icon, Tick02Icon, ZapIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ExternalLinkGlassIcon, CheckGlassOutlineIcon, ZapGlassIcon } from "@thesvg/ui-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { CopyButton } from "@/components/ui/copy-button"
@@ -56,7 +56,7 @@ export function CreateCanisterAlerts({
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="items-center text-center sm:items-center sm:text-center">
             <div className="animate-in fade-in zoom-in-75 mb-1 flex items-center justify-center text-success duration-200">
-              <HugeiconsIcon icon={Tick02Icon} className="size-10" strokeWidth={2.25} />
+              <Icon icon={CheckGlassOutlineIcon} className="size-10" strokeWidth={2.25} />
             </div>
             <DialogTitle>{t("successTitle")}</DialogTitle>
             <DialogDescription className="sr-only">
@@ -104,7 +104,7 @@ export function CreateCanisterAlerts({
                     />
                   }
                 >
-                  <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5" />
+                  <Icon icon={ExternalLinkGlassIcon} className="size-3.5" />
                   {t("viewOnDashboard")}
                 </Button>
                 <Button
@@ -114,7 +114,7 @@ export function CreateCanisterAlerts({
                   nativeButton={false}
                   render={<Link href="/canister" />}
                 >
-                  <HugeiconsIcon icon={ZapIcon} className="size-3.5" />
+                  <Icon icon={ZapGlassIcon} className="size-3.5" />
                   {t("viewMine")}
                 </Button>
                 <Button

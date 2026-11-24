@@ -1,5 +1,5 @@
-import { HugeiconsIcon } from "@hugeicons/react"
-import type { IconSvgElement } from "@hugeicons/react"
+import { Icon } from "@/components/ui/icon"
+import type { UiIcon } from "@thesvg/ui-react"
 import { cn } from "@/lib/ui/utils"
 
 export function NavIcon({
@@ -7,11 +7,11 @@ export function NavIcon({
   className,
   strokeWidth = 1.75,
 }: {
-  icon: IconSvgElement
+  icon: UiIcon
   className?: string
   strokeWidth?: number
 }) {
   return (
-    <HugeiconsIcon icon={icon} className={cn("size-3.5 shrink-0", className)} strokeWidth={strokeWidth} />
+    <Icon icon={icon} className={cn("size-3.5 shrink-0", className)} strokeWidth={strokeWidth} />
   )
 }

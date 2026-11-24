@@ -5,22 +5,15 @@ import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { CodeBlock } from "@/components/ui/code-block"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Layers01Icon,
-  Shield01Icon,
-  DatabaseIcon,
-  HardDriveIcon,
-  ArrowDown01Icon,
-  CheckmarkCircle02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { LayersGlassIcon, ShieldGlassIcon, DatabaseGlassIcon, BlockStorageGlassIcon, ArrowDownGlassIcon, CircleCheckGlassIcon } from "@thesvg/ui-react"
 
 const TIERS = [
   {
     tier: "Tier 1",
     name: "API Layer",
     path: "backend/src/api/v1/",
-    icon: Shield01Icon,
+    icon: ShieldGlassIcon,
     summary: "Thin Candid endpoints & auth mixins",
     responsibilities: [
       "Caller destructuring: shared ({ caller }) func",
@@ -33,7 +26,7 @@ const TIERS = [
     tier: "Tier 2",
     name: "Service Layer",
     path: "backend/src/services/",
-    icon: Layers01Icon,
+    icon: LayersGlassIcon,
     summary: "Pure business logic & orchestration",
     responsibilities: [
       "Coordinates complex state mutations and domain rules",
@@ -46,7 +39,7 @@ const TIERS = [
     tier: "Tier 3",
     name: "Repository Layer",
     path: "backend/src/repositories/",
-    icon: DatabaseIcon,
+    icon: DatabaseGlassIcon,
     summary: "FalconORM models & relational access",
     responsibilities: [
       "Normalized 3NF relational data querying",
@@ -59,7 +52,7 @@ const TIERS = [
     tier: "Tier 4",
     name: "Storage Layer",
     path: "backend/src/storage/",
-    icon: HardDriveIcon,
+    icon: BlockStorageGlassIcon,
     summary: "Orthogonal persistent memory",
     responsibilities: [
       "Enhanced Orthogonal Persistence (EOP) collections",
@@ -145,7 +138,7 @@ export function ArchitectureSection() {
                                 : "border-border/60 bg-muted/40 text-muted-foreground"
                             }`}
                           >
-                            <HugeiconsIcon icon={tier.icon} className="size-5" />
+                            <Icon icon={tier.icon} className="size-5" />
                           </div>
                           <div>
                             <div className="flex items-center gap-2">
@@ -162,7 +155,7 @@ export function ArchitectureSection() {
                   </Card>
                   {idx < TIERS.length - 1 && (
                     <div className="flex justify-center py-1">
-                      <HugeiconsIcon icon={ArrowDown01Icon} className="size-4 text-muted-foreground/60" />
+                      <Icon icon={ArrowDownGlassIcon} className="size-4 text-muted-foreground/60" />
                     </div>
                   )}
                 </div>
@@ -196,8 +189,8 @@ export function ArchitectureSection() {
                   <ul className="space-y-2">
                     {TIERS[selectedTier].responsibilities.map((r, i) => (
                       <li key={i} className="flex items-start gap-2.5 text-sm text-foreground/90">
-                        <HugeiconsIcon
-                          icon={CheckmarkCircle02Icon}
+                        <Icon
+                          icon={CircleCheckGlassIcon}
                           className="size-4 text-success shrink-0 mt-0.5"
                         />
                         <span>{r}</span>

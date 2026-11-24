@@ -1,5 +1,5 @@
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Github01Icon, Linkedin01Icon, Globe02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { SocialGithubGlassIcon, SocialLinkedinGlassIcon, GlobeGlassIcon } from "@thesvg/ui-react"
 import type { SocialLink, SocialPlatform } from "@/services/types"
 
 function platformKey(p: SocialPlatform): "github" | "linkedin" | "website" {
@@ -9,9 +9,9 @@ function platformKey(p: SocialPlatform): "github" | "linkedin" | "website" {
 }
 
 const ICONS = {
-  github:   Github01Icon,
-  linkedin: Linkedin01Icon,
-  website:  Globe02Icon,
+  github:   SocialGithubGlassIcon,
+  linkedin: SocialLinkedinGlassIcon,
+  website:  GlobeGlassIcon,
 }
 
 // Shows social link icons (with href) for public profiles — no editing.
@@ -38,7 +38,7 @@ export function SocialLinkIcons({
             aria-label={key}
             className={`flex ${box} items-center justify-center rounded-full bg-muted text-muted-foreground transition-colors hover:bg-accent hover:text-foreground`}
           >
-            <HugeiconsIcon icon={ICONS[key]} className={icon} />
+            <Icon icon={ICONS[key]} className={icon} />
           </a>
         )
       })}

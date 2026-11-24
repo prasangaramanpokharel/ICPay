@@ -546,7 +546,8 @@
     "suggested": "Sizin için önerilen",
     "noneFound": "“{query}” için kimse bulunamadı.",
     "empty": "Henüz kullanıcı adı olan hesap yok. İlk siz olun.",
-    "premium": "Verified premium handle"
+    "premium": "Verified premium handle",
+    "subtitle": "Ağ genelindeki kullanıcı profillerini keşfedin"
   },
   "success": {
     "send": "Gönderim başarılı",

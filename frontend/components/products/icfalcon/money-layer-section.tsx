@@ -4,14 +4,8 @@ import { motion } from "motion/react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { CodeBlock } from "@/components/ui/code-block"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Coins01Icon,
-  Shield01Icon,
-  LockKeyIcon,
-  CheckmarkCircle02Icon,
-  UserCheck01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CoinsGlassIcon, ShieldGlassIcon, LockGlassIcon, CircleCheckGlassIcon, UserCheckGlassIcon } from "@thesvg/ui-react"
 
 const PROTOCOL_STEPS = [
   {
@@ -19,28 +13,28 @@ const PROTOCOL_STEPS = [
     title: "Propose Transfer",
     actor: "Client -> Canister",
     description: "Client calls proposeTransfer. Canister validates available user balance (amount + fee) and locks the amount with a unique transferId.",
-    icon: LockKeyIcon,
+    icon: LockGlassIcon,
   },
   {
     step: "02",
     title: "Human Confirmation",
     actor: "Human in the Loop",
     description: "Client displays a clear confirmation preview. The user reviews destination principal, subaccount, and transparent ledger fee.",
-    icon: UserCheck01Icon,
+    icon: UserCheckGlassIcon,
   },
   {
     step: "03",
     title: "Execute ICRC-1 Outcall",
     actor: "Canister -> Ledger",
     description: "Canister invokes the ledger canister with idempotency memo. Upon success, the internal balance deducts and returns the block index.",
-    icon: Coins01Icon,
+    icon: CoinsGlassIcon,
   },
   {
     step: "04",
     title: "Atomic Receipt",
     actor: "Dual-Entry Audit",
     description: "Transaction records into immutable on-chain history with status #completed, guaranteeing zero double-spends or balance leakage.",
-    icon: CheckmarkCircle02Icon,
+    icon: CircleCheckGlassIcon,
   },
 ]
 
@@ -81,7 +75,7 @@ export function MoneyLayerSection() {
             <Card className="border-border/60 bg-card/70 backdrop-blur-xs">
               <CardHeader>
                 <div className="flex items-center gap-2 text-primary text-xs font-semibold uppercase tracking-wider">
-                  <HugeiconsIcon icon={Shield01Icon} className="size-4" />
+                  <Icon icon={ShieldGlassIcon} className="size-4" />
                   <span>Subaccount Derivation</span>
                 </div>
                 <CardTitle className="text-lg">Deterministic User Accounts</CardTitle>
@@ -120,7 +114,7 @@ export function MoneyLayerSection() {
                         <span className="font-mono text-xs font-bold text-primary">{step.step}</span>
                         <CardTitle className="text-sm font-semibold">{step.title}</CardTitle>
                       </div>
-                      <HugeiconsIcon icon={step.icon} className="size-4 text-muted-foreground" />
+                      <Icon icon={step.icon} className="size-4 text-muted-foreground" />
                     </div>
                     <span className="text-[11px] font-medium text-primary/80 block">{step.actor}</span>
                     <CardDescription className="text-xs leading-relaxed mt-1">

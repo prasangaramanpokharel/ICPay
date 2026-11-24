@@ -101,8 +101,7 @@ export function QrScanner({
         </DrawerHeader>
 
         <div className="space-y-3 px-4 pb-4">
-          <div className="aspect-square overflow-hidden rounded-2xl border bg-muted">
-            {/* Mounted only while open so closing the drawer releases the camera. */}
+          <div className="aspect-square overflow-hidden rounded-(--radius) border bg-muted">
             {open && (
               <Suspense fallback={<Skeleton className="size-full" />}>
                 <Scanner

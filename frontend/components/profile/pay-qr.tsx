@@ -1,13 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import Image from "next/image"
+import { QRCode } from "@ttsalpha/qrcode"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/ui/utils"
 import { ICP_LOGO } from "@/lib/token/icon"
 
-// Rendered from a dynamic import so the qrcode library stays out of the initial
-// bundle for a page whose first paint is an avatar and a name.
 export function PayQr({
   value,
   className,
@@ -19,51 +16,33 @@ export function PayQr({
   qrClassName?: string
   skeletonClassName?: string
 }) {
-  // The address is stored alongside the image rather than in a second state:
-  // clearing it on change would be a setState in the effect body, and leaving
-  // it would render the previous holder's QR over the new name -- money sent to
-  // the wrong account.
-  const [done, setDone] = useState<{ value: string; src: string } | null>(null)
-
-  useEffect(() => {
-    let active = true
-    import("qrcode")
-      .then((mod) => mod.toDataURL(value, { errorCorrectionLevel: "M", margin: 1, width: 512 }))
-      .then((src) => {
-        if (active) setDone({ value, src })
-      })
-      .catch(() => {})
-    return () => {
-      active = false
-    }
-  }, [value])
-
-  if (done?.value !== value) {
-    return <Skeleton className={cn("size-44 rounded-2xl", skeletonClassName)} />
+  if (!value) {
+    return <Skeleton className={cn("size-44 rounded-(--radius)", skeletonClassName)} />
   }
 
   return (
-    // Literal white, not a theme token: the QR is generated as dark modules on a
-    // light field, so scanners need that contrast to hold in dark mode too.
     <div className={className}>
-      <div className="relative flex items-center justify-center rounded-2xl bg-white p-3">
-        <Image
-          src={done.src}
-          alt=""
-          width={512}
-          height={512}
-          unoptimized
+      <div className="relative flex items-center justify-center rounded-(--radius) bg-white p-3">
+        <QRCode
+          value={value}
+          size={176}
+          margin={1}
+          dotStyle="circle"
+          dotColor="#000000"
+          backgroundColor="#ffffff"
+          corner={{
+            square: { style: "extra-rounded", color: "#000000" },
+            dot: { style: "circle", color: "#000000" },
+          }}
+          logo={{
+            src: ICP_LOGO,
+            size: 0.38,
+            margin: 1,
+            radius: 1,
+            aspectRatio: 1,
+          }}
           className={cn("size-44", qrClassName)}
         />
-        <span className="absolute left-1/2 top-1/2 flex size-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full bg-background shadow-sm ring-1 ring-black/10">
-          <Image
-            src={ICP_LOGO}
-            alt=""
-            width={40}
-            height={40}
-            className="size-6 object-contain"
-          />
-        </span>
       </div>
     </div>
   )

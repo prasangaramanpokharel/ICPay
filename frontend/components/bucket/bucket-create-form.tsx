@@ -24,8 +24,8 @@ import { useLiveBalance, useProPerkStatus } from "@/hooks/wallet/useWalletData"
 import { CAPACITY_TIERS_GB, mapBucketError, validateBucketName } from "@/lib/bucket/bucket"
 import { calculateListPriceE8s, calculateYearlyListPriceE8s } from "@/lib/bucket/pricing"
 import { formatAmount, ICP_FEE } from "@/lib/wallet/utils"
-import { Mail01Icon } from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { MailGlassIcon } from "@thesvg/ui-react"
+import { Icon } from "@/components/ui/icon"
 import { cn } from "@/lib/ui/utils"
 import type { BucketBillingPeriod, BucketVisibilityVariant } from "@/services/bucket/types"
 
@@ -293,8 +293,8 @@ export function BucketCreateForm({
               autoComplete="email"
               className="h-10 pr-9 text-xs font-mono"
             />
-            <HugeiconsIcon
-              icon={Mail01Icon}
+            <Icon
+              icon={MailGlassIcon}
               className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
             />
           </div>

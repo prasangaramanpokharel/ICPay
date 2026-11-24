@@ -457,7 +457,8 @@
     "suggested": "Sugerencias para ti",
     "noneFound": "No se encontró a nadie para “{query}”.",
     "empty": "Aún no hay cuentas con nombre de usuario. Sé el primero.",
-    "premium": "Identificador premium verificado"
+    "premium": "Identificador premium verificado",
+    "subtitle": "Explora perfiles de usuario en toda la red"
   },
   "success": {
     "send": "Envío correcto",

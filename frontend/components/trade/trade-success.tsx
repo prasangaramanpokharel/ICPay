@@ -2,14 +2,65 @@
 
 import { useEffect, useMemo, useRef } from "react"
 import { useTranslations } from "next-intl"
+import { motion, type Variants } from "motion/react"
 import { Icon } from "@/components/ui/icon"
-import { CheckGlassIcon } from "@thesvg/ui-react"
+import { CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { requiredWalletDebit } from "@/lib/trade/fees"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { playSuccessChime } from "@/lib/ui/successChime"
 import type { TokenHolding } from "@/services/tokens"
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.04,
+    },
+  },
+}
+
+const checkBadgeVariants: Variants = {
+  hidden: { scale: 0.4, opacity: 0 },
+  visible: {
+    scale: 1,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 420,
+      damping: 24,
+    },
+  },
+}
+
+const checkIconVariants: Variants = {
+  hidden: { scale: 0 },
+  visible: {
+    scale: 1,
+    transition: {
+      delay: 0.08,
+      type: "spring",
+      stiffness: 500,
+      damping: 25,
+    },
+  },
+}
+
+const itemVariants: Variants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 380,
+      damping: 30,
+    },
+  },
+}
 
 export function TradeSuccessView({
   amountIn,
@@ -50,17 +101,33 @@ export function TradeSuccessView({
   const received = `${formatTokenAmount(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`
 
   return (
-    <div className="flex flex-col items-center px-1 pt-4 text-center sm:pt-6">
-      <div className="animate-in fade-in zoom-in-75 mb-5 flex size-18 items-center justify-center rounded-full bg-success/10 duration-300 ease-out">
-        <span className="flex size-13 items-center justify-center rounded-full bg-success text-background shadow-sm">
-          <Icon icon={CheckGlassIcon} className="size-8" strokeWidth={3} />
-        </span>
-      </div>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="flex flex-col items-center px-1 pt-4 text-center sm:pt-6"
+    >
+      <motion.div
+        variants={checkBadgeVariants}
+        className="mb-5 flex size-18 items-center justify-center rounded-full bg-success/10"
+      >
+        <motion.span
+          variants={checkIconVariants}
+          className="flex size-13 items-center justify-center rounded-full bg-success text-success-foreground shadow-sm"
+        >
+          <Icon icon={CheckGlassOutlineIcon} className="size-8 text-success-foreground" strokeWidth={3} />
+        </motion.span>
+      </motion.div>
 
-      <h1 className="text-2xl font-bold tracking-tight">{t("successTitle")}</h1>
-      <p className="mt-2 text-sm text-muted-foreground">{t("successBody")}</p>
+      <motion.div variants={itemVariants}>
+        <h1 className="text-2xl font-bold tracking-tight">{t("successTitle")}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t("successBody")}</p>
+      </motion.div>
 
-      <div className="mt-8 w-full rounded-3xl border border-border/60 bg-card p-5 shadow-sm">
+      <motion.div
+        variants={itemVariants}
+        className="mt-8 w-full rounded-3xl border border-border/60 bg-card p-5 shadow-sm"
+      >
         <p className="text-xs font-medium text-muted-foreground">{t("youReceive")}</p>
         <p className="mt-1 text-[clamp(1.75rem,7vw,2.25rem)] font-bold tracking-tight tabular-nums">
           {received}
@@ -68,9 +135,9 @@ export function TradeSuccessView({
         <p className="mt-3 text-sm text-muted-foreground tabular-nums">
           {t("youPay")}: {paid}
         </p>
-      </div>
+      </motion.div>
 
-      <div className="mt-6 w-full text-left">
+      <motion.div variants={itemVariants} className="mt-6 w-full text-left">
         <p className="text-xs text-muted-foreground">{t("balanceAfter")}</p>
         <div className="mt-3 space-y-2 rounded-2xl border border-border/50 bg-muted/30 p-4">
           <BalanceLine
@@ -86,12 +153,14 @@ export function TradeSuccessView({
             after={afterOut}
           />
         </div>
-      </div>
+      </motion.div>
 
-      <Button className="mt-8 h-12 w-full rounded-full text-base font-semibold" onClick={onDone}>
-        {tc("done")}
-      </Button>
-    </div>
+      <motion.div variants={itemVariants} className="mt-8 w-full">
+        <Button className="h-12 w-full rounded-full text-base font-semibold" onClick={onDone}>
+          {tc("done")}
+        </Button>
+      </motion.div>
+    </motion.div>
   )
 }
 

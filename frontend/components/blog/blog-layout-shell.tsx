@@ -3,8 +3,8 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useMemo } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowLeftGlassIcon } from "@thesvg/ui-react"
 import { BlogSidebar } from "@/components/blog/blog-sidebar"
 import { BLOG_POSTS } from "@/services/blog/blog"
 
@@ -59,7 +59,7 @@ export function BlogLayoutShell({ children }: { children: React.ReactNode }) {
           href="/blog"
           className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
         >
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
+          <Icon icon={ArrowLeftGlassIcon} className="size-4" />
           <span>Back to all guides</span>
         </Link>
 

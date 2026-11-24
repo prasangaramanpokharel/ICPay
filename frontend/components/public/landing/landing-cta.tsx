@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import { Button } from "@/components/ui/button"
 
@@ -36,7 +36,7 @@ export function LandingCta() {
                 className="h-11 gap-2 rounded-full px-7"
               >
                 <span>{t("signIn")}</span>
-                <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" strokeWidth={2} />
+                <Icon icon={ArrowRightGlassIcon} className="size-4" strokeWidth={2} />
               </Button>
               <Button
                 size="lg"

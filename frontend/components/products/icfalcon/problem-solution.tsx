@@ -2,13 +2,8 @@
 
 import { motion } from "motion/react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Layers01Icon,
-  TerminalIcon,
-  LinkSquare02Icon,
-  Package01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { LayersGlassIcon, TerminalGlassIcon, ExternalLinkGlassIcon, PackageGlassIcon } from "@thesvg/ui-react"
 import {
   Card,
   CardHeader,
@@ -18,10 +13,10 @@ import {
 
 const PROBLEM_IDS = ["0", "1", "2", "3"] as const
 const SOLUTION_ICONS = [
-  Layers01Icon,
-  TerminalIcon,
-  LinkSquare02Icon,
-  Package01Icon,
+  LayersGlassIcon,
+  TerminalGlassIcon,
+  ExternalLinkGlassIcon,
+  PackageGlassIcon,
 ] as const
 
 export function ProblemSolution() {
@@ -84,7 +79,7 @@ export function ProblemSolution() {
                   <CardHeader className="p-4">
                     <CardTitle className="flex items-start gap-2.5 text-sm font-semibold text-foreground">
                       <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md border border-primary/20 bg-primary/10 text-primary">
-                        <HugeiconsIcon
+                        <Icon
                           icon={SOLUTION_ICONS[index]}
                           className="size-3.5"
                         />

@@ -3,13 +3,8 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowRight01Icon,
-  BookOpen01Icon,
-  Tick02Icon,
-  Award01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon, BookOpenGlassIcon, CheckGlassIcon, AwardGlassIcon } from "@thesvg/ui-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -149,7 +144,7 @@ export function EnrolledCoursesPanel() {
           nativeButton={false}
           render={<Link href="/academy#courses" />}
         >
-          <HugeiconsIcon icon={BookOpen01Icon} className="size-3.5" />
+          <Icon icon={BookOpenGlassIcon} className="size-3.5" />
           <span>Browse All Courses</span>
         </Button>
       </div>
@@ -203,7 +198,7 @@ export function EnrolledCoursesPanel() {
               className="mt-2 gap-1.5"
             >
               Explore Course Catalog
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+              <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
             </Button>
           </div>
         ) : (
@@ -229,7 +224,7 @@ export function EnrolledCoursesPanel() {
                     <div className="absolute top-3 right-3">
                       {isCompleted ? (
                         <Badge variant="outline" className="gap-1 bg-card/90 shadow-xs backdrop-blur-md text-foreground border-border text-xs">
-                          <HugeiconsIcon icon={Tick02Icon} className="size-3 text-primary" />
+                          <Icon icon={CheckGlassIcon} className="size-3 text-primary" />
                           Completed
                         </Badge>
                       ) : (
@@ -276,7 +271,7 @@ export function EnrolledCoursesPanel() {
                         render={<Link href={`/academy/course?id=${course.id}`} />}
                       >
                         <span>{isCompleted ? "Review Masterclass" : "Resume Masterclass"}</span>
-                        <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+                        <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
                       </Button>
                       {isCompleted && (
                         <Button
@@ -290,7 +285,7 @@ export function EnrolledCoursesPanel() {
                           }}
                           className="w-full gap-2 rounded-full text-xs font-semibold border-primary/40 text-primary hover:bg-primary/10"
                         >
-                          <HugeiconsIcon icon={Award01Icon} className="size-3.5" />
+                          <Icon icon={AwardGlassIcon} className="size-3.5" />
                           <span>View Soulbound Certificate</span>
                         </Button>
                       )}
