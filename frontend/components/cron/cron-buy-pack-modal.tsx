@@ -67,13 +67,23 @@ export function CronBuyPackModal({
 
   React.useEffect(() => {
     if (!open) return
-    if (runs < 100) {
-      setQuote(null)
-      setLoadingQuote(false)
-      return
-    }
     let active = true
-    setLoadingQuote(true)
+    if (runs < 100) {
+      setTimeout(() => {
+        if (active) {
+          setQuote(null)
+          setLoadingQuote(false)
+        }
+      }, 0)
+      return () => {
+        active = false
+      }
+    }
+    setTimeout(() => {
+      if (active) {
+        setLoadingQuote(true)
+      }
+    }, 0)
     quoteCredits(BigInt(runs), identity ?? undefined)
       .then((q) => {
         if (active) {
