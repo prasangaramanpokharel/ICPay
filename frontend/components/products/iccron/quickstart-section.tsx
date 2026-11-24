@@ -12,7 +12,7 @@ const CODE_TABS = [
     id: "curl",
     label: "cURL Webhook",
     icon: TerminalGlassIcon,
-    snippet: `curl -X POST "https://iccron.icpay.app/api/v1/jobs" \\
+    snippet: `curl -X POST "https://uzt4z-lp777-77774-qaabq-cai.raw.icp0.io/api/v1/jobs" \\
   -H "Authorization: Bearer cr_live_9f82bc4e7d1a..." \\
   -H "Content-Type: application/json" \\
   -d '{

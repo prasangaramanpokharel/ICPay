@@ -47,7 +47,7 @@ export function HeroSection() {
 
   const copySnippet = () => {
     const text = targetMode === "webhook"
-      ? `curl -X POST https://iccron.icpay.app/api/v1/jobs -d '{"schedule":"${cronExpr}","url":"https://my-app.com/api/cron"}'`
+      ? `curl -X POST https://uzt4z-lp777-77774-qaabq-cai.raw.icp0.io/api/v1/jobs -d '{"schedule":"${cronExpr}","url":"https://my-app.com/api/cron"}'`
       : `dfx canister call uzt4z-lp777-77774-qaabq-cai create_job '(record { schedule = "${cronExpr}"; ... })'`
     navigator.clipboard.writeText(text)
     setCopied(true)

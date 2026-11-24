@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { CodeBlock } from "@/components/ui/code-block"
+import { CRON_CANISTER_ID } from "@/services/cron/actor"
 import type { RemoteProjectRecord } from "@/services/cron/types"
 import { formatProjectId } from "./cron-types"
 
@@ -22,8 +23,7 @@ interface CronConnectModalProps {
   onOpenChange: (open: boolean) => void
 }
 
-const CRON_CANISTER_ID = "uzt4z-lp777-77774-qaabq-cai"
-const API_ENDPOINT = "https://iccron.icpay.app/api/v1/cron/trigger"
+const API_ENDPOINT = `https://${CRON_CANISTER_ID}.raw.icp0.io/api/v1/cron/trigger`
 
 export function CronConnectModal({
   project,
