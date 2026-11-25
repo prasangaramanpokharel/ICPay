@@ -1,5 +1,6 @@
 import {
   HttpAgent,
+  AnonymousIdentity,
   type Identity,
   type UpdateOptions,
   type PollingOptions,
@@ -49,7 +50,17 @@ export function preferAsyncUpdates(agent: HttpAgent): HttpAgent {
 }
 
 export async function createAgent(identity?: Identity): Promise<HttpAgent> {
-  if (cachedAgent && cachedFor === (identity ?? null)) return cachedAgent
+  if (cachedAgent) {
+    if (cachedFor !== (identity ?? null)) {
+      if (identity) {
+        cachedAgent.replaceIdentity(identity)
+      } else {
+        cachedAgent.replaceIdentity(new AnonymousIdentity())
+      }
+      cachedFor = identity ?? null
+    }
+    return cachedAgent
+  }
 
   const host = getHost()
   const agent = preferAsyncUpdates(HttpAgent.createSync({ identity, host }))
@@ -63,6 +74,9 @@ export async function createAgent(identity?: Identity): Promise<HttpAgent> {
 }
 
 export function clearAgentCache(): void {
+  if (cachedAgent) {
+    cachedAgent.invalidateIdentity()
+  }
   cachedAgent = null
   cachedFor = null
 }

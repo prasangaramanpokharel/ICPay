@@ -138,7 +138,17 @@ export function BucketUploadControl({
     clearLegacyBucketStorage()
   }, [])
 
-  const { items, expanded, busy, doneCount, enqueue, retry, dismiss, setExpanded } = useBucketUpload({
+  const {
+    items,
+    expanded,
+    busy,
+    doneCount,
+    enqueue,
+    retry,
+    retryAllFailed,
+    dismiss,
+    setExpanded,
+  } = useBucketUpload({
     pathPrefix,
     remainingBytes,
     onUpload,
@@ -224,6 +234,7 @@ export function BucketUploadControl({
         onToggle={() => setExpanded((v) => !v)}
         onDismiss={dismiss}
         onRetry={retry}
+        onRetryAllFailed={retryAllFailed}
       />
     ) : null
 
