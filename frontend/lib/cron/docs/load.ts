@@ -56,14 +56,14 @@ function parseFrontmatter(data: Record<string, unknown>): CronDocFrontmatter {
 
 function toFullMarkdown(frontmatter: CronDocFrontmatter, body: string): string {
   const lines = ["---"]
-  lines.push(`title: "${frontmatter.title.replace(/"/g, '\\"')}"`)
+  lines.push(`title: ${JSON.stringify(frontmatter.title)}`)
   if (frontmatter.description) {
-    lines.push(`description: "${frontmatter.description.replace(/"/g, '\\"')}"`)
+    lines.push(`description: ${JSON.stringify(frontmatter.description)}`)
   }
-  lines.push(`group: "${frontmatter.group}"`)
+  lines.push(`group: ${JSON.stringify(frontmatter.group)}`)
   lines.push(`order: ${frontmatter.order}`)
   if (frontmatter.eyebrow) {
-    lines.push(`eyebrow: "${frontmatter.eyebrow.replace(/"/g, '\\"')}"`)
+    lines.push(`eyebrow: ${JSON.stringify(frontmatter.eyebrow)}`)
   }
   lines.push("---")
   lines.push("")

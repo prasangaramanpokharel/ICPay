@@ -214,7 +214,7 @@ export function TokenDetailDrawer({
                       variant="outline"
                       size="sm"
                       nativeButton={false}
-                      render={<Link href={`/trade?from=${token.ledgerId}`} prefetch />}
+                      render={<Link href={`/trade?from=${encodeURIComponent(token.ledgerId)}`} prefetch />}
                       className="flex-1 h-9 text-xs font-semibold cursor-pointer border-border/80"
                     >
                       {t("swap")}
@@ -226,7 +226,7 @@ export function TokenDetailDrawer({
                       nativeButton={false}
                       render={
                         <a
-                          href={`https://app.icpswap.com/swap?input=ryjl3-tyaaa-aaaaa-aaaba-cai&output=${token.ledgerId}`}
+                          href={`https://app.icpswap.com/swap?input=ryjl3-tyaaa-aaaaa-aaaba-cai&output=${encodeURIComponent(token.ledgerId)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                         />

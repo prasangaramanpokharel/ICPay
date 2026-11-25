@@ -350,7 +350,7 @@ export function CronProjectDetail({
             variant="outline"
             size="sm"
             nativeButton={false}
-            render={<Link href={`/cron/api?projectId=${project.id}`} />}
+            render={<Link href={`/cron/api?projectId=${encodeURIComponent(String(project.id))}`} />}
             className="gap-1.5 text-xs font-medium"
           >
             <Icon icon={KeyGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />

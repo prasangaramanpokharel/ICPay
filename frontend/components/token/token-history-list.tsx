@@ -84,7 +84,7 @@ export function TokenHistoryList({
                 {isReceive ? t("kind.receive") : t("kind.send")}
               </p>
               <a
-                href={`https://dashboard.internetcomputer.org/canister/${token.ledgerId}`}
+                href={`https://dashboard.internetcomputer.org/canister/${encodeURIComponent(token.ledgerId)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 font-mono text-xs text-muted-foreground hover:text-primary transition-colors"

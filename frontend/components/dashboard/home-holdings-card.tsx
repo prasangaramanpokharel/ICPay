@@ -60,7 +60,7 @@ export function HomeHoldingsCard({ hidden: hiddenProp }: { hidden?: boolean } = 
             {top.map((token) => (
               <div key={token.ledgerId} className="px-6">
                 <Link
-                  href={`/wallet?token=${token.ledgerId}`}
+                  href={`/wallet?token=${encodeURIComponent(token.ledgerId)}`}
                   className="flex items-center justify-between py-3 -mx-2 px-2 rounded-lg hover:bg-muted/40 transition-colors"
                 >
                   <div className="flex items-center gap-3 min-w-0">

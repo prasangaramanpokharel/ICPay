@@ -285,12 +285,13 @@ function DetailValue({
   href?: string
 }) {
   const tc = useTranslations("common")
+  const safeHref = href && (href.startsWith("https://") || href.startsWith("/")) ? href : undefined
 
   return (
     <div className="flex min-w-0 items-start justify-end gap-1.5">
-      {href ? (
+      {safeHref ? (
         <a
-          href={href}
+          href={safeHref}
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
