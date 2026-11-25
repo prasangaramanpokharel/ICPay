@@ -237,14 +237,21 @@ export function CronJobTable({ jobs, loading, projectId, onRefresh }: CronJobTab
                               >
                                 {job.status}
                               </Badge>
-                              {job.consecutive_failures > 0 && (
+                              {job.consecutive_failures > 0 ? (
                                 <Badge
                                   variant="destructive"
                                   className="text-[10px] py-0 px-1 font-sans"
                                 >
                                   {job.consecutive_failures} fails
                                 </Badge>
-                              )}
+                              ) : job.total_runs > 0n ? (
+                                <Badge
+                                  variant="outline"
+                                  className="text-[10px] py-0 px-1 font-sans text-success border-success/30 bg-success/10"
+                                >
+                                  Success
+                                </Badge>
+                              ) : null}
                             </div>
                           </div>
                         </TableCell>

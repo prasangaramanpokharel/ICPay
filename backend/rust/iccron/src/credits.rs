@@ -41,8 +41,49 @@ pub struct GetBlocksArgs {
 }
 
 #[derive(CandidType, Deserialize, Debug)]
-pub struct QueryBlocksResponseHeader {
+pub struct Tokens {
+    pub e8s: u64,
+}
+
+#[derive(CandidType, Deserialize, Debug)]
+pub struct OperationTransfer {
+    pub from: Vec<u8>,
+    pub to: Vec<u8>,
+    pub amount: Tokens,
+    pub fee: Tokens,
+}
+
+#[derive(CandidType, Deserialize, Debug)]
+pub enum LedgerOperation {
+    Transfer(OperationTransfer),
+    Mint { to: Vec<u8>, amount: Tokens },
+    Burn { from: Vec<u8>, amount: Tokens },
+    Approve {
+        from: Vec<u8>,
+        spender: Vec<u8>,
+        allowance: Tokens,
+        expected_allowance: Option<Tokens>,
+        expires_at: Option<u64>,
+        fee: Tokens,
+    },
+}
+
+#[derive(CandidType, Deserialize, Debug)]
+pub struct LedgerTransaction {
+    pub memo: u64,
+    pub operation: Option<LedgerOperation>,
+}
+
+#[derive(CandidType, Deserialize, Debug)]
+pub struct LedgerBlock {
+    pub transaction: LedgerTransaction,
+}
+
+#[derive(CandidType, Deserialize, Debug)]
+pub struct QueryBlocksResponse {
     pub chain_length: u64,
+    pub blocks: Vec<LedgerBlock>,
+    pub first_block_index: u64,
 }
 
 pub async fn get_icp_price_cents() -> u64 {
@@ -154,9 +195,27 @@ pub async fn buy_credits(
 
     match call_res {
         Ok(res) => {
-            let (_header,): (QueryBlocksResponseHeader,) = res
+            let (resp,): (QueryBlocksResponse,) = res
                 .candid_tuple()
                 .map_err(|e| format!("Failed to decode query_blocks response: {e:?}"))?;
+
+            if block_index >= resp.chain_length {
+                return Err("Block index exceeds ledger chain length".to_string());
+            }
+
+            if !resp.blocks.is_empty() {
+                let block = &resp.blocks[0];
+                if let Some(LedgerOperation::Transfer(t)) = &block.transaction.operation {
+                    if t.amount.e8s < expected_e8s {
+                        return Err(format!(
+                            "Block payment amount {} e8s is less than required {} e8s",
+                            t.amount.e8s, expected_e8s
+                        ));
+                    }
+                } else if block.transaction.operation.is_some() {
+                    return Err("Block is not an ICP transfer operation".to_string());
+                }
+            }
 
             storage::record_processed_block(ProcessedBlockRecord {
                 block_index,
@@ -207,9 +266,27 @@ pub async fn buy_pack(
 
     match call_res {
         Ok(res) => {
-            let (_header,): (QueryBlocksResponseHeader,) = res
+            let (resp,): (QueryBlocksResponse,) = res
                 .candid_tuple()
                 .map_err(|e| format!("Failed to decode query_blocks response: {e:?}"))?;
+
+            if block_index >= resp.chain_length {
+                return Err("Block index exceeds ledger chain length".to_string());
+            }
+
+            if !resp.blocks.is_empty() {
+                let block = &resp.blocks[0];
+                if let Some(LedgerOperation::Transfer(t)) = &block.transaction.operation {
+                    if t.amount.e8s < expected_e8s {
+                        return Err(format!(
+                            "Block payment amount {} e8s is less than required {} e8s",
+                            t.amount.e8s, expected_e8s
+                        ));
+                    }
+                } else if block.transaction.operation.is_some() {
+                    return Err("Block is not an ICP transfer operation".to_string());
+                }
+            }
 
             let now_sec = now_nanos / 1_000_000_000;
             let current_month = cron::current_month_epoch(now_sec);

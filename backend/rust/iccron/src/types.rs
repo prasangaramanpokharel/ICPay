@@ -386,3 +386,22 @@ pub struct CronAuditStats {
     pub cycles_balance: u128,
     pub memory_pages: u64,
 }
+
+#[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
+pub struct HeaderField(pub String, pub String);
+
+#[derive(CandidType, Deserialize, Clone, Debug)]
+pub struct InboundHttpRequest {
+    pub method: String,
+    pub url: String,
+    pub headers: Vec<HeaderField>,
+    pub body: Vec<u8>,
+}
+
+#[derive(CandidType, Serialize, Clone, Debug)]
+pub struct InboundHttpResponse {
+    pub status_code: u16,
+    pub headers: Vec<HeaderField>,
+    pub body: Vec<u8>,
+    pub upgrade: Option<bool>,
+}

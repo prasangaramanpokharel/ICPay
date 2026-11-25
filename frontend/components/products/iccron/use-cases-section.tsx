@@ -7,7 +7,16 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Icon } from "@/components/ui/icon"
-import { CoinsGlassIcon, CloudGlassIcon, CodeGlassIcon, ShoppingBagGlassIcon, ShieldGlassIcon, ArrowRightGlassIcon, CheckGlassOutlineIcon, CopyGlassIcon } from "@thesvg/ui-react"
+import {
+  CoinsGlassIcon,
+  CloudGlassIcon,
+  CodeGlassIcon,
+  ShoppingBagGlassIcon,
+  ShieldGlassIcon,
+  ArrowRightIcon,
+  CheckGlassOutlineIcon,
+  CopyGlassIcon,
+} from "@thesvg/ui-react"
 
 const RECIPES = [
   {
@@ -24,7 +33,7 @@ const RECIPES = [
     metrics: [
       { label: "Execution Cost", value: "$0.0005/day" },
       { label: "Key Security", value: "100% On-Chain" },
-      { label: "Failover", value: "Automatic Subnet Retry" },
+      { label: "Failover", value: "Subnet Retry" },
     ],
     samplePayload: `{\n  "action": "harvest_and_reinvest",\n  "pool_id": "icp_ckbtc_lp",\n  "min_return": 100000\n}`,
   },
@@ -34,7 +43,7 @@ const RECIPES = [
     icon: CloudGlassIcon,
     image: "/images/pages/iccron/cloud-network.jpg",
     schedule: "0 2 * * *",
-    scheduleLabel: "Every night at 02:00 UTC",
+    scheduleLabel: "Nightly at 02:00 UTC",
     targetType: "HTTPS Webhook",
     endpoint: "POST https://api.my-app.com/v1/jobs/db-dump",
     description:
@@ -42,7 +51,7 @@ const RECIPES = [
     metrics: [
       { label: "Cadence", value: "Nightly 2 AM" },
       { label: "Storage Target", value: "icBucket S3" },
-      { label: "Egress Fees", value: "$0.00 Forever" },
+      { label: "Egress Fees", value: "$0.00" },
     ],
     samplePayload: `{\n  "target": "icbucket://backups/prod-db.sql.gz",\n  "retention_days": 30\n}`,
   },
@@ -60,7 +69,7 @@ const RECIPES = [
     metrics: [
       { label: "Vercel Pro Cost", value: "$240.00/yr" },
       { label: "icCron Cost", value: "$4.32/yr" },
-      { label: "Net Savings", value: "98.2% Saved" },
+      { label: "Net Savings", value: "98.2%" },
     ],
     samplePayload: `{\n  "job": "sync_inventory",\n  "source": "shopify_webhook",\n  "batch_size": 250\n}`,
   },
@@ -76,9 +85,9 @@ const RECIPES = [
     description:
       "Regularly query checkout sessions idle for more than 1 hour and dispatch personalized email discount drip notifications via Resend or SendGrid.",
     metrics: [
-      { label: "Trigger Interval", value: "Every 30 Min" },
-      { label: "Recovery Rate", value: "+14.8% Sales" },
-      { label: "DLQ Protection", value: "Auto-Circuit Breaker" },
+      { label: "Interval", value: "30 Min" },
+      { label: "Recovery Rate", value: "+14.8%" },
+      { label: "DLQ Protection", value: "Circuit Breaker" },
     ],
     samplePayload: `{\n  "idle_threshold_minutes": 60,\n  "coupon_code": "SAVE10",\n  "max_notifications": 100\n}`,
   },
@@ -96,7 +105,7 @@ const RECIPES = [
     metrics: [
       { label: "Fleet Protection", value: "Zero Downtime" },
       { label: "Cycle Reserve", value: "> 30 Days" },
-      { label: "Authentication", value: "Caller Principal" },
+      { label: "Auth Mode", value: "Caller Principal" },
     ],
     samplePayload: `{\n  "canister_ids": ["6vbhm-nqaaa-aaaan-q6muq-cai"],\n  "min_cycles": 500000000000\n}`,
   },
@@ -137,7 +146,7 @@ export function UseCasesSection() {
               onClick={() => setActiveTab(recipe.id)}
               className={`flex items-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-semibold transition-all ${
                 activeTab === recipe.id
-                  ? "bg-primary text-primary-foreground shadow-md"
+                  ? "bg-primary text-primary-foreground shadow-sm"
                   : "border border-border bg-card/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
               }`}
             >
@@ -148,7 +157,7 @@ export function UseCasesSection() {
         </div>
 
         <div className="mt-8">
-          <Card className="relative overflow-hidden rounded-3xl border border-border/80 bg-card/80 p-6 shadow-xl md:p-8">
+          <Card className="overflow-hidden rounded-3xl border border-border/80 bg-card p-6 shadow-sm md:p-8">
             <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
               <div className="space-y-6 lg:col-span-6">
                 <div className="space-y-2">
@@ -171,7 +180,7 @@ export function UseCasesSection() {
                 <div className="grid grid-cols-3 gap-3 border-y border-border/50 py-4">
                   {activeRecipe.metrics.map((metric, i) => (
                     <div key={i}>
-                      <p className="text-xs text-muted-foreground">{metric.label}</p>
+                      <p className="text-[11px] text-muted-foreground">{metric.label}</p>
                       <p className="text-sm font-bold text-foreground">{metric.value}</p>
                     </div>
                   ))}
@@ -179,7 +188,7 @@ export function UseCasesSection() {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-muted-foreground">Sample Payload Preview</span>
+                    <span className="font-semibold text-muted-foreground">Payload Preview</span>
                     <button
                       type="button"
                       onClick={copyPayload}
@@ -193,7 +202,7 @@ export function UseCasesSection() {
                       ) : (
                         <>
                           <Icon icon={CopyGlassIcon} className="size-3.5" />
-                          <span>Copy Payload</span>
+                          <span>Copy</span>
                         </>
                       )}
                     </button>
@@ -203,29 +212,31 @@ export function UseCasesSection() {
                   </pre>
                 </div>
 
-                <div className="pt-2">
+                <div className="pt-1">
                   <Button
                     size="default"
-                    className="gap-2 rounded-xl text-xs font-semibold"
+                    className="gap-1.5 rounded-xl text-xs font-semibold"
                     nativeButton={false}
                     render={<Link href="/login" />}
                   >
-                    Deploy This Recipe
-                    <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
+                    Deploy
+                    <Icon icon={ArrowRightIcon} className="size-3.5" />
                   </Button>
                 </div>
               </div>
 
-              <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl border border-border lg:col-span-6">
-                <Image
-                  src={activeRecipe.image}
-                  alt={activeRecipe.title}
-                  fill
-                  className="object-cover object-center"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-                <div className="absolute bottom-4 left-4 right-4 rounded-xl border border-border/80 bg-card/90 p-3.5 backdrop-blur-md">
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+              <div className="flex flex-col gap-3 lg:col-span-6">
+                <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-border/60 bg-muted shadow-sm">
+                  <Image
+                    src={activeRecipe.image}
+                    alt={activeRecipe.title}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 50vw"
+                    className="object-cover object-top"
+                  />
+                </div>
+                <div className="rounded-xl border border-border/70 bg-background/80 p-3">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Target Execution
                   </p>
                   <p className="font-mono text-xs font-bold text-foreground truncate">

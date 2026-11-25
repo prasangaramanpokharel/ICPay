@@ -6,6 +6,8 @@ import useSWRImmutable from "swr/immutable"
 import { useSWRConfig } from "swr"
 import type { Identity } from "@icp-sdk/core/agent"
 import { useAuth } from "@/components/auth/auth-provider"
+import { usePersistedSWR } from "@/hooks/cache/usePersistedSWR"
+import { useEffectivePrincipal } from "@/lib/auth/lastPrincipal"
 import { FILES_PAGE_SIZE } from "@/lib/bucket/bucket"
 import {
   bucketAllFilesKey,
@@ -44,11 +46,17 @@ import type { BucketBillingPeriod, FileListPage, FilePublic } from "@/services/b
 import { apiListFolderPrefix } from "@/lib/bucket/folderPath"
 
 export const BUCKET_QUERY = {
-  revalidateOnFocus: true,
+  revalidateOnFocus: false,
   revalidateIfStale: true,
   revalidateOnMount: true,
   errorRetryCount: 3,
 } as const
+
+const bucketListCacheKey = (principal: string) => `icpay:bucket:list:${principal}`
+const bucketStatsCacheKey = (principal: string, bucketId: string) =>
+  `icpay:bucket:stats:${principal}:${bucketId}`
+const bucketFilesCacheKey = (principal: string, bucketId: string, prefix: string, page: number) =>
+  `icpay:bucket:files:${principal}:${bucketId}:${prefix}:${page}`
 
 export function useInvalidateBucketCache() {
   const { mutate } = useSWRConfig()
@@ -61,55 +69,85 @@ export function useInvalidateBucketCache() {
 }
 
 export function useBucketList() {
-  const { identity } = useAuth()
+  const { identity, isLoading: authLoading } = useAuth()
+  const { principal } = useEffectivePrincipal()
 
-  const { data, error, isLoading, isValidating, mutate } = useSWR(
+  const { resolved, error, isInitialLoading, isValidating, mutate } = usePersistedSWR(
     bucketListKey(identity),
     () => listBuckets(identity),
-    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 4_000 }
+    {
+      ...BUCKET_QUERY,
+      keepPreviousData: true,
+      dedupingInterval: 15_000,
+      cacheKey: principal ? bucketListCacheKey(principal) : null,
+      maxAgeMs: 5 * 60_000,
+      authPending: authLoading,
+    }
   )
 
-  return { buckets: data ?? [], error, isLoading, isValidating, refresh: mutate }
+  return {
+    buckets: resolved ?? [],
+    error,
+    isLoading: isInitialLoading,
+    isValidating,
+    refresh: mutate,
+  }
 }
 
 export function useBucketStats(bucketId: string | null) {
-  const { identity } = useAuth()
+  const { identity, isLoading: authLoading } = useAuth()
+  const { principal } = useEffectivePrincipal()
 
-  const { data, error, isLoading, isValidating, mutate } = useSWR(
+  const { resolved, error, isInitialLoading, isValidating, mutate } = usePersistedSWR(
     bucketId ? bucketStatsKey(identity, bucketId) : null,
     () => getBucketStats(identity!, bucketId!),
-    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 15_000 }
+    {
+      ...BUCKET_QUERY,
+      keepPreviousData: true,
+      dedupingInterval: 15_000,
+      cacheKey: bucketId && principal ? bucketStatsCacheKey(principal, bucketId) : null,
+      maxAgeMs: 3 * 60_000,
+      authPending: authLoading,
+    }
   )
 
-  const initialLoad = isLoading && data === undefined
-
-  return { stats: data ?? null, error, isLoading: initialLoad, isValidating, refresh: mutate }
+  return { stats: resolved ?? null, error, isLoading: isInitialLoading, isValidating, refresh: mutate }
 }
 
 export function useBucketFiles(bucketId: string | null, prefix: string, page: number) {
-  const { identity } = useAuth()
+  const { identity, isLoading: authLoading } = useAuth()
+  const { principal } = useEffectivePrincipal()
   const apiPrefix = apiListFolderPrefix(prefix)
 
-  const { data, error, isLoading, mutate } = useSWR(
+  const { resolved, error, isInitialLoading, mutate } = usePersistedSWR(
     bucketId ? bucketFilesKey(identity, bucketId, apiPrefix, page) : null,
     () => listFolder(identity!, bucketId!, apiPrefix, page, FILES_PAGE_SIZE),
-    { ...BUCKET_QUERY, keepPreviousData: true, dedupingInterval: 15_000 }
+    {
+      ...BUCKET_QUERY,
+      keepPreviousData: true,
+      dedupingInterval: 15_000,
+      cacheKey:
+        bucketId && principal && page <= 1
+          ? bucketFilesCacheKey(principal, bucketId, apiPrefix, page)
+          : null,
+      maxAgeMs: 3 * 60_000,
+      authPending: authLoading,
+    }
   )
 
-  const total = data ? Number(data.total) : 0
-  const pageSize = data ? Number(data.pageSize) : FILES_PAGE_SIZE
+  const total = resolved ? Number(resolved.total) : 0
+  const pageSize = resolved ? Number(resolved.pageSize) : FILES_PAGE_SIZE
   const totalPages = pageSize > 0 ? Math.max(1, Math.ceil(total / pageSize)) : 1
-  const initialLoad = isLoading && data === undefined
 
   return {
-    files: data?.items ?? [],
-    folders: data?.folders ?? [],
+    files: resolved?.items ?? [],
+    folders: resolved?.folders ?? [],
     total,
-    page: data ? Number(data.page) : page,
+    page: resolved ? Number(resolved.page) : page,
     pageSize,
     totalPages,
     error,
-    isLoading: initialLoad,
+    isLoading: isInitialLoading,
     refresh: mutate,
   }
 }

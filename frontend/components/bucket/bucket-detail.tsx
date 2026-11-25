@@ -56,7 +56,7 @@ import {
   moveFile,
   bulkMoveFiles,
 } from "@/services/bucket/bucket"
-import type { BucketBillingPeriod, FilePathOp } from "@/services/bucket/types"
+import type { BucketBillingPeriod, FileListPage, FilePathOp } from "@/services/bucket/types"
 import { formatBytes, isBucketActive, isBucketFrozen, isBucketTombstoned } from "@/lib/bucket/bucket"
 import { joinObjectPath, nestedPrefix, prefixSegments, apiListFolderPrefix } from "@/lib/bucket/folderPath"
 import { clearLegacyBucketStorage } from "@/lib/bucket/legacyStorage"
@@ -172,20 +172,57 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
     scheduleRefreshAfterUpload()
   }, [scheduleRefreshAfterUpload])
 
+  const patchFolderListing = useCallback(
+    (updater: (prev: FileListPage | undefined) => FileListPage | undefined, revalidate: boolean) => {
+      if (!identity || !bucketId) return
+      const folderPrefix = apiListFolderPrefix(prefix)
+      const principal = identity.getPrincipal().toText()
+      void mutate(
+        (key) =>
+          Array.isArray(key) &&
+          key[0] === "bucket-files" &&
+          key[1] === bucketId &&
+          key[2] === folderPrefix &&
+          key[key.length - 1] === principal,
+        updater,
+        { revalidate }
+      )
+    },
+    [identity, bucketId, prefix, mutate]
+  )
+
   const handleCreateFolder = useCallback(
     async (name: string) => {
       const path = joinObjectPath(prefix, `${name}/`)
       const res = await createFolder(identity, bucketId, path)
       if ("err" in res) throw new Error(res.err)
+      patchFolderListing(
+        (prev) =>
+          prev && !prev.folders.includes(path)
+            ? { ...prev, folders: [...prev.folders, path] }
+            : prev,
+        false
+      )
       setPrefix(nestedPrefix(prefix, name))
       void refreshFolderListing()
     },
-    [identity, bucketId, prefix, refreshFolderListing]
+    [identity, bucketId, prefix, patchFolderListing, refreshFolderListing]
   )
 
   const handleDelete = async (path: string) => {
     const res = await deleteFile(identity, bucketId, path)
     if ("err" in res) return res.err
+    patchFolderListing(
+      (prev) =>
+        prev
+          ? {
+              ...prev,
+              items: prev.items.filter((item) => item.path !== path),
+              total: prev.total > 0n ? prev.total - 1n : 0n,
+            }
+          : prev,
+      true
+    )
     return null
   }
 
@@ -194,6 +231,19 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
     if (paths.length === 1) return handleDelete(paths[0])
     const res = await bulkDeleteFiles(identity, bucketId, paths)
     if ("err" in res) return res.err
+    const removed = new Set(paths)
+    patchFolderListing(
+      (prev) =>
+        prev
+          ? {
+              ...prev,
+              items: prev.items.filter((item) => !removed.has(item.path)),
+              total:
+                prev.total > BigInt(paths.length) ? prev.total - BigInt(paths.length) : 0n,
+            }
+          : prev,
+      true
+    )
     return null
   }
 
@@ -207,6 +257,17 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
         }
       }
     }
+    const removedPrefixes = new Set(paths.map((p) => p.replace(/\/+$/, "")))
+    patchFolderListing(
+      (prev) =>
+        prev
+          ? {
+              ...prev,
+              folders: prev.folders.filter((f) => !removedPrefixes.has(f.replace(/\/+$/, ""))),
+            }
+          : prev,
+      false
+    )
     await invalidateBucketCache()
     return null
   }

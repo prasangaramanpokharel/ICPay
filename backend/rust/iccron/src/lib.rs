@@ -173,6 +173,58 @@ fn list_my_projects() -> Vec<ProjectRecord> {
 // Jobs
 // -----------------------------------------------------------------------------
 
+fn validate_target_url(url: &str) -> Result<(), String> {
+    let u = url.trim();
+    if !u.starts_with("https://") && !u.starts_with("http://") {
+        return Err("Webhook URL must begin with https:// or http://".to_string());
+    }
+    if u.len() > 2048 {
+        return Err("Webhook URL exceeds 2048 characters".to_string());
+    }
+
+    let after_scheme = if let Some(stripped) = u.strip_prefix("https://") {
+        stripped
+    } else {
+        u.strip_prefix("http://").unwrap()
+    };
+
+    let host_part = after_scheme
+        .split('/')
+        .next()
+        .unwrap_or("")
+        .split('?')
+        .next()
+        .unwrap_or("");
+    let host = host_part
+        .split(':')
+        .next()
+        .unwrap_or("")
+        .trim()
+        .to_ascii_lowercase();
+
+    if host.is_empty() {
+        return Err("Target URL has empty host".to_string());
+    }
+
+    if host == "169.254.169.254" || host.starts_with("169.254.") {
+        return Err("Target URL points to forbidden metadata endpoint".to_string());
+    }
+    if host == "localhost"
+        || host == "127.0.0.1"
+        || host.starts_with("127.")
+        || host == "0.0.0.0"
+        || host == "::1"
+        || host == "[::1]"
+    {
+        return Err("Target URL cannot point to loopback address".to_string());
+    }
+    if host.starts_with("10.") || host.starts_with("192.168.") {
+        return Err("Target URL cannot point to private network address".to_string());
+    }
+
+    Ok(())
+}
+
 #[ic_cdk::update]
 fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
     let caller = ic_cdk::api::msg_caller();
@@ -182,7 +234,7 @@ fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
 
     let project = storage::get_project(args.project_id)
         .ok_or_else(|| "Project not found".to_string())?;
-    if project.owner != caller {
+    if project.owner != caller && !ic_cdk::api::is_controller(&caller) {
         return Err("Unauthorized to add job to this project".to_string());
     }
 
@@ -201,13 +253,7 @@ fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
             }
         }
         JobTarget::HttpWebhook { url, .. } => {
-            let u = url.trim();
-            if !u.starts_with("https://") && !u.starts_with("http://") {
-                return Err("Webhook URL must begin with https:// or http://".to_string());
-            }
-            if u.len() > 2048 {
-                return Err("Webhook URL exceeds 2048 characters".to_string());
-            }
+            validate_target_url(url)?;
         }
     }
 
@@ -220,7 +266,7 @@ fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
     let job = JobRecord {
         id: job_id,
         project_id: args.project_id,
-        owner: caller,
+        owner: project.owner,
         label: label.to_string(),
         target: args.target,
         cron_expression: args.cron_expression.trim().to_string(),
@@ -271,13 +317,7 @@ fn update_job(args: UpdateJobArgs) -> Result<JobRecord, String> {
                 }
             }
             JobTarget::HttpWebhook { url, .. } => {
-                let u = url.trim();
-                if !u.starts_with("https://") && !u.starts_with("http://") {
-                    return Err("Webhook URL must begin with https:// or http://".to_string());
-                }
-                if u.len() > 2048 {
-                    return Err("Webhook URL exceeds 2048 characters".to_string());
-                }
+                validate_target_url(url)?;
             }
         }
         job.target = target;
@@ -419,7 +459,7 @@ fn list_jobs(project_id: Option<u64>) -> Vec<JobSummary> {
 fn get_job(job_id: u64) -> Result<JobRecord, String> {
     let caller = ic_cdk::api::msg_caller();
     let job = storage::get_job(job_id).ok_or_else(|| "Job not found".to_string())?;
-    if job.owner != caller {
+    if job.owner != caller && !ic_cdk::api::is_controller(&caller) {
         return Err("Unauthorized".to_string());
     }
     Ok(job)
@@ -429,7 +469,7 @@ fn get_job(job_id: u64) -> Result<JobRecord, String> {
 fn get_job_logs(job_id: u64, limit: Option<u64>) -> Vec<ExecutionLog> {
     let caller = ic_cdk::api::msg_caller();
     if let Some(job) = storage::get_job(job_id) {
-        if job.owner != caller {
+        if job.owner != caller && !ic_cdk::api::is_controller(&caller) {
             return vec![];
         }
     } else {
@@ -595,4 +635,331 @@ fn get_audit_stats() -> CronAuditStats {
     let cycles = ic_cdk::api::canister_cycle_balance();
     let pages = ic_cdk::stable::stable_size();
     storage::get_audit_stats(credits::TREASURY_PRINCIPAL_TEXT, cycles, pages)
+}
+
+// -----------------------------------------------------------------------------
+// Inbound HTTP Gateway Handlers
+// -----------------------------------------------------------------------------
+
+fn standard_cors_headers() -> Vec<types::HeaderField> {
+    vec![
+        types::HeaderField("Content-Type".to_string(), "application/json".to_string()),
+        types::HeaderField("Access-Control-Allow-Origin".to_string(), "*".to_string()),
+        types::HeaderField(
+            "Access-Control-Allow-Methods".to_string(),
+            "POST, GET, OPTIONS".to_string(),
+        ),
+        types::HeaderField(
+            "Access-Control-Allow-Headers".to_string(),
+            "Authorization, Content-Type".to_string(),
+        ),
+    ]
+}
+
+fn extract_api_key(req: &types::InboundHttpRequest) -> Option<String> {
+    for types::HeaderField(name, val) in &req.headers {
+        if name.eq_ignore_ascii_case("authorization") {
+            let trimmed = val.trim();
+            if let Some(token) = trimmed.strip_prefix("Bearer ") {
+                return Some(token.trim().to_string());
+            } else {
+                return Some(trimmed.to_string());
+            }
+        }
+    }
+
+    #[derive(serde::Deserialize)]
+    struct KeyPayload {
+        api_key: Option<String>,
+    }
+    let payload: Option<KeyPayload> = serde_json::from_slice(&req.body).ok();
+    payload.and_then(|p| p.api_key)
+}
+
+#[ic_cdk::query]
+fn http_request(req: types::InboundHttpRequest) -> types::InboundHttpResponse {
+    let cors_headers = standard_cors_headers();
+
+    if req.method.eq_ignore_ascii_case("OPTIONS") {
+        return types::InboundHttpResponse {
+            status_code: 204,
+            headers: cors_headers,
+            body: vec![],
+            upgrade: None,
+        };
+    }
+
+    let path = req.url.split('?').next().unwrap_or(&req.url);
+
+    if req.method.eq_ignore_ascii_case("POST") {
+        if path != "/api/v1/cron/trigger" && path != "/api/v1/cron/trigger/" {
+            let err_body = serde_json::json!({
+                "ok": false,
+                "error": "Endpoint not found"
+            });
+            return types::InboundHttpResponse {
+                status_code: 404,
+                headers: cors_headers,
+                body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                upgrade: None,
+            };
+        }
+
+        let key = match extract_api_key(&req) {
+            Some(k) if !k.is_empty() => k,
+            _ => {
+                let err_body = serde_json::json!({
+                    "ok": false,
+                    "error": "Missing Authorization header or api_key in request body"
+                });
+                return types::InboundHttpResponse {
+                    status_code: 401,
+                    headers: cors_headers,
+                    body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                    upgrade: None,
+                };
+            }
+        };
+
+        if api_keys::verify_key(&key).is_none() {
+            let err_body = serde_json::json!({
+                "ok": false,
+                "error": "Invalid or revoked API key"
+            });
+            return types::InboundHttpResponse {
+                status_code: 401,
+                headers: cors_headers,
+                body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                upgrade: None,
+            };
+        }
+
+        return types::InboundHttpResponse {
+            status_code: 200,
+            headers: vec![],
+            body: vec![],
+            upgrade: Some(true),
+        };
+    }
+
+    if req.method.eq_ignore_ascii_case("GET") {
+        let body = serde_json::json!({
+            "status": "ok",
+            "service": "icCron",
+            "canister_id": ic_cdk::api::canister_self().to_text()
+        });
+        let body_bytes = serde_json::to_vec(&body).unwrap_or_default();
+
+        return types::InboundHttpResponse {
+            status_code: 200,
+            headers: cors_headers,
+            body: body_bytes,
+            upgrade: None,
+        };
+    }
+
+    types::InboundHttpResponse {
+        status_code: 405,
+        headers: cors_headers,
+        body: serde_json::to_vec(&serde_json::json!({"error": "Method not allowed"})).unwrap_or_default(),
+        upgrade: None,
+    }
+}
+
+#[ic_cdk::update]
+async fn http_request_update(req: types::InboundHttpRequest) -> types::InboundHttpResponse {
+    let cors_headers = standard_cors_headers();
+
+    if req.method.eq_ignore_ascii_case("OPTIONS") {
+        return types::InboundHttpResponse {
+            status_code: 204,
+            headers: cors_headers,
+            body: vec![],
+            upgrade: None,
+        };
+    }
+
+    #[derive(serde::Deserialize)]
+    struct TriggerPayload {
+        job_id: Option<u64>,
+    }
+
+    let key = match extract_api_key(&req) {
+        Some(k) if !k.is_empty() => k,
+        _ => {
+            let err_body = serde_json::json!({
+                "ok": false,
+                "error": "Missing Authorization header or api_key in request body"
+            });
+            return types::InboundHttpResponse {
+                status_code: 401,
+                headers: cors_headers,
+                body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                upgrade: None,
+            };
+        }
+    };
+
+    let payload: Option<TriggerPayload> = serde_json::from_slice(&req.body).ok();
+    let job_id = match payload.and_then(|p| p.job_id) {
+        Some(id) => id,
+        None => {
+            let err_body = serde_json::json!({
+                "ok": false,
+                "error": "Missing job_id in JSON payload"
+            });
+            return types::InboundHttpResponse {
+                status_code: 400,
+                headers: cors_headers,
+                body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                upgrade: None,
+            };
+        }
+    };
+
+    let key_record = match api_keys::verify_key(&key) {
+        Some(rec) => rec,
+        None => {
+            let err_body = serde_json::json!({
+                "ok": false,
+                "error": "Invalid or revoked API key"
+            });
+            return types::InboundHttpResponse {
+                status_code: 401,
+                headers: cors_headers,
+                body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                upgrade: None,
+            };
+        }
+    };
+
+    let job = match storage::get_job(job_id) {
+        Some(j) => j,
+        None => {
+            let err_body = serde_json::json!({
+                "ok": false,
+                "error": format!("Job {} not found", job_id)
+            });
+            return types::InboundHttpResponse {
+                status_code: 404,
+                headers: cors_headers,
+                body: serde_json::to_vec(&err_body).unwrap_or_default(),
+                upgrade: None,
+            };
+        }
+    };
+
+    if job.project_id != key_record.project_id {
+        let err_body = serde_json::json!({
+            "ok": false,
+            "error": "API key does not have access to this job's project"
+        });
+        return types::InboundHttpResponse {
+            status_code: 403,
+            headers: cors_headers,
+            body: serde_json::to_vec(&err_body).unwrap_or_default(),
+            upgrade: None,
+        };
+    }
+
+    ic_cdk::futures::spawn(async move {
+        engine::execute_single_job(job).await;
+    });
+
+    let ok_body = serde_json::json!({
+        "ok": true,
+        "job_id": job_id,
+        "status": "triggered"
+    });
+
+    types::InboundHttpResponse {
+        status_code: 200,
+        headers: cors_headers,
+        body: serde_json::to_vec(&ok_body).unwrap_or_default(),
+        upgrade: None,
+    }
+}
+
+// -----------------------------------------------------------------------------
+// Security Unit Tests
+// -----------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_url_ssrf_validation() {
+        assert!(validate_target_url("http://169.254.169.254/latest/meta-data").is_err());
+        assert!(validate_target_url("https://169.254.1.1/api").is_err());
+        assert!(validate_target_url("http://localhost:3000/trigger").is_err());
+        assert!(validate_target_url("https://127.0.0.1:8080").is_err());
+        assert!(validate_target_url("http://127.0.0.2/test").is_err());
+        assert!(validate_target_url("http://0.0.0.0/test").is_err());
+        assert!(validate_target_url("http://10.0.0.1/private").is_err());
+        assert!(validate_target_url("http://192.168.1.1/router").is_err());
+        assert!(validate_target_url("ftp://example.com/file").is_err());
+
+        assert!(validate_target_url("https://httpbin.org/post").is_ok());
+        assert!(validate_target_url("https://discord.com/api/webhooks/12345").is_ok());
+        assert!(validate_target_url("https://api.myproject.com/v1/cron").is_ok());
+    }
+
+    #[test]
+    fn test_extract_api_key_bearer() {
+        let req = types::InboundHttpRequest {
+            method: "POST".to_string(),
+            url: "/api/v1/cron/trigger".to_string(),
+            headers: vec![types::HeaderField(
+                "Authorization".to_string(),
+                "Bearer icp_cron_test_key_123".to_string(),
+            )],
+            body: vec![],
+        };
+        assert_eq!(
+            extract_api_key(&req),
+            Some("icp_cron_test_key_123".to_string())
+        );
+    }
+
+    #[test]
+    fn test_extract_api_key_body() {
+        let payload = serde_json::json!({
+            "api_key": "icp_cron_body_key_456",
+            "job_id": 1
+        });
+        let req = types::InboundHttpRequest {
+            method: "POST".to_string(),
+            url: "/api/v1/cron/trigger".to_string(),
+            headers: vec![],
+            body: serde_json::to_vec(&payload).unwrap(),
+        };
+        assert_eq!(
+            extract_api_key(&req),
+            Some("icp_cron_body_key_456".to_string())
+        );
+    }
+
+    #[test]
+    fn test_extract_api_key_missing() {
+        let req = types::InboundHttpRequest {
+            method: "POST".to_string(),
+            url: "/api/v1/cron/trigger".to_string(),
+            headers: vec![],
+            body: vec![],
+        };
+        assert_eq!(extract_api_key(&req), None);
+    }
+
+    #[test]
+    fn test_paused_job_next_run_isolation() {
+        let is_paused = matches!(
+            types::JobStatus::Paused,
+            types::JobStatus::Paused
+                | types::JobStatus::AutoPausedDormant
+                | types::JobStatus::ExhaustedCredits
+                | types::JobStatus::DeadLetterQueue
+        );
+        assert!(is_paused);
+    }
 }

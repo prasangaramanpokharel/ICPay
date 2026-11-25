@@ -12,7 +12,7 @@ const CODE_TABS = [
     id: "curl",
     label: "cURL Webhook",
     icon: TerminalGlassIcon,
-    snippet: `curl -X POST "https://iccron.icpay.app/api/v1/jobs" \\
+    snippet: `curl -X POST "https://uzt4z-lp777-77774-qaabq-cai.raw.icp0.io/api/v1/jobs" \\
   -H "Authorization: Bearer cr_live_9f82bc4e7d1a..." \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -38,7 +38,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Autonomous scheduled logic
   await syncStripeInvoices();
   return NextResponse.json({ ok: true, timestamp: Date.now() });
 }`,
@@ -52,7 +51,7 @@ export async function POST(req: NextRequest) {
 actor MyCanister {
   public func setupScheduler() : async () {
     let jobId = await IcCron.create_job({
-      schedule = "0 0 * * *"; // Daily at midnight
+      schedule = "0 0 * * *";
       target = #CanisterCall({
         canister_id = Principal.fromActor(this);
         method = "harvest_rewards";
