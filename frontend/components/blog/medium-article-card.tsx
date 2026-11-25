@@ -1,5 +1,5 @@
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowUpRight01Icon, BookOpen01Icon, FavouriteIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowUpRightGlassIcon, BookOpenGlassIcon, HeartGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
@@ -45,8 +45,8 @@ export function MediumArticleCard({
             </p>
           </div>
         </div>
-        <HugeiconsIcon
-          icon={ArrowUpRight01Icon}
+        <Icon
+          icon={ArrowUpRightGlassIcon}
           className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-foreground"
         />
       </a>
@@ -81,9 +81,9 @@ export function MediumArticleCard({
               }
               className="gap-2 rounded-full px-5 py-2.5 font-medium shadow-sm hover:shadow"
             >
-              <HugeiconsIcon icon={FavouriteIcon} className="size-4" />
+              <Icon icon={HeartGlassIcon} className="size-4" />
               <span>Read & Clap on Medium</span>
-              <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
+              <Icon icon={ArrowUpRightGlassIcon} className="size-4" />
             </Button>
           </div>
         </div>
@@ -138,7 +138,7 @@ export function MediumArticleCard({
       {/* Actions */}
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-          <HugeiconsIcon icon={BookOpen01Icon} className="size-4" />
+          <Icon icon={BookOpenGlassIcon} className="size-4" />
           <span>Published by ICPay Creator</span>
         </div>
         <Button
@@ -149,7 +149,7 @@ export function MediumArticleCard({
           className="gap-2 rounded-full px-5 text-xs font-semibold shadow-sm cursor-pointer"
         >
           <span>Read Full Article on Medium</span>
-          <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" />
+          <Icon icon={ArrowUpRightGlassIcon} className="size-4" />
         </Button>
       </div>
     </div>

@@ -1,0 +1,568 @@
+# icCron — LLM & Agent Knowledge Base
+
+> Autonomous, serverless on-chain cron scheduler and HTTP webhook dispatcher running natively on the Internet Computer (canister `w2fxo-5qaaa-aaaan-q6zxq-cai`) with sub-second precision, O(1) bitmask scheduling, and Dead Letter Queues.
+
+- **Product Page**: https://icpay.app/iccron
+- **Dashboard**: https://icpay.app/cron
+- **Pricing**: https://icpay.app/iccron/pricing
+- **Security**: https://icpay.app/iccron/security
+- **Canister ID (Mainnet)**: `w2fxo-5qaaa-aaaan-q6zxq-cai`
+- **HTTP Gateway**: `https://w2fxo-5qaaa-aaaan-q6zxq-cai.raw.icp0.io`
+- **Candid Interface**: `https://a4gq6-oaaaa-aaaab-qaa4q-cai.raw.icp0.io/?id=w2fxo-5qaaa-aaaan-q6zxq-cai`
+- **Dashboard Verify**: `https://dashboard.internetcomputer.org/canister/w2fxo-5qaaa-aaaan-q6zxq-cai`
+- **Source & SDKs**: https://github.com/prasangapokharel/ICPay/tree/main/pkg/iccron
+
+---
+
+## 1. What icCron Is
+
+icCron is a production Rust canister on the Internet Computer that replaces AWS EventBridge, Vercel Cron Jobs, GitHub Actions schedules, and legacy server-side cron daemons with a fully on-chain, custody-free scheduler. It fires HTTP webhooks or inter-canister Candid calls on a standard 5-field cron expression with 1-second-resolution timer precision — without any server, bot, or external orchestrator.
+
+**Key differentiators over traditional schedulers:**
+
+1. Zero idle cost — Native IC system timers sleep between firings. No heartbeat polling means 99.4% cycle reduction versus legacy heartbeat-based schedulers.
+2. Deterministic consensus — Every HTTPS outcall is sent by all subnet nodes and passes `transform_http_response` before the result is committed to canister state.
+3. No single point of failure — The Internet Computer's subnet architecture means no VM going down can stall your cron jobs.
+4. API-key REST interface — Integrates with any language through 5 official SDKs (npm, Python, Go, Rust, PHP) and a plain HTTP REST API.
+
+---
+
+## 2. Architecture
+
+### Canister Core (Rust)
+
+Built with `ic-cdk` and `ic-stable-structures`. All state is stored in `BTreeMap`s backed by `StableMemory` so canister Wasm upgrades preserve every project, job, log, and credit balance without migration code.
+
+**State entities:**
+- `Project` — named namespace owned by an IC principal; holds a credit balance.
+- `Job` — a scheduled task inside a project: cron expression, target, status, retry config, next-run timestamp.
+- `BitmaskSchedule` — compiled form of a 5-field cron string into `(minutes: u64, hours: u32, days: u32, months: u16, weekdays: u8)` for O(1) tick evaluation.
+- `ApiKeyRecord` — project-scoped authentication token; only the SHA-256 hash is stored on-chain.
+- `ExecutionLog` — per-job ring-buffer of the last 50 executions: timestamp, duration, HTTP status, response snippet, error.
+- `CreditLedger` — prepaid ICP credit balance consumed at `1 credit = 1 job execution`.
+
+### Scheduling Engine
+
+The scheduler uses a single global IC system timer. On each tick:
+
+1. Scan `active_jobs` for entries where `next_run_at <= now`.
+2. For each eligible job, compute `next_run_at` using O(1) bitmask arithmetic.
+3. Set the IC system timer to `min(next_run_at)` across all active jobs.
+4. Dispatch each eligible job in a `spawn` future (non-blocking).
+
+### Dispatch Modes
+
+**HttpWebhook** — Makes an IC HTTPS outcall to any public HTTPS URL. Supports `GET`, `POST`, `HEAD` methods with custom headers and body. The result passes through `transform_http_response` which strips all response headers, keeping only the status code and a 200-byte body snippet for consensus.
+
+**CanisterCall** — Encodes a Candid method name and argument blob and executes a cross-canister call directly on the IC. Used to trigger ICP canister methods on a schedule.
+
+### Dead Letter Queue & Circuit Breaker
+
+- If a job execution fails (non-2xx HTTP or canister rejection), `consecutive_failures` increments.
+- Once `consecutive_failures >= max_retries`, the job transitions to `AutoPausedDormant` and an entry is written to the Dead Letter Queue.
+- The job stops consuming cycles and timers until manually resumed via API or Dashboard.
+- Exponential backoff is applied between retries when configured.
+
+---
+
+## 3. REST API Reference
+
+### Base URL
+
+```
+https://w2fxo-5qaaa-aaaan-q6zxq-cai.raw.icp0.io
+```
+
+### Authentication
+
+All endpoints require an API key in the `Authorization` header:
+
+```http
+Authorization: Bearer icp_cron_<64-hex-chars>
+Content-Type: application/json
+```
+
+The API key is scoped to a single project. All operations automatically resolve to that project's `project_id` and `owner` principal.
+
+---
+
+### POST /api/v1/cron/jobs — Create Job
+
+Creates a new scheduled job inside the API key's project.
+
+**Request body:**
+
+```json
+{
+  "label": "Hourly Sync",
+  "cron_expression": "0 * * * *",
+  "max_retries": 10,
+  "target": {
+    "type": "HttpWebhook",
+    "url": "https://example.com/api/cron",
+    "method": "POST",
+    "headers": [["Content-Type", "application/json"]],
+    "body": "{\"event\":\"sync\"}"
+  }
+}
+```
+
+**Cron expression format:** standard 5-field `minute hour day month weekday`. Ranges, step values, and `*` wildcards are supported.
+
+**Success response (201):**
+
+```json
+{
+  "job_id": 42,
+  "ok": true
+}
+```
+
+**Notes:**
+- Target URL must be `https://` and must not resolve to a private/internal address.
+- `max_retries` default is `3`; maximum is `100`.
+- The job starts in `Active` state immediately after creation.
+
+---
+
+### GET /api/v1/cron/jobs — List Project Jobs
+
+Returns all jobs in the API key's project.
+
+**Success response (200):**
+
+```json
+{
+  "jobs": [
+    {
+      "id": 1,
+      "label": "Hourly Sync",
+      "cron_expression": "0 * * * *",
+      "status": "Active",
+      "target_type": "HttpWebhook",
+      "target_preview": "POST https://example.com/api/cron",
+      "total_runs": 48,
+      "consecutive_failures": 0,
+      "last_run_at": 1795588663,
+      "next_run_at": 1795590000,
+      "created_at": 1795500000,
+      "updated_at": 1795588663,
+      "project_id": 1
+    }
+  ],
+  "ok": true,
+  "project_id": 1
+}
+```
+
+---
+
+### POST /api/v1/cron/jobs/{job_id}/pause — Pause Job
+
+Pauses an active job. The job will not fire until resumed. Timer slot is released immediately.
+
+**Success response (200):**
+
+```json
+{ "ok": true, "status": "Paused" }
+```
+
+---
+
+### POST /api/v1/cron/jobs/{job_id}/resume — Resume Job
+
+Resumes a paused or AutoPausedDormant job. Recomputes `next_run_at` from the current time.
+
+**Success response (200):**
+
+```json
+{ "ok": true, "status": "Active" }
+```
+
+---
+
+### DELETE /api/v1/cron/jobs/{job_id} — Delete Job
+
+Permanently deletes a job and all its associated execution logs. This action is irreversible.
+
+**Success response (200):**
+
+```json
+{ "ok": true }
+```
+
+---
+
+### GET /api/v1/cron/jobs/{job_id}/logs — Get Job Logs
+
+Returns the last 50 execution logs for a specific job, newest first.
+
+**Success response (200):**
+
+```json
+{
+  "job_id": 1,
+  "logs": [
+    {
+      "log_id": 7,
+      "job_id": 1,
+      "job_label": "Hourly Sync",
+      "started_at": 1795588663,
+      "duration_ms": 2402,
+      "status_code": 200,
+      "success": true,
+      "response_snippet": "{\"ok\":true}",
+      "error": null
+    }
+  ],
+  "ok": true
+}
+```
+
+---
+
+### GET /api/v1/cron/logs — Get Project Logs
+
+Returns the last 100 execution logs across all jobs in the project, newest first.
+
+**Success response (200):**
+
+```json
+{
+  "logs": [...],
+  "ok": true,
+  "project_id": 1
+}
+```
+
+---
+
+### Error Responses
+
+All error responses follow this shape:
+
+```json
+{
+  "error": "Human-readable error message",
+  "ok": false
+}
+```
+
+Common error codes:
+- `400` — Malformed request body, invalid cron expression, or invalid target URL.
+- `401` — Missing or invalid `Authorization` header.
+- `403` — API key valid but job does not belong to this key's project.
+- `404` — Job not found.
+- `429` — Project credit balance exhausted; top up credits to resume scheduling.
+- `500` — Canister internal error.
+
+---
+
+## 4. Official SDKs
+
+All 5 SDKs expose the same 7-method interface: `createJob`, `listJobs`, `pauseJob`, `resumeJob`, `deleteJob`, `getJobLogs`, `getProjectLogs`.
+
+### npm / TypeScript — `icpay-cron`
+
+```
+npm install icpay-cron
+```
+
+```typescript
+import { IcCronClient } from "icpay-cron"
+
+const client = new IcCronClient({
+  apiKey: "icp_cron_...",
+})
+
+const job = await client.createJob({
+  label: "Nightly Report",
+  cronExpression: "0 2 * * *",
+  maxRetries: 5,
+  target: {
+    type: "HttpWebhook",
+    url: "https://example.com/api/nightly",
+    method: "POST",
+    headers: [["Content-Type", "application/json"]],
+    body: JSON.stringify({ event: "nightly-report" }),
+  },
+})
+
+const logs = await client.getProjectLogs()
+```
+
+**npm**: https://www.npmjs.com/package/icpay-cron
+
+---
+
+### Python — `icpay-cron`
+
+```
+pip install icpay-cron
+```
+
+```python
+from icpay_cron import IcCronClient
+
+client = IcCronClient(api_key="icp_cron_...")
+
+job = client.create_job(
+    label="Nightly Report",
+    cron_expression="0 2 * * *",
+    max_retries=5,
+    target={
+        "type": "HttpWebhook",
+        "url": "https://example.com/api/nightly",
+        "method": "POST",
+        "headers": [["Content-Type", "application/json"]],
+        "body": '{"event":"nightly-report"}',
+    },
+)
+
+logs = client.get_project_logs()
+```
+
+**PyPI**: https://pypi.org/project/icpay-cron/
+
+---
+
+### Go — `icpay-cron-go`
+
+```
+go get github.com/prasangaramanpokharel/icpay-cron-go
+```
+
+```go
+import iccron "github.com/prasangaramanpokharel/icpay-cron-go"
+
+client := iccron.NewClient("icp_cron_...")
+
+job, _ := client.CreateJob(iccron.CreateJobRequest{
+    Label:          "Nightly Report",
+    CronExpression: "0 2 * * *",
+    MaxRetries:     5,
+    Target: iccron.Target{
+        Type:    "HttpWebhook",
+        URL:     "https://example.com/api/nightly",
+        Method:  "POST",
+        Headers: [][2]string{{"Content-Type", "application/json"}},
+        Body:    `{"event":"nightly-report"}`,
+    },
+})
+
+logs, _ := client.GetProjectLogs()
+```
+
+---
+
+### Rust — `icpay-cron`
+
+```
+cargo add icpay-cron
+```
+
+```rust
+use icpay_cron::{IcCronClient, CreateJobRequest, Target};
+
+let client = IcCronClient::new("icp_cron_...".to_string());
+
+let job = client.create_job(CreateJobRequest {
+    label: "Nightly Report".into(),
+    cron_expression: "0 2 * * *".into(),
+    max_retries: 5,
+    target: Target::HttpWebhook {
+        url: "https://example.com/api/nightly".into(),
+        method: "POST".into(),
+        headers: vec![("Content-Type".into(), "application/json".into())],
+        body: Some(r#"{"event":"nightly-report"}"#.into()),
+    },
+}).await?;
+
+let logs = client.get_project_logs().await?;
+```
+
+**crates.io**: https://crates.io/crates/icpay-cron
+
+---
+
+### PHP — `icpay/cron`
+
+```
+composer require icpay/cron
+```
+
+```php
+use ICPay\Cron\IcCronClient;
+
+$client = new IcCronClient('icp_cron_...');
+
+$job = $client->createJob([
+    'label'           => 'Nightly Report',
+    'cron_expression' => '0 2 * * *',
+    'max_retries'     => 5,
+    'target'          => [
+        'type'    => 'HttpWebhook',
+        'url'     => 'https://example.com/api/nightly',
+        'method'  => 'POST',
+        'headers' => [['Content-Type', 'application/json']],
+        'body'    => '{"event":"nightly-report"}',
+    ],
+]);
+
+$logs = $client->getProjectLogs();
+```
+
+**Packagist**: https://packagist.org/packages/icpay/cron
+
+---
+
+## 5. Security Model
+
+### API Key Hashing
+
+Raw API keys are `icp_cron_` prefixed 64-character hex strings generated from a cryptographic random source. The raw key is returned to the user exactly once at creation time and is never stored on-chain. Only the SHA-256 hash is persisted in stable memory. Every subsequent request re-hashes the incoming key and compares it against stored hashes.
+
+### SSRF Protection
+
+Before persisting any `HttpWebhook` target, the canister validates:
+
+- Scheme must be exactly `https`.
+- Host must not be `localhost`, `127.0.0.1`, `::1`, or any variation.
+- IP ranges blocked: `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`, `169.254.0.0/16` (AWS metadata), `100.64.0.0/10`.
+- Port must be omitted (defaults to 443) or explicitly `443`.
+
+### HTTPS Outcall Consensus
+
+The Internet Computer executes HTTPS outcalls through all nodes on a subnet. Each node independently makes the HTTP request and the canister only commits the result when a threshold supermajority agrees on the response body. Because per-node origin IPs and timestamps can differ, all HTTP response headers are stripped by `transform_http_response` before consensus evaluation. **Webhook endpoints must return a deterministic, identical response body regardless of which subnet node sent the request.**
+
+### Principal-Gated Control Plane
+
+Canister methods that mutate project or key state (`create_project`, `create_api_key`, `delete_api_key`, `add_credits`) verify `api::caller()` is not an anonymous principal. The Internet Identity authentication flow is mandatory at the ICPay Dashboard level.
+
+### Upgrade Safety
+
+All state lives in `ic-stable-structures` `BTreeMap` collections mapped to `StableMemory`. Wasm module upgrades that change the in-memory representation are safe because serialization/deserialization uses `Encode!`/`Decode!` Candid macros rather than raw memory layout assumptions.
+
+---
+
+## 6. Pricing
+
+### Free Tier
+
+Every principal automatically receives **60 free execution credits per calendar month**. Credits reset on the 1st of each month at midnight UTC. The free tier includes all 7 REST API endpoints, all SDK methods, and both dispatch modes (HttpWebhook and CanisterCall).
+
+### Pay-As-You-Go
+
+After the free tier is exhausted, executions consume prepaid ICP credit packs at **\$0.0005 per execution run**.
+
+Credit packs available: 1,000 / 5,000 / 25,000 / 100,000 executions.
+
+### Cost Comparison
+
+| Scheduler | 8,760 runs/year (hourly) | Per run |
+|---|---|---|
+| icCron | \$4.32 | \$0.0005 |
+| AWS EventBridge | ~\$10.00 | \$0.00114 |
+| Vercel Cron (Pro) | ~\$240.00 (subscription) | — |
+| GitHub Actions (hosted) | ~\$17.52 | \$0.002 |
+
+### Query Calls are Free
+
+`listJobs`, `getJobLogs`, and `getProjectLogs` are served from `http_request` (IC query call path) and cost zero cycles. Only execution dispatches consume credits.
+
+---
+
+## 7. Common Integration Patterns
+
+### Vercel API Route Webhook
+
+```typescript
+// app/api/cron/route.ts
+import { NextResponse } from "next/server"
+
+export async function POST(req: Request) {
+  const secret = req.headers.get("x-cron-secret")
+  if (secret !== process.env.CRON_SECRET) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  }
+  // deterministic body — no timestamps or random values
+  return NextResponse.json({ ok: true })
+}
+```
+
+**icCron job pointing to this:**
+
+```json
+{
+  "label": "Vercel Nightly Job",
+  "cron_expression": "0 2 * * *",
+  "target": {
+    "type": "HttpWebhook",
+    "url": "https://your-app.vercel.app/api/cron",
+    "method": "POST",
+    "headers": [["x-cron-secret", "your-secret"]],
+    "body": "{}"
+  }
+}
+```
+
+### Discord Notification
+
+```json
+{
+  "label": "Daily Discord Ping",
+  "cron_expression": "0 9 * * *",
+  "target": {
+    "type": "HttpWebhook",
+    "url": "https://discord.com/api/webhooks/<id>/<token>",
+    "method": "POST",
+    "headers": [["Content-Type", "application/json"]],
+    "body": "{\"content\":\"Daily cron fired from the Internet Computer.\"}"
+  }
+}
+```
+
+### Inter-Canister Call (Candid)
+
+```json
+{
+  "label": "Weekly Canister Maintenance",
+  "cron_expression": "0 0 * * 0",
+  "target": {
+    "type": "CanisterCall",
+    "canister_id": "aaaaa-aa",
+    "method": "cleanup",
+    "args": ""
+  }
+}
+```
+
+---
+
+## 8. Cron Expression Reference
+
+Standard 5-field format: `minute hour day-of-month month day-of-week`
+
+| Expression | Meaning |
+|---|---|
+| `* * * * *` | Every minute |
+| `0 * * * *` | Every hour at :00 |
+| `0 2 * * *` | Daily at 02:00 UTC |
+| `0 9 * * 1` | Every Monday at 09:00 UTC |
+| `*/15 * * * *` | Every 15 minutes |
+| `0 0 1 * *` | First day of every month |
+| `0 0 * * 1-5` | Every weekday at midnight UTC |
+| `0 8,12,18 * * *` | At 08:00, 12:00, 18:00 UTC daily |
+
+Ranges (`1-5`), lists (`8,12,18`), and step values (`*/15`) are fully supported across all five fields.
+
+---
+
+## 9. Limitations & Notes
+
+- **Deterministic webhook bodies required**: Endpoints returning per-node IPs, random tokens, or server timestamps in the response body will cause consensus failure (`raw_reject_code: 2`). The response body must be identical across all subnet nodes.
+- **HTTPS only**: HTTP targets are rejected at job creation time.
+- **1-second minimum tick resolution**: The IC system timer fires at 1-second precision, not sub-second.
+- **50-log ring buffer per job**: Execution history retains the last 50 runs per job. Older entries are overwritten automatically.
+- **Max 100 project-wide logs**: `GET /api/v1/cron/logs` returns at most the 100 most recent log entries across all jobs in a project.
+- **No shared secrets in cron expressions**: Cron expressions and job labels are stored in stable memory. Do not embed secrets in labels; use headers for authentication tokens.

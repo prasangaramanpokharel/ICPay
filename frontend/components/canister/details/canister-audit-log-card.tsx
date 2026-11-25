@@ -1,13 +1,8 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Clock01Icon,
-  RefreshIcon,
-  InformationCircleIcon,
-  CheckmarkCircle02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ClockGlassIcon, RefreshCwGlassIcon, InfoGlassIcon, CircleCheckGlassIcon } from "@thesvg/ui-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -58,7 +53,7 @@ export function CanisterAuditLogCard({
       <CardHeader className="flex flex-col gap-4 border-b border-border/40 pb-4 sm:flex-row sm:items-center sm:justify-between p-0">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={Clock01Icon} className="size-4 text-muted-foreground" strokeWidth={1.5} />
+            <Icon icon={ClockGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.5} />
             <CardTitle className="text-base font-semibold text-foreground">
               {t("auditTitle")}
             </CardTitle>
@@ -76,7 +71,7 @@ export function CanisterAuditLogCard({
           disabled={isLoading}
           className="h-8 gap-1.5 text-xs cursor-pointer"
         >
-          <HugeiconsIcon icon={RefreshIcon} className={isLoading ? "size-3.5 animate-spin" : "size-3.5"} />
+          <Icon icon={RefreshCwGlassIcon} className={isLoading ? "size-3.5 animate-spin" : "size-3.5"} />
           <span>{t("refresh")}</span>
         </Button>
       </CardHeader>
@@ -95,7 +90,7 @@ export function CanisterAuditLogCard({
 
         {state.kind === "error" && (
           <div className="rounded-lg border border-border/40 bg-muted/20 p-8 text-center space-y-2">
-            <HugeiconsIcon icon={InformationCircleIcon} className="size-5 text-muted-foreground mx-auto" />
+            <Icon icon={InfoGlassIcon} className="size-5 text-muted-foreground mx-auto" />
             <p className="text-xs font-medium text-foreground">{t("standardCanister")}</p>
             <p className="text-xs text-muted-foreground max-w-sm mx-auto">{state.error}</p>
           </div>
@@ -132,7 +127,7 @@ export function CanisterAuditLogCard({
                 <span className="text-xs text-muted-foreground font-medium">{t("role")}</span>
                 <div className="flex items-center gap-1.5 pt-0.5">
                   <Badge variant="outline" className="text-[11px] gap-1 px-2 py-0.5 border-border text-muted-foreground">
-                    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3 text-muted-foreground" />
+                    <Icon icon={CircleCheckGlassIcon} className="size-3 text-muted-foreground" />
                     <span>{t("verified")}</span>
                   </Badge>
                 </div>

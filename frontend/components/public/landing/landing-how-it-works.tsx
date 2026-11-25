@@ -1,24 +1,16 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  CheckmarkBadge01Icon,
-  Layers01Icon,
-  SentIcon,
-  Share08Icon,
-  ShieldIcon,
-  UserIcon,
-} from "@hugeicons/core-free-icons"
+import { BadgeCheckGlassIcon, LayersGlassIcon, SendGlassIcon, Share2GlassIcon, ShieldGlassIcon, UserGlassIcon } from "@thesvg/ui-react"
 import { Card, CardTitle } from "@/components/ui/card"
 
 const STEP_CONFIG = [
-  { id: "0", icon: ShieldIcon },
-  { id: "1", icon: UserIcon },
-  { id: "2", icon: Share08Icon },
-  { id: "3", icon: SentIcon },
-  { id: "4", icon: CheckmarkBadge01Icon },
-  { id: "5", icon: Layers01Icon },
+  { id: "0", icon: ShieldGlassIcon },
+  { id: "1", icon: UserGlassIcon },
+  { id: "2", icon: Share2GlassIcon },
+  { id: "3", icon: SendGlassIcon },
+  { id: "4", icon: BadgeCheckGlassIcon },
+  { id: "5", icon: LayersGlassIcon },
 ] as const
 
 export function LandingHowItWorks() {
@@ -43,7 +35,7 @@ export function LandingHowItWorks() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {STEP_CONFIG.map(({ id: stepId, icon: Icon }, index) => {
+          {STEP_CONFIG.map(({ id: stepId, icon: StepIcon }, index) => {
             const stepNum = String(index + 1).padStart(2, "0")
             return (
               <Card
@@ -52,8 +44,7 @@ export function LandingHowItWorks() {
               >
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <HugeiconsIcon
-                      icon={Icon}
+                    <StepIcon
                       className="size-5 shrink-0 text-primary transition-transform duration-200 group-hover:scale-105"
                       strokeWidth={1.75}
                     />

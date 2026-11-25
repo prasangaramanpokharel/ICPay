@@ -2,19 +2,12 @@
 
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  AlertCircleIcon,
-  CheckmarkCircle02Icon,
-  DollarCircleIcon,
-  CpuIcon,
-  LockKeyIcon,
-  CloudIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CircleAlertGlassIcon, CircleCheckGlassIcon, DollarSignGlassIcon, CpuGlassIcon, LockGlassIcon, CloudGlassIcon } from "@thesvg/ui-react"
 
 const PAIN_POINTS = [
   {
-    icon: DollarCircleIcon,
+    icon: DollarSignGlassIcon,
     category: "Cost & Markups",
     problemTitle: "The Vercel $20/mo Cron Tax",
     problemDesc:
@@ -25,7 +18,7 @@ const PAIN_POINTS = [
     savings: "98.2% Less",
   },
   {
-    icon: CpuIcon,
+    icon: CpuGlassIcon,
     category: "Reliability",
     problemTitle: "Fragile 24/7 Keeper Bots",
     problemDesc:
@@ -36,7 +29,7 @@ const PAIN_POINTS = [
     savings: "Zero Downtime",
   },
   {
-    icon: LockKeyIcon,
+    icon: LockGlassIcon,
     category: "Security",
     problemTitle: "Hot Private Key Exposure",
     problemDesc:
@@ -47,7 +40,7 @@ const PAIN_POINTS = [
     savings: "Zero Hot Keys",
   },
   {
-    icon: CloudIcon,
+    icon: CloudGlassIcon,
     category: "Simplicity",
     problemTitle: "AWS Cloud Sprawl & IAM",
     problemDesc:
@@ -84,7 +77,7 @@ export function ProblemSolution() {
               <div className="flex items-center justify-between border-b border-border/50 pb-4">
                 <div className="flex items-center gap-2.5">
                   <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                    <HugeiconsIcon icon={item.icon} className="size-5" />
+                    <Icon icon={item.icon} className="size-5" />
                   </div>
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -101,8 +94,8 @@ export function ProblemSolution() {
               <div className="mt-5 space-y-4 text-sm">
                 <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-4">
                   <div className="flex items-start gap-2.5">
-                    <HugeiconsIcon
-                      icon={AlertCircleIcon}
+                    <Icon
+                      icon={CircleAlertGlassIcon}
                       className="mt-0.5 size-4 text-destructive shrink-0"
                     />
                     <div className="space-y-1">
@@ -116,8 +109,8 @@ export function ProblemSolution() {
 
                 <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
                   <div className="flex items-start gap-2.5">
-                    <HugeiconsIcon
-                      icon={CheckmarkCircle02Icon}
+                    <Icon
+                      icon={CircleCheckGlassIcon}
                       className="mt-0.5 size-4 text-primary shrink-0"
                     />
                     <div className="space-y-1">

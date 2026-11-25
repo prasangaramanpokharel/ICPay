@@ -11,6 +11,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://icpay.app"
 // behind public payment links: it carries no handle of its own.
 const PRIVATE = [
   "/wallet",
+  "/bucket",
+  "/cron",
   "/deposit",
   "/withdraw",
   "/transfer",
@@ -28,6 +30,10 @@ const PRIVATE = [
   "/analytics",
   "/launch",
   "/icpay",
+  "/yourname",
+  "/hello.txt",
+  "/1",
+  "/$",
 ]
 
 const BLOG_PUBLIC = BLOG_POSTS.map((post) => `/blog/${post.slug}`)
@@ -48,14 +54,16 @@ const PUBLIC = [
   "/llms.txt",
   "/llms-full.txt",
   "/icbucket",
-  "/products/icBucket",
-  "/products/icBucket/packages",
+  "/icbucket/pricing",
   "/bucket/docs",
   "/bucket/docs/",
+  "/iccron",
+  "/iccron/pricing",
+  "/iccron/security",
+  "/iccron/llm.txt",
+  "/cron/docs",
+  "/cron/docs/",
   "/icfalcon",
-  "/products/icFalcon",
-  "/products/icFalcon/packages",
-  "/products/icFalcon/commands",
   "/canister/tools",
   "/canister/manage",
   "/canister/create",

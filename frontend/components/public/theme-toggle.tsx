@@ -2,8 +2,8 @@
 
 import { useSyncExternalStore } from "react"
 import { useTheme } from "next-themes"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Moon02Icon, Sun01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { MoonGlassIcon, SunGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 
 export function ThemeToggle() {
@@ -29,7 +29,7 @@ export function ThemeToggle() {
       aria-label={dark ? "Switch to light mode" : "Switch to dark mode"}
       onClick={() => setTheme(dark ? "light" : "dark")}
     >
-      <HugeiconsIcon icon={dark ? Sun01Icon : Moon02Icon} className="size-4.5" strokeWidth={1.75} />
+      <Icon icon={dark ? SunGlassIcon : MoonGlassIcon} className="size-4.5" strokeWidth={1.75} />
     </Button>
   )
 }

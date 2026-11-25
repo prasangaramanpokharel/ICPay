@@ -3,18 +3,8 @@
 import { useRef } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowDownRight01Icon,
-  ArrowUpRight01Icon,
-  CloudIcon,
-  CommandLineIcon,
-  DatabaseIcon,
-  Globe02Icon,
-  HierarchySquare01Icon,
-  LockPasswordIcon,
-} from "@hugeicons/core-free-icons"
-import { Nodejs, Python, Go } from "@dev.icons/react"
+import { Icon } from "@/components/ui/icon"
+import { ArrowDownRightGlassIcon, ArrowUpRightGlassIcon, CloudGlassIcon, TerminalGlassIcon, DatabaseGlassIcon, GlobeGlassIcon, NetworkGlassIcon, LockGlassIcon, CodeGlassIcon } from "@thesvg/ui-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { AnimatedBeam } from "@/components/ui/animated-beam"
 
@@ -38,7 +28,7 @@ export function ArchitectureSection() {
       <div className="mx-auto max-w-7xl px-4 py-16 md:px-6 md:py-20 space-y-12">
         <div className="space-y-3 text-center">
           <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-muted/50 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-xs">
-            <HugeiconsIcon icon={HierarchySquare01Icon} className="size-3.5 text-primary" strokeWidth={1.75} />
+            <Icon icon={NetworkGlassIcon} className="size-3.5 text-primary" strokeWidth={1.75} />
             <span>Storage Topography & Lifecycle</span>
           </div>
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent md:text-5xl">
@@ -49,8 +39,8 @@ export function ArchitectureSection() {
           </p>
         </div>
 
-        <Card className="relative overflow-hidden bg-background">
-          <CardContent className="">
+        <Card className="relative overflow-hidden border-0 bg-transparent shadow-none">
+          <CardContent className="p-0">
             <div className="w-full overflow-x-auto">
               <div
                 ref={containerRef}
@@ -145,76 +135,53 @@ export function ArchitectureSection() {
                     <div className="flex flex-col items-center gap-2 text-center">
                       <div
                         ref={browserRef}
-                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
+                        className="z-10 flex size-12 items-center justify-center rounded-(--radius) border border-border/70 bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
                       >
-                        <HugeiconsIcon icon={Globe02Icon} className="size-5 text-foreground" strokeWidth={1.75} />
+                        <Icon icon={GlobeGlassIcon} className="size-5 text-foreground" strokeWidth={1.75} />
                       </div>
-                      <div className="space-y-0.5">
-                        <p className="text-xs font-semibold tracking-tight text-foreground">Browser App</p>
-                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
-                          Internet Identity
-                        </span>
-                      </div>
+                      <p className="text-xs font-semibold tracking-tight text-foreground">Browser App</p>
                     </div>
 
                     <div className="flex flex-col items-center gap-2 text-center">
                       <div
                         ref={sdkRef}
-                        className="z-10 flex size-12 items-center justify-center gap-1.5 rounded-2xl border border-border bg-card px-2 shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
+                        className="z-10 flex size-12 items-center justify-center rounded-(--radius) border border-border/70 bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
                       >
-                        <Nodejs size={14} />
-                        <Python size={14} />
-                        <Go size={14} />
+                        <Icon icon={CodeGlassIcon} className="size-5 text-foreground" strokeWidth={1.75} />
                       </div>
-                      <div className="space-y-0.5">
-                        <p className="text-xs font-semibold tracking-tight text-foreground">Client SDKs</p>
-                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
-                          Agent + API Key
-                        </span>
-                      </div>
+                      <p className="text-xs font-semibold tracking-tight text-foreground">Client SDKs</p>
                     </div>
 
                     <div className="flex flex-col items-center gap-2 text-center">
                       <div
                         ref={ciRef}
-                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
+                        className="z-10 flex size-12 items-center justify-center rounded-(--radius) border border-border/70 bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
                       >
-                        <HugeiconsIcon icon={CommandLineIcon} className="size-5 text-foreground" strokeWidth={1.75} />
+                        <Icon icon={TerminalGlassIcon} className="size-5 text-foreground" strokeWidth={1.75} />
                       </div>
-                      <div className="space-y-0.5">
-                        <p className="text-xs font-semibold tracking-tight text-foreground">CI & Automation</p>
-                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
-                          Signed Updates
-                        </span>
-                      </div>
+                      <p className="text-xs font-semibold tracking-tight text-foreground">CI & Automation</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col items-center gap-8">
-                  <span className="inline-flex items-center rounded-full border border-border/80 bg-background/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground shadow-2xs backdrop-blur-xs">
-                    Internet Computer
-                  </span>
-
+                <div className="flex flex-col items-center justify-center pt-10">
                   <div className="relative flex flex-col items-center gap-3 text-center">
                     <div
                       ref={canisterRef}
-                      className="z-10 relative flex size-24 items-center justify-center rounded-3xl border-2 border-primary/50 bg-card p-3 shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-primary"
+                      className="z-10 relative flex size-24 items-center justify-center rounded-(--radius) border-2 border-primary/50 bg-card p-3 shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-primary"
                     >
                       <Image
                         src="/images/logo/icbucket/icbucket.png"
                         alt="ICBucket Canister"
                         width={72}
                         height={72}
-                        className="size-16 sm:size-18 rounded-2xl object-contain drop-shadow-sm"
+                        className="size-16 sm:size-18 rounded-(--radius) object-contain drop-shadow-sm"
                       />
                     </div>
                     <div className="space-y-1">
-                      <div className="flex items-center justify-center gap-1.5">
-                        <p className="text-xs font-bold tracking-tight text-foreground">
-                          ICBucket Canister
-                        </p>
-                      </div>
+                      <p className="text-xs font-bold tracking-tight text-foreground">
+                        ICBucket Canister
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -228,46 +195,31 @@ export function ArchitectureSection() {
                     <div className="flex flex-col items-center gap-2 text-center">
                       <div
                         ref={uploadRef}
-                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
+                        className="z-10 flex size-12 items-center justify-center rounded-(--radius) border border-border/70 bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
                       >
-                        <HugeiconsIcon icon={LockPasswordIcon} className="size-5 text-foreground" strokeWidth={1.75} />
+                        <Icon icon={LockGlassIcon} className="size-5 text-foreground" strokeWidth={1.75} />
                       </div>
-                      <div className="space-y-0.5">
-                        <p className="text-xs font-semibold tracking-tight text-foreground">Upload Session</p>
-                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
-                          Chunk → Encrypt
-                        </span>
-                      </div>
+                      <p className="text-xs font-semibold tracking-tight text-foreground">Upload Session</p>
                     </div>
 
                     <div className="flex flex-col items-center gap-2 text-center">
                       <div
                         ref={memoryRef}
-                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
+                        className="z-10 flex size-12 items-center justify-center rounded-(--radius) border border-border/70 bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
                       >
-                        <HugeiconsIcon icon={DatabaseIcon} className="size-5 text-foreground" strokeWidth={1.75} />
+                        <Icon icon={DatabaseGlassIcon} className="size-5 text-foreground" strokeWidth={1.75} />
                       </div>
-                      <div className="space-y-0.5">
-                        <p className="text-xs font-semibold tracking-tight text-foreground">Stable Memory</p>
-                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
-                          Encrypted Blobs
-                        </span>
-                      </div>
+                      <p className="text-xs font-semibold tracking-tight text-foreground">Stable Memory</p>
                     </div>
 
                     <div className="flex flex-col items-center gap-2 text-center">
                       <div
                         ref={httpRef}
-                        className="z-10 flex size-12 items-center justify-center rounded-2xl border border-border bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
+                        className="z-10 flex size-12 items-center justify-center rounded-(--radius) border border-border/70 bg-card shadow-xs transition-all duration-200 hover:border-primary/50 hover:shadow-sm"
                       >
-                        <HugeiconsIcon icon={CloudIcon} className="size-5 text-foreground" strokeWidth={1.75} />
+                        <Icon icon={CloudGlassIcon} className="size-5 text-foreground" strokeWidth={1.75} />
                       </div>
-                      <div className="space-y-0.5">
-                        <p className="text-xs font-semibold tracking-tight text-foreground">HTTPS Gateway</p>
-                        <span className="inline-flex items-center rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
-                          *.raw.icp0.io · CDN
-                        </span>
-                      </div>
+                      <p className="text-xs font-semibold tracking-tight text-foreground">HTTPS Gateway</p>
                     </div>
                   </div>
                 </div>
@@ -277,12 +229,12 @@ export function ArchitectureSection() {
         </Card>
 
         <div className="grid gap-6 md:grid-cols-2">
-          <Card className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs transition-colors">
+          <Card className="rounded-(--radius) border border-border/70 bg-card/60 p-6 shadow-xs transition-colors">
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-border/60 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="flex size-7 items-center justify-center rounded-lg border border-border bg-muted/50 text-primary">
-                    <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-4" strokeWidth={1.75} />
+                    <Icon icon={ArrowUpRightGlassIcon} className="size-4" strokeWidth={1.75} />
                   </div>
                   <h3 className="text-sm font-semibold tracking-tight text-foreground">
                     {t("writePath")}
@@ -307,12 +259,42 @@ export function ArchitectureSection() {
             </div>
           </Card>
 
-          <Card className="rounded-2xl border border-border/80 bg-card p-6 shadow-xs transition-colors">
+          <Card className="rounded-(--radius) border border-border/70 bg-card/60 p-6 shadow-xs transition-colors">
             <div className="space-y-4">
               <div className="flex items-center justify-between border-b border-border/60 pb-3">
                 <div className="flex items-center gap-2.5">
                   <div className="flex size-7 items-center justify-center rounded-lg border border-border bg-muted/50 text-primary">
-                    <HugeiconsIcon icon={ArrowDownRight01Icon} className="size-4" strokeWidth={1.75} />
+                    <Icon icon={ArrowDownRightGlassIcon} className="size-4" strokeWidth={1.75} />
+                  </div>
+                  <h3 className="text-sm font-semibold tracking-tight text-foreground">
+                    {t("readPath")}
+                  </h3>
+                </div>
+                <span className="rounded-md border border-border/60 bg-muted/40 px-2 py-0.5 font-mono text-[10px] text-muted-foreground">
+                  Decryption & Edge CDN
+                </span>
+              </div>
+              <div className="space-y-3">
+                {READ_STEP_IDS.map((id, index) => (
+                  <div key={id} className="flex items-start gap-3 text-sm">
+                    <span className="flex size-5 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/10 text-[11px] font-semibold text-primary">
+                      {index + 1}
+                    </span>
+                    <p className="leading-relaxed text-muted-foreground">
+                      {t(`readSteps.${id}`)}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
+
+          <Card className="rounded-(--radius) border border-border/70 bg-card/60 p-6 shadow-xs transition-colors">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between border-b border-border/60 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex size-7 items-center justify-center rounded-lg border border-border bg-muted/50 text-primary">
+                    <Icon icon={ArrowDownRightGlassIcon} className="size-4" strokeWidth={1.75} />
                   </div>
                   <h3 className="text-sm font-semibold tracking-tight text-foreground">
                     {t("readPath")}

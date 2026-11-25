@@ -1,7 +1,7 @@
 "use client"
 
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Location01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { PinGlassIcon } from "@thesvg/ui-react"
 import type { CharityCampaign } from "@/lib/public/charity/campaigns"
 import { charityCampaignShellClass } from "@/lib/public/charity/shell"
 import { CharityBreadcrumb } from "@/components/public/charity/charity-breadcrumb"
@@ -47,7 +47,7 @@ export function CharityCampaignHero({ campaign }: CharityCampaignHeroProps) {
         <div className="mt-8 grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-14">
           <div className="space-y-6">
             <span className="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary-80 px-4 py-2 text-sm font-medium text-foreground shadow-sm backdrop-blur-sm">
-              <HugeiconsIcon icon={Location01Icon} className="size-4 shrink-0" strokeWidth={2} />
+              <Icon icon={PinGlassIcon} className="size-4 shrink-0" strokeWidth={2} />
               {campaign.countryLabel} • Emergency Relief • Since 2026
             </span>
 

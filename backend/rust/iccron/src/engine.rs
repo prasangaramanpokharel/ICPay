@@ -155,7 +155,7 @@ pub async fn execute_single_job(mut job: JobRecord) {
 
             let request = HttpRequestArgs {
                 url: url.clone(),
-                max_response_bytes: Some(512),
+                max_response_bytes: Some(8192),
                 method: req_method,
                 headers: req_headers,
                 body: body.clone(),
@@ -202,9 +202,19 @@ pub async fn execute_single_job(mut job: JobRecord) {
         job.consecutive_failures = job.consecutive_failures.saturating_add(1);
     }
 
+    let is_paused = matches!(
+        job.status,
+        JobStatus::Paused
+            | JobStatus::AutoPausedDormant
+            | JobStatus::ExhaustedCredits
+            | JobStatus::DeadLetterQueue
+    );
+
     let max_retries = job.max_retries.max(10);
     if job.consecutive_failures >= max_retries {
         job.status = JobStatus::DeadLetterQueue;
+        job.next_run_at = None;
+    } else if is_paused {
         job.next_run_at = None;
     } else {
         job.next_run_at = cron::next_run_timestamp(&job.compiled_cron, now_sec);
@@ -214,4 +224,5 @@ pub async fn execute_single_job(mut job: JobRecord) {
     job.last_run_at = Some(now_sec);
     job.updated_at = now_sec;
     storage::update_job(job);
+    arm_next_timer();
 }

@@ -6,22 +6,8 @@ import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import useSWR from "swr"
 import { toast } from "sonner"
-import {
-  Add01Icon,
-  ArrowRight01Icon,
-  CodeIcon,
-  Copy01Icon,
-  Delete02Icon,
-  EyeIcon,
-  EyeOffIcon,
-  InformationCircleIcon,
-  Key01Icon,
-  MoreHorizontalIcon,
-  Plug01Icon,
-  Search01Icon,
-  Tick02Icon,
-} from "@hugeicons/core-free-icons"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { PlusGlassIcon, CodeGlassIcon, CopyGlassIcon, DeleteGlassIcon, EyeGlassIcon, EyeOffGlassIcon, InfoGlassIcon, KeyGlassIcon, EllipsisGlassIcon, PlugGlassIcon, SearchGlassIcon } from "@thesvg/ui-react"
+import { Icon } from "@/components/ui/icon"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import {
   Breadcrumb,
@@ -37,6 +23,7 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import {
@@ -79,6 +66,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { PremiumGateDialog } from "@/components/shared/premium-gate"
 import { BucketApiKeyConnectModal } from "@/components/bucket/bucket-api-key-connect-modal"
@@ -335,9 +323,7 @@ export function BucketApiView() {
             <BreadcrumbItem>
               <BreadcrumbLink render={<Link href="/bucket" />}>{t("title")}</BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator>
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3" strokeWidth={1.75} />
-            </BreadcrumbSeparator>
+            <BreadcrumbSeparator />
             <BreadcrumbItem>
               <BreadcrumbPage>{t("apiKeysTitle")}</BreadcrumbPage>
             </BreadcrumbItem>
@@ -353,7 +339,7 @@ export function BucketApiView() {
             render={<Link href="/bucket/docs" />}
             className="gap-1.5"
           >
-            <HugeiconsIcon icon={CodeIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+            <Icon icon={CodeGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
             <span>Docs</span>
           </Button>
 
@@ -363,7 +349,7 @@ export function BucketApiView() {
             disabled={buckets.length === 0 || bucketsLoading}
             className="gap-1.5"
           >
-            <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={PlusGlassIcon} className="size-4" strokeWidth={1.75} />
             <span>Create API key</span>
           </Button>
         </div>
@@ -372,8 +358,8 @@ export function BucketApiView() {
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1">
-          <HugeiconsIcon
-            icon={Search01Icon}
+          <Icon
+            icon={SearchGlassIcon}
             className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
           />
           <Input
@@ -430,13 +416,25 @@ export function BucketApiView() {
             </TableHeader>
             <TableBody>
               {bucketsLoading || keysLoading ? (
-                Array.from({ length: 3 }).map((_, i) => (
+                Array.from({ length: 4 }).map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell colSpan={6} className="py-4 text-center">
-                      <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                        <Spinner className="size-4" />
-                        <span>Loading API keys…</span>
-                      </div>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32 rounded-md" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-28 rounded-md" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-5 w-20 rounded-full" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-3.5 w-16 rounded-md" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-3.5 w-20 rounded-md" />
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Skeleton className="ml-auto size-7 rounded-md" />
                     </TableCell>
                   </TableRow>
                 ))
@@ -445,7 +443,7 @@ export function BucketApiView() {
                   <TableCell colSpan={6} className="py-12 text-center">
                     <div className="mx-auto flex max-w-sm flex-col items-center justify-center gap-3">
                       <div className="flex size-10 items-center justify-center rounded-xl border border-border bg-muted/60 text-muted-foreground">
-                        <HugeiconsIcon icon={Key01Icon} className="size-5" />
+                        <Icon icon={KeyGlassIcon} className="size-5" />
                       </div>
                       <div className="space-y-1">
                         <p className="text-sm font-medium text-foreground">No buckets available</p>
@@ -470,7 +468,7 @@ export function BucketApiView() {
                   <TableCell colSpan={6} className="py-12 text-center">
                     <div className="mx-auto flex max-w-sm flex-col items-center justify-center gap-3">
                       <div className="flex size-10 items-center justify-center rounded-xl border border-border bg-muted/60 text-muted-foreground">
-                        <HugeiconsIcon icon={Key01Icon} className="size-5" />
+                        <Icon icon={KeyGlassIcon} className="size-5" />
                       </div>
                       <div className="space-y-1">
                         <p className="text-sm font-medium text-foreground">
@@ -489,7 +487,7 @@ export function BucketApiView() {
                           onClick={openCreateDialog}
                           className="mt-1 gap-1.5"
                         >
-                          <HugeiconsIcon icon={Add01Icon} className="size-3.5" />
+                          <Icon icon={PlusGlassIcon} className="size-3.5" />
                           <span>Create API key</span>
                         </Button>
                       )}
@@ -507,7 +505,7 @@ export function BucketApiView() {
                       <TableCell className="py-3">
                         <div className="flex items-center gap-2.5">
                           <div className="flex size-7 shrink-0 items-center justify-center rounded-lg border border-border/80 bg-muted/50 text-muted-foreground transition-colors group-hover:border-primary/40 group-hover:text-primary">
-                            <HugeiconsIcon icon={Key01Icon} className="size-3.5" strokeWidth={1.75} />
+                            <Icon icon={KeyGlassIcon} className="size-3.5" strokeWidth={1.75} />
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center gap-2">
@@ -536,10 +534,7 @@ export function BucketApiView() {
                             aria-label="Copy key token prefix"
                             title={copiedKeyHintId === key.id ? tc("copied") : tc("copy")}
                           >
-                            <HugeiconsIcon
-                              icon={copiedKeyHintId === key.id ? Tick02Icon : Copy01Icon}
-                              className="size-3.5"
-                            />
+                            <CopyIconIndicator copied={copiedKeyHintId === key.id} iconClassName="size-3.5" />
                           </Button>
                         </div>
                       </TableCell>
@@ -566,7 +561,7 @@ export function BucketApiView() {
                                 className="size-7 text-muted-foreground hover:text-foreground"
                                 aria-label="Key actions"
                               >
-                                <HugeiconsIcon icon={MoreHorizontalIcon} className="size-4" strokeWidth={1.75} />
+                                <Icon icon={EllipsisGlassIcon} className="size-4" strokeWidth={1.75} />
                               </Button>
                             }
                           />
@@ -575,7 +570,7 @@ export function BucketApiView() {
                               onClick={() => void handleCopyHint(key)}
                               className="gap-2 text-xs cursor-pointer"
                             >
-                              <HugeiconsIcon icon={Copy01Icon} className="size-3.5 text-muted-foreground" />
+                              <Icon icon={CopyGlassIcon} className="size-3.5 text-muted-foreground" />
                               <span>Copy token prefix</span>
                             </DropdownMenuItem>
 
@@ -583,7 +578,7 @@ export function BucketApiView() {
                               onClick={() => setCodeSnippetKey(key)}
                               className="gap-2 text-xs cursor-pointer"
                             >
-                              <HugeiconsIcon icon={Plug01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+                              <Icon icon={PlugGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
                               <span>Quick connect</span>
                             </DropdownMenuItem>
 
@@ -591,7 +586,7 @@ export function BucketApiView() {
                               onClick={() => setKeyToRevoke(key)}
                               className="gap-2 text-xs text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer"
                             >
-                              <HugeiconsIcon icon={Delete02Icon} className="size-3.5 text-destructive" />
+                              <Icon icon={DeleteGlassIcon} className="size-3.5 text-destructive" />
                               <span>Delete API key</span>
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -742,7 +737,7 @@ export function BucketApiView() {
           </DialogHeader>
 
           <div className="flex items-center gap-2 rounded-lg border border-info/30 bg-info/10 p-3 text-xs text-info">
-            <HugeiconsIcon icon={InformationCircleIcon} className="size-4 shrink-0 text-info" />
+            <Icon icon={InfoGlassIcon} className="size-4 shrink-0 text-info" />
             <span>You can only see this key once. Store it safely.</span>
           </div>
 
@@ -763,7 +758,7 @@ export function BucketApiView() {
                   aria-label={showCreatedSecret ? "Hide secret" : "Reveal secret"}
                   title={showCreatedSecret ? "Hide secret" : "Reveal secret"}
                 >
-                  <HugeiconsIcon icon={showCreatedSecret ? EyeOffIcon : EyeIcon} className="size-3.5" />
+                  <Icon icon={showCreatedSecret ? EyeOffGlassIcon : EyeGlassIcon} className="size-3.5" />
                 </InputGroupButton>
                 <InputGroupButton
                   size="icon-xs"
@@ -771,7 +766,7 @@ export function BucketApiView() {
                   aria-label="Copy secret"
                   title={copiedCreatedSecret ? tc("copied") : tc("copy")}
                 >
-                  <HugeiconsIcon icon={copiedCreatedSecret ? Tick02Icon : Copy01Icon} className="size-3.5" />
+                  <CopyIconIndicator copied={copiedCreatedSecret} iconClassName="size-3.5" />
                 </InputGroupButton>
               </InputGroupAddon>
             </InputGroup>

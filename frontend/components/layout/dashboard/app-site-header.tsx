@@ -6,8 +6,8 @@ import Image from "next/image"
 import { usePathname, useSearchParams } from "next/navigation"
 import useSWR from "swr"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { CrownIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CrownGlassIcon } from "@thesvg/ui-react"
 import { Separator } from "@/components/ui/separator"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { buttonVariants } from "@/components/ui/button"
@@ -225,10 +225,11 @@ export function AppSiteHeader() {
               buttonVariants({ variant: "ghost", size: "icon-sm" }),
               "size-8 rounded-full text-muted-foreground hover:text-primary transition-colors",
             )}
-            aria-label={t("settings.items.buyPremium" as never)}
+            title={t("settings.items.buyPremium" as never) || "Buy Premium Username"}
+            aria-label={t("settings.items.buyPremium" as never) || "Buy Premium Username"}
           >
-            <HugeiconsIcon
-              icon={CrownIcon}
+            <Icon
+              icon={CrownGlassIcon}
               className="size-4 shrink-0"
               strokeWidth={1.75}
             />

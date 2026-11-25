@@ -11,9 +11,9 @@ import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { AppPage } from "@/components/layout/dashboard/app-page"
-import { HugeiconsIcon } from "@hugeicons/react"
+import { Icon } from "@/components/ui/icon"
 import { PremiumBadge } from "@/components/verified/premium-badge"
-import { Search01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { SearchGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { avatarUriFor } from "@/lib/profile/avatar"
 import { useAuth } from "@/components/auth/auth-provider"
 import { prefetchUsernameProfile } from "@/lib/navigation/prefetchRoute"
@@ -31,12 +31,12 @@ function IcpverseSearch() {
   const searching = debounced.trim().length > 0
 
   return (
-    <AppPage title={tNav("icpverse")}>
+    <AppPage title={tNav("icpverse")} description={t("subtitle")}>
       <Card>
         <CardHeader className="border-b pb-4">
           <div className="relative">
-            <HugeiconsIcon
-              icon={Search01Icon}
+            <Icon
+              icon={SearchGlassIcon}
               className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
             />
             <Input
@@ -101,8 +101,8 @@ function IcpverseSearch() {
                         ) : null}
                       </ItemContent>
                       <ItemActions>
-                        <HugeiconsIcon
-                          icon={ArrowRight01Icon}
+                        <Icon
+                          icon={ArrowRightGlassIcon}
                           className="size-4 shrink-0 text-muted-foreground"
                         />
                       </ItemActions>

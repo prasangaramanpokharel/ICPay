@@ -6,11 +6,8 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowRight01Icon,
-  CheckmarkCircle02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightIcon, CircleCheckGlassIcon } from "@thesvg/ui-react"
 
 const FREQUENCIES = [
   { label: "Every 5 min", multiplier: 105120 },
@@ -61,14 +58,14 @@ export function PricingCalculator() {
 
         <div className="mt-12 grid gap-8 lg:grid-cols-12 lg:items-center">
           <div className="space-y-6 lg:col-span-7">
-            <Card className="rounded-3xl border border-border/80 bg-card/80 p-6 shadow-xl md:p-8 space-y-6">
+            <Card className="rounded-3xl border border-border/80 bg-card p-6 shadow-sm md:p-8 space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-bold text-foreground">Scheduled Job Count</p>
-                    <p className="text-xs text-muted-foreground">Number of active cron routines</p>
+                    <p className="text-sm font-bold text-foreground">Active Jobs</p>
+                    <p className="text-xs text-muted-foreground">Number of scheduled background routines</p>
                   </div>
-                  <span className="font-mono text-xl font-extrabold text-primary">
+                  <span className="font-mono text-2xl font-extrabold text-primary">
                     {jobs} {jobs === 1 ? "Job" : "Jobs"}
                   </span>
                 </div>
@@ -83,12 +80,17 @@ export function PricingCalculator() {
                   }
                   className="py-2"
                 />
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                  <span>1 Job</span>
+                  <span>12 Jobs</span>
+                  <span>25 Jobs</span>
+                </div>
               </div>
 
               <div className="space-y-3 border-t border-border/50 pt-5">
                 <div>
-                  <p className="text-sm font-bold text-foreground">Trigger Frequency</p>
-                  <p className="text-xs text-muted-foreground">How often each job runs</p>
+                  <p className="text-sm font-bold text-foreground">Trigger Cadence</p>
+                  <p className="text-xs text-muted-foreground">Execution interval per job</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -99,8 +101,8 @@ export function PricingCalculator() {
                       onClick={() => setFreqIndex(i)}
                       className={`rounded-xl px-3 py-2 text-xs font-semibold transition-all ${
                         freqIndex === i
-                          ? "bg-primary text-primary-foreground shadow-sm"
-                          : "border border-border bg-secondary/50 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                          ? "bg-primary text-primary-foreground shadow-xs"
+                          : "border border-border bg-secondary/40 text-muted-foreground hover:bg-secondary hover:text-foreground"
                       }`}
                     >
                       {f.label}
@@ -111,7 +113,7 @@ export function PricingCalculator() {
 
               <div className="space-y-3 border-t border-border/50 pt-5">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-muted-foreground">Annual Dispatched Executions:</span>
+                  <span className="text-muted-foreground">Total Dispatched Executions:</span>
                   <span className="font-mono font-bold text-foreground">
                     {stats.annualRuns.toLocaleString()} runs/yr
                   </span>
@@ -127,11 +129,11 @@ export function PricingCalculator() {
                   </div>
 
                   <div className="rounded-2xl border border-destructive/20 bg-destructive/5 p-4 space-y-1">
-                    <p className="text-[11px] font-semibold text-destructive">Vercel Pro (1 seat)</p>
+                    <p className="text-[11px] font-semibold text-destructive">Vercel Pro</p>
                     <p className="font-mono text-2xl font-black text-muted-foreground line-through">
                       ${stats.vercelAnnualCost}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">/ year minimum</p>
+                    <p className="text-[10px] text-muted-foreground">/ year base</p>
                   </div>
 
                   <div className="rounded-2xl border border-border bg-secondary/30 p-4 space-y-1">
@@ -139,7 +141,7 @@ export function PricingCalculator() {
                     <p className="font-mono text-2xl font-black text-muted-foreground">
                       ${stats.awsAnnualCost}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">+ CloudWatch & IAM</p>
+                    <p className="text-[10px] text-muted-foreground">+ CloudWatch</p>
                   </div>
                 </div>
               </div>
@@ -147,37 +149,37 @@ export function PricingCalculator() {
           </div>
 
           <div className="lg:col-span-5">
-            <Card className="rounded-3xl border border-primary/30 bg-gradient-to-b from-card to-card/90 p-6 shadow-2xl space-y-6">
+            <Card className="rounded-3xl border border-primary/30 bg-card p-6 shadow-xl space-y-6 md:p-8">
               <div className="space-y-2">
                 <Badge variant="outline" className="border-primary/30 bg-primary/10 text-xs font-semibold text-primary">
-                  Net Developer Value
+                  Net Savings
                 </Badge>
                 <h3 className="text-3xl font-black tracking-tight text-foreground">
                   Save ${stats.savingsAmount}{" "}
                   <span className="text-primary text-xl">({stats.savingsPct}%)</span>
                 </h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  Every dollar spent goes to decentralized computation, not bloated SaaS seats or idle cloud server hours.
+                  Every dollar spent goes strictly to on-chain execution, not recurring SaaS seats or idle cloud server hours.
                 </p>
               </div>
 
-              <div className="space-y-3 rounded-2xl border border-border/60 bg-background/60 p-4 text-xs">
+              <div className="space-y-3 rounded-2xl border border-border/60 bg-secondary/20 p-4 text-xs">
                 <div className="flex items-start gap-2.5">
-                  <HugeiconsIcon icon={CheckmarkCircle02Icon} className="mt-0.5 size-4 text-primary shrink-0" />
+                  <Icon icon={CircleCheckGlassIcon} className="mt-0.5 size-4 text-primary shrink-0" />
                   <span>
-                    <strong className="text-foreground">60 Free Runs Monthly:</strong> Permanent baseline without credit card requirement.
+                    <strong className="text-foreground">60 Free Monthly Runs:</strong> Permanent allowance with zero credit card required.
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <HugeiconsIcon icon={CheckmarkCircle02Icon} className="mt-0.5 size-4 text-primary shrink-0" />
+                  <Icon icon={CircleCheckGlassIcon} className="mt-0.5 size-4 text-primary shrink-0" />
                   <span>
                     <strong className="text-foreground">$0.0005 per Run:</strong> Ultra-predictable prepaid credits that never expire.
                   </span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <HugeiconsIcon icon={CheckmarkCircle02Icon} className="mt-0.5 size-4 text-primary shrink-0" />
+                  <Icon icon={CircleCheckGlassIcon} className="mt-0.5 size-4 text-primary shrink-0" />
                   <span>
-                    <strong className="text-foreground">No Minimum Spend:</strong> Top up with ICP or credit card only when you need.
+                    <strong className="text-foreground">No Minimum:</strong> Top up with ICP or fiat only as needed.
                   </span>
                 </div>
               </div>
@@ -185,15 +187,15 @@ export function PricingCalculator() {
               <div className="space-y-2 pt-2">
                 <Button
                   size="lg"
-                  className="w-full gap-2 rounded-xl font-semibold shadow-md"
+                  className="w-full gap-2 rounded-xl font-semibold shadow-sm"
                   nativeButton={false}
                   render={<Link href="/login" />}
                 >
-                  Claim 60 Free Monthly Runs
-                  <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                  Start
+                  <ArrowRightIcon className="size-4" />
                 </Button>
                 <p className="text-center text-[11px] text-muted-foreground">
-                  Login with Internet Identity · No credit card required
+                  Internet Identity login · No credit card required
                 </p>
               </div>
             </Card>
@@ -212,21 +214,21 @@ export function PricingCalculator() {
             </div>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Webhook & Candid targets
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Sub-second precision
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 7-day execution logs
               </li>
             </ul>
           </Card>
 
-          <Card className="relative rounded-2xl border border-primary/40 bg-card p-6 space-y-4 shadow-md">
+          <Card className="relative rounded-2xl border border-primary/40 bg-card p-6 space-y-4 shadow-sm">
             <div className="absolute -top-2.5 right-4 rounded-full bg-primary px-2.5 py-0.5 text-[10px] font-bold text-primary-foreground">
               POPULAR
             </div>
@@ -240,19 +242,19 @@ export function PricingCalculator() {
             </div>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Never-expiring credits
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Automated exponential retries
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Dead Letter Queue (DLQ)
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 30-day execution audit logs
               </li>
             </ul>
@@ -269,15 +271,15 @@ export function PricingCalculator() {
             </div>
             <ul className="space-y-2 text-xs text-muted-foreground">
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Dedicated subnet scheduling
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Custom cycle reserve management
               </li>
               <li className="flex items-center gap-2">
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-primary" />
+                <Icon icon={CircleCheckGlassIcon} className="size-3.5 text-primary" />
                 Priority SLA support & Discord bridge
               </li>
             </ul>

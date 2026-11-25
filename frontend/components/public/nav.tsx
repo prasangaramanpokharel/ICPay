@@ -8,6 +8,8 @@ import { getNavMenuIcon } from "@/lib/public/nav-menu-icons"
 import { charityCampaignShellClass, isCharityCampaignPath } from "@/lib/public/charity/shell"
 import type { NavMenuItem } from "@/lib/public/site-links"
 import { cn } from "@/lib/ui/utils"
+import { Icon } from "@/components/ui/icon"
+import { StoreGlassIcon, ScatterPlotGlassIcon, HeatTileGlassIcon, DropdownGlassIcon, type UiIcon } from "@thesvg/ui-react"
 import { LanguageSwitch } from "@/components/i18n/language-switch"
 import { NavMenuItemContent } from "@/components/public/nav-menu-item"
 import { PublicNavAuth, PublicNavMobileUser, PublicNavMobileAuthFallback } from "@/components/public/public-nav-auth"
@@ -60,10 +62,12 @@ function NavMenuListItem({ item }: { item: NavMenuItem }) {
 
 function NavDropdown({
   label,
+  icon: NavIcon,
   items,
   columns = 1,
 }: {
   label: string
+  icon?: UiIcon
   items: NavMenuItem[]
   columns?: 1 | 2
 }) {
@@ -72,8 +76,9 @@ function NavDropdown({
       <NavigationMenuItem>
         <NavigationMenuTrigger
           suppressHydrationWarning
-          className="bg-transparent px-3 font-normal text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground data-open:bg-transparent data-popup-open:bg-transparent"
+          className="bg-transparent px-3 font-normal text-muted-foreground shadow-none hover:bg-transparent hover:text-foreground data-open:bg-transparent data-popup-open:bg-transparent flex items-center gap-1.5"
         >
+          {NavIcon && <Icon icon={NavIcon} className="size-3.5 shrink-0" />}
           <span suppressHydrationWarning>{label}</span>
         </NavigationMenuTrigger>
         <NavigationMenuContent>
@@ -134,6 +139,7 @@ export function PublicNav() {
               priority
               loading="eager"
             />
+            <span className="h-4.5 w-px bg-border/80" aria-hidden="true" />
             <span className="text-xl font-bold tracking-tight text-foreground md:text-2xl">
               ic<span className="text-primary">Pay</span>
             </span>
@@ -169,10 +175,10 @@ export function PublicNav() {
                   )
                 })}
 
-                <NavDropdown label={sectionLabels.products} items={productMenu} />
-                <NavDropdown label={sectionLabels.resources} items={resourceMenu} columns={2} />
-                <NavDropdown label={sectionLabels.canisters} items={canisterMenu} />
-                <NavDropdown label={sectionLabels.more} items={legalMenu} columns={2} />
+                <NavDropdown label={sectionLabels.products} icon={StoreGlassIcon} items={productMenu} />
+                <NavDropdown label={sectionLabels.resources} icon={ScatterPlotGlassIcon} items={resourceMenu} columns={2} />
+                <NavDropdown label={sectionLabels.canisters} icon={HeatTileGlassIcon} items={canisterMenu} />
+                <NavDropdown label={sectionLabels.more} icon={DropdownGlassIcon} items={legalMenu} columns={2} />
               </NavigationMenuList>
             </MotionHighlight>
           </NavigationMenu>

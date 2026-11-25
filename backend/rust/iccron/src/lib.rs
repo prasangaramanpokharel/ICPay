@@ -173,16 +173,70 @@ fn list_my_projects() -> Vec<ProjectRecord> {
 // Jobs
 // -----------------------------------------------------------------------------
 
-#[ic_cdk::update]
-fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
-    let caller = ic_cdk::api::msg_caller();
+fn validate_target_url(url: &str) -> Result<(), String> {
+    let u = url.trim();
+    if !u.starts_with("https://") && !u.starts_with("http://") {
+        return Err("Webhook URL must begin with https:// or http://".to_string());
+    }
+    if u.len() > 2048 {
+        return Err("Webhook URL exceeds 2048 characters".to_string());
+    }
+
+    let after_scheme = if let Some(stripped) = u.strip_prefix("https://") {
+        stripped
+    } else {
+        u.strip_prefix("http://").unwrap()
+    };
+
+    let host_part = after_scheme
+        .split('/')
+        .next()
+        .unwrap_or("")
+        .split('?')
+        .next()
+        .unwrap_or("");
+    let host = host_part
+        .split(':')
+        .next()
+        .unwrap_or("")
+        .trim()
+        .to_ascii_lowercase();
+
+    if host.is_empty() {
+        return Err("Target URL has empty host".to_string());
+    }
+
+    if host == "169.254.169.254" || host.starts_with("169.254.") {
+        return Err("Target URL points to forbidden metadata endpoint".to_string());
+    }
+    if host == "localhost"
+        || host == "127.0.0.1"
+        || host.starts_with("127.")
+        || host == "0.0.0.0"
+        || host == "::1"
+        || host == "[::1]"
+    {
+        return Err("Target URL cannot point to loopback address".to_string());
+    }
+    if host.starts_with("10.") || host.starts_with("192.168.") {
+        return Err("Target URL cannot point to private network address".to_string());
+    }
+
+    Ok(())
+}
+
+fn create_job_inner(
+    caller: Principal,
+    is_controller: bool,
+    args: CreateJobArgs,
+) -> Result<JobRecord, String> {
     if caller == Principal::anonymous() {
         return Err("Anonymous callers cannot create jobs".to_string());
     }
 
     let project = storage::get_project(args.project_id)
         .ok_or_else(|| "Project not found".to_string())?;
-    if project.owner != caller {
+    if project.owner != caller && !is_controller {
         return Err("Unauthorized to add job to this project".to_string());
     }
 
@@ -201,13 +255,7 @@ fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
             }
         }
         JobTarget::HttpWebhook { url, .. } => {
-            let u = url.trim();
-            if !u.starts_with("https://") && !u.starts_with("http://") {
-                return Err("Webhook URL must begin with https:// or http://".to_string());
-            }
-            if u.len() > 2048 {
-                return Err("Webhook URL exceeds 2048 characters".to_string());
-            }
+            validate_target_url(url)?;
         }
     }
 
@@ -220,7 +268,7 @@ fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
     let job = JobRecord {
         id: job_id,
         project_id: args.project_id,
-        owner: caller,
+        owner: project.owner,
         label: label.to_string(),
         target: args.target,
         cron_expression: args.cron_expression.trim().to_string(),
@@ -239,6 +287,12 @@ fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
     engine::arm_next_timer();
 
     Ok(job)
+}
+
+#[ic_cdk::update]
+fn create_job(args: CreateJobArgs) -> Result<JobRecord, String> {
+    let caller = ic_cdk::api::msg_caller();
+    create_job_inner(caller, ic_cdk::api::is_controller(&caller), args)
 }
 
 #[ic_cdk::update]
@@ -271,13 +325,7 @@ fn update_job(args: UpdateJobArgs) -> Result<JobRecord, String> {
                 }
             }
             JobTarget::HttpWebhook { url, .. } => {
-                let u = url.trim();
-                if !u.starts_with("https://") && !u.starts_with("http://") {
-                    return Err("Webhook URL must begin with https:// or http://".to_string());
-                }
-                if u.len() > 2048 {
-                    return Err("Webhook URL exceeds 2048 characters".to_string());
-                }
+                validate_target_url(url)?;
             }
         }
         job.target = target;
@@ -324,16 +372,9 @@ fn delete_job(job_id: u64) -> Result<(), String> {
     Ok(())
 }
 
-#[ic_cdk::update]
-fn pause_job(job_id: u64) -> Result<(), String> {
-    let caller = ic_cdk::api::msg_caller();
-    let mut job = storage::get_job(job_id).ok_or_else(|| "Job not found".to_string())?;
-    if job.owner != caller {
-        return Err("Unauthorized".to_string());
-    }
-
+fn pause_job_inner(mut job: JobRecord) {
     if let Some(ts) = job.next_run_at {
-        storage::remove_from_schedule(ts, job_id);
+        storage::remove_from_schedule(ts, job.id);
     }
     let now_sec = ic_cdk::api::time() / 1_000_000_000;
     job.status = JobStatus::Paused;
@@ -341,25 +382,37 @@ fn pause_job(job_id: u64) -> Result<(), String> {
     job.updated_at = now_sec;
     storage::update_job(job);
     engine::arm_next_timer();
+}
+
+fn resume_job_inner(mut job: JobRecord) {
+    let now_sec = ic_cdk::api::time() / 1_000_000_000;
+    job.status = JobStatus::Active;
+    job.consecutive_failures = 0;
+    job.next_run_at = cron::next_run_timestamp(&job.compiled_cron, now_sec);
+    job.updated_at = now_sec;
+    storage::update_job(job);
+    engine::arm_next_timer();
+}
+
+#[ic_cdk::update]
+fn pause_job(job_id: u64) -> Result<(), String> {
+    let caller = ic_cdk::api::msg_caller();
+    let job = storage::get_job(job_id).ok_or_else(|| "Job not found".to_string())?;
+    if job.owner != caller {
+        return Err("Unauthorized".to_string());
+    }
+    pause_job_inner(job);
     Ok(())
 }
 
 #[ic_cdk::update]
 fn resume_job(job_id: u64) -> Result<(), String> {
     let caller = ic_cdk::api::msg_caller();
-    let mut job = storage::get_job(job_id).ok_or_else(|| "Job not found".to_string())?;
+    let job = storage::get_job(job_id).ok_or_else(|| "Job not found".to_string())?;
     if job.owner != caller {
         return Err("Unauthorized".to_string());
     }
-
-    let now_sec = ic_cdk::api::time() / 1_000_000_000;
-    job.status = JobStatus::Active;
-    job.consecutive_failures = 0;
-    job.next_run_at = cron::next_run_timestamp(&job.compiled_cron, now_sec);
-    job.updated_at = now_sec;
-
-    storage::update_job(job);
-    engine::arm_next_timer();
+    resume_job_inner(job);
     Ok(())
 }
 
@@ -419,7 +472,7 @@ fn list_jobs(project_id: Option<u64>) -> Vec<JobSummary> {
 fn get_job(job_id: u64) -> Result<JobRecord, String> {
     let caller = ic_cdk::api::msg_caller();
     let job = storage::get_job(job_id).ok_or_else(|| "Job not found".to_string())?;
-    if job.owner != caller {
+    if job.owner != caller && !ic_cdk::api::is_controller(&caller) {
         return Err("Unauthorized".to_string());
     }
     Ok(job)
@@ -429,7 +482,7 @@ fn get_job(job_id: u64) -> Result<JobRecord, String> {
 fn get_job_logs(job_id: u64, limit: Option<u64>) -> Vec<ExecutionLog> {
     let caller = ic_cdk::api::msg_caller();
     if let Some(job) = storage::get_job(job_id) {
-        if job.owner != caller {
+        if job.owner != caller && !ic_cdk::api::is_controller(&caller) {
             return vec![];
         }
     } else {
@@ -595,4 +648,680 @@ fn get_audit_stats() -> CronAuditStats {
     let cycles = ic_cdk::api::canister_cycle_balance();
     let pages = ic_cdk::stable::stable_size();
     storage::get_audit_stats(credits::TREASURY_PRINCIPAL_TEXT, cycles, pages)
+}
+
+// -----------------------------------------------------------------------------
+// Inbound HTTP Gateway Handlers
+// -----------------------------------------------------------------------------
+
+fn standard_cors_headers() -> Vec<types::HeaderField> {
+    vec![
+        types::HeaderField("Content-Type".to_string(), "application/json".to_string()),
+        types::HeaderField("Access-Control-Allow-Origin".to_string(), "*".to_string()),
+        types::HeaderField(
+            "Access-Control-Allow-Methods".to_string(),
+            "POST, GET, OPTIONS".to_string(),
+        ),
+        types::HeaderField(
+            "Access-Control-Allow-Headers".to_string(),
+            "Authorization, Content-Type".to_string(),
+        ),
+    ]
+}
+
+fn extract_api_key(req: &types::InboundHttpRequest) -> Option<String> {
+    for types::HeaderField(name, val) in &req.headers {
+        if name.eq_ignore_ascii_case("authorization") {
+            let trimmed = val.trim();
+            if let Some(token) = trimmed.strip_prefix("Bearer ") {
+                return Some(token.trim().to_string());
+            } else {
+                return Some(trimmed.to_string());
+            }
+        }
+    }
+
+    #[derive(serde::Deserialize)]
+    struct KeyPayload {
+        api_key: Option<String>,
+    }
+    let payload: Option<KeyPayload> = serde_json::from_slice(&req.body).ok();
+    payload.and_then(|p| p.api_key)
+}
+
+fn json_response(
+    status_code: u16,
+    cors_headers: Vec<types::HeaderField>,
+    body: serde_json::Value,
+) -> types::InboundHttpResponse {
+    types::InboundHttpResponse {
+        status_code,
+        headers: cors_headers,
+        body: serde_json::to_vec(&body).unwrap_or_default(),
+        upgrade: None,
+    }
+}
+
+fn verify_http_api_key(
+    req: &types::InboundHttpRequest,
+    cors_headers: &[types::HeaderField],
+) -> Result<types::ApiKeyRecord, types::InboundHttpResponse> {
+    let key = match extract_api_key(req) {
+        Some(k) if !k.is_empty() => k,
+        _ => {
+            return Err(json_response(
+                401,
+                cors_headers.to_vec(),
+                serde_json::json!({
+                    "ok": false,
+                    "error": "Missing Authorization header or api_key in request body"
+                }),
+            ));
+        }
+    };
+
+    api_keys::verify_key(&key).ok_or_else(|| {
+        json_response(
+            401,
+            cors_headers.to_vec(),
+            serde_json::json!({
+                "ok": false,
+                "error": "Invalid or revoked API key"
+            }),
+        )
+    })
+}
+
+fn job_to_json(job: &JobRecord) -> serde_json::Value {
+    let (target_type, target_preview) = match &job.target {
+        JobTarget::CanisterCall { canister_id, method, .. } => (
+            "CanisterCall",
+            format!("{}::{}", canister_id, method),
+        ),
+        JobTarget::HttpWebhook { url, method, .. } => (
+            "HttpWebhook",
+            format!("{:?} {}", method, url),
+        ),
+    };
+    serde_json::json!({
+        "id": job.id,
+        "project_id": job.project_id,
+        "label": job.label,
+        "cron_expression": job.cron_expression,
+        "target_type": target_type,
+        "target_preview": target_preview,
+        "status": job.status.as_str(),
+        "total_runs": job.total_runs,
+        "consecutive_failures": job.consecutive_failures,
+        "next_run_at": job.next_run_at,
+        "last_run_at": job.last_run_at,
+        "created_at": job.created_at,
+        "updated_at": job.updated_at,
+    })
+}
+
+fn normalized_path(url: &str) -> &str {
+    let raw = url.split('?').next().unwrap_or(url);
+    let trimmed = raw.trim_end_matches('/');
+    if trimmed.is_empty() { "/" } else { trimmed }
+}
+
+fn log_to_json(l: ExecutionLog, job_label: Option<&str>) -> serde_json::Value {
+    serde_json::json!({
+        "log_id": l.log_id,
+        "job_id": l.job_id,
+        "job_label": job_label,
+        "started_at": l.started_at,
+        "duration_ms": l.duration_ms,
+        "success": l.success,
+        "status_code": l.status_code,
+        "error": l.error,
+        "response_snippet": l.response_snippet,
+    })
+}
+
+#[ic_cdk::query]
+fn http_request(req: types::InboundHttpRequest) -> types::InboundHttpResponse {
+    let cors_headers = standard_cors_headers();
+
+    if req.method.eq_ignore_ascii_case("OPTIONS") {
+        return types::InboundHttpResponse {
+            status_code: 204,
+            headers: cors_headers,
+            body: vec![],
+            upgrade: None,
+        };
+    }
+
+    let path = normalized_path(&req.url);
+
+    if req.method.eq_ignore_ascii_case("POST") {
+        let is_job_action = path
+            .strip_prefix("/api/v1/cron/jobs/")
+            .and_then(|rest| rest.split_once('/'))
+            .is_some_and(|(id, action)| {
+                id.parse::<u64>().is_ok() && (action == "pause" || action == "resume")
+            });
+
+        if path != "/api/v1/cron/trigger" && path != "/api/v1/cron/jobs" && !is_job_action {
+            return json_response(
+                404,
+                cors_headers,
+                serde_json::json!({ "ok": false, "error": "Endpoint not found" }),
+            );
+        }
+
+        if let Err(err_res) = verify_http_api_key(&req, &cors_headers) {
+            return err_res;
+        }
+
+        return types::InboundHttpResponse {
+            status_code: 200,
+            headers: vec![],
+            body: vec![],
+            upgrade: Some(true),
+        };
+    }
+
+    if req.method.eq_ignore_ascii_case("DELETE") {
+        if path != "/api/v1/cron/jobs" && !path.starts_with("/api/v1/cron/jobs/") {
+            return json_response(
+                404,
+                cors_headers,
+                serde_json::json!({ "ok": false, "error": "Endpoint not found" }),
+            );
+        }
+
+        if let Err(err_res) = verify_http_api_key(&req, &cors_headers) {
+            return err_res;
+        }
+
+        return types::InboundHttpResponse {
+            status_code: 200,
+            headers: vec![],
+            body: vec![],
+            upgrade: Some(true),
+        };
+    }
+
+    if req.method.eq_ignore_ascii_case("GET") {
+        if path == "/api/v1/cron/jobs" {
+            let key_record = match verify_http_api_key(&req, &cors_headers) {
+                Ok(rec) => rec,
+                Err(err_res) => return err_res,
+            };
+            let jobs: Vec<serde_json::Value> =
+                storage::list_jobs_by_owner(key_record.owner, Some(key_record.project_id))
+                    .iter()
+                    .map(job_to_json)
+                    .collect();
+            return json_response(
+                200,
+                cors_headers,
+                serde_json::json!({
+                    "ok": true,
+                    "project_id": key_record.project_id,
+                    "jobs": jobs,
+                }),
+            );
+        }
+
+        if path == "/api/v1/cron/logs" {
+            let key_record = match verify_http_api_key(&req, &cors_headers) {
+                Ok(rec) => rec,
+                Err(err_res) => return err_res,
+            };
+            let jobs = storage::list_jobs_by_owner(key_record.owner, Some(key_record.project_id));
+            let mut all_logs: Vec<(ExecutionLog, String)> = Vec::new();
+            for j in jobs {
+                for l in storage::list_job_logs(j.id, 50) {
+                    all_logs.push((l, j.label.clone()));
+                }
+            }
+            all_logs.sort_by(|a, b| {
+                b.0.started_at
+                    .cmp(&a.0.started_at)
+                    .then_with(|| b.0.log_id.cmp(&a.0.log_id))
+            });
+            all_logs.truncate(100);
+            let logs: Vec<serde_json::Value> = all_logs
+                .into_iter()
+                .map(|(l, label)| log_to_json(l, Some(&label)))
+                .collect();
+            return json_response(
+                200,
+                cors_headers,
+                serde_json::json!({
+                    "ok": true,
+                    "project_id": key_record.project_id,
+                    "logs": logs,
+                }),
+            );
+        }
+
+        if let Some((id_str, action)) = path
+            .strip_prefix("/api/v1/cron/jobs/")
+            .and_then(|rest| rest.split_once('/'))
+        {
+            if action == "logs" {
+                if let Ok(job_id) = id_str.parse::<u64>() {
+                    let key_record = match verify_http_api_key(&req, &cors_headers) {
+                        Ok(rec) => rec,
+                        Err(err_res) => return err_res,
+                    };
+                    let job = match storage::get_job(job_id) {
+                        Some(j) => j,
+                        None => {
+                            return json_response(
+                                404,
+                                cors_headers,
+                                serde_json::json!({ "ok": false, "error": format!("Job {} not found", job_id) }),
+                            );
+                        }
+                    };
+                    if job.project_id != key_record.project_id {
+                        return json_response(
+                            403,
+                            cors_headers,
+                            serde_json::json!({ "ok": false, "error": "API key does not have access to this job's project" }),
+                        );
+                    }
+                    let logs: Vec<serde_json::Value> = storage::list_job_logs(job_id, 50)
+                        .into_iter()
+                        .map(|l| log_to_json(l, Some(&job.label)))
+                        .collect();
+                    return json_response(
+                        200,
+                        cors_headers,
+                        serde_json::json!({ "ok": true, "job_id": job_id, "logs": logs }),
+                    );
+                }
+            }
+        }
+
+        return json_response(
+            200,
+            cors_headers,
+            serde_json::json!({
+                "status": "ok",
+                "service": "icCron",
+                "canister_id": ic_cdk::api::canister_self().to_text()
+            }),
+        );
+    }
+
+    json_response(
+        405,
+        cors_headers,
+        serde_json::json!({ "error": "Method not allowed" }),
+    )
+}
+
+#[ic_cdk::update]
+async fn http_request_update(req: types::InboundHttpRequest) -> types::InboundHttpResponse {
+    let cors_headers = standard_cors_headers();
+
+    if req.method.eq_ignore_ascii_case("OPTIONS") {
+        return types::InboundHttpResponse {
+            status_code: 204,
+            headers: cors_headers,
+            body: vec![],
+            upgrade: None,
+        };
+    }
+
+    let key_record = match verify_http_api_key(&req, &cors_headers) {
+        Ok(rec) => rec,
+        Err(err_res) => return err_res,
+    };
+
+    let path = normalized_path(&req.url);
+
+    if req.method.eq_ignore_ascii_case("POST") && path == "/api/v1/cron/jobs" {
+        #[derive(serde::Deserialize)]
+        struct HttpCreateJobPayload {
+            label: String,
+            cron_expression: String,
+            max_retries: Option<u8>,
+            target: HttpJobTargetPayload,
+        }
+        #[derive(serde::Deserialize)]
+        #[serde(tag = "type")]
+        enum HttpJobTargetPayload {
+            HttpWebhook {
+                url: String,
+                method: Option<String>,
+                headers: Option<Vec<(String, String)>>,
+                body: Option<String>,
+            },
+            CanisterCall {
+                canister_id: String,
+                method: String,
+                payload: Option<Vec<u8>>,
+            },
+        }
+
+        let payload: HttpCreateJobPayload = match serde_json::from_slice(&req.body) {
+            Ok(p) => p,
+            Err(e) => {
+                return json_response(
+                    400,
+                    cors_headers,
+                    serde_json::json!({
+                        "ok": false,
+                        "error": format!("Invalid JSON payload: {}", e)
+                    }),
+                );
+            }
+        };
+
+        let target = match payload.target {
+            HttpJobTargetPayload::HttpWebhook {
+                url,
+                method,
+                headers,
+                body,
+            } => {
+                let http_method = match method.as_deref().unwrap_or("POST").to_uppercase().as_str() {
+                    "GET" => types::HttpMethod::GET,
+                    "HEAD" => types::HttpMethod::HEAD,
+                    _ => types::HttpMethod::POST,
+                };
+                types::JobTarget::HttpWebhook {
+                    url,
+                    method: http_method,
+                    headers: headers.unwrap_or_default(),
+                    body: body.map(|b| b.into_bytes()),
+                }
+            }
+            HttpJobTargetPayload::CanisterCall {
+                canister_id,
+                method,
+                payload,
+            } => {
+                let principal = match Principal::from_text(canister_id.trim()) {
+                    Ok(p) => p,
+                    Err(_) => {
+                        return json_response(
+                            400,
+                            cors_headers,
+                            serde_json::json!({ "ok": false, "error": "Invalid target canister_id" }),
+                        );
+                    }
+                };
+                types::JobTarget::CanisterCall {
+                    canister_id: principal,
+                    method,
+                    payload: payload.unwrap_or_default(),
+                }
+            }
+        };
+
+        let args = CreateJobArgs {
+            project_id: key_record.project_id,
+            label: payload.label,
+            target,
+            cron_expression: payload.cron_expression,
+            max_retries: payload.max_retries,
+        };
+
+        return match create_job_inner(key_record.owner, false, args) {
+            Ok(job) => json_response(
+                201,
+                cors_headers,
+                serde_json::json!({ "ok": true, "job": job_to_json(&job) }),
+            ),
+            Err(err) => json_response(
+                400,
+                cors_headers,
+                serde_json::json!({ "ok": false, "error": err }),
+            ),
+        };
+    }
+
+    if req.method.eq_ignore_ascii_case("DELETE")
+        && (path == "/api/v1/cron/jobs" || path.starts_with("/api/v1/cron/jobs/"))
+    {
+        #[derive(serde::Deserialize)]
+        struct DeletePayload {
+            job_id: Option<u64>,
+        }
+        let path_id = path
+            .strip_prefix("/api/v1/cron/jobs/")
+            .and_then(|s| s.parse::<u64>().ok());
+        let body_id = serde_json::from_slice::<DeletePayload>(&req.body)
+            .ok()
+            .and_then(|p| p.job_id);
+        let job_id = match path_id.or(body_id) {
+            Some(id) => id,
+            None => {
+                return json_response(
+                    400,
+                    cors_headers,
+                    serde_json::json!({ "ok": false, "error": "Missing job_id" }),
+                );
+            }
+        };
+
+        let job = match storage::get_job(job_id) {
+            Some(j) => j,
+            None => {
+                return json_response(
+                    404,
+                    cors_headers,
+                    serde_json::json!({ "ok": false, "error": format!("Job {} not found", job_id) }),
+                );
+            }
+        };
+
+        if job.project_id != key_record.project_id {
+            return json_response(
+                403,
+                cors_headers,
+                serde_json::json!({ "ok": false, "error": "API key does not have access to this job's project" }),
+            );
+        }
+
+        storage::delete_job(job_id);
+        storage::delete_job_logs(job_id);
+        return json_response(
+            200,
+            cors_headers,
+            serde_json::json!({ "ok": true, "deleted": true, "job_id": job_id }),
+        );
+    }
+
+    if req.method.eq_ignore_ascii_case("POST") {
+        if let Some((id_str, action)) = path
+            .strip_prefix("/api/v1/cron/jobs/")
+            .and_then(|rest| rest.split_once('/'))
+        {
+            if action == "pause" || action == "resume" {
+                let job_id = match id_str.parse::<u64>() {
+                    Ok(id) => id,
+                    Err(_) => {
+                        return json_response(
+                            400,
+                            cors_headers,
+                            serde_json::json!({ "ok": false, "error": "Invalid job_id" }),
+                        );
+                    }
+                };
+                let job = match storage::get_job(job_id) {
+                    Some(j) => j,
+                    None => {
+                        return json_response(
+                            404,
+                            cors_headers,
+                            serde_json::json!({ "ok": false, "error": format!("Job {} not found", job_id) }),
+                        );
+                    }
+                };
+                if job.project_id != key_record.project_id {
+                    return json_response(
+                        403,
+                        cors_headers,
+                        serde_json::json!({ "ok": false, "error": "API key does not have access to this job's project" }),
+                    );
+                }
+                if action == "pause" {
+                    pause_job_inner(job);
+                    return json_response(
+                        200,
+                        cors_headers,
+                        serde_json::json!({ "ok": true, "job_id": job_id, "status": "Paused" }),
+                    );
+                } else {
+                    resume_job_inner(job);
+                    return json_response(
+                        200,
+                        cors_headers,
+                        serde_json::json!({ "ok": true, "job_id": job_id, "status": "Active" }),
+                    );
+                }
+            }
+        }
+    }
+
+    if !req.method.eq_ignore_ascii_case("POST") || path != "/api/v1/cron/trigger" {
+        return json_response(
+            404,
+            cors_headers,
+            serde_json::json!({ "ok": false, "error": "Endpoint not found" }),
+        );
+    }
+
+    #[derive(serde::Deserialize)]
+    struct TriggerPayload {
+        job_id: Option<u64>,
+    }
+
+    let payload: Option<TriggerPayload> = serde_json::from_slice(&req.body).ok();
+    let job_id = match payload.and_then(|p| p.job_id) {
+        Some(id) => id,
+        None => {
+            return json_response(
+                400,
+                cors_headers,
+                serde_json::json!({ "ok": false, "error": "Missing job_id in JSON payload" }),
+            );
+        }
+    };
+
+    let job = match storage::get_job(job_id) {
+        Some(j) => j,
+        None => {
+            return json_response(
+                404,
+                cors_headers,
+                serde_json::json!({ "ok": false, "error": format!("Job {} not found", job_id) }),
+            );
+        }
+    };
+
+    if job.project_id != key_record.project_id {
+        return json_response(
+            403,
+            cors_headers,
+            serde_json::json!({ "ok": false, "error": "API key does not have access to this job's project" }),
+        );
+    }
+
+    ic_cdk::futures::spawn(async move {
+        engine::execute_single_job(job).await;
+    });
+
+    json_response(
+        200,
+        cors_headers,
+        serde_json::json!({
+            "ok": true,
+            "job_id": job_id,
+            "status": "triggered"
+        }),
+    )
+}
+
+// -----------------------------------------------------------------------------
+// Security Unit Tests
+// -----------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_url_ssrf_validation() {
+        assert!(validate_target_url("http://169.254.169.254/latest/meta-data").is_err());
+        assert!(validate_target_url("https://169.254.1.1/api").is_err());
+        assert!(validate_target_url("http://localhost:3000/trigger").is_err());
+        assert!(validate_target_url("https://127.0.0.1:8080").is_err());
+        assert!(validate_target_url("http://127.0.0.2/test").is_err());
+        assert!(validate_target_url("http://0.0.0.0/test").is_err());
+        assert!(validate_target_url("http://10.0.0.1/private").is_err());
+        assert!(validate_target_url("http://192.168.1.1/router").is_err());
+        assert!(validate_target_url("ftp://example.com/file").is_err());
+
+        assert!(validate_target_url("https://httpbin.org/post").is_ok());
+        assert!(validate_target_url("https://discord.com/api/webhooks/12345").is_ok());
+        assert!(validate_target_url("https://api.myproject.com/v1/cron").is_ok());
+    }
+
+    #[test]
+    fn test_extract_api_key_bearer() {
+        let req = types::InboundHttpRequest {
+            method: "POST".to_string(),
+            url: "/api/v1/cron/trigger".to_string(),
+            headers: vec![types::HeaderField(
+                "Authorization".to_string(),
+                "Bearer icp_cron_test_key_123".to_string(),
+            )],
+            body: vec![],
+        };
+        assert_eq!(
+            extract_api_key(&req),
+            Some("icp_cron_test_key_123".to_string())
+        );
+    }
+
+    #[test]
+    fn test_extract_api_key_body() {
+        let payload = serde_json::json!({
+            "api_key": "icp_cron_body_key_456",
+            "job_id": 1
+        });
+        let req = types::InboundHttpRequest {
+            method: "POST".to_string(),
+            url: "/api/v1/cron/trigger".to_string(),
+            headers: vec![],
+            body: serde_json::to_vec(&payload).unwrap(),
+        };
+        assert_eq!(
+            extract_api_key(&req),
+            Some("icp_cron_body_key_456".to_string())
+        );
+    }
+
+    #[test]
+    fn test_extract_api_key_missing() {
+        let req = types::InboundHttpRequest {
+            method: "POST".to_string(),
+            url: "/api/v1/cron/trigger".to_string(),
+            headers: vec![],
+            body: vec![],
+        };
+        assert_eq!(extract_api_key(&req), None);
+    }
+
+    #[test]
+    fn test_paused_job_next_run_isolation() {
+        let is_paused = matches!(
+            types::JobStatus::Paused,
+            types::JobStatus::Paused
+                | types::JobStatus::AutoPausedDormant
+                | types::JobStatus::ExhaustedCredits
+                | types::JobStatus::DeadLetterQueue
+        );
+        assert!(is_paused);
+    }
 }

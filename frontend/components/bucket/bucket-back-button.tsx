@@ -2,8 +2,8 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowLeftGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 
 export function BucketBackButton({
@@ -17,7 +17,7 @@ export function BucketBackButton({
 
   const label = (
     <>
-      <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
+      <Icon icon={ArrowLeftGlassIcon} className="size-4" />
       {t("back")}
     </>
   )

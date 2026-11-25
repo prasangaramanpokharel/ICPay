@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
+import { motion, AnimatePresence } from "motion/react"
 import { useAuth } from "@/components/auth/auth-provider"
 import { TradeForm, type TradeSuccess } from "@/components/trade/trade-form"
 import { TradeSuccessView } from "@/components/trade/trade-success"
@@ -20,41 +21,54 @@ function TradePageContent() {
   const from = params.get("from")
   const to = params.get("to")
 
-  if (done) {
-    return (
-      <AppPage>
-        <div className="mx-auto w-full max-w-md">
-          <TradeSuccessView
-            amountIn={done.amountIn}
-            amountOut={done.amountOut}
-            tokenIn={done.tokenIn}
-            tokenOut={done.tokenOut}
-            beforeIn={done.beforeIn}
-            beforeOut={done.beforeOut}
-            onDone={() => setDone(null)}
-          />
-        </div>
-      </AppPage>
-    )
-  }
-
   return (
-    <AppPage title={t("title")} description={t("subtitle")}>
-      <TradeForm
-        identity={identity}
-        initialTokenIn={from}
-        initialTokenOut={to}
-        onSuccess={(result) => {
-          applyTradeBalances({
-            tokenInId: result.tokenIn.ledgerId,
-            tokenOutId: result.tokenOut.ledgerId,
-            amountIn: result.amountIn,
-            amountOut: result.amountOut,
-            tokenInFee: result.tokenIn.fee,
-          })
-          setDone(result)
-        }}
-      />
+    <AppPage title={done ? undefined : t("title")} description={done ? undefined : t("subtitle")}>
+      <AnimatePresence mode="wait">
+        {done ? (
+          <motion.div
+            key="trade-success"
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.96 }}
+            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+            className="mx-auto w-full max-w-md"
+          >
+            <TradeSuccessView
+              amountIn={done.amountIn}
+              amountOut={done.amountOut}
+              tokenIn={done.tokenIn}
+              tokenOut={done.tokenOut}
+              beforeIn={done.beforeIn}
+              beforeOut={done.beforeOut}
+              onDone={() => setDone(null)}
+            />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="trade-form"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ type: "spring", stiffness: 350, damping: 30 }}
+          >
+            <TradeForm
+              identity={identity}
+              initialTokenIn={from}
+              initialTokenOut={to}
+              onSuccess={(result) => {
+                applyTradeBalances({
+                  tokenInId: result.tokenIn.ledgerId,
+                  tokenOutId: result.tokenOut.ledgerId,
+                  amountIn: result.amountIn,
+                  amountOut: result.amountOut,
+                  tokenInFee: result.tokenIn.fee,
+                })
+                setDone(result)
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </AppPage>
   )
 }
@@ -63,9 +77,9 @@ function TradePageFallback() {
   return (
     <AppPage>
       <div className="mx-auto w-full max-w-md space-y-4">
-        <Skeleton className="h-44 w-full rounded-3xl" />
-        <Skeleton className="h-28 w-full rounded-2xl" />
-        <Skeleton className="h-12 w-full rounded-full" />
+        <Skeleton className="h-44 w-full rounded-(--radius)" />
+        <Skeleton className="h-28 w-full rounded-(--radius)" />
+        <Skeleton className="h-12 w-full rounded-(--radius)" />
       </div>
     </AppPage>
   )

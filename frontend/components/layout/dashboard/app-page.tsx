@@ -1,4 +1,7 @@
+"use client"
+
 import type { ReactNode } from "react"
+import { motion } from "motion/react"
 import { cn } from "@/lib/ui/utils"
 import { AppPageHeader } from "@/components/layout/dashboard/app-page-header"
 
@@ -20,7 +23,12 @@ export function AppPage({
   className?: string
 }) {
   return (
-    <div className={cn("space-y-6", className)}>
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ type: "spring", stiffness: 380, damping: 32 }}
+      className={cn("space-y-6", className)}
+    >
       {title ? (
         <AppPageHeader
           title={title}
@@ -31,6 +39,6 @@ export function AppPage({
         />
       ) : null}
       {children}
-    </div>
+    </motion.div>
   )
 }

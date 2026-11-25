@@ -88,7 +88,7 @@ export function ReceiptPreview({
         </DialogHeader>
 
         <div
-          className="overflow-hidden rounded-2xl bg-muted ring-1 ring-border"
+          className="overflow-hidden rounded-(--radius) bg-muted ring-1 ring-border"
           style={{ aspectRatio: ASPECT }}
         >
           {error ? (
@@ -96,8 +96,6 @@ export function ReceiptPreview({
               {t("renderFailed")}
             </div>
           ) : url ? (
-            // Plain img: the source is a blob URL for a canvas we just rendered,
-            // and images are unoptimized under static export anyway.
             // eslint-disable-next-line @next/next/no-img-element
             <img src={url} alt={t("imageAlt")} className="size-full object-contain" />
           ) : (

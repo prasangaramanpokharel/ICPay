@@ -4,15 +4,8 @@ import { BlogAuthorMeta } from "@/components/blog/blog-author-meta"
 import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  CloudIcon,
-  ShoppingBag01Icon,
-  SecurityCheckIcon,
-  ArrowRight01Icon,
-  Database01Icon,
-  SparklesIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CloudGlassIcon, ShoppingBagGlassIcon, ShieldCheckGlassIcon, ArrowRightGlassIcon, DatabaseGlassIcon, SparklesGlassIcon } from "@thesvg/ui-react"
 
 const SLUG = "changelog-2026-11-13"
 const TITLE = "ICPay Changelog (Nov 13, 2026): Pro Username Shop, Free Storage Perks, Treasury Tokenomics & Multi-Handle Profiles"
@@ -149,7 +142,7 @@ export default function ChangelogNov13Page() {
         <div className="grid gap-4 sm:grid-cols-2 pt-2">
           <Card className="rounded-2xl border border-border/80 bg-card p-5 space-y-2">
             <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-              <HugeiconsIcon icon={ShoppingBag01Icon} className="size-4" />
+              <Icon icon={ShoppingBagGlassIcon} className="size-4" />
               Dual-Currency Pricing (-20% with $ICPAY)
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -159,7 +152,7 @@ export default function ChangelogNov13Page() {
 
           <Card className="rounded-2xl border border-border/80 bg-card p-5 space-y-2">
             <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-              <HugeiconsIcon icon={SecurityCheckIcon} className="size-4" />
+              <Icon icon={ShieldCheckGlassIcon} className="size-4" />
               100% On-Chain Treasury Inflow
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -229,7 +222,7 @@ export default function ChangelogNov13Page() {
         <div className="grid gap-4 sm:grid-cols-3 pt-2">
           <Card className="rounded-2xl border border-border/80 bg-card p-5 space-y-2">
             <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-              <HugeiconsIcon icon={SparklesIcon} className="size-4" />
+              <Icon icon={SparklesGlassIcon} className="size-4" />
               Persistent On-Chain Claim
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -239,7 +232,7 @@ export default function ChangelogNov13Page() {
 
           <Card className="rounded-2xl border border-border/80 bg-card p-5 space-y-2">
             <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-              <HugeiconsIcon icon={CloudIcon} className="size-4" />
+              <Icon icon={CloudGlassIcon} className="size-4" />
               Dynamic Auto-Selection
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -249,7 +242,7 @@ export default function ChangelogNov13Page() {
 
           <Card className="rounded-2xl border border-border/80 bg-card p-5 space-y-2">
             <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-              <HugeiconsIcon icon={Database01Icon} className="size-4" />
+              <Icon icon={DatabaseGlassIcon} className="size-4" />
               0.00 ICP Ledger Bypass
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -313,7 +306,7 @@ export default function ChangelogNov13Page() {
           <div className="flex items-center gap-3 shrink-0">
             <Button nativeButton={false} render={<Link href="/username" />}>
               Explore Handles
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-4 ml-1.5" />
+              <Icon icon={ArrowRightGlassIcon} className="size-4 ml-1.5" />
             </Button>
             <Button variant="outline" nativeButton={false} render={<Link href="/bucket" />}>
               Open icBucket

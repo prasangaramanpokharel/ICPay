@@ -448,7 +448,13 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "प्रतीक",
+    "colName": "नाम",
+    "colQuantity": "परिमाण",
+    "colValue": "मूल्य",
+    "totalIcpBalance": "कुल ICP ब्यालेन्स",
+    "yourAssets": "तपाईंको सम्पत्ति"
   },
   "token": {
     "back": "वालेट",
@@ -456,7 +462,7 @@
     "send": "पठाउनुहोस्",
     "deposit": "जम्मा",
     "swap": "स्वैप",
-    "depositTitle": "जम्मा ठेगाना",
+    "depositTitle": "जम्मा",
     "depositSubtitle": "तपाईको शीर्ष उठाउन यहाँ {symbol} पठाउनुहोस्।",
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "तपाईको व्यक्तिगत राखना - तपाई यहाँ जम्मा गर्न सक्नुहुन्छ। आफ्नो ब्यालेन्स ट्याप गर्न {symbol} पठाउनुहोस्।",
@@ -472,7 +478,7 @@
     "selfCustodyNet": "सबै प्राप्त गर्ने",
     "selfCustodyDust": "यो {symbol} नेटवर्क शुल्क भन्दा कम छ, त्यसैले यो सार्न सकिन्।",
     "selfCustodyEmpty": "सार्न को लागी केहि छैन - योर्न तपाईको प्रिन्सिपल पठाइएको छैन।",
-    "historyTitle": "अन-चेन इतिहास",
+    "historyTitle": "इतिहास",
     "snsLink": "SNS हेर्नुहोस्",
     "snsDashboard": "SNS ड्यासबोर्ड",
     "snsSwap": "SNS स्वैप",
@@ -540,7 +546,8 @@
     "suggested": "टेपका लागि",
     "noneFound": "\"{query}\" को लागि कोही पनि फेला परेन।",
     "empty": "प्रयोगकर्ता नामहरू उल्लेख गरिएका खाताहरू छैनन्। पहिलो हुनुहोस्।",
-    "premium": "सत्य प्रिमियम हेन्डल"
+    "premium": "सत्य प्रिमियम हेन्डल",
+    "subtitle": "नेटवर्कभरिका प्रयोगकर्ता प्रोफाइलहरू अन्वेषण गर्नुहोस्"
   },
   "success": {
     "send": "सफलता पठाउनुहोस्",
@@ -1381,6 +1388,10 @@
         "blog": {
           "title": "ब्लग",
           "description": "गाइड, ट्युटोरियल र ICP इकोसिस्टम लेखहरू।"
+        },
+        "launch": {
+          "title": "टोकन लन्च गर्नुहोस्",
+          "description": "Internet Computer मा ICRC-1 टोकन सिर्जना गर्नुहोस्।"
         }
       },
       "legal": {

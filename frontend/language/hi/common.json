@@ -398,14 +398,20 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "प्रतीक",
+    "colName": "नाम",
+    "colQuantity": "मात्रा",
+    "colValue": "मूल्य",
+    "totalIcpBalance": "कुल आईसीपी शेष",
+    "yourAssets": "आपकी संपत्तियां"
   },
   "token": {
     "back": "वॉलेट",
     "notFound": "यह टोकन लोड नहीं हो सका।",
     "send": "भेजें",
     "deposit": "जमा करें",
-    "depositTitle": "जमा पता",
+    "depositTitle": "जमा",
     "depositSubtitle": "अपना वॉलेट भरने के लिए {symbol} यहाँ भेजें।",
     "warning": "इस पते पर केवल {symbol} भेजें। अन्य टोकन खो जाएँगे।",
     "selfCustodyTitle": "ICPay के बाहर रखा गया",
@@ -422,7 +428,7 @@
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
     "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet.",
-    "historyTitle": "On-chain history",
+    "historyTitle": "इतिहास",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
@@ -451,7 +457,8 @@
     "suggested": "आपके लिए सुझाव",
     "noneFound": "“{query}” के लिए कोई नहीं मिला।",
     "empty": "अभी यूज़रनेम वाला कोई अकाउंट नहीं। पहले आप बनें।",
-    "premium": "सत्यापित प्रीमियम हैंडल"
+    "premium": "सत्यापित प्रीमियम हैंडल",
+    "subtitle": "नेटवर्क भर में उपयोगकर्ता प्रोफाइल देखें"
   },
   "success": {
     "send": "सफलतापूर्वक भेजा",
@@ -1381,6 +1388,10 @@
         "blog": {
           "title": "ब्लॉग",
           "description": "गाइड, ट्यूटोरियल और ICP इकोसिस्टम लेख।"
+        },
+        "launch": {
+          "title": "टोकन लॉन्च करें",
+          "description": "Internet Computer पर ICRC-1 टोकन बनाएं।"
         }
       },
       "legal": {

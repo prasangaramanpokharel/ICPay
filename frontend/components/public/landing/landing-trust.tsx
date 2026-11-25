@@ -2,27 +2,18 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowRight01Icon,
-  ArrowUpRight01Icon,
-  CodeIcon,
-  Database01Icon,
-  Globe02Icon,
-  NewTwitterIcon,
-  ShieldIcon,
-  UserGroupIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightGlassIcon, ArrowUpRightGlassIcon, CodeGlassIcon, DatabaseGlassIcon, GlobeGlassIcon, SocialXGlassIcon, ShieldGlassIcon, UsersCollaborationGlassIcon } from "@thesvg/ui-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ICPAY_CANISTERS, TRUST_LINK_DEFS } from "@/lib/public/trust-links"
 
-const TRUST_ICONS: Record<string, typeof CodeIcon> = {
-  github: CodeIcon,
-  backendCanister: Database01Icon,
-  transparency: ShieldIcon,
-  x: NewTwitterIcon,
-  linkedin: UserGroupIcon,
-  frontendCanister: Globe02Icon,
+const TRUST_ICONS: Record<string, typeof CodeGlassIcon> = {
+  github: CodeGlassIcon,
+  backendCanister: DatabaseGlassIcon,
+  transparency: ShieldGlassIcon,
+  x: SocialXGlassIcon,
+  linkedin: UsersCollaborationGlassIcon,
+  frontendCanister: GlobeGlassIcon,
 }
 
 export function LandingTrust() {
@@ -65,14 +56,13 @@ export function LandingTrust() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {trustLinks.map((item) => {
-            const Icon = TRUST_ICONS[item.id] ?? ShieldIcon
+            const TrustIcon = TRUST_ICONS[item.id] ?? ShieldGlassIcon
             const content = (
               <Card className="h-full border-border/60 bg-card shadow-xs transition-all duration-200 hover:-translate-y-0.5 hover:border-border hover:shadow-md">
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <HugeiconsIcon
-                        icon={Icon}
+                      <TrustIcon
                         className="size-5 shrink-0 text-primary transition-transform duration-200 group-hover:scale-105"
                         strokeWidth={1.75}
                       />
@@ -80,8 +70,8 @@ export function LandingTrust() {
                         {item.label}
                       </CardTitle>
                     </div>
-                    <HugeiconsIcon
-                      icon={item.external ? ArrowUpRight01Icon : ArrowRight01Icon}
+                    <Icon
+                      icon={item.external ? ArrowUpRightGlassIcon : ArrowRightGlassIcon}
                       className="size-4 shrink-0 text-muted-foreground transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-primary"
                       strokeWidth={1.75}
                     />

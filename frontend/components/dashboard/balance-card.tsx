@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl"
 import { toast } from "sonner"
 import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { EyeIcon, ViewOffIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { EyeGlassIcon, EyeOffGlassIcon } from "@thesvg/ui-react"
 import { PremiumBadge } from "@/components/verified/premium-badge"
 import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { copyText } from "@/lib/wallet/utils"
@@ -83,7 +83,7 @@ export function BalanceCard({
           onClick={onToggleHidden}
           className="size-7 shrink-0 rounded-full text-muted-foreground/60 hover:bg-transparent hover:text-muted-foreground"
         >
-          <HugeiconsIcon icon={hidden ? ViewOffIcon : EyeIcon} className="size-4" strokeWidth={1.75} />
+          <Icon icon={hidden ? EyeOffGlassIcon : EyeGlassIcon} className="size-4" strokeWidth={1.75} />
         </Button>
       </div>
 
@@ -103,7 +103,7 @@ export function BalanceCard({
                 exit={{ opacity: 0, filter: "blur(4px)" }}
                 transition={{ duration: 0.18 }}
               >
-                ••••••••
+                ••••••
               </motion.span>
             ) : (
               <motion.span
@@ -127,7 +127,7 @@ export function BalanceCard({
             title="Click to refresh price"
             className="text-sm font-semibold tabular-nums text-success transition-opacity hover:opacity-70 active:opacity-40 cursor-pointer"
           >
-            {hidden || !fiat.formatted ? "••••" : `${fiat.symbol}${fiat.formatted}`}
+            {hidden || !fiat.formatted ? "••••••" : `${fiat.symbol}${fiat.formatted}`}
           </button>
 
           {!hidden && price && (

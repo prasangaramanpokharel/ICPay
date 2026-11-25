@@ -2,8 +2,8 @@ import * as React from "react"
 import { type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/ui/utils"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ChevronDownGlassIcon } from "@thesvg/ui-react"
 import { inputVariants } from "@/components/ui/input"
 
 type NativeSelectProps = Omit<React.ComponentProps<"select">, "size"> &
@@ -31,7 +31,7 @@ function NativeSelect({
         )}
         {...props}
       />
-      <HugeiconsIcon icon={ArrowDown01Icon} className="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-muted-foreground select-none" aria-hidden="true" data-slot="native-select-icon" />
+      <Icon icon={ChevronDownGlassIcon} className="pointer-events-none absolute top-1/2 right-3.5 size-4 -translate-y-1/2 text-muted-foreground select-none" aria-hidden="true" data-slot="native-select-icon" />
     </div>
   )
 }

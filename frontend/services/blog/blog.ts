@@ -31,6 +31,26 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "chatty-pk-chatt-pakistan-sovereign-messenger-icp",
+    title:
+      "ChatT (chatty.pk): Inside Pakistan's Sovereign Messenger Built on the Internet Computer (ICP)",
+    description:
+      "A technical breakdown of ChatT (chatty.pk), Pakistan's national sovereign messaging platform developed with DFINITY and the Pakistan Digital Authority. How on-chain canisters and the Pakistan Cloud Engine redefine sovereign communication ahead of the December 1, 2026 launch.",
+    publishedAt: "2026-11-25",
+    readingMinutes: 10,
+    category: "Infrastructure",
+  },
+  {
+    slug: "chatgpt-pakistan-message-dawn-newspaper-blunder",
+    title:
+      "The Dawn Newspaper ChatGPT Blunder in Pakistan: What the Viral 'Snappier Version' Message Reveals About AI Journalism",
+    description:
+      "A deep dive into Pakistan's Dawn newspaper accidentally printing an unedited ChatGPT closing prompt in its business section, why multi-tiered editorial desks failed to catch it, and how programmatic verification prevents LLM pipeline leakage.",
+    publishedAt: "2026-11-25",
+    readingMinutes: 9,
+    category: "Technology",
+  },
+  {
     slug: "changelog-2026-11-13",
     title: "ICPay Changelog (Nov 13, 2026): Pro Username Shop, Free Storage Perks, Treasury Tokenomics & Multi-Handle Profiles",
     description:
@@ -86,9 +106,9 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "cloud-storage-pricing-comparison-2026",
-    title: "Cloud Storage Pricing Comparison 2026: AWS vs Google vs Azure vs ICBucket",
+    title: "Cloud Storage Pricing Comparison (2026): AWS S3 vs R2 vs icBucket [Cost Table]",
     description:
-      "Complete 2026 cloud storage pricing comparison guide. We break down storage costs, hidden egress bandwidth fees, request charges, and compare AWS S3, Google Cloud Storage, Microsoft Azure Blob, and on-chain ICBucket.",
+      "Full 2026 cloud storage pricing matrix. Compare S3 Standard ($0.023/GB), egress costs ($0.09/GB), and icBucket zero-egress on-chain storage. Updated November 2026.",
     publishedAt: "2026-10-12",
     readingMinutes: 14,
     category: "Infrastructure",
@@ -104,18 +124,18 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "best-s3-compatible-storage-aws-pricing-alternative",
-    title: "Best S3 Compatible Storage 2026: AWS S3 Pricing Alternative & Cloud Cost Comparison",
+    title: "S3 Storage Pricing in 2026: AWS Cost per TB, Egress Fees & Cheaper Alternatives",
     description:
-      "Looking for the best S3-compatible storage and AWS S3 pricing alternative? We compare AWS S3 cost, Google Cloud Storage, Azure Blob, MinIO, and icBucket — highlighting hidden egress fees, API compatibility, and predictable $5/GB/year on-chain storage.",
+      "Compare AWS S3 cost per TB ($23/TB/mo) vs Google Cloud, Cloudflare R2, Wasabi, and icBucket. Calculate hidden egress fees and see how $5/GB/yr on-chain storage saves 80%.",
     publishedAt: "2026-10-12",
     readingMinutes: 13,
     category: "Infrastructure",
   },
   {
     slug: "best-cloudinary-alternative-zero-egress-fees",
-    title: "Best Cloudinary Alternative 2026: Fast Image CDN & On-Chain S3 Storage (Zero Egress Taxes)",
+    title: "Cloudinary Alternatives (2026): Best Free & Low-Cost Image Hosting Without Egress",
     description:
-      "Tired of expensive Cloudinary credit limits and surprise bandwidth invoices? Discover the best Cloudinary alternative in 2026: icBucket provides high-speed image & video CDN hosting, direct upload APIs, and predictable flat-rate storage with zero egress taxes.",
+      "Drowning in Cloudinary credit overage fees? Discover the best Cloudinary alternatives for developers with predictable pricing, zero bandwidth charges, and S3 APIs.",
     publishedAt: "2026-10-12",
     readingMinutes: 12,
     category: "Developers",
@@ -483,9 +503,9 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "what-is-icp",
-    title: "What is ICP?",
+    title: "What is ICP? The Internet Computer Explained in Simple Terms (2026 Guide)",
     description:
-      "A plain-language guide to the Internet Computer Protocol — how it works, why it exists, and what makes it different from other blockchains.",
+      "What is ICP and how does it work? Learn how the Internet Computer runs full-stack web applications on-chain with zero gas fees, reverse gas, and canister smart contracts.",
     publishedAt: "2026-08-09",
     readingMinutes: 6,
     category: "Explainers",

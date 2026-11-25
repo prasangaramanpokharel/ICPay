@@ -18,6 +18,7 @@ interface CodeBlockProps {
   code?: string
   language?: string
   className?: string
+  preClassName?: string
 }
 
 export function CodeBlock({
@@ -25,6 +26,7 @@ export function CodeBlock({
   code,
   language = "bash",
   className,
+  preClassName,
 }: CodeBlockProps) {
   const [activeTab, setActiveTab] = useState(0)
   const [copied, setCopied] = useState(false)
@@ -116,7 +118,6 @@ export function CodeBlock({
         className
       )}
     >
-      {/* Tab Bar */}
       {codeContent.length > 1 && (
         <div className="relative flex items-center pr-2.5 border-b border-border/40">
           <div
@@ -174,9 +175,7 @@ export function CodeBlock({
         </div>
       )}
 
-      {/* Code Content */}
       <div className="relative w-full min-w-0 max-w-full overflow-hidden">
-        {/* Copy Button */}
         <motion.button
           onClick={handleCopy}
           whileTap={{ scale: 0.95 }}
@@ -194,7 +193,7 @@ export function CodeBlock({
           aria-label="Copy code"
         >
           <CopyIconIndicator copied={copied} iconClassName="size-3.5" />
-          <span>{copied ? "Copied" : "Copy"}</span>
+          <span className={cn(copied && "text-success font-medium")}>{copied ? "Copied" : "Copy"}</span>
         </motion.button>
         <pre
           className={cn(
@@ -206,12 +205,14 @@ export function CodeBlock({
             "scrollbar-thumb-black/15 hover:scrollbar-thumb-black/20",
             "dark:scrollbar-thumb-white/20 dark:hover:scrollbar-thumb-white/25",
             "[&::-webkit-scrollbar]:h-2",
+            "[&::-webkit-scrollbar]:w-2",
             "[&::-webkit-scrollbar-thumb]:rounded-full",
             "[&::-webkit-scrollbar-thumb]:bg-black/15",
             "[&::-webkit-scrollbar-thumb]:dark:bg-white/20",
             "[&::-webkit-scrollbar-thumb]:hover:bg-black/20",
             "[&::-webkit-scrollbar-thumb:hover]:dark:bg-white/25",
-            "[&::-webkit-scrollbar-track]:bg-transparent"
+            "[&::-webkit-scrollbar-track]:bg-transparent",
+            preClassName
           )}
         >
           <AnimatePresence mode="wait" initial={false} custom={direction}>

@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import type { IconSvgElement } from "@hugeicons/react"
+import { Icon } from "@/components/ui/icon"
+import type { UiIcon } from "@thesvg/ui-react"
 import type { NavMenuItem } from "@/lib/public/site-links"
 import { getNavMenuIcon } from "@/lib/public/nav-menu-icons"
 import { cn } from "@/lib/ui/utils"
@@ -12,11 +12,11 @@ export function NavMenuItemContent({
 }: {
   title: string
   description: string
-  icon: IconSvgElement
+  icon: UiIcon
 }) {
   return (
     <div className="flex items-start gap-3">
-      <HugeiconsIcon
+      <Icon
         icon={icon}
         className="mt-0.5 size-5 shrink-0 text-muted-foreground"
         strokeWidth={1.75}

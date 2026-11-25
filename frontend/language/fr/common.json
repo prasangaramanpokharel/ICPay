@@ -398,14 +398,20 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Symbole",
+    "colName": "Nom",
+    "colQuantity": "Quantité",
+    "colValue": "Valeur",
+    "totalIcpBalance": "Solde total ICP",
+    "yourAssets": "Vos actifs"
   },
   "token": {
     "back": "Portefeuille",
     "notFound": "Ce jeton n'a pas pu être chargé.",
     "send": "Envoyer",
     "deposit": "Déposer",
-    "depositTitle": "Adresse de dépôt",
+    "depositTitle": "Dépôt",
     "depositSubtitle": "Envoyez des {symbol} ici pour recharger votre portefeuille.",
     "warning": "N'envoyez que des {symbol} à cette adresse. Les autres jetons seront perdus.",
     "selfCustodyTitle": "Détenu hors d'ICPay",
@@ -422,7 +428,7 @@
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
     "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet.",
-    "historyTitle": "On-chain history",
+    "historyTitle": "Historique",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
@@ -451,7 +457,8 @@
     "suggested": "Suggestions pour vous",
     "noneFound": "Aucun résultat pour “{query}”.",
     "empty": "Aucun compte avec nom d'utilisateur. Soyez le premier.",
-    "premium": "Identifiant premium vérifié"
+    "premium": "Identifiant premium vérifié",
+    "subtitle": "Explorez les profils d'utilisateurs sur le réseau"
   },
   "success": {
     "send": "Envoi réussi",
@@ -1381,6 +1388,10 @@
         "blog": {
           "title": "Blog",
           "description": "Guides, tutoriels et articles sur l'écosystème ICP."
+        },
+        "launch": {
+          "title": "Lancer un token",
+          "description": "Créez un token ICRC-1 sur Internet Computer."
         }
       },
       "legal": {

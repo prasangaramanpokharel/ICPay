@@ -2,27 +2,18 @@
 
 import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  FolderLibraryIcon,
-  CloudUploadIcon,
-  Key01Icon,
-  Globe02Icon,
-  CodeIcon,
-  ShieldIcon,
-  SearchList01Icon,
-  DashboardSpeed01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { FoldersGlassIcon, UploadGlassIcon, KeyGlassIcon, GlobeGlassIcon, CodeGlassIcon, ShieldGlassIcon, FileSearchGlassIcon, GaugeGlassIcon } from "@thesvg/ui-react"
 
 const FEATURE_ICONS = [
-  FolderLibraryIcon,
-  CloudUploadIcon,
-  Key01Icon,
-  Globe02Icon,
-  CodeIcon,
-  ShieldIcon,
-  SearchList01Icon,
-  DashboardSpeed01Icon,
+  FoldersGlassIcon,
+  UploadGlassIcon,
+  KeyGlassIcon,
+  GlobeGlassIcon,
+  CodeGlassIcon,
+  ShieldGlassIcon,
+  FileSearchGlassIcon,
+  GaugeGlassIcon,
 ] as const
 
 const FEATURE_IDS = ["0", "1", "2", "3", "4", "5", "6", "7"] as const
@@ -47,7 +38,7 @@ export function FeaturesSection() {
               className="border-border/60 bg-card rounded-2xl shadow-sm"
             >
               <CardHeader className="gap-3">
-                <HugeiconsIcon
+                <Icon
                   icon={FEATURE_ICONS[index]}
                   className="size-5 text-primary"
                   strokeWidth={1.75}

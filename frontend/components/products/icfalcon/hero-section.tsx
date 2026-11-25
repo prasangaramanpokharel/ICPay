@@ -3,8 +3,8 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { useTheme } from "next-themes"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CopyGlassIcon, CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import Image from "next/image"
 import { PAGE_IMAGES } from "@/lib/public/page-images"
 import Link from "next/link"
@@ -13,7 +13,7 @@ import { Particles } from "@/components/ui/particles"
 import { ShineBorder } from "@/components/ui/shine-border"
 
 import { cn } from "@/lib/ui/utils"
-import { Gitlab, NpmIcon } from "@dev.icons/react"
+import { Gitlab, NextjsIcon, NpmIcon } from "@dev.icons/react"
 
 export function HeroSection() {
   const t = useTranslations("publicSite.icfalcon.hero")
@@ -57,45 +57,65 @@ export function HeroSection() {
           </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="flex flex-wrap items-center justify-center gap-2">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs font-medium text-foreground shadow-xs">
+            <span className="size-1.5 rounded-full bg-success" />
+            <span>Motoko 1.6.0</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs font-medium text-foreground shadow-xs">
+            <span className="size-1.5 rounded-full bg-primary" />
+            <span>mo:core 2.6.1</span>
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border/70 bg-card/60 px-3 py-1 text-xs font-medium text-foreground shadow-xs">
+            <NextjsIcon size={13} className="size-3.5 shrink-0 rounded-full dark:invert" />
+            <span>Next.js 15</span>
+          </span>
+        </div>
+
+        <div className="space-y-3">
           <h1 className="text-4xl font-extrabold tracking-tight bg-linear-to-b from-foreground via-foreground/90 to-foreground/45 bg-clip-text text-transparent sm:text-5xl md:text-6xl">
             {t("title")}
           </h1>
-          <p className="text-xl text-muted-foreground sm:text-2xl">{t("subtitle")}</p>
-          <p className="text-base text-muted-foreground">{t("features")}</p>
+          <p className="text-lg text-muted-foreground sm:text-xl max-w-2xl mx-auto leading-relaxed">
+            {t("subtitle")}
+          </p>
         </div>
 
         <div className="mx-auto flex flex-col items-center space-y-3">
           <div className="flex items-center gap-1.5 rounded-full border border-border/60 bg-muted/40 p-1 backdrop-blur-xs">
-            <button
+            <Button
               type="button"
+              variant={activeTab === "curl" ? "default" : "ghost"}
+              size="sm"
               onClick={() => setActiveTab("curl")}
               className={cn(
-                "rounded-full px-3 py-1 text-xs font-semibold transition-all cursor-pointer",
+                "rounded-full px-3 py-1 text-xs font-semibold h-7 transition-all",
                 activeTab === "curl"
                   ? "bg-primary text-primary-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               curl (One-Liner)
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant={activeTab === "npm" ? "default" : "ghost"}
+              size="sm"
               onClick={() => setActiveTab("npm")}
               className={cn(
-                "rounded-full px-3 py-1 text-xs font-semibold transition-all cursor-pointer",
+                "rounded-full px-3 py-1 text-xs font-semibold h-7 transition-all",
                 activeTab === "npm"
                   ? "bg-primary text-primary-foreground shadow-xs"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
               npm create
-            </button>
+            </Button>
           </div>
 
           <div className="relative mx-auto flex w-full max-w-lg items-center justify-between gap-3 rounded-xl border border-border/60 bg-card/80 px-4 py-2.5 shadow-sm backdrop-blur-xs">
             <ShineBorder
-              shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+              shineColor={["var(--primary)", "var(--accent)", "var(--success)"]}
               borderWidth={1.2}
               duration={12}
             />
@@ -110,10 +130,11 @@ export function HeroSection() {
               className="size-7 shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer transition-colors"
               aria-label={t("copyCommand")}
             >
-              <HugeiconsIcon
-                icon={copied ? Tick02Icon : Copy01Icon}
-                className={`size-4 transition-colors ${copied ? "text-primary" : "text-muted-foreground"}`}
-              />
+              {copied ? (
+                <Icon icon={CheckGlassOutlineIcon} className="size-4 text-success" strokeWidth={2.5} />
+              ) : (
+                <Icon icon={CopyGlassIcon} className="size-4 text-muted-foreground" />
+              )}
             </Button>
           </div>
           <p className="text-xs text-muted-foreground">

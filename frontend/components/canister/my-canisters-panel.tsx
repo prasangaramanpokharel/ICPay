@@ -3,21 +3,15 @@
 import { useMemo, useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Add01Icon,
-  ConnectIcon,
-  Grid2X2Icon,
-  Link01Icon,
-  ListViewIcon,
-  Package01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { PlusGlassIcon, LinkGlassIcon, Grid2x2GlassIcon, ListGlassIcon, PackageGlassIcon } from "@thesvg/ui-react"
 import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent } from "@/components/ui/card"
 import { CopyButton } from "@/components/ui/copy-button"
-import { Table, TableBody } from "@/components/ui/table"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table"
 import { LinkCanisterDialog } from "@/components/canister/link-canister-dialog"
 import { ConnectControllerDialog } from "@/components/canister/connect-controller-dialog"
 import { OnboardAgentButton } from "@/components/canister/onboard-agent-button"
@@ -49,14 +43,79 @@ function EmptyBlock({
       {loading ? (
         <Spinner className="size-8 text-primary" />
       ) : (
-        <HugeiconsIcon
-          icon={Package01Icon}
+        <Icon
+          icon={PackageGlassIcon}
           className="size-10 text-muted-foreground/40"
         />
       )}
       <p className="max-w-xs text-sm text-muted-foreground">{message}</p>
       {actions}
     </div>
+  )
+}
+
+function CanisterCardSkeleton() {
+  return (
+    <Card className="flex flex-col justify-between gap-3.5 rounded-xl border border-border/60 bg-card p-4">
+      <CardContent className="p-0 space-y-3.5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <Skeleton className="size-9 shrink-0 rounded-lg" />
+            <div className="space-y-1.5">
+              <Skeleton className="h-4 w-28 rounded-md" />
+              <Skeleton className="h-3 w-36 rounded-md" />
+            </div>
+          </div>
+          <Skeleton className="h-5 w-16 rounded-full" />
+        </div>
+        <div className="space-y-2 rounded-lg border border-border/50 bg-muted/20 p-2.5">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-3 w-16 rounded-md" />
+            <Skeleton className="h-3 w-20 rounded-md" />
+          </div>
+          <Skeleton className="h-1.5 w-full rounded-full" />
+          <div className="flex items-center justify-between pt-1">
+            <Skeleton className="h-3 w-16 rounded-md" />
+            <Skeleton className="h-3 w-16 rounded-md" />
+          </div>
+        </div>
+      </CardContent>
+      <div className="flex items-center justify-between border-t border-border/40 pt-3">
+        <Skeleton className="h-7 w-20 rounded-md" />
+        <Skeleton className="h-7 w-20 rounded-md" />
+      </div>
+    </Card>
+  )
+}
+
+function CanisterRowSkeleton() {
+  return (
+    <TableRow>
+      <TableCell>
+        <div className="flex items-center gap-3 min-w-0">
+          <Skeleton className="size-9 shrink-0 rounded-lg" />
+          <div className="space-y-1.5">
+            <Skeleton className="h-4 w-32 rounded-md" />
+            <Skeleton className="h-3 w-40 rounded-md" />
+          </div>
+        </div>
+      </TableCell>
+      <TableCell className="hidden sm:table-cell">
+        <Skeleton className="h-5 w-16 rounded-full" />
+      </TableCell>
+      <TableCell className="hidden md:table-cell">
+        <div className="space-y-1">
+          <Skeleton className="h-3.5 w-24 rounded-md" />
+          <Skeleton className="h-1.5 w-20 rounded-full" />
+        </div>
+      </TableCell>
+      <TableCell className="text-right">
+        <div className="flex items-center justify-end gap-1.5">
+          <Skeleton className="h-7 w-16 rounded-md" />
+          <Skeleton className="size-7 rounded-md" />
+        </div>
+      </TableCell>
+    </TableRow>
   )
 }
 
@@ -114,7 +173,7 @@ export function MyCanistersPanel() {
             onClick={openLink}
             className="h-8 gap-1.5 px-3 text-xs font-medium cursor-pointer"
           >
-            <HugeiconsIcon icon={Link01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+            <Icon icon={LinkGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
             <span>{t("link")}</span>
           </Button>
           <Button
@@ -123,7 +182,7 @@ export function MyCanistersPanel() {
             nativeButton={false}
             render={<Link href="/canister/create" />}
           >
-            <HugeiconsIcon icon={Add01Icon} className="size-3.5" strokeWidth={2} />
+            <Icon icon={PlusGlassIcon} className="size-3.5" strokeWidth={2} />
             <span>{t("create")}</span>
           </Button>
         </div>
@@ -152,10 +211,9 @@ export function MyCanistersPanel() {
               type="button"
               variant="outline"
               size="sm"
-              className="h-8 gap-1.5 px-3 text-xs font-medium cursor-pointer"
+              className="h-8 px-3 text-xs font-medium cursor-pointer"
               onClick={() => handleOpenConnect()}
             >
-              <HugeiconsIcon icon={ConnectIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
               <span>Connect</span>
             </Button>
           </AlertAction>
@@ -176,7 +234,7 @@ export function MyCanistersPanel() {
               title="Grid view"
               aria-label="Grid view"
             >
-              <HugeiconsIcon icon={Grid2X2Icon} className="size-3.5" />
+              <Icon icon={Grid2x2GlassIcon} className="size-3.5" />
             </button>
             <button
               type="button"
@@ -188,17 +246,31 @@ export function MyCanistersPanel() {
               title="List view"
               aria-label="List view"
             >
-              <HugeiconsIcon icon={ListViewIcon} className="size-3.5" />
+              <Icon icon={ListGlassIcon} className="size-3.5" />
             </button>
           </div>
         </div>
 
         {mine.isLoading ? (
-          <Card className="min-w-0 overflow-hidden p-0">
-            <CardContent className="p-2">
-              <EmptyBlock message={t("loading")} loading />
-            </CardContent>
-          </Card>
+          viewMode === "grid" ? (
+            <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <CanisterCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : (
+            <Card className="min-w-0 overflow-hidden p-0">
+              <CardContent className="p-0">
+                <Table>
+                  <TableBody>
+                    {Array.from({ length: 6 }).map((_, i) => (
+                      <CanisterRowSkeleton key={i} />
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          )
         ) : mine.ids.length === 0 ? (
           <Card className="min-w-0 overflow-hidden p-0">
             <CardContent className="p-2">

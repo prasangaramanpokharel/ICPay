@@ -4,16 +4,8 @@ import Link from "next/link"
 import { useSelectedLayoutSegment } from "next/navigation"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  SecurityCheckIcon,
-  Logout01Icon,
-  Layers01Icon,
-  CheckmarkCircle02Icon,
-  Clock01Icon,
-  ArrowRight01Icon,
-  Coins01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ShieldCheckGlassIcon, LogOutGlassIcon, LayersGlassIcon, CircleCheckGlassIcon, ClockGlassIcon, ArrowRightGlassIcon, CoinsGlassIcon } from "@thesvg/ui-react"
 import { clearAdminSession, getAdminSession } from "@/services/academy/admin-auth"
 import { useAuth } from "@/components/auth/auth-provider"
 import { cn } from "@/lib/ui/utils"
@@ -36,25 +28,25 @@ export function AcademyAdminNav() {
     {
       title: "Dashboard",
       href: "/acadamey/dashboard",
-      icon: Clock01Icon,
+      icon: ClockGlassIcon,
       active: segment === "dashboard" || segment === null,
     },
     {
       title: "Courses & Tracks",
       href: "/acadamey/courses",
-      icon: Layers01Icon,
+      icon: LayersGlassIcon,
       active: segment === "courses",
     },
     {
       title: "Treasury & Payout",
       href: "/acadamey/payout",
-      icon: Coins01Icon,
+      icon: CoinsGlassIcon,
       active: segment === "payout",
     },
     {
       title: "Audit Trail",
       href: "/acadamey/audit",
-      icon: CheckmarkCircle02Icon,
+      icon: CircleCheckGlassIcon,
       active: segment === "audit",
     },
   ]
@@ -64,7 +56,7 @@ export function AcademyAdminNav() {
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-6">
           <Link href="/acadamey/dashboard" className="flex items-center gap-2.5">
-            <HugeiconsIcon icon={SecurityCheckIcon} className="size-5 text-primary" strokeWidth={1.75} />
+            <Icon icon={ShieldCheckGlassIcon} className="size-5 text-primary" strokeWidth={1.75} />
             <div className="flex flex-col">
               <span className="text-sm font-bold tracking-tight text-foreground">
                 ICAcademy Admin
@@ -91,7 +83,7 @@ export function AcademyAdminNav() {
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
-                <HugeiconsIcon icon={link.icon} className="size-3.5" strokeWidth={1.75} />
+                <Icon icon={link.icon} className="size-3.5" strokeWidth={1.75} />
                 {link.title}
               </Link>
             ))}
@@ -108,7 +100,7 @@ export function AcademyAdminNav() {
             )}
           >
             View Public Academy
-            <HugeiconsIcon icon={ArrowRight01Icon} className="size-3 text-muted-foreground" strokeWidth={2} />
+            <Icon icon={ArrowRightGlassIcon} className="size-3 text-muted-foreground" strokeWidth={2} />
           </Link>
 
           {isAuthenticated && shortPrincipal ? (
@@ -126,7 +118,7 @@ export function AcademyAdminNav() {
               onClick={() => void login()}
               className="h-8 gap-1.5 border-warning/30 bg-warning/10 text-xs font-semibold text-warning hover:bg-warning/20"
             >
-              <HugeiconsIcon icon={SecurityCheckIcon} className="size-3.5" strokeWidth={1.75} />
+              <Icon icon={ShieldCheckGlassIcon} className="size-3.5" strokeWidth={1.75} />
               Connect Signer
             </Button>
           )}
@@ -157,7 +149,7 @@ export function AcademyAdminNav() {
             title="Sign out of Admin Session"
             className="size-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
           >
-            <HugeiconsIcon icon={Logout01Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={LogOutGlassIcon} className="size-4" strokeWidth={1.75} />
           </Button>
         </div>
       </div>
@@ -178,7 +170,7 @@ export function AcademyAdminNav() {
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
-            <HugeiconsIcon icon={link.icon} className="size-3" strokeWidth={2} />
+            <Icon icon={link.icon} className="size-3" strokeWidth={2} />
             {link.title}
           </Link>
         ))}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { HeroSection } from "@/components/products/iccron/hero-section"
+import { SdkBenchmarkSection } from "@/components/products/iccron/sdk-benchmark-section"
 import { ProblemSolution } from "@/components/products/iccron/problem-solution"
 import { WhatIsSection } from "@/components/products/iccron/what-is-section"
 import { GalleryShowcase } from "@/components/products/iccron/gallery-showcase"
@@ -99,6 +100,51 @@ const jsonLd = {
         },
       ],
     },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How is icCron different from Linux cron or node-cron on a VPS?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Linux cron and node-cron run on a single host. If that machine runs out of memory, reboots for a kernel update, or experiences a network partition, jobs fail silently. icCron runs as a replicated state machine on the Internet Computer blockchain across independent node providers worldwide, providing 100% uptime with zero server maintenance.",
+          },
+        },
+        {
+          "@type": "Question",
+          "name": "Can icCron make HTTPS requests to any public endpoint on the web?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Using Internet Computer HTTPS outcalls, icCron reaches any publicly addressable URL (Vercel, AWS, Cloudflare, Supabase, Fly.io, or private APIs). The HTTP requests are cryptographically threshold-signed by subnet consensus.",
+          },
+        },
+        {
+          "@type": "Question",
+          "name": "What happens if my target endpoint is down or returns a 500 error?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "icCron features configurable exponential backoff retries. If the target endpoint fails repeatedly beyond the configured maximum retry count, the job is transitioned to a Dead Letter Queue (DLQ) with status TargetUnavailable or AutoPausedDormant.",
+          },
+        },
+        {
+          "@type": "Question",
+          "name": "Do I need to hold cryptocurrency or ICP tokens to use icCron?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Every user receives 60 free execution runs every month simply by signing in with Internet Identity. For higher volume, you can purchase prepaid credit packs using ICP or standard payment methods right within the ICPay dashboard.",
+          },
+        },
+        {
+          "@type": "Question",
+          "name": "How accurate is the execution timing?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "icCron leverages native Internet Computer Canister Timers with 64-bit nanosecond scheduling. Unlike AWS Lambda cold starts or serverless cron jobs that experience unpredictable wake-up drift of minutes, icCron ticks with deterministic 1-second consensus precision.",
+          },
+        },
+      ],
+    },
   ],
 }
 
@@ -110,6 +156,7 @@ export default function IcCronPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <HeroSection />
+      <SdkBenchmarkSection />
       <ProblemSolution />
       <WhatIsSection />
       <GalleryShowcase />

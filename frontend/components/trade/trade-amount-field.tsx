@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { TokenLogo } from "@/components/token/token-logo"
 import { TokenFiatHint } from "@/components/token/token-fiat-hint"
 import { formatTokenAmount } from "@/lib/wallet/utils"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import type { TokenHolding } from "@/services/tokens"
 import { cn } from "@/lib/ui/utils"
 
@@ -39,6 +40,7 @@ export function TradeAmountField({
   className?: string
 }) {
   const t = useTranslations("trade")
+  const { hidden } = useBalanceVisibility()
 
   return (
     <div className={cn("px-4 py-4 sm:px-5 sm:py-5", className)}>
@@ -47,7 +49,7 @@ export function TradeAmountField({
         {!readOnly && token && balance !== undefined && (
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <span className="tabular-nums">
-              {t("balance")}: {formatTokenAmount(balance, token.decimals)}
+              {t("balance")}: {hidden ? "••••••" : formatTokenAmount(balance, token.decimals)}
             </span>
             {onMax && maxHint !== undefined && maxHint > 0n && (
               <Button

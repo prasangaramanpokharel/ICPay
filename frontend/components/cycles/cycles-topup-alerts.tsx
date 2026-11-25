@@ -3,8 +3,9 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, LinkSquare02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ExternalLinkGlassIcon, CheckGlassOutlineIcon } from "@thesvg/ui-react"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import {
@@ -70,8 +71,8 @@ export function CyclesTopUpAlerts({
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="items-center text-center sm:items-center sm:text-center">
             <div className="animate-in fade-in zoom-in-75 mb-1 flex size-16 items-center justify-center rounded-full bg-success/10 duration-300 ease-out">
-              <span className="flex size-11 items-center justify-center rounded-full bg-success text-background shadow-sm">
-                <HugeiconsIcon icon={Tick02Icon} className="size-7" strokeWidth={3} />
+              <span className="flex size-11 items-center justify-center rounded-full bg-success text-success-foreground shadow-sm">
+                <Icon icon={CheckGlassOutlineIcon} className="size-7 text-success-foreground" strokeWidth={3} />
               </span>
             </div>
             <DialogTitle>{t("successTitle")}</DialogTitle>
@@ -103,10 +104,7 @@ export function CyclesTopUpAlerts({
                     aria-label={tc("copy")}
                     onClick={() => void copyCanister(lastOk.canister)}
                   >
-                    <HugeiconsIcon
-                      icon={copied ? Tick02Icon : Copy01Icon}
-                      className="size-3.5"
-                    />
+                    <CopyIconIndicator copied={copied} iconClassName="size-3.5" />
                   </Button>
                 </div>
                 <p className="text-sm text-foreground">
@@ -140,7 +138,7 @@ export function CyclesTopUpAlerts({
                   />
                 }
               >
-                <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5" />
+                <Icon icon={ExternalLinkGlassIcon} className="size-3.5" />
                 {t("viewOnDashboard")}
               </Button>
             )}

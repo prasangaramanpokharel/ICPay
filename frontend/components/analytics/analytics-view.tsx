@@ -3,7 +3,15 @@
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Button } from "@/components/ui/button"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useOwnProfile } from "@/hooks/wallet/useWalletData"
@@ -22,6 +30,87 @@ import {
 import { buildAnalyticsCsv, downloadAnalyticsCsv, ledgerSymbolFallback } from "@/lib/analytics/csv"
 import { exportUserAnalytics } from "@/services/analytics/analytics"
 import { formatAmount } from "@/lib/wallet/utils"
+
+function AnalyticsViewSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <Skeleton className="h-4 w-32 rounded-md" />
+        <div className="flex gap-2">
+          <Skeleton className="h-8 w-20 rounded-md" />
+          <Skeleton className="h-8 w-24 rounded-md" />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="rounded-(--radius) border border-border/60 bg-card p-4 space-y-2">
+            <Skeleton className="h-3.5 w-20 rounded-md" />
+            <Skeleton className="h-7 w-28 rounded-lg" />
+            <Skeleton className="h-3 w-16 rounded-md" />
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="rounded-(--radius) border border-border/60 bg-card p-5 space-y-4">
+          <Skeleton className="h-5 w-32 rounded-md" />
+          <Skeleton className="h-56 w-full rounded-(--radius)" />
+        </div>
+        <div className="rounded-(--radius) border border-border/60 bg-card p-5 space-y-4">
+          <Skeleton className="h-5 w-32 rounded-md" />
+          <Skeleton className="h-56 w-full rounded-(--radius)" />
+        </div>
+      </div>
+
+      <div className="rounded-(--radius) border border-border/60 bg-card overflow-hidden">
+        <div className="p-4 border-b border-border/40 flex items-center justify-between">
+          <Skeleton className="h-9 w-64 rounded-lg" />
+          <div className="flex gap-2">
+            <Skeleton className="h-9 w-28 rounded-lg" />
+            <Skeleton className="h-9 w-28 rounded-lg" />
+          </div>
+        </div>
+        <Table>
+          <TableHeader>
+            <TableRow className="border-border/60 hover:bg-transparent">
+              <TableHead className="w-10" />
+              <TableHead>Type</TableHead>
+              <TableHead>Amount</TableHead>
+              <TableHead>Counterparty</TableHead>
+              <TableHead>Time</TableHead>
+              <TableHead className="w-12 text-right" />
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <TableRow key={i} className="border-border/40">
+                <TableCell className="w-10">
+                  <Skeleton className="size-4 rounded" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-5 w-16 rounded-full" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-24 rounded-md" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-36 rounded-md font-mono" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-3.5 w-20 rounded-md" />
+                </TableCell>
+                <TableCell className="text-right">
+                  <Skeleton className="ml-auto size-7 rounded-md" />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  )
+}
 
 export function AnalyticsView() {
   const t = useTranslations("analytics")
@@ -82,9 +171,7 @@ export function AnalyticsView() {
   return (
     <AppPage title={t("title")} description={t("subtitle")}>
       {isLoading && !data ? (
-        <div className="flex justify-center py-16">
-          <Spinner className="size-6 text-muted-foreground" />
-        </div>
+        <AnalyticsViewSkeleton />
       ) : error ? (
         <Alert variant="destructive">
           <AlertDescription>{error.message}</AlertDescription>

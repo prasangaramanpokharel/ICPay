@@ -1,20 +1,8 @@
 "use client"
 
 import Image from "next/image"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowLeft01Icon,
-  ArrowRight01Icon,
-  Tick02Icon,
-  Time02Icon,
-  SecurityLockIcon,
-  Coins01Icon,
-  Award01Icon,
-  HelpCircleIcon,
-  SourceCodeIcon,
-  Book01Icon,
-  PlayIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowLeftGlassIcon, ArrowRightGlassIcon, CheckGlassIcon, ClockGlassIcon, ShieldCheckGlassIcon, CoinsGlassIcon, AwardGlassIcon, CircleQuestionMarkGlassIcon, CodeGlassIcon, BookGlassIcon, PlayGlassIcon } from "@thesvg/ui-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -86,7 +74,7 @@ export function LessonVideoPlayer({
             className="object-cover blur-sm brightness-40"
           />
           <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center bg-background/60 backdrop-blur-xs">
-            <HugeiconsIcon icon={SecurityLockIcon} className="size-8 text-primary" strokeWidth={1.75} />
+            <Icon icon={ShieldCheckGlassIcon} className="size-8 text-primary" strokeWidth={1.75} />
             <h3 className="mt-3 text-base font-bold text-foreground sm:text-lg">
               Unlock Full Course to Access This Lesson
             </h3>
@@ -106,7 +94,7 @@ export function LessonVideoPlayer({
                     shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
                   />
                   <span className="relative z-10 flex items-center gap-2">
-                    <HugeiconsIcon icon={SecurityLockIcon} className="size-3.5" />
+                    <Icon icon={ShieldCheckGlassIcon} className="size-3.5" />
                     Connect Wallet to Unlock
                   </span>
                 </Button>
@@ -122,7 +110,7 @@ export function LessonVideoPlayer({
                     shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
                   />
                   <span className="relative z-10 flex items-center gap-2">
-                    <HugeiconsIcon icon={Coins01Icon} className="size-3.5" />
+                    <Icon icon={CoinsGlassIcon} className="size-3.5" />
                     Unlock Course for {coursePrice}
                   </span>
                 </Button>
@@ -180,7 +168,7 @@ export function LessonVideoPlayer({
                 variant="outline"
                 className="gap-1 text-xs border-primary/40 bg-primary/10 text-primary"
               >
-                <HugeiconsIcon icon={HelpCircleIcon} className="size-3" />
+                <Icon icon={CircleQuestionMarkGlassIcon} className="size-3" />
                 <span>Interactive Quiz</span>
               </Badge>
             ) : lesson.type === "code_lab" ? (
@@ -188,7 +176,7 @@ export function LessonVideoPlayer({
                 variant="outline"
                 className="gap-1 text-xs border-info/40 bg-info/10 text-info"
               >
-                <HugeiconsIcon icon={SourceCodeIcon} className="size-3" />
+                <Icon icon={CodeGlassIcon} className="size-3" />
                 <span>Hands-On Code Lab</span>
               </Badge>
             ) : lesson.type === "reading" ? (
@@ -196,12 +184,12 @@ export function LessonVideoPlayer({
                 variant="outline"
                 className="gap-1 text-xs border-secondary/50 bg-secondary/20 text-secondary-foreground"
               >
-                <HugeiconsIcon icon={Book01Icon} className="size-3.5" />
+                <Icon icon={BookGlassIcon} className="size-3.5" />
                 <span>Reading Deep Dive</span>
               </Badge>
             ) : (
               <Badge variant="outline" className="gap-1 text-xs">
-                <HugeiconsIcon icon={PlayIcon} className="size-3" />
+                <Icon icon={PlayGlassIcon} className="size-3" />
                 <span>Video Masterclass</span>
               </Badge>
             )}
@@ -217,7 +205,7 @@ export function LessonVideoPlayer({
             )}
           </div>
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-            <HugeiconsIcon icon={Time02Icon} className="size-3.5" />
+            <Icon icon={ClockGlassIcon} className="size-3.5" />
             <span>{lesson.durationMinutes} min</span>
           </div>
         </div>
@@ -264,8 +252,8 @@ export function LessonVideoPlayer({
             {isCompleted ? (
               <ToastSuccessIcon />
             ) : (
-              <HugeiconsIcon
-                icon={Tick02Icon}
+              <Icon
+                icon={CheckGlassIcon}
                 className="size-4 text-muted-foreground"
               />
             )}
@@ -280,7 +268,7 @@ export function LessonVideoPlayer({
               onClick={onPrevious}
               className="gap-1.5 text-xs"
             >
-              <HugeiconsIcon icon={ArrowLeft01Icon} className="size-3.5" />
+              <Icon icon={ArrowLeftGlassIcon} className="size-3.5" />
               <span>Previous</span>
             </Button>
             {hasNext ? (
@@ -290,7 +278,7 @@ export function LessonVideoPlayer({
                 className="gap-1.5 text-xs font-semibold"
               >
                 <span>Next</span>
-                <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+                <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
               </Button>
             ) : isAllCompleted ? (
               <Button
@@ -298,7 +286,7 @@ export function LessonVideoPlayer({
                 onClick={onClaimCertificate}
                 className="gap-1.5 text-xs font-semibold bg-primary text-primary-foreground shadow-xs"
               >
-                <HugeiconsIcon icon={Award01Icon} className="size-3.5" />
+                <Icon icon={AwardGlassIcon} className="size-3.5" />
                 <span>Claim Certificate</span>
               </Button>
             ) : (
@@ -308,7 +296,7 @@ export function LessonVideoPlayer({
                 className="gap-1.5 text-xs font-semibold"
               >
                 <span>Next</span>
-                <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+                <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
               </Button>
             )}
           </div>

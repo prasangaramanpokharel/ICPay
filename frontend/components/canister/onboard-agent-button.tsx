@@ -2,8 +2,8 @@
 
 import { useState, useSyncExternalStore } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Cancel01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassOutlineIcon, XGlassIcon } from "@thesvg/ui-react"
 import { toast } from "@/components/ui/sonner"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { Button } from "@/components/ui/button"
@@ -203,8 +203,14 @@ Once added as a controller, the canister will automatically appear and be manage
             />
           }
         >
-          <span className="hidden sm:inline">{copied ? t("onboardAgentCopied") : t("onboardAgentTitle")}</span>
-          {copied && <span className="sm:hidden">{t("onboardAgentCopied")}</span>}
+          {copied ? (
+            <span className="inline-flex items-center gap-1.5 text-success font-medium">
+              <Icon icon={CheckGlassOutlineIcon} className="size-3.5 text-success" strokeWidth={2.5} />
+              <span>{t("onboardAgentCopied")}</span>
+            </span>
+          ) : (
+            <span>{t("onboardAgentTitle")}</span>
+          )}
           <div className="flex items-center gap-1.5 shrink-0">
             <ClaudeCodeIcon className="size-3.5 shrink-0" />
             <CursorIcon className="size-3.5 shrink-0" />
@@ -227,7 +233,7 @@ Once added as a controller, the canister will automatically appear and be manage
         className="size-7 rounded-full text-muted-foreground hover:text-foreground cursor-pointer"
         aria-label="Dismiss"
       >
-        <HugeiconsIcon icon={Cancel01Icon} className="size-3" />
+        <Icon icon={XGlassIcon} className="size-3" />
       </Button>
     </div>
   )

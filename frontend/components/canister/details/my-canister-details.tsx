@@ -3,15 +3,8 @@
 import { useMemo, useState } from "react"
 import useSWR from "swr"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowDown01Icon,
-  ConnectIcon,
-  InformationCircleIcon,
-  Link01Icon,
-  PencilEdit01Icon,
-  Settings02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowDownGlassIcon, LinkGlassIcon, InfoGlassIcon, PencilGlassIcon, SettingsGlassIcon } from "@thesvg/ui-react"
 
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -197,7 +190,7 @@ export function MyCanisterDetails({
               className="size-7 text-muted-foreground hover:text-foreground cursor-pointer"
               aria-label="Edit canister name"
             >
-              <HugeiconsIcon icon={PencilEdit01Icon} className="size-4" strokeWidth={1.75} />
+              <Icon icon={PencilGlassIcon} className="size-4" strokeWidth={1.75} />
             </Button>
           </div>
 
@@ -300,7 +293,7 @@ export function MyCanisterDetails({
                 </div>
                 <HoverCard>
                   <HoverCardTrigger className="cursor-help inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
-                    <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5 text-muted-foreground/70" />
+                    <Icon icon={InfoGlassIcon} className="size-3.5 text-muted-foreground/70" />
                   </HoverCardTrigger>
                   <HoverCardContent className="w-80 space-y-2 text-xs">
                     <p className="font-semibold text-foreground">Canister Execution & Fuel</p>
@@ -383,7 +376,7 @@ export function MyCanisterDetails({
                 <HoverCard>
                   <HoverCardTrigger className="cursor-help inline-flex items-center gap-1.5 text-sm font-semibold text-foreground hover:text-primary transition-colors">
                     <CardTitle className="text-sm font-semibold">Subnet</CardTitle>
-                    <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5 text-muted-foreground/70" />
+                    <Icon icon={InfoGlassIcon} className="size-3.5 text-muted-foreground/70" />
                   </HoverCardTrigger>
                   <HoverCardContent className="w-80 space-y-2 text-xs">
                     <p className="font-semibold text-foreground">Internet Computer Subnet</p>
@@ -419,7 +412,7 @@ export function MyCanisterDetails({
                       className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline pt-1"
                     >
                       <span>View subnet on explorer</span>
-                      <HugeiconsIcon icon={Link01Icon} className="size-3" />
+                      <Icon icon={LinkGlassIcon} className="size-3" />
                     </a>
                   </HoverCardContent>
                 </HoverCard>
@@ -440,8 +433,8 @@ export function MyCanisterDetails({
             >
               <CollapsibleTrigger className="flex w-full items-center justify-between p-5 text-left hover:bg-muted/10 transition-colors cursor-pointer">
                 <span className="text-sm font-semibold text-foreground">Technical details</span>
-                <HugeiconsIcon
-                  icon={ArrowDown01Icon}
+                <Icon
+                  icon={ArrowDownGlassIcon}
                   className={cn("size-4 text-muted-foreground transition-transform duration-200", !technicalOpen && "-rotate-90")}
                 />
               </CollapsibleTrigger>
@@ -551,7 +544,7 @@ export function MyCanisterDetails({
                           onClick={() => handleTabSelect("settings")}
                           className="h-auto p-0 inline-flex items-center gap-1 text-[11px] text-primary hover:underline cursor-pointer"
                         >
-                          <HugeiconsIcon icon={Settings02Icon} className="size-3" />
+                          <Icon icon={SettingsGlassIcon} className="size-3" />
                           <span>Manage in Settings</span>
                         </Button>
                       </div>
@@ -600,7 +593,7 @@ export function MyCanisterDetails({
                       />
                     }
                   >
-                    <HugeiconsIcon icon={Link01Icon} className="size-3.5" />
+                    <Icon icon={LinkGlassIcon} className="size-3.5" />
                     <span>{t("dashboard")}</span>
                   </Button>
                 </div>
@@ -632,12 +625,12 @@ export function MyCanisterDetails({
           ) : status.kind === "loading" ? (
             <div className="space-y-4">
               <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-48 w-full rounded-xl" />
+              <Skeleton className="h-48 w-full rounded-(--radius)" />
             </div>
           ) : (
             <Card className="p-8 text-center space-y-3">
               <div className="flex size-10 mx-auto items-center justify-center rounded-xl bg-muted/60 text-muted-foreground">
-                <HugeiconsIcon icon={InformationCircleIcon} className="size-5" />
+                <Icon icon={InfoGlassIcon} className="size-5" />
               </div>
               <CardTitle className="text-sm font-semibold">
                 {status.kind === "denied" ? "Controller Access Required" : "Canister Settings Unavailable"}
@@ -653,9 +646,8 @@ export function MyCanisterDetails({
                   variant="outline"
                   type="button"
                   onClick={() => setConnectOpen(true)}
-                  className="cursor-pointer gap-1.5"
+                  className="cursor-pointer"
                 >
-                  <HugeiconsIcon icon={ConnectIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
                   <span>Connect as Controller</span>
                 </Button>
                 <Button
@@ -671,7 +663,7 @@ export function MyCanisterDetails({
                   }
                   className="cursor-pointer gap-1.5"
                 >
-                  <HugeiconsIcon icon={Link01Icon} className="size-3.5" />
+                  <Icon icon={LinkGlassIcon} className="size-3.5" />
                   <span>View on IC Dashboard</span>
                 </Button>
               </CardContent>

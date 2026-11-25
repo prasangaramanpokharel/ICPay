@@ -2,8 +2,9 @@
 
 import { type ReactNode } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Tick02Icon } from "@hugeicons/core-free-icons"
+import { motion } from "motion/react"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { CopyButton } from "@/components/ui/copy-button"
 import {
@@ -46,9 +47,14 @@ export function CanisterSuccessDialog({
     >
       <DialogContent className="gap-5 p-5 sm:max-w-md sm:p-6" closeButtonSize="icon-lg">
         <DialogHeader className="items-center pr-10 text-center sm:items-center sm:text-center">
-          <div className="animate-in fade-in zoom-in-75 mb-1 flex items-center justify-center text-success duration-200">
-            <HugeiconsIcon icon={Tick02Icon} className="size-10" strokeWidth={2.25} />
-          </div>
+          <motion.div
+            initial={{ scale: 0.4, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 420, damping: 24 }}
+            className="mb-1 flex items-center justify-center text-success"
+          >
+            <Icon icon={CheckGlassOutlineIcon} className="size-10" strokeWidth={2.25} />
+          </motion.div>
           <DialogTitle>{title}</DialogTitle>
           {description ? (
             <DialogDescription>{description}</DialogDescription>

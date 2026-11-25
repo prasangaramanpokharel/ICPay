@@ -3,19 +3,10 @@
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { toast } from "sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Add01Icon,
-  CancelCircleIcon,
-  Copy01Icon,
-  Delete02Icon,
-  Key01Icon,
-  Search01Icon,
-  Tick02Icon,
-  ViewIcon,
-  ViewOffIcon,
-} from "@hugeicons/core-free-icons"
+import { toast } from "@/components/ui/sonner"
+import { Icon } from "@/components/ui/icon"
+import { CopyIconIndicator } from "@/components/ui/copy-button"
+import { PlusGlassIcon, CircleXGlassIcon, DeleteGlassIcon, KeyGlassIcon, SearchGlassIcon, EyeGlassIcon, EyeOffGlassIcon } from "@thesvg/ui-react"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -23,6 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty"
 import { Badge } from "@/components/ui/badge"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Spinner } from "@/components/ui/spinner"
 import {
   Table,
@@ -43,18 +35,18 @@ import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { useAuth } from "@/components/auth/auth-provider"
 import { copyText } from "@/lib/wallet/utils"
 import {
+  useCronApiKeys,
+  useCronProjects,
+  type EnrichedCronApiKey,
+} from "@/hooks/cron/useCron"
+import {
   createApiKey,
   deleteApiKey,
-  listApiKeys,
-  listProjects,
   revokeApiKey,
 } from "@/services/cron/client"
-import type { RemoteApiKeySummary, RemoteProjectRecord } from "@/services/cron/types"
 import { formatProjectId, parseProjectId } from "./cron-types"
 
-interface EnrichedApiKey extends RemoteApiKeySummary {
-  projectName: string
-}
+type EnrichedApiKey = EnrichedCronApiKey
 
 function hexFromBytes(bytes: Uint8Array | number[]): string {
   return Array.from(bytes)
@@ -80,19 +72,18 @@ export function CronApiView() {
   const t = useTranslations("cron")
   const tCommon = useTranslations("common")
 
-  const [projects, setProjects] = React.useState<RemoteProjectRecord[]>([])
-  const [loadingProjects, setLoadingProjects] = React.useState(true)
+  const { projects, isLoading: loadingProjects } = useCronProjects()
   const [selectedProjectId, setSelectedProjectId] = React.useState<string>(
     initialProjectParam ?? "all"
   )
   const [statusFilter, setStatusFilter] = React.useState<string>("all")
   const [query, setQuery] = React.useState("")
 
-  const [keys, setKeys] = React.useState<EnrichedApiKey[]>([])
-  const [loadingKeys, setLoadingKeys] = React.useState(true)
+  const { keys, isLoading: loadingKeys, mutate: mutateKeys } = useCronApiKeys(projects)
 
   const [createOpen, setCreateOpen] = React.useState(false)
-  const [targetProjectId, setTargetProjectId] = React.useState<string>("")
+  const [manualTargetProjectId, setTargetProjectId] = React.useState<string>("")
+  const targetProjectId = manualTargetProjectId || (projects.length > 0 ? projects[0].id.toString() : "")
   const [newKeyLabel, setNewKeyLabel] = React.useState("")
   const [creatingKey, setCreatingKey] = React.useState(false)
 
@@ -112,94 +103,9 @@ export function CronApiView() {
     }, 2000)
   }
 
-  const loadData = React.useCallback(async (callerIdentity: typeof identity) => {
-    if (!callerIdentity) {
-      setProjects([])
-      setKeys([])
-      setLoadingProjects(false)
-      setLoadingKeys(false)
-      return
-    }
-
-    try {
-      const projList = await listProjects(callerIdentity)
-      setProjects(projList)
-      if (projList.length > 0) {
-        setTargetProjectId((prev) => prev || projList[0].id.toString())
-      }
-
-      const allKeyPromises = projList.map(async (p) => {
-        try {
-          const projectKeys = await listApiKeys(p.id, callerIdentity)
-          return projectKeys.map((k) => ({
-            ...k,
-            projectName: p.name,
-          }))
-        } catch {
-          return []
-        }
-      })
-
-      const nested = await Promise.all(allKeyPromises)
-      const flat = nested.flat().sort((a, b) => Number(b.created_at - a.created_at))
-      setKeys(flat)
-    } catch {
-      setProjects([])
-      setKeys([])
-    } finally {
-      setLoadingProjects(false)
-      setLoadingKeys(false)
-    }
-  }, [])
-
-  React.useEffect(() => {
-    let active = true
-    if (!identity) {
-      return () => {
-        active = false
-      }
-    }
-
-    listProjects(identity)
-      .then(async (projList) => {
-        if (!active) return
-        setProjects(projList)
-        if (projList.length > 0) {
-          setTargetProjectId((prev) => prev || projList[0].id.toString())
-        }
-
-        const allKeyPromises = projList.map(async (p) => {
-          try {
-            const projectKeys = await listApiKeys(p.id, identity)
-            return projectKeys.map((k) => ({
-              ...k,
-              projectName: p.name,
-            }))
-          } catch {
-            return []
-          }
-        })
-
-        const nested = await Promise.all(allKeyPromises)
-        if (!active) return
-        const flat = nested.flat().sort((a, b) => Number(b.created_at - a.created_at))
-        setKeys(flat)
-      })
-      .catch(() => {
-        if (!active) return
-        setProjects([])
-        setKeys([])
-      })
-      .finally(() => {
-        if (!active) return
-        setLoadingProjects(false)
-        setLoadingKeys(false)
-      })
-
-    return () => {
-      active = false
-    }
-  }, [identity])
+  const loadData = React.useCallback(async () => {
+    await mutateKeys()
+  }, [mutateKeys])
 
   const filteredKeys = React.useMemo(() => {
     const needle = query.trim().toLowerCase()
@@ -238,7 +144,7 @@ export function CronApiView() {
       setResultModalOpen(true)
       setNewKeyLabel("")
       toast.success("API key generated successfully.")
-      await loadData(identity)
+      await loadData()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to generate API key.")
     } finally {
@@ -257,7 +163,7 @@ export function CronApiView() {
     try {
       await revokeApiKey(key.key_hash, identity)
       toast.success(`API key "${key.label}" revoked successfully.`)
-      await loadData(identity)
+      await loadData()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to revoke API key.")
     } finally {
@@ -276,7 +182,7 @@ export function CronApiView() {
     try {
       await deleteApiKey(key.key_hash, identity)
       toast.success(`API key "${key.label}" deleted successfully.`)
-      await loadData(identity)
+      await loadData()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to delete API key.")
     } finally {
@@ -309,7 +215,7 @@ export function CronApiView() {
             disabled={projects.length === 0 || loadingProjects}
             className="gap-1.5"
           >
-            <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={PlusGlassIcon} className="size-4" strokeWidth={1.75} />
             <span>{t("createApiKey")}</span>
           </Button>
         </div>
@@ -318,8 +224,8 @@ export function CronApiView() {
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1">
-          <HugeiconsIcon
-            icon={Search01Icon}
+          <Icon
+            icon={SearchGlassIcon}
             className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
           />
           <Input
@@ -375,18 +281,35 @@ export function CronApiView() {
             </TableHeader>
             <TableBody>
               {loadingKeys ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="h-40 text-center">
-                    <Spinner className="size-6 text-primary mx-auto" />
-                  </TableCell>
-                </TableRow>
+                Array.from({ length: 4 }).map((_, i) => (
+                  <TableRow key={i} className="border-border/40">
+                    <TableCell>
+                      <Skeleton className="h-4 w-28 rounded-md" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-32 rounded-md font-mono" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-4 w-20 rounded-md" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-5 w-16 rounded-full" />
+                    </TableCell>
+                    <TableCell>
+                      <Skeleton className="h-3.5 w-20 rounded-md" />
+                    </TableCell>
+                    <TableCell className="text-right pr-6">
+                      <Skeleton className="ml-auto size-7 rounded-md" />
+                    </TableCell>
+                  </TableRow>
+                ))
               ) : filteredKeys.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="p-0 text-center">
                     <Empty className="py-12 border-0">
                       <EmptyHeader>
                         <EmptyMedia variant="icon">
-                          <HugeiconsIcon icon={Key01Icon} className="size-6 text-muted-foreground" />
+                          <Icon icon={KeyGlassIcon} className="size-6 text-muted-foreground" />
                         </EmptyMedia>
                         <EmptyTitle>{t("noApiKeysTitle")}</EmptyTitle>
                         <EmptyDescription>
@@ -406,7 +329,7 @@ export function CronApiView() {
                     <TableRow key={hex} className="hover:bg-muted/30">
                       <TableCell className="font-medium text-foreground">
                         <div className="flex items-center gap-2">
-                          <HugeiconsIcon icon={Key01Icon} className="size-4 text-muted-foreground" />
+                          <Icon icon={KeyGlassIcon} className="size-4 text-muted-foreground" />
                           <span>{key.label}</span>
                         </div>
                       </TableCell>
@@ -434,8 +357,8 @@ export function CronApiView() {
                               }
                               aria-label={visibleKeys[hex] ? "Hide API key" : "Show API key"}
                             >
-                              <HugeiconsIcon
-                                icon={visibleKeys[hex] ? ViewOffIcon : ViewIcon}
+                              <Icon
+                                icon={visibleKeys[hex] ? EyeOffGlassIcon : EyeGlassIcon}
                                 className="size-3"
                               />
                             </Button>
@@ -448,10 +371,7 @@ export function CronApiView() {
                             onClick={() => void handleCopyKey(key.raw_key || `icp_cron_${hex}...`, hex)}
                             aria-label="Copy API key"
                           >
-                            <HugeiconsIcon
-                              icon={copiedHex === hex ? Tick02Icon : Copy01Icon}
-                              className="size-3"
-                            />
+                            <CopyIconIndicator copied={copiedHex === hex} iconClassName="size-3" />
                           </Button>
                         </div>
                       </TableCell>
@@ -489,7 +409,7 @@ export function CronApiView() {
                               {isRevoking ? (
                                 <Spinner className="size-3" />
                               ) : (
-                                <HugeiconsIcon icon={CancelCircleIcon} className="size-3 mr-1" />
+                                <Icon icon={CircleXGlassIcon} className="size-3 mr-1" />
                               )}
                               {t("revoke")}
                             </Button>
@@ -504,7 +424,7 @@ export function CronApiView() {
                             {isDeleting ? (
                               <Spinner className="size-3" />
                             ) : (
-                              <HugeiconsIcon icon={Delete02Icon} className="size-3 mr-1" />
+                              <Icon icon={DeleteGlassIcon} className="size-3 mr-1" />
                             )}
                             {t("delete")}
                           </Button>
@@ -606,10 +526,7 @@ export function CronApiView() {
                 onClick={handleCopySecret}
                 className="shrink-0 gap-1.5 bg-primary text-primary-foreground"
               >
-                <HugeiconsIcon
-                  icon={copiedSecret ? Tick02Icon : Copy01Icon}
-                  className="size-3.5"
-                />
+                <CopyIconIndicator copied={copiedSecret} iconClassName="size-3.5" />
                 {copiedSecret ? tCommon("copied") : tCommon("copy")}
               </Button>
             </div>

@@ -3,13 +3,15 @@
 import { useEffect, type ReactNode } from "react"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/components/auth/auth-provider"
+import { useEffectivePrincipal } from "@/lib/auth/lastPrincipal"
 import { Spinner } from "@/components/ui/spinner"
 import { cn } from "@/lib/ui/utils"
 
 export function AppAuthGate({ children }: { children: ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth()
+  const { isCachedSession } = useEffectivePrincipal()
   const router = useRouter()
-  const gated = isLoading || !isAuthenticated
+  const gated = (isLoading && !isCachedSession) || (!isLoading && !isAuthenticated)
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {

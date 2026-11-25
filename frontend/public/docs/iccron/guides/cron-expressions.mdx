@@ -1,0 +1,46 @@
+---
+title: "Cron Expression Syntax"
+description: "5-field cron expression syntax, step values, wildcards, and O(1) bitmask compilation."
+group: "Guides"
+order: 2
+---
+
+# Cron Expression Syntax
+
+icCron supports standard 5-field UNIX cron syntax:
+
+```
+ ┌───────────── minute (0 - 59)
+ │ ┌───────────── hour (0 - 23)
+ │ │ ┌───────────── day of the month (1 - 31)
+ │ │ │ ┌───────────── month (1 - 12)
+ │ │ │ │ ┌───────────── day of the week (0 - 6) (Sunday to Saturday)
+ │ │ │ │ │
+ * * * * *
+```
+
+## Common Schedules
+
+| Expression | Meaning | Typical Use Case |
+|---|---|---|
+| `* * * * *` | Every minute | Real-time monitoring & pinging |
+| `*/5 * * * *` | Every 5 minutes | Cache warm-ups & feed polling |
+| `*/15 * * * *` | Every 15 minutes | Inventory & order status syncs |
+| `0 * * * *` | Every hour at minute 0 | Database snapshots & Vercel bypass |
+| `0 2 * * *` | Daily at 02:00 UTC | Nightly analytical rollups |
+| `0 0 * * 1` | Every Monday at 00:00 UTC | Weekly billing summaries |
+| `0 0 1 * *` | First day of every month | Monthly subscription renewals |
+| `0 8,12,18 * * *` | Daily at 08:00, 12:00, 18:00 UTC | Multi-batch notification emails |
+| `0 0 * * 1-5` | Every weekday at midnight UTC | Financial settlement runs |
+
+## O(1) Bitmask Compilation
+
+Unlike naive schedulers that run regular expressions or iterate minute-by-minute across the entire calendar, icCron compiles every cron string into 5 compact integer bitmasks upon job creation:
+
+- `minutes`: `u64` (bits 0–59)
+- `hours`: `u32` (bits 0–23)
+- `days`: `u32` (bits 1–31)
+- `months`: `u16` (bits 1–12)
+- `weekdays`: `u8` (bits 0–6)
+
+When the canister timer wakes up, next-run calculations are performed using constant-time bitwise shifts and bit tests.

@@ -1,5 +1,5 @@
-import { HugeiconsIcon } from "@hugeicons/react"
-import { InformationCircleIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { InfoGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 
@@ -16,8 +16,8 @@ export function InfoTooltip({ content }: { content: string }) {
           />
         }
       >
-        <HugeiconsIcon
-          icon={InformationCircleIcon}
+        <Icon
+          icon={InfoGlassIcon}
           className="size-3.5 text-muted-foreground/60 hover:text-muted-foreground"
           strokeWidth={2}
         />

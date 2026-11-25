@@ -3,8 +3,8 @@
 import { useState } from "react"
 import Image from "next/image"
 import { AnimatePresence, motion } from "motion/react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Cancel01Icon, PlayIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { XGlassIcon, PlayGlassIcon } from "@thesvg/ui-react"
 
 import { cn } from "@/lib/ui/utils"
 
@@ -115,8 +115,8 @@ export function HeroVideoDialog({
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="flex size-20 sm:size-24 items-center justify-center rounded-full bg-background/20 p-2 backdrop-blur-md transition-all duration-300 group-hover:scale-110 group-hover:bg-background/30">
             <div className="flex size-14 sm:size-16 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform duration-300 group-hover:scale-105">
-              <HugeiconsIcon
-                icon={PlayIcon}
+              <Icon
+                icon={PlayGlassIcon}
                 className="size-7 sm:size-8 fill-current ml-1"
                 strokeWidth={1.5}
               />
@@ -153,7 +153,7 @@ export function HeroVideoDialog({
                 className="absolute top-4 right-4 z-30 flex size-9 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur-md transition-all hover:bg-black hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 cursor-pointer shadow-md"
                 aria-label="Close video"
               >
-                <HugeiconsIcon icon={Cancel01Icon} className="size-5" />
+                <Icon icon={XGlassIcon} className="size-5" />
               </button>
 
               {isDirect ? (

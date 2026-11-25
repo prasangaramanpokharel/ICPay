@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowUpRightGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { CopyIconIndicator } from "@/components/ui/copy-button"
@@ -133,7 +133,7 @@ export function LandingTransparency() {
                   className="gap-1.5 rounded-full px-4 text-xs font-medium text-foreground"
                 >
                   <span>ICP Dashboard</span>
-                  <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-3.5 text-muted-foreground" />
+                  <Icon icon={ArrowUpRightGlassIcon} className="size-3.5 text-muted-foreground" />
                 </Button>
               </div>
             </div>

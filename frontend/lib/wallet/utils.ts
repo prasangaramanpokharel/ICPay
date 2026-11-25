@@ -125,7 +125,7 @@ export function formatPrincipal(p: string): string {
 }
 
 export function explorerTxUrl(blockIndex: bigint): string {
-  return `https://dashboard.internetcomputer.org/transaction/${blockIndex}`
+  return `https://dashboard.internetcomputer.org/transaction/${encodeURIComponent(blockIndex.toString())}`
 }
 
 export function formatTime(t: bigint): string {
@@ -137,6 +137,19 @@ export function formatTime(t: bigint): string {
     hour: "2-digit",
     minute: "2-digit",
   })
+}
+
+export function formatRelativeTime(t: bigint): string {
+  const ms = Number(t / 1_000_000n)
+  if (!ms || Number.isNaN(ms) || ms <= 0) return "—"
+  const now = Date.now()
+  const diffSec = Math.max(0, Math.floor((now - ms) / 1000))
+  if (diffSec < 60) return "just now"
+  if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`
+  if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h ago`
+  if (diffSec < 86400 * 30) return `${Math.floor(diffSec / 86400)}d ago`
+  if (diffSec < 86400 * 365) return `${Math.floor(diffSec / (86400 * 30))}mo ago`
+  return `${Math.floor(diffSec / (86400 * 365))}y ago`
 }
 
 export function formatDetailTime(t: bigint): string {

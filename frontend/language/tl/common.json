@@ -448,7 +448,13 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Simbolo",
+    "colName": "Pangalan",
+    "colQuantity": "Dami",
+    "colValue": "Halaga",
+    "totalIcpBalance": "Kabuuang Balanse ng ICP",
+    "yourAssets": "Iyong mga asset"
   },
   "token": {
     "back": "wallet",
@@ -456,7 +462,7 @@
     "send": "Ipadala",
     "deposit": "Deposito",
     "swap": "Magpalit",
-    "depositTitle": "Address ng deposito",
+    "depositTitle": "Deposito",
     "depositSubtitle": "Ipadala ang {symbol} dito para i-top up ang iyong wallet.",
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Ang iyong personal na address — ikaw lamang ang maaaring magdeposito dito. Magpadala ng {symbol} para i-top up ang iyong balanse.",
@@ -472,7 +478,7 @@
     "selfCustodyNet": "Matatanggap mo",
     "selfCustodyDust": "Ito ay mas mababa sa {symbol} network fee, kaya hindi ito maaaring ilipat.",
     "selfCustodyEmpty": "Walang maililipat — ang token na ito ay hindi naipadala sa iyong punong-guro.",
-    "historyTitle": "On-chain na kasaysayan",
+    "historyTitle": "Kasaysayan",
     "snsLink": "Tingnan ang SNS",
     "snsDashboard": "Dashboard ng SNS",
     "snsSwap": "SNS palitan",
@@ -540,7 +546,8 @@
     "suggested": "Iminungkahi para sa iyo",
     "noneFound": "Walang nahanap para sa “{query}”.",
     "empty": "Wala pang mga account na may mga username. Maging una.",
-    "premium": "Na-verify na premium handle"
+    "premium": "Na-verify na premium handle",
+    "subtitle": "Galugarin ang mga profile ng user sa buong network"
   },
   "success": {
     "send": "Ipadala ang Tagumpay",
@@ -1381,6 +1388,10 @@
         "blog": {
           "title": "Blog",
           "description": "Mga gabay, tutorial, at artikulo tungkol sa ICP ecosystem."
+        },
+        "launch": {
+          "title": "Ilunsad ang token",
+          "description": "Gumawa ng ICRC-1 token sa Internet Computer."
         }
       },
       "legal": {

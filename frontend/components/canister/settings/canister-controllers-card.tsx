@@ -4,8 +4,8 @@ import { useOptimistic, useState, useTransition } from "react"
 import { useTranslations } from "next-intl"
 import { invalidateCanisterStatus } from "@/lib/swr/keys"
 import { toast } from "@/components/ui/sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { MoreHorizontalIcon, Delete02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { EllipsisGlassIcon, DeleteGlassIcon } from "@thesvg/ui-react"
 
 import { SettingsSection } from "./settings-section"
 import { Button } from "@/components/ui/button"
@@ -180,7 +180,7 @@ export function CanisterControllersCard({
                                   className="size-7 text-muted-foreground/40 pointer-events-none"
                                   aria-label="Actions"
                                 >
-                                  <HugeiconsIcon icon={MoreHorizontalIcon} className="size-3.5" />
+                                  <Icon icon={EllipsisGlassIcon} className="size-3.5" />
                                 </Button>
                               </span>
                             }
@@ -200,7 +200,7 @@ export function CanisterControllersCard({
                                 className="size-7 cursor-pointer text-muted-foreground hover:text-foreground"
                                 aria-label="Actions"
                               >
-                                <HugeiconsIcon icon={MoreHorizontalIcon} className="size-3.5" />
+                                <Icon icon={EllipsisGlassIcon} className="size-3.5" />
                               </Button>
                             }
                           />
@@ -210,7 +210,7 @@ export function CanisterControllersCard({
                               disabled={isPending}
                               className="cursor-pointer gap-2 text-xs text-destructive focus:text-destructive focus:bg-destructive/10"
                             >
-                              <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                              <Icon icon={DeleteGlassIcon} className="size-3.5" />
                               <span>{t("remove")}</span>
                             </DropdownMenuItem>
                           </DropdownMenuContent>

@@ -4,11 +4,11 @@ import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import { copyText } from "@/lib/wallet/utils"
 import { profileUrlFor } from "@/lib/profile/url"
 
-// The link is the product here: it is what the user hands to someone else to
-// get paid, so it is shown in full rather than truncated.
 export function ShareProfileCard({ username }: { username: string }) {
   const t = useTranslations("profile")
   const tc = useTranslations("common")
@@ -21,9 +21,6 @@ export function ShareProfileCard({ username }: { username: string }) {
     setTimeout(() => setCopied(false), 1500)
   }
 
-  // Share sheet where the browser has one, copy everywhere else. Dismissing the
-  // sheet rejects with AbortError, which is a choice rather than a failure and
-  // must not fall through to a surprise copy.
   const handleShare = async () => {
     const payload = {
       title: t("shareSheetTitle", { name: username }),
@@ -55,9 +52,16 @@ export function ShareProfileCard({ username }: { username: string }) {
           variant="outline"
           size="sm"
           onClick={handleCopy}
-          className="shrink-0"
+          className="shrink-0 gap-1.5"
         >
-          {copied ? tc("copied") : tc("copy")}
+          {copied ? (
+            <>
+              <Icon icon={CheckGlassOutlineIcon} className="size-3.5 text-success" strokeWidth={2.5} />
+              <span className="text-success font-medium">{tc("copied")}</span>
+            </>
+          ) : (
+            tc("copy")
+          )}
         </Button>
         <Button
           size="sm"

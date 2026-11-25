@@ -4,28 +4,24 @@ import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ShineBorder } from "@/components/ui/shine-border"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowRight01Icon,
-  Clock01Icon,
-  LinkSquare02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowRightIcon, ClockGlassIcon, ExternalLinkGlassIcon } from "@thesvg/ui-react"
 
 export function CtaSection() {
   return (
     <section className="bg-background py-16 md:py-24">
       <div className="mx-auto max-w-5xl px-4 md:px-6">
         <div className="relative rounded-3xl p-px">
-          <Card className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card to-background p-8 md:p-14 text-center shadow-2xl">
+          <Card className="relative overflow-hidden rounded-3xl border border-border/80 bg-gradient-to-b from-card via-card to-background p-8 md:p-14 text-center shadow-xl">
             <ShineBorder
               borderWidth={1.5}
               duration={10}
-              shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
+              shineColor={["var(--primary)", "var(--accent)", "var(--success)"]}
             />
 
             <div className="mx-auto max-w-2xl space-y-6">
               <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-xs font-semibold text-primary">
-                <HugeiconsIcon icon={Clock01Icon} className="size-3.5" />
+                <Icon icon={ClockGlassIcon} className="size-3.5" />
                 Zero Infrastructure · Infinite Reliability
               </div>
 
@@ -41,28 +37,28 @@ export function CtaSection() {
               <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                 <Button
                   size="lg"
-                  className="rounded-xl px-7 font-semibold shadow-lg"
+                  className="gap-2 rounded-xl px-7 font-semibold shadow-sm"
                   nativeButton={false}
-                  render={<Link href="/login" />}
+                  render={<Link href="/cron" />}
                 >
-                  Start Free with Internet Identity
-                  <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+                  Launch icCron Dashboard
+                  <ArrowRightIcon className="size-4" />
                 </Button>
                 <Button
                   size="lg"
                   variant="outline"
-                  className="rounded-xl px-6 font-medium"
+                  className="gap-2 rounded-xl px-6 font-medium"
                   nativeButton={false}
                   render={
                     <Link
-                      href="https://dashboard.internetcomputer.org/canister/uzt4z-lp777-77774-qaabq-cai"
+                      href="https://dashboard.internetcomputer.org/canister/w2fxo-5qaaa-aaaan-q6zxq-cai"
                       target="_blank"
                       rel="noopener noreferrer"
                     />
                   }
                 >
-                  <HugeiconsIcon icon={LinkSquare02Icon} className="size-4" />
-                  View Canister on icScan
+                  <Icon icon={ExternalLinkGlassIcon} className="size-4" />
+                  Explorer
                 </Button>
               </div>
 

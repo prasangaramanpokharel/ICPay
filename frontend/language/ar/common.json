@@ -448,7 +448,13 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "الرمز",
+    "colName": "الاسم",
+    "colQuantity": "الكمية",
+    "colValue": "القيمة",
+    "totalIcpBalance": "إجمالي رصيد ICP",
+    "yourAssets": "أصولك"
   },
   "token": {
     "back": "محفظة",
@@ -456,7 +462,7 @@
     "send": "يرسل",
     "deposit": "إيداع",
     "swap": "تغيير",
-    "depositTitle": "عنوان الإيداع",
+    "depositTitle": "الإيداع",
     "depositSubtitle": "أرسل {symbol} هنا لتعبئة محفظتك.",
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "عنوانك الشخصي — أنت وحدك من يستطيع الإيداع هنا. أرسل {symbol} لتعبئة رصيدك.",
@@ -472,7 +478,7 @@
     "selfCustodyNet": "تشكيل",
     "selfCustodyDust": "وهذا أقل من رسوم الشبكة {symbol}، لذلك لا يمكن نقله.",
     "selfCustodyEmpty": "لا يوجد شيء يمكن نقله - يتم إرسال هذا الرمز المميز إلى مديرك.",
-    "historyTitle": "التاريخ على السلسلة",
+    "historyTitle": "التاريخ",
     "snsLink": "عرض خدمات الشبكات الاجتماعية",
     "snsDashboard": "لوحة القيادة SNS",
     "snsSwap": "مبادلة SNS",
@@ -540,7 +546,8 @@
     "suggested": "آلة لك",
     "noneFound": "لم يتم العثور على أحد لـ \"{query}\".",
     "empty": "لا توجد حسابات بأسماء المستخدمين حتى الآن. كن الأول.",
-    "premium": "تم التحقق منه بشكل ممتاز"
+    "premium": "تم التحقق منه بشكل ممتاز",
+    "subtitle": "استكشف ملفات تعريف المستخدمين عبر الشبكة"
   },
   "success": {
     "send": "تقديم النجاح",
@@ -1381,6 +1388,10 @@
         "blog": {
           "title": "المدونة",
           "description": "أدلة ودروس ومقالات عن نظام ICP البيئي."
+        },
+        "launch": {
+          "title": "إطلاق رمز",
+          "description": "أنشئ رمز ICRC-1 على Internet Computer."
         }
       },
       "legal": {

@@ -5,9 +5,9 @@ import { BlogAuthorMeta } from "@/components/blog/blog-author-meta"
 import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
 
 const SLUG = "cloud-storage-pricing-comparison-2026"
-const TITLE = "Cloud Storage Pricing Comparison 2026: AWS vs Google vs Azure vs ICBucket"
+const TITLE = "Cloud Storage Pricing Comparison (2026): AWS S3 vs R2 vs icBucket [Cost Table]"
 const DESCRIPTION =
-  "Complete 2026 cloud storage pricing comparison guide. We break down storage costs, hidden egress bandwidth fees, request charges, and compare AWS S3, Google Cloud Storage, Microsoft Azure Blob, and on-chain ICBucket."
+  "Full 2026 cloud storage pricing matrix. Compare S3 Standard ($0.023/GB), egress costs ($0.09/GB), and icBucket zero-egress on-chain storage. Updated November 2026."
 const PUBLISHED_AT = "2026-10-12"
 const READING_MINUTES = 14
 

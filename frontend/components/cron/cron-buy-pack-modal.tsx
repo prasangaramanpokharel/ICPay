@@ -16,9 +16,9 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
-import { toast } from "sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ZapIcon, Coins01Icon, Clock01Icon } from "@hugeicons/core-free-icons"
+import { toast } from "@/components/ui/sonner"
+import { Icon } from "@/components/ui/icon"
+import { ZapGlassIcon, ClockGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import { buyCredits, quoteCredits } from "@/services/cron/client"
 import { getWalletActor } from "@/services/wallet/actor"
@@ -38,16 +38,16 @@ function formatRunway(runs: number): string {
   const hourlyDays = Math.floor(runs / 24)
   if (hourlyDays >= 365) {
     const years = (hourlyDays / 365).toFixed(1)
-    return `~${years} years of hourly runs`
+    return `~ ${years} years of hourly runs`
   }
   if (hourlyDays >= 30) {
     const months = (hourlyDays / 30).toFixed(1)
-    return `~${months} months of hourly runs`
+    return `~ ${months} months of hourly runs`
   }
   if (hourlyDays >= 2) {
-    return `~${hourlyDays} days of hourly runs`
+    return `~ ${hourlyDays} days of hourly runs`
   }
-  return `~${runs} hours of hourly runs`
+  return `~ ${runs} hours of hourly runs`
 }
 
 export function CronBuyPackModal({
@@ -67,10 +67,23 @@ export function CronBuyPackModal({
 
   React.useEffect(() => {
     if (!open) return
-    if (runs < 100) {
-      return
-    }
     let active = true
+    if (runs < 100) {
+      setTimeout(() => {
+        if (active) {
+          setQuote(null)
+          setLoadingQuote(false)
+        }
+      }, 0)
+      return () => {
+        active = false
+      }
+    }
+    setTimeout(() => {
+      if (active) {
+        setLoadingQuote(true)
+      }
+    }, 0)
     quoteCredits(BigInt(runs), identity ?? undefined)
       .then((q) => {
         if (active) {
@@ -168,7 +181,7 @@ export function CronBuyPackModal({
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <HugeiconsIcon icon={ZapIcon} className="size-5 text-primary" />
+            <Icon icon={ZapGlassIcon} className="size-5 text-primary" />
             {t("topUpTitle")}
           </DialogTitle>
           <DialogDescription>
@@ -244,8 +257,7 @@ export function CronBuyPackModal({
 
               <div className="text-right flex flex-col items-end">
                 <span className="text-xs text-muted-foreground">{t("estimatedIcp")}</span>
-                <div className="flex items-center gap-1.5 text-sm font-semibold text-foreground tabular-nums">
-                  <HugeiconsIcon icon={Coins01Icon} className="size-4 text-primary" />
+                <div className="flex items-center text-sm font-semibold text-foreground tabular-nums">
                   {loadingQuote ? <Spinner className="size-3.5" /> : `${icpFormatted} ICP`}
                 </div>
               </div>
@@ -253,8 +265,8 @@ export function CronBuyPackModal({
 
             <div className="flex items-center justify-between border-t border-border/60 pt-2.5 text-xs text-muted-foreground">
               <div className="flex items-center gap-1.5">
-                <HugeiconsIcon icon={Clock01Icon} className="size-3.5 text-primary" />
-                <span>{t("estimatedRunway")}:</span>
+                <Icon icon={ClockGlassIcon} className="size-3.5 text-primary" />
+                <span>{t("estimatedRunway")}</span>
               </div>
               <Badge variant="secondary" className="font-normal text-[11px]">
                 {formatRunway(runs)}

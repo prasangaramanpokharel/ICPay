@@ -7,8 +7,8 @@ import useEmblaCarousel, {
 
 import { cn } from "@/lib/ui/utils"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon, ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowLeftGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 
 type CarouselApi = UseEmblaCarouselType[1]
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>
@@ -198,7 +198,7 @@ function CarouselPrevious({
       onClick={scrollPrev}
       {...props}
     >
-      <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
+      <Icon icon={ArrowLeftGlassIcon} className="size-4" />
       <span className="sr-only">Previous slide</span>
     </Button>
   )
@@ -228,7 +228,7 @@ function CarouselNext({
       onClick={scrollNext}
       {...props}
     >
-      <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+      <Icon icon={ArrowRightGlassIcon} className="size-4" />
       <span className="sr-only">Next slide</span>
     </Button>
   )

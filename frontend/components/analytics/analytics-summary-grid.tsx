@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl"
 import { Card } from "@/components/ui/card"
 import type { AnalyticsSummary } from "@/services/types"
 import { formatAmount } from "@/lib/wallet/utils"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 
 type AnalyticsSummaryGridProps = {
   summary: AnalyticsSummary
@@ -11,12 +12,15 @@ type AnalyticsSummaryGridProps = {
 
 export function AnalyticsSummaryGrid({ summary }: AnalyticsSummaryGridProps) {
   const t = useTranslations("analytics")
+  const { hidden } = useBalanceVisibility()
 
   const netDiffE8s = summary.totalReceivedE8s - summary.totalSentE8s
   const isNetPositive = netDiffE8s >= 0n
-  const netDisplay = isNetPositive
-    ? `+${formatAmount(netDiffE8s)} ICP`
-    : `-${formatAmount(-netDiffE8s)} ICP`
+  const netDisplay = hidden
+    ? "••••••"
+    : isNetPositive
+      ? `+${formatAmount(netDiffE8s)} ICP`
+      : `-${formatAmount(-netDiffE8s)} ICP`
 
   const totalOps = Number(summary.completedCount + summary.failedCount)
   const successRate = totalOps > 0
@@ -39,7 +43,7 @@ export function AnalyticsSummaryGrid({ summary }: AnalyticsSummaryGridProps) {
         </div>
         <div className="mt-3">
           <p className="text-xl font-bold tracking-tight text-foreground tabular-nums sm:text-2xl">
-            {formatAmount(summary.totalReceivedE8s)}{" "}
+            {hidden ? "••••••" : formatAmount(summary.totalReceivedE8s)}{" "}
             <span className="text-xs font-normal text-muted-foreground sm:text-sm">ICP</span>
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
@@ -55,7 +59,7 @@ export function AnalyticsSummaryGrid({ summary }: AnalyticsSummaryGridProps) {
         </div>
         <div className="mt-3">
           <p className="text-xl font-bold tracking-tight text-foreground tabular-nums sm:text-2xl">
-            {formatAmount(summary.totalSentE8s)}{" "}
+            {hidden ? "••••••" : formatAmount(summary.totalSentE8s)}{" "}
             <span className="text-xs font-normal text-muted-foreground sm:text-sm">ICP</span>
           </p>
           <p className="mt-1 text-xs text-muted-foreground">

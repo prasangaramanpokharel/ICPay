@@ -3,17 +3,8 @@
 import { useState } from "react"
 import Image from "next/image"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Tick02Icon,
-  Copy01Icon,
-  NewTwitterIcon,
-  TelegramIcon,
-  SecurityCheckIcon,
-  Download01Icon,
-  LinkSquare01Icon,
-  Edit01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassIcon, CheckGlassOutlineIcon, CopyGlassIcon, SocialXGlassIcon, SocialTelegramGlassIcon, ShieldCheckGlassIcon, DownloadGlassIcon, ExternalLinkGlassIcon, PencilGlassIcon } from "@thesvg/ui-react"
 import {
   Dialog,
   DialogContent,
@@ -170,7 +161,7 @@ export function AcademyCertificateModal({
                 variant="outline"
                 className="gap-1.5 border-primary/40 bg-primary/10 text-primary text-xs"
               >
-                <HugeiconsIcon icon={SecurityCheckIcon} className="size-3.5" />
+                <Icon icon={ShieldCheckGlassIcon} className="size-3.5" />
                 Soulbound Verifiable Credential
               </Badge>
               <span className="font-mono text-xs font-semibold text-muted-foreground">
@@ -237,7 +228,7 @@ export function AcademyCertificateModal({
                       onClick={handleSaveName}
                       className="shrink-0 gap-1"
                     >
-                      <HugeiconsIcon icon={Tick02Icon} className="size-3.5" />
+                      <Icon icon={CheckGlassIcon} className="size-3.5" />
                       Save
                     </Button>
                     <Button
@@ -267,7 +258,7 @@ export function AcademyCertificateModal({
                       className="text-muted-foreground hover:text-foreground print:hidden"
                       title="Edit recipient name"
                     >
-                      <HugeiconsIcon icon={Edit01Icon} className="size-3.5" />
+                      <Icon icon={PencilGlassIcon} className="size-3.5" />
                     </Button>
                   </div>
                 )}
@@ -282,8 +273,8 @@ export function AcademyCertificateModal({
                     className="text-muted-foreground hover:text-foreground shrink-0 print:hidden"
                     title="Copy Principal ID"
                   >
-                    <HugeiconsIcon
-                      icon={copiedPrincipal ? Tick02Icon : Copy01Icon}
+                    <Icon
+                      icon={copiedPrincipal ? CheckGlassIcon : CopyGlassIcon}
                       className="size-3"
                     />
                   </Button>
@@ -343,7 +334,7 @@ export function AcademyCertificateModal({
                     title={certificate.verification_hash}
                   >
                     <span>{certificate.verification_hash.slice(0, 8)}...</span>
-                    <HugeiconsIcon icon={copiedHash ? Tick02Icon : Copy01Icon} className="size-3" />
+                    <Icon icon={copiedHash ? CheckGlassIcon : CopyGlassIcon} className="size-3" />
                   </Button>
                 </div>
               </div>
@@ -358,8 +349,17 @@ export function AcademyCertificateModal({
                 onClick={handleCopyLink}
                 className="gap-1.5 rounded-full text-xs"
               >
-                <HugeiconsIcon icon={copiedLink ? Tick02Icon : LinkSquare01Icon} className="size-3.5" />
-                <span>{copiedLink ? "Copied" : "Copy Link"}</span>
+                {copiedLink ? (
+                  <>
+                    <Icon icon={CheckGlassOutlineIcon} className="size-3.5 text-success" strokeWidth={2.5} />
+                    <span className="text-success font-medium">Copied</span>
+                  </>
+                ) : (
+                  <>
+                    <Icon icon={ExternalLinkGlassIcon} className="size-3.5" />
+                    <span>Copy Link</span>
+                  </>
+                )}
               </Button>
               <Button
                 variant="ghost"
@@ -368,7 +368,7 @@ export function AcademyCertificateModal({
                 render={<a href={tweetUrl} target="_blank" rel="noopener noreferrer" />}
                 className="gap-1.5 rounded-full text-xs"
               >
-                <HugeiconsIcon icon={NewTwitterIcon} className="size-3.5" />
+                <Icon icon={SocialXGlassIcon} className="size-3.5" />
                 <span>Share on X</span>
               </Button>
               <Button
@@ -378,7 +378,7 @@ export function AcademyCertificateModal({
                 render={<a href={telegramUrl} target="_blank" rel="noopener noreferrer" />}
                 className="gap-1.5 rounded-full text-xs"
               >
-                <HugeiconsIcon icon={TelegramIcon} className="size-3.5" />
+                <Icon icon={SocialTelegramGlassIcon} className="size-3.5" />
                 <span>Telegram</span>
               </Button>
             </ButtonGroup>
@@ -390,7 +390,7 @@ export function AcademyCertificateModal({
                 onClick={handlePrint}
                 className="gap-1.5 rounded-full text-xs"
               >
-                <HugeiconsIcon icon={Download01Icon} className="size-3.5" />
+                <Icon icon={DownloadGlassIcon} className="size-3.5" />
                 <span>Print / Save PDF</span>
               </Button>
               <Button

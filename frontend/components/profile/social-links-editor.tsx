@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Github01Icon, Linkedin01Icon, Globe02Icon, Add01Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { SocialGithubGlassIcon, SocialLinkedinGlassIcon, GlobeGlassIcon, PlusGlassIcon, XGlassIcon, type UiIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Input } from "@/components/ui/input"
@@ -15,13 +15,13 @@ import { useAuth } from "@/components/auth/auth-provider"
 type Platform = "github" | "linkedin" | "website"
 
 const PLATFORM_CONFIG: Record<Platform, {
-  icon: React.ComponentProps<typeof HugeiconsIcon>["icon"]
+  icon: UiIcon
   labelKey: "github" | "linkedin" | "website"
   placeholderKey: "github" | "linkedin" | "website"
 }> = {
-  github: { icon: Github01Icon, labelKey: "github", placeholderKey: "github" },
-  linkedin: { icon: Linkedin01Icon, labelKey: "linkedin", placeholderKey: "linkedin" },
-  website: { icon: Globe02Icon, labelKey: "website", placeholderKey: "website" },
+  github: { icon: SocialGithubGlassIcon, labelKey: "github", placeholderKey: "github" },
+  linkedin: { icon: SocialLinkedinGlassIcon, labelKey: "linkedin", placeholderKey: "linkedin" },
+  website: { icon: GlobeGlassIcon, labelKey: "website", placeholderKey: "website" },
 }
 
 function platformKey(p: SocialPlatform): Platform {
@@ -115,7 +115,7 @@ export function SocialLinksEditor({
           return (
             <div key={platform} className="rounded-2xl border bg-muted/30 px-3 py-2.5">
               <div className="flex items-center gap-2.5">
-                <HugeiconsIcon icon={cfg.icon} className="size-4 shrink-0 text-muted-foreground" />
+                <Icon icon={cfg.icon} className="size-4 shrink-0 text-muted-foreground" />
                 <span className="flex-1 text-sm font-medium">{t(cfg.labelKey)}</span>
                 {existing && !isOpen ? (
                   <div className="flex items-center gap-1">
@@ -133,7 +133,7 @@ export function SocialLinksEditor({
                       onClick={() => handleRemove(platform)}
                       className="size-6 text-muted-foreground hover:text-destructive"
                     >
-                      <HugeiconsIcon icon={Cancel01Icon} className="size-3" />
+                      <Icon icon={XGlassIcon} className="size-3" />
                     </Button>
                   </div>
                 ) : !isOpen ? (
@@ -143,7 +143,7 @@ export function SocialLinksEditor({
                     onClick={() => handleOpen(platform)}
                     className="size-6 text-muted-foreground"
                   >
-                    <HugeiconsIcon icon={Add01Icon} className="size-3.5" />
+                    <Icon icon={PlusGlassIcon} className="size-3.5" />
                   </Button>
                 ) : null}
               </div>

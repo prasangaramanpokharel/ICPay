@@ -162,6 +162,22 @@ type TransformArgs = record {
   context : blob;
 };
 
+type HeaderField = record { text; text };
+
+type InboundHttpRequest = record {
+  method : text;
+  url : text;
+  headers : vec HeaderField;
+  body : blob;
+};
+
+type InboundHttpResponse = record {
+  status_code : nat16;
+  headers : vec HeaderField;
+  body : blob;
+  upgrade : opt bool;
+};
+
 service : {
   "create_project" : (text) -> (variant { Ok : ProjectRecord; Err : text });
   "rename_project" : (nat64, text) -> (variant { Ok : ProjectRecord; Err : text });
@@ -197,4 +213,6 @@ service : {
   "get_audit_stats" : () -> (CronAuditStats) query;
 
   "transform_http_response" : (TransformArgs) -> (HttpResponse) query;
+  "http_request" : (InboundHttpRequest) -> (InboundHttpResponse) query;
+  "http_request_update" : (InboundHttpRequest) -> (InboundHttpResponse);
 }

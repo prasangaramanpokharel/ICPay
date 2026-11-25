@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { UserAdd01Icon, InformationCircleIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { UserPlusGlassIcon, InfoGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import {
@@ -90,7 +90,7 @@ export function MyCanisterAddControllerDialog({
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="gap-1.5">
             <DialogTitle className="flex items-center gap-2">
-              <HugeiconsIcon icon={UserAdd01Icon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+              <Icon icon={UserPlusGlassIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
               <span>{t("addControllerTitle")}</span>
             </DialogTitle>
             <DialogDescription>
@@ -108,7 +108,7 @@ export function MyCanisterAddControllerDialog({
               {/* Guide Callout */}
               <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 text-xs space-y-1">
                 <div className="flex items-center gap-1.5 font-medium text-foreground">
-                  <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5 text-primary" />
+                  <Icon icon={InfoGlassIcon} className="size-3.5 text-primary" />
                   <span>Controller Permissions on Internet Computer</span>
                 </div>
                 <p className="text-muted-foreground leading-relaxed">

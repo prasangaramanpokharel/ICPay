@@ -1,13 +1,14 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { LinkSquare02Icon } from "@hugeicons/core-free-icons"
-import { Spinner } from "@/components/ui/spinner"
+import { Icon } from "@/components/ui/icon"
+import { ExternalLinkGlassIcon } from "@thesvg/ui-react"
+import { Skeleton } from "@/components/ui/skeleton"
 import { useIcrcTokenHistory } from "@/hooks/ledger/useIcrcTokenHistory"
 import { useTransactions, useDashboard } from "@/hooks/wallet/useWalletData"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { formatTokenAmount } from "@/lib/wallet/utils"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { ICP_LEDGER_ID, type TokenHolding } from "@/services/tokens"
 import { cn } from "@/lib/ui/utils"
 
@@ -19,6 +20,7 @@ export function TokenHistoryList({
   enabled?: boolean
 }) {
   const t = useTranslations("tokenHistory")
+  const { hidden } = useBalanceVisibility()
   const { page, isLoading: isIcrcLoading } = useIcrcTokenHistory(token.ledgerId, enabled)
   const { items: allTxs, isLoading: isTxsLoading } = useTransactions(0, 50)
   const { data: dashboardData, isLoading: isDashLoading } = useDashboard()
@@ -40,8 +42,22 @@ export function TokenHistoryList({
 
   if (isLoading) {
     return (
-      <div className="flex justify-center py-6">
-        <Spinner className="size-5 text-muted-foreground" />
+      <div className="divide-y divide-border/40 overflow-hidden">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="flex items-center justify-between gap-3 px-4 py-3">
+            <div className="flex items-center gap-3">
+              <Skeleton className="size-8 rounded-full" />
+              <div className="space-y-1.5">
+                <Skeleton className="h-3.5 w-24 rounded-md" />
+                <Skeleton className="h-3 w-16 rounded-md" />
+              </div>
+            </div>
+            <div className="space-y-1.5 text-right flex flex-col items-end">
+              <Skeleton className="h-4 w-20 rounded-md" />
+              <Skeleton className="h-3 w-12 rounded-md" />
+            </div>
+          </div>
+        ))}
       </div>
     )
   }
@@ -68,14 +84,14 @@ export function TokenHistoryList({
                 {isReceive ? t("kind.receive") : t("kind.send")}
               </p>
               <a
-                href={`https://dashboard.internetcomputer.org/canister/${token.ledgerId}`}
+                href={`https://dashboard.internetcomputer.org/canister/${encodeURIComponent(token.ledgerId)}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1 font-mono text-xs text-muted-foreground hover:text-primary transition-colors"
               >
                 <span>#{row.id.toString()}</span>
-                <HugeiconsIcon
-                  icon={LinkSquare02Icon}
+                <Icon
+                  icon={ExternalLinkGlassIcon}
                   className="size-3 opacity-60"
                   strokeWidth={1.75}
                 />
@@ -88,7 +104,7 @@ export function TokenHistoryList({
               )}
             >
               {isReceive ? "+" : "−"}
-              {formatTokenAmount(row.amount, token.decimals, 4)} {token.symbol}
+              {hidden ? "••••••" : formatTokenAmount(row.amount, token.decimals, 4)} {token.symbol}
             </p>
           </li>
         )

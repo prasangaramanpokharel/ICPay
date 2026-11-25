@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { SearchGlassIcon } from "@thesvg/ui-react"
 import { Input } from "@/components/ui/input"
 import { ServiceTile } from "@/components/settings/service-tile"
 import { SettingsDrawer } from "@/components/settings/settings-drawer"
@@ -185,8 +185,8 @@ export function SettingsMenuView() {
   return (
     <AppPage title={t("title")} description={t("subtitle")}>
       <div className="relative">
-        <HugeiconsIcon
-          icon={Search01Icon}
+        <Icon
+          icon={SearchGlassIcon}
           className="pointer-events-none absolute top-1/2 left-3.5 size-3.5 -translate-y-1/2 text-muted-foreground"
         />
         <Input

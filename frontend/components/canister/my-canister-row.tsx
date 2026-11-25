@@ -3,8 +3,8 @@
 import { useMemo } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ConnectIcon, FuelStationIcon, ViewIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { LinkGlassIcon, FuelGaugeGlassIcon, EyeGlassIcon } from "@thesvg/ui-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
@@ -130,7 +130,7 @@ export function MyCanisterRow({
                         aria-label="Connect Canister"
                         className="cursor-pointer"
                       >
-                        <HugeiconsIcon icon={ConnectIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+                        <Icon icon={LinkGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
                       </Button>
                     }
                   />
@@ -148,7 +148,7 @@ export function MyCanisterRow({
                       aria-label={t("view")}
                       className="cursor-pointer"
                     >
-                      <HugeiconsIcon icon={ViewIcon} className="size-3.5" strokeWidth={1.75} />
+                      <Icon icon={EyeGlassIcon} className="size-3.5" strokeWidth={1.75} />
                     </Button>
                   }
                 />
@@ -162,7 +162,7 @@ export function MyCanisterRow({
                 aria-label={t("topUp")}
                 className="gap-1.5 px-3 text-xs font-medium cursor-pointer"
               >
-                <HugeiconsIcon icon={FuelStationIcon} className="size-3.5" strokeWidth={1.75} />
+                <Icon icon={FuelGaugeGlassIcon} className="size-3.5" strokeWidth={1.75} />
                 <span className="hidden sm:inline">{t("topUp")}</span>
               </Button>
             </ButtonGroup>

@@ -3,8 +3,8 @@
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { SearchGlassIcon } from "@thesvg/ui-react"
 import { Gitlab } from "@dev.icons/react"
 import {
   Sidebar,
@@ -61,7 +61,7 @@ export function BucketDocsSidebar({ navGroups, onOpenSearch }: BucketDocsSidebar
           onClick={onOpenSearch}
           className="flex h-9 w-full items-center gap-2 rounded-lg border border-border/60 bg-muted/30 px-2.5 text-xs text-muted-foreground transition-colors hover:bg-muted/70 hover:text-foreground cursor-pointer"
         >
-          <HugeiconsIcon icon={Search01Icon} className="size-3.5" />
+          <Icon icon={SearchGlassIcon} className="size-3.5" />
           <span>Search docs...</span>
           <kbd className="pointer-events-none ml-auto inline-flex h-4 items-center rounded border border-border/70 bg-background px-1 font-mono text-[10px] text-muted-foreground">
             ⌘K

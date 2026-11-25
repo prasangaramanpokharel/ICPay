@@ -2,25 +2,8 @@
 
 import { useState, useMemo } from "react"
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Copy01Icon,
-  Tick02Icon,
-  Search01Icon,
-  Cancel01Icon,
-  SparklesIcon,
-  Shield01Icon,
-  Coins01Icon,
-  DatabaseIcon,
-  CheckmarkCircle02Icon,
-  Layers01Icon,
-  FlashIcon,
-  GridViewIcon,
-  ListViewIcon,
-  ArrowRight01Icon,
-  ArrowLeft01Icon,
-  Package01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CopyGlassIcon, CheckGlassOutlineIcon, SearchGlassIcon, XGlassIcon, SparklesGlassIcon, ShieldGlassIcon, CoinsGlassIcon, DatabaseGlassIcon, CircleCheckGlassIcon, LayersGlassIcon, ZapGlassIcon, LayoutGridGlassIcon, ListGlassIcon, ArrowRightGlassIcon, ArrowLeftGlassIcon, PackageGlassIcon } from "@thesvg/ui-react"
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Gitlab } from "@dev.icons/react"
 import { Badge } from "@/components/ui/badge"
@@ -41,7 +24,7 @@ export type CategoryKey =
 interface CategoryDef {
   key: CategoryKey
   label: string
-  icon: typeof SparklesIcon
+  icon: typeof SparklesGlassIcon
   slugs?: string[]
 }
 
@@ -49,42 +32,42 @@ const CATEGORIES: CategoryDef[] = [
   {
     key: "all",
     label: "All Packages",
-    icon: SparklesIcon,
+    icon: SparklesGlassIcon,
   },
   {
     key: "security",
     label: "Auth & Security",
-    icon: Shield01Icon,
+    icon: ShieldGlassIcon,
     slugs: ["rbac", "caller", "session", "rate-limit", "multisig", "whitelist", "api-key", "dao", "sanitize"],
   },
   {
     key: "financial",
     label: "Tokens & ICRC",
-    icon: Coins01Icon,
+    icon: CoinsGlassIcon,
     slugs: ["icrc1", "icrc2", "ledger", "escrow", "wallet", "nft", "cycles"],
   },
   {
     key: "storage",
     label: "Storage & State",
-    icon: DatabaseIcon,
+    icon: DatabaseGlassIcon,
     slugs: ["crud", "storage", "cache", "indexer", "migration", "upgrade", "blob", "asset", "upload"],
   },
   {
     key: "validation",
     label: "Validation & Errors",
-    icon: CheckmarkCircle02Icon,
+    icon: CircleCheckGlassIcon,
     slugs: ["errors", "validate-text", "validate-nat", "validate-email", "validate-url", "validate-json", "validate-principal"],
   },
   {
     key: "network",
     label: "Network & Interop",
-    icon: Layers01Icon,
+    icon: LayersGlassIcon,
     slugs: ["http", "canister-call", "webhook", "json", "csv", "base64", "candid-utils"],
   },
   {
     key: "core",
     label: "Utils & Core",
-    icon: FlashIcon,
+    icon: ZapGlassIcon,
     slugs: ["pagination", "time", "uuid", "slug", "search", "sort", "filter", "retry", "circuit-breaker", "nanoid", "date", "cron", "array", "list", "math", "string", "random", "logger", "env", "feature-flag", "test", "mock", "seed"],
   },
 ]
@@ -186,8 +169,8 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           {/* Search Input */}
           <div className="relative flex-1">
-            <HugeiconsIcon
-              icon={Search01Icon}
+            <Icon
+              icon={SearchGlassIcon}
               className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground"
             />
             <Input
@@ -204,7 +187,7 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
                 aria-label="Clear search"
               >
-                <HugeiconsIcon icon={Cancel01Icon} className="size-4" />
+                <Icon icon={XGlassIcon} className="size-4" />
               </button>
             )}
           </div>
@@ -220,7 +203,7 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                 title="Grid View"
                 aria-label="Grid View"
               >
-                <HugeiconsIcon icon={GridViewIcon} className="size-4" />
+                <Icon icon={LayoutGridGlassIcon} className="size-4" />
               </Button>
               <Button
                 variant={viewMode === "list" ? "secondary" : "ghost"}
@@ -230,7 +213,7 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                 title="List View"
                 aria-label="List View"
               >
-                <HugeiconsIcon icon={ListViewIcon} className="size-4" />
+                <Icon icon={ListGlassIcon} className="size-4" />
               </Button>
             </div>
           </div>
@@ -258,7 +241,7 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                     : "bg-background/60 text-muted-foreground border-border/60 hover:bg-accent/60 hover:text-foreground"
                 )}
               >
-                <HugeiconsIcon
+                <Icon
                   icon={cat.icon}
                   className={cn("size-3.5", isSelected ? "text-primary-foreground" : "text-primary")}
                 />
@@ -305,7 +288,7 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
       {filteredPackages.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/80 bg-card/40 p-12 text-center backdrop-blur-xs">
           <div className="flex size-14 items-center justify-center rounded-2xl bg-muted/60 text-primary mb-4">
-            <HugeiconsIcon icon={Package01Icon} className="size-7" />
+            <Icon icon={PackageGlassIcon} className="size-7" />
           </div>
           <h3 className="text-base font-semibold text-foreground">No Motoko Packages Found</h3>
           <p className="mt-1 max-w-sm text-xs text-muted-foreground">
@@ -341,7 +324,7 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                   <CardHeader className="p-0 space-y-2">
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex items-center gap-2">
-                        <HugeiconsIcon icon={cat.icon} className="size-4 shrink-0 text-primary" />
+                        <Icon icon={cat.icon} className="size-4 shrink-0 text-primary" />
                         <CardTitle className="font-mono text-sm sm:text-base font-bold text-foreground group-hover:text-primary transition-colors">
                           {pkg.slug}
                         </CardTitle>
@@ -373,14 +356,14 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                         className="absolute right-1 top-1/2 -translate-y-1/2 size-7 text-muted-foreground hover:bg-accent hover:text-foreground cursor-pointer"
                         aria-label="Copy install command"
                       >
-                        <HugeiconsIcon
-                          icon={cmdCopied ? Tick02Icon : Copy01Icon}
-                          className={cn("size-3.5 transition-colors", cmdCopied ? "text-primary" : "text-muted-foreground")}
-                        />
+                        {cmdCopied ? (
+                          <Icon icon={CheckGlassOutlineIcon} className="size-4 text-success" strokeWidth={2.5} />
+                        ) : (
+                          <Icon icon={CopyGlassIcon} className="size-3.5 text-muted-foreground" />
+                        )}
                       </Button>
                     </div>
 
-                    {/* Import Path */}
                     <div className="flex items-center justify-between gap-1 text-[11px] text-muted-foreground rounded-lg bg-muted/40 px-2.5 py-1.5">
                       <span className="font-medium text-muted-foreground/80 shrink-0">Import:</span>
                       <code className="truncate font-mono text-[11px] text-foreground/80 select-all" title={pkg.import}>
@@ -392,19 +375,19 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                         className="ml-1 shrink-0 text-muted-foreground hover:text-foreground cursor-pointer"
                         title="Copy import path"
                       >
-                        <HugeiconsIcon
-                          icon={importCopied ? Tick02Icon : Copy01Icon}
-                          className={cn("size-3", importCopied ? "text-primary" : "text-muted-foreground")}
-                        />
+                        {importCopied ? (
+                          <Icon icon={CheckGlassOutlineIcon} className="size-3.5 text-success" strokeWidth={2.5} />
+                        ) : (
+                          <Icon icon={CopyGlassIcon} className="size-3 text-muted-foreground" />
+                        )}
                       </button>
                     </div>
                   </CardContent>
                 </div>
 
-                {/* Card Footer Link */}
                 <div className="flex items-center justify-between pt-3 mt-3 border-t border-border/40 text-[11px]">
                   <span className="text-muted-foreground font-medium flex items-center gap-1.5">
-                    <HugeiconsIcon icon={cat.icon} className="size-3 text-primary" />
+                    <Icon icon={cat.icon} className="size-3 text-primary" />
                     <span>{cat.label}</span>
                   </span>
                   <Link
@@ -435,7 +418,7 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                 className="group flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-border/60 bg-card/60 p-3.5 backdrop-blur-xs transition-all hover:border-primary/40 hover:bg-card/90"
               >
                 <div className="flex items-start gap-3 min-w-0">
-                  <HugeiconsIcon icon={cat.icon} className="size-4.5 shrink-0 text-primary mt-1" />
+                  <Icon icon={cat.icon} className="size-4.5 shrink-0 text-primary mt-1" />
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <span className="font-mono text-sm font-bold text-foreground group-hover:text-primary transition-colors">
@@ -462,11 +445,17 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
                     onClick={() => handleCopy(installCmd, `cmd-${pkg.slug}`)}
                     className="h-8 gap-1.5 text-xs rounded-lg cursor-pointer"
                   >
-                    <HugeiconsIcon
-                      icon={cmdCopied ? Tick02Icon : Copy01Icon}
-                      className={cn("size-3.5", cmdCopied ? "text-primary" : "text-muted-foreground")}
-                    />
-                    <span>{cmdCopied ? "Copied" : "Copy Install"}</span>
+                    {cmdCopied ? (
+                      <>
+                        <Icon icon={CheckGlassOutlineIcon} className="size-4 text-success" strokeWidth={2.5} />
+                        <span className="text-success font-medium">Copied</span>
+                      </>
+                    ) : (
+                      <>
+                        <Icon icon={CopyGlassIcon} className="size-3.5 text-muted-foreground" />
+                        <span>Copy Install</span>
+                      </>
+                    )}
                   </Button>
                   <Link
                     href={`https://gitlab.com/prasangapokharel/falconpkg/-/tree/main/${pkg.path}`}
@@ -500,7 +489,7 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
               disabled={safePage === 1}
               className="h-8 gap-1 rounded-lg text-xs cursor-pointer"
             >
-              <HugeiconsIcon icon={ArrowLeft01Icon} className="size-3.5" />
+              <Icon icon={ArrowLeftGlassIcon} className="size-3.5" />
               <span>Previous</span>
             </Button>
 
@@ -541,7 +530,7 @@ export function PackagesGrid({ packages }: PackagesGridProps) {
               className="h-8 gap-1 rounded-lg text-xs cursor-pointer"
             >
               <span>Next</span>
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+              <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
             </Button>
           </div>
         </div>

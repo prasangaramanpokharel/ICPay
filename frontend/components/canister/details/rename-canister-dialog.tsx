@@ -1,8 +1,8 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { PencilEdit01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { PencilGlassIcon } from "@thesvg/ui-react"
 import { toast } from "@/components/ui/sonner"
 import {
   Dialog,
@@ -70,7 +70,7 @@ export function RenameCanisterDialog({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <div className="flex items-center gap-2">
-            <HugeiconsIcon icon={PencilEdit01Icon} className="size-5 text-muted-foreground" strokeWidth={1.75} />
+            <Icon icon={PencilGlassIcon} className="size-5 text-muted-foreground" strokeWidth={1.75} />
             <DialogTitle>Edit canister name</DialogTitle>
           </div>
           <DialogDescription>

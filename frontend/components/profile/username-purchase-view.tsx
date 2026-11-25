@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
+import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -12,16 +13,8 @@ import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Tick02Icon,
-  Cancel01Icon,
-  InformationCircleIcon,
-  CloudIcon,
-  GiftIcon,
-  Rocket01Icon,
-  ArrowRight01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassOutlineIcon, XGlassIcon, InfoGlassIcon, CloudGlassIcon, GiftGlassIcon, RocketGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 import {
   Popover,
   PopoverContent,
@@ -53,6 +46,7 @@ import {
 import { isProPerkClaimed, markProPerkClaimed } from "@/lib/profile/claimPerk"
 import { ICPAY_LEDGER_ID } from "@/services/tokens"
 import { formatAmount, formatTokenAmount, ICP_FEE, shortPrincipal } from "@/lib/wallet/utils"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { ICP_LOGO } from "@/lib/token/icon"
 import {
   priceFor,
@@ -79,6 +73,7 @@ export function UsernamePurchaseView() {
   const refreshWallet = useRefreshWallet()
   const { data: dashboard } = useDashboard()
   const icpayHolding = useTokenHolding(ICPAY_LEDGER_ID)
+  const { hidden } = useBalanceVisibility()
 
   const [name, setName] = useState("")
   const [currency, setCurrency] = useState<CurrencyMode>("ICP")
@@ -153,33 +148,43 @@ export function UsernamePurchaseView() {
     setBought(result.ok)
   }
 
-  if (bought) {
-    return (
-      <AppPage>
-        <div className="mx-auto w-full max-w-md">
-          <SendSuccess
-            amount={bought.price}
-            recipient={`@${bought.username}`}
-            blockIndex={bought.blockIndex}
-            kind="purchase"
-            symbol={purchasedCurrency === "ICPAY" ? "$ICPAY" : "ICP"}
-            decimals={8}
-            onDone={() => router.push("/profile")}
-          />
-        </div>
-      </AppPage>
-    )
-  }
-
   return (
-    <AppPage title={t("title")} description={t("subtitle")}>
-      <div className="mx-auto w-full max-w-md space-y-4">
+    <AppPage title={bought ? undefined : t("title")} description={bought ? undefined : t("subtitle")}>
+      <div className="mx-auto w-full max-w-md">
+        <AnimatePresence mode="wait">
+          {bought ? (
+            <motion.div
+              key="bought-success"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ type: "spring", stiffness: 350, damping: 30 }}
+            >
+              <SendSuccess
+                amount={bought.price}
+                recipient={`@${bought.username}`}
+                blockIndex={bought.blockIndex}
+                kind="purchase"
+                symbol={purchasedCurrency === "ICPAY" ? "$ICPAY" : "ICP"}
+                decimals={8}
+                onDone={() => router.push("/profile")}
+              />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="purchase-form"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={{ type: "spring", stiffness: 350, damping: 30 }}
+              className="space-y-4"
+            >
         {isExistingPro && !perkClaimed && (
           <Card className="border-primary/40 bg-linear-to-r from-primary/10 via-background to-card shadow-sm">
             <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <HugeiconsIcon icon={GiftIcon} className="size-4 text-primary" />
+                  <Icon icon={GiftGlassIcon} className="size-4 text-primary" />
                   <span className="text-sm font-semibold text-foreground">
                     {t("perkAvailable")}
                   </span>
@@ -197,9 +202,9 @@ export function UsernamePurchaseView() {
                 onClick={handleClaimPerk}
                 className="shrink-0 gap-1.5 font-semibold"
               >
-                <HugeiconsIcon icon={CloudIcon} className="size-4" />
+                <Icon icon={CloudGlassIcon} className="size-4" />
                 <span>{t("claimPerk", { gb: proStorageGb })}</span>
-                <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+                <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
               </Button>
             </CardContent>
           </Card>
@@ -242,12 +247,12 @@ export function UsernamePurchaseView() {
               <div className="flex items-center gap-2 tabular-nums">
                 {currency === "ICP" ? (
                   <span className="font-semibold text-foreground">
-                    {balanceIcp !== undefined ? `${formatAmount(balanceIcp)} ICP` : "—"}
+                    {balanceIcp !== undefined ? `${hidden ? "••••••" : formatAmount(balanceIcp)} ICP` : "—"}
                   </span>
                 ) : (
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-foreground">
-                      {formatTokenAmount(balanceIcpay, 8)} $ICPAY
+                      {hidden ? "••••••" : `${formatTokenAmount(balanceIcpay, 8)} $ICPAY`}
                     </span>
                     <Link
                       href="/swap"
@@ -267,7 +272,7 @@ export function UsernamePurchaseView() {
                   <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
                     {tc("balance")}{" "}
                     <span className="font-semibold text-foreground">
-                      {formatAmount(balanceIcp)} ICP
+                      {hidden ? "••••••" : `${formatAmount(balanceIcp)} ICP`}
                     </span>
                   </Badge>
                 )}
@@ -292,8 +297,8 @@ export function UsernamePurchaseView() {
                 />
                 {trimmed !== "" && !shapeError && !checking && (
                   <span className="absolute top-1/2 right-4 -translate-y-1/2">
-                    <HugeiconsIcon
-                      icon={available ? Tick02Icon : Cancel01Icon}
+                    <Icon
+                      icon={available ? CheckGlassOutlineIcon : XGlassIcon}
                       className={cn(
                         "size-5",
                         available ? "text-success" : "text-destructive"
@@ -360,7 +365,7 @@ export function UsernamePurchaseView() {
                   <div className="space-y-1.5 rounded-xl border border-border/50 bg-muted/30 p-3 text-xs">
                     <p className="font-semibold text-foreground">{t("bundledPerks")}</p>
                     <div className="flex items-center gap-2 text-muted-foreground">
-                      <HugeiconsIcon icon={CloudIcon} className="size-3.5 text-primary shrink-0" />
+                      <Icon icon={CloudGlassIcon} className="size-3.5 text-primary shrink-0" />
                       <span>
                         {tier.perks.storageGb > 0
                           ? t("cloudStoragePerk", { gb: tier.perks.storageGb })
@@ -368,7 +373,7 @@ export function UsernamePurchaseView() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground">
-                      <HugeiconsIcon icon={Tick02Icon} className="size-3.5 text-primary shrink-0" />
+                      <Icon icon={CheckGlassOutlineIcon} className="size-3.5 text-primary shrink-0" />
                       <span>
                         {tier.perks.badge === "gold"
                           ? "Gold Verified Badge & #1 directory search rank"
@@ -379,7 +384,7 @@ export function UsernamePurchaseView() {
                     </div>
                     {tier.perks.launchpadDiscountPercent > 0 && (
                       <div className="flex items-center gap-2 text-muted-foreground">
-                        <HugeiconsIcon icon={Rocket01Icon} className="size-3.5 text-primary shrink-0" />
+                        <Icon icon={RocketGlassIcon} className="size-3.5 text-primary shrink-0" />
                         <span>{tier.perks.launchpadDiscountPercent}% Token Launcher voucher</span>
                       </div>
                     )}
@@ -442,7 +447,7 @@ export function UsernamePurchaseView() {
                     aria-label={t("badgeInfoTitle")}
                     className="text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    <HugeiconsIcon icon={InformationCircleIcon} className="size-4" />
+                    <Icon icon={InfoGlassIcon} className="size-4" />
                   </PopoverTrigger>
                   <PopoverContent align="start" className="gap-3">
                     <PopoverHeader>
@@ -538,6 +543,9 @@ export function UsernamePurchaseView() {
             </div>
           </CardContent>
         </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </AppPage>
   )

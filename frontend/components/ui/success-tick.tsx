@@ -1,5 +1,5 @@
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Tick02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import { cn } from "@/lib/ui/utils"
 
 const SIZES = {
@@ -25,11 +25,11 @@ export function SuccessTick({
     >
       <span
         className={cn(
-          "flex items-center justify-center rounded-full bg-success text-background shadow-sm",
+          "flex items-center justify-center rounded-full bg-success text-success-foreground shadow-sm",
           dim.inner
         )}
       >
-        <HugeiconsIcon icon={Tick02Icon} className={dim.icon} strokeWidth={3} />
+        <Icon icon={CheckGlassOutlineIcon} className={cn(dim.icon, "text-success-foreground")} strokeWidth={3} />
       </span>
     </div>
   )

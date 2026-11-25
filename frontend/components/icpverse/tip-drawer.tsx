@@ -25,6 +25,7 @@ import {
   ICP_FEE,
 } from "@/lib/wallet/utils"
 import { AmountInput } from "@/components/shared/amount-input"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { primeSuccessChime } from "@/lib/ui/successChime"
 import { cn } from "@/lib/ui/utils"
 
@@ -51,6 +52,7 @@ export function TipDrawer({
 }) {
   const t = useTranslations("tip")
   const tc = useTranslations("common")
+  const { hidden } = useBalanceVisibility()
   const [selected, setSelected] = useState<bigint | null>(E8S)
   const [custom, setCustom] = useState("")
   const [message, setMessage] = useState("")
@@ -105,7 +107,7 @@ export function TipDrawer({
                 <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
                   {tc("balance")}{" "}
                   <span className="font-semibold text-foreground">
-                    {formatAmount(balance)} ICP
+                    {hidden ? "••••••" : `${formatAmount(balance)} ICP`}
                   </span>
                 </Badge>
               )}

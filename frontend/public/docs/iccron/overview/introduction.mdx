@@ -1,0 +1,43 @@
+---
+title: "Introduction"
+description: "Architectural overview of icCron, native IC canister timers, dual dispatch, and comparison with legacy schedulers."
+group: "Overview"
+order: 1
+---
+
+# Introduction to icCron
+
+Traditional cloud scheduling requires choosing between fragile server infrastructure or expensive SaaS subscriptions. icCron is engineered to solve these problems by running as a deterministic, decentralized state machine on the Internet Computer blockchain.
+
+## Why We Built icCron
+
+### The Vercel $20/month Cron Tax
+Vercel Free restricts cron triggers to once every 24 hours. Scheduling an hourly sync forces teams to upgrade to Vercel Pro ($20/month per user, $240/yr minimum). With icCron, pointing a webhook at your Next.js route handler costs just **$4.32/year** for hourly executions — saving over **98%**.
+
+### Fragile 24/7 Keeper Bots
+Running continuous scripts on AWS EC2 or VPS instances to trigger smart contracts requires managing server uptime, process monitors (PM2/systemd), OS patches, and memory leaks. icCron runs on a replicated subnet of independent hardware nodes with automatic failover.
+
+### Hot Private Key Exposure
+Off-chain keeper bots typically store plaintext private keys or seed phrases in `.env` files to sign transactions, creating massive attack vectors. icCron calls other canisters directly as an authenticated canister principal, eliminating private keys entirely.
+
+## Architecture Under the Hood
+
+### 1. Native IC System Timers (Zero Heartbeat Waste)
+Legacy Motoko canisters relied on the `heartbeat` mechanism, which woke the canister on every single consensus round (~1 second), wasting millions of cycles even when idle. icCron utilizes native IC Canister Timers (`ic-cdk::timer`) with 64-bit nanosecond scheduling. The canister sleeps at **0 cycle burn** until the exact scheduled second arrives.
+
+### 2. O(1) Bitmask Cron Engine
+Standard 5-field cron expressions are parsed once at job creation time into in-memory bitmasks:
+- `minutes`: 64-bit integer bitmask (bits 0–59)
+- `hours`: 32-bit integer bitmask (bits 0–23)
+- `days`: 32-bit integer bitmask (bits 1–31)
+- `months`: 16-bit integer bitmask (bits 1–12)
+- `weekdays`: 8-bit integer bitmask (bits 0–6)
+
+Evaluating the next scheduled run takes **O(1) bitwise operations** with zero regular expression parsing overhead.
+
+### 3. Dual-Dispatch Modes
+- **HttpWebhook**: Dispatches threshold-signed HTTPS outcalls (`GET`, `POST`, `HEAD`) to any public Web2 URL (Next.js, Vercel, Supabase, Cloudflare Workers, AWS Lambda).
+- **CanisterCall**: Dispatches direct inter-canister Candid calls to smart contracts across the Internet Computer.
+
+### 4. Circuit Breakers & Dead Letter Queue (DLQ)
+When a downstream target fails (HTTP 5xx, timeout, or consensus reject), icCron applies exponential backoff retries. Once `consecutive_failures >= max_retries`, the job is automatically moved to `AutoPausedDormant` to prevent cycle burn, and an error snippet is logged for debugging.

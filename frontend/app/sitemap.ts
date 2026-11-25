@@ -3,6 +3,7 @@ import { BLOG_POSTS } from "@/services/blog/blog"
 import { CHARITY_CAMPAIGNS } from "@/lib/public/charity/campaigns"
 import { listCachedIndexableChannelSnapshots } from "@/lib/community/publicCache"
 import { bucketDocSlugs } from "@/lib/bucket/docs/load"
+import { cronDocSlugs } from "@/lib/cron/docs/load"
 
 // IMPORTANT: Keep force-static. This runs listAllPublicChannelsForSeo() which
 // calls the IC canister. Without this, Next.js would re-execute that canister
@@ -71,6 +72,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   })
 
+  const cronDocEntries: MetadataRoute.Sitemap = cronDocSlugs().map((slugParts) => {
+    const path = slugParts.length > 0 ? `/cron/docs/${slugParts.join("/")}` : "/cron/docs"
+    return {
+      url: `${siteUrl}${path}`,
+      changeFrequency: "weekly" as const,
+      priority: path === "/cron/docs" ? 0.85 : 0.75,
+    }
+  })
+
   return [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
     { url: `${siteUrl}/downloads`, changeFrequency: "weekly", priority: 0.85 },
@@ -81,13 +91,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/brand-protection`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${siteUrl}/login`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/icbucket`, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${siteUrl}/products/icBucket`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${siteUrl}/products/icBucket/packages`, changeFrequency: "weekly", priority: 0.75 },
+    { url: `${siteUrl}/icbucket/pricing`, changeFrequency: "weekly", priority: 0.85 },
     ...bucketDocEntries,
+    { url: `${siteUrl}/iccron`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${siteUrl}/iccron/pricing`, changeFrequency: "weekly", priority: 0.85 },
+    { url: `${siteUrl}/iccron/security`, changeFrequency: "weekly", priority: 0.8 },
+    ...cronDocEntries,
     { url: `${siteUrl}/icfalcon`, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${siteUrl}/products/icFalcon`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${siteUrl}/products/icFalcon/packages`, changeFrequency: "weekly", priority: 0.75 },
-    { url: `${siteUrl}/products/icFalcon/commands`, changeFrequency: "weekly", priority: 0.75 },
     { url: `${siteUrl}/token/create`, changeFrequency: "weekly", priority: 0.85 },
     { url: `${siteUrl}/canister/tools`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/canister/manage`, changeFrequency: "weekly", priority: 0.75 },

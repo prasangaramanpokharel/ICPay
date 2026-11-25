@@ -2,21 +2,8 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Copy01Icon,
-  HeadphonesIcon,
-  HelpCircleIcon,
-  LinkSquare02Icon,
-  LockPasswordIcon,
-  Mail01Icon,
-  Message01Icon,
-  SentIcon,
-  Shield01Icon,
-  SourceCodeIcon,
-  SparklesIcon,
-  Tick02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CopyGlassIcon, HeadphonesGlassIcon, CircleQuestionMarkGlassIcon, ExternalLinkGlassIcon, LockGlassIcon, MailGlassIcon, MessageSquareGlassIcon, SendGlassIcon, ShieldGlassIcon, CodeGlassIcon, SparklesGlassIcon, CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
@@ -39,7 +26,7 @@ const TOPICS = [
 
 const CONTACT_CHANNELS = [
   {
-    icon: HeadphonesIcon,
+    icon: HeadphonesGlassIcon,
     title: "General & Technical Support",
     description: "Account help, custodial wallet inquiries, transaction verification, or feature questions.",
     actionText: "contact@icpay.cloud",
@@ -48,7 +35,7 @@ const CONTACT_CHANNELS = [
     badgeVariant: "secondary" as const,
   },
   {
-    icon: SparklesIcon,
+    icon: SparklesGlassIcon,
     title: "icBucket Cloud Storage",
     description: "Assistance with custom capacity tiers, edge CDN reverse proxies, API keys, or SDK integrations.",
     actionText: "contact@icpay.cloud",
@@ -57,7 +44,7 @@ const CONTACT_CHANNELS = [
     badgeVariant: "outline" as const,
   },
   {
-    icon: Shield01Icon,
+    icon: ShieldGlassIcon,
     title: "Security & Vulnerability Disclosure",
     description: "Responsible vulnerability disclosures, smart contract audit feedback, and infrastructure issues.",
     actionText: "contact@icpay.cloud",
@@ -66,7 +53,7 @@ const CONTACT_CHANNELS = [
     badgeVariant: "destructive" as const,
   },
   {
-    icon: Message01Icon,
+    icon: MessageSquareGlassIcon,
     title: "Community & Ecosystem",
     description: "Join community discussions, propose token listings, or follow official engineering announcements.",
     actionText: "Community Channels",
@@ -77,9 +64,9 @@ const CONTACT_CHANNELS = [
 ]
 
 const QUICK_LINKS = [
-  { title: "Transparency & Canister IDs", href: "/transparency", icon: LockPasswordIcon, desc: "Verify on-chain Motoko wasm and live subnets" },
-  { title: "icBucket Developer Docs", href: "/bucket/docs", icon: SourceCodeIcon, desc: "API methods, Python/TypeScript SDKs, and tutorials" },
-  { title: "Frequently Asked Questions", href: "/faq", icon: HelpCircleIcon, desc: "Internet Identity, self-custody model, and gas fees" },
+  { title: "Transparency & Canister IDs", href: "/transparency", icon: LockGlassIcon, desc: "Verify on-chain Motoko wasm and live subnets" },
+  { title: "icBucket Developer Docs", href: "/bucket/docs", icon: CodeGlassIcon, desc: "API methods, Python/TypeScript SDKs, and tutorials" },
+  { title: "Frequently Asked Questions", href: "/faq", icon: CircleQuestionMarkGlassIcon, desc: "Internet Identity, self-custody model, and gas fees" },
 ]
 
 export function ContactView() {
@@ -126,7 +113,7 @@ export function ContactView() {
       <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 md:py-14 space-y-12">
         <div className="text-center space-y-4 max-w-2xl mx-auto pt-2 sm:pt-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-muted/40 px-3.5 py-1 text-xs font-medium text-foreground backdrop-blur-xs">
-            <HugeiconsIcon icon={Mail01Icon} className="size-3.5 text-primary" strokeWidth={1.75} />
+            <Icon icon={MailGlassIcon} className="size-3.5 text-primary" strokeWidth={1.75} />
             <span>Official Communications</span>
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight bg-linear-to-b from-foreground via-foreground/90 to-foreground/55 bg-clip-text text-transparent sm:text-4xl md:text-5xl">
@@ -138,7 +125,7 @@ export function ContactView() {
 
           <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
             <div className="inline-flex items-center gap-2.5 rounded-2xl border border-border/80 bg-card/70 px-4 py-2 shadow-xs backdrop-blur-xs">
-              <HugeiconsIcon icon={Mail01Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+              <Icon icon={MailGlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
               <span className="font-mono text-xs sm:text-sm font-semibold text-foreground">{CONTACT_EMAIL}</span>
               <div className="h-4 w-px bg-border/80" />
               <Button
@@ -150,9 +137,9 @@ export function ContactView() {
                 className="size-7 rounded-lg text-muted-foreground hover:text-foreground"
               >
                 {copiedEmail ? (
-                  <HugeiconsIcon icon={Tick02Icon} className="size-3.5 text-success" strokeWidth={1.75} />
+                  <Icon icon={CheckGlassOutlineIcon} className="size-3.5 text-success" strokeWidth={2.5} />
                 ) : (
-                  <HugeiconsIcon icon={Copy01Icon} className="size-3.5" strokeWidth={1.75} />
+                  <Icon icon={CopyGlassIcon} className="size-3.5" strokeWidth={1.75} />
                 )}
               </Button>
               <a
@@ -160,7 +147,7 @@ export function ContactView() {
                 className="inline-flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                 title="Open email client"
               >
-                <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5" strokeWidth={1.75} />
+                <Icon icon={ExternalLinkGlassIcon} className="size-3.5" strokeWidth={1.75} />
               </a>
             </div>
           </div>
@@ -175,7 +162,7 @@ export function ContactView() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                    <HugeiconsIcon icon={channel.icon} className="size-4.5" strokeWidth={1.75} />
+                    <Icon icon={channel.icon} className="size-4.5" strokeWidth={1.75} />
                   </div>
                   <Badge variant={channel.badgeVariant} className="text-[10px] font-medium h-5">
                     {channel.badge}
@@ -197,14 +184,14 @@ export function ContactView() {
                     className={buttonVariants({ variant: "outline", size: "sm", className: "h-8 gap-1.5 text-xs rounded-xl" })}
                   >
                     <span>{channel.actionText}</span>
-                    <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5 opacity-70" strokeWidth={1.75} />
+                    <Icon icon={ExternalLinkGlassIcon} className="size-3.5 opacity-70" strokeWidth={1.75} />
                   </Link>
                 ) : (
                   <a
                     href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(channel.mailtoSubject || "Inquiry")}`}
                     className={buttonVariants({ variant: "outline", size: "sm", className: "h-8 gap-1.5 text-xs font-mono rounded-xl" })}
                   >
-                    <HugeiconsIcon icon={Mail01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+                    <Icon icon={MailGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
                     <span>{channel.actionText}</span>
                   </a>
                 )}
@@ -217,7 +204,7 @@ export function ContactView() {
           <CardHeader className="p-5 sm:p-6 pb-4 border-b border-border/50">
             <div className="flex items-center gap-3">
               <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary shrink-0">
-                <HugeiconsIcon icon={SentIcon} className="size-5" strokeWidth={1.75} />
+                <Icon icon={SendGlassIcon} className="size-5" strokeWidth={1.75} />
               </div>
               <div>
                 <CardTitle className="text-base sm:text-lg font-semibold tracking-tight">Direct Email Composer</CardTitle>
@@ -304,9 +291,9 @@ export function ContactView() {
                   className="h-9 gap-1.5 text-xs rounded-xl"
                 >
                   {copiedDraft ? (
-                    <HugeiconsIcon icon={Tick02Icon} className="size-3.5 text-success" strokeWidth={1.75} />
+                    <Icon icon={CheckGlassOutlineIcon} className="size-3.5 text-success" strokeWidth={2.5} />
                   ) : (
-                    <HugeiconsIcon icon={Copy01Icon} className="size-3.5" strokeWidth={1.75} />
+                    <Icon icon={CopyGlassIcon} className="size-3.5" strokeWidth={1.75} />
                   )}
                   <span>{copiedDraft ? "Copied" : "Copy Draft"}</span>
                 </Button>
@@ -314,7 +301,7 @@ export function ContactView() {
                   href={generateMailto()}
                   className={buttonVariants({ variant: "default", size: "sm", className: "h-9 gap-1.5 text-xs rounded-xl" })}
                 >
-                  <HugeiconsIcon icon={SentIcon} className="size-3.5" strokeWidth={1.75} />
+                  <Icon icon={SendGlassIcon} className="size-3.5" strokeWidth={1.75} />
                   <span>Send via Email</span>
                 </a>
               </div>
@@ -338,7 +325,7 @@ export function ContactView() {
               >
                 <div className="space-y-2">
                   <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                    <HugeiconsIcon icon={link.icon} className="size-4.5" strokeWidth={1.75} />
+                    <Icon icon={link.icon} className="size-4.5" strokeWidth={1.75} />
                   </div>
                   <h3 className="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
                     {link.title}
@@ -349,7 +336,7 @@ export function ContactView() {
                 </div>
                 <div className="pt-3 flex items-center gap-1.5 text-xs font-medium text-primary">
                   <span>Explore</span>
-                  <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
+                  <Icon icon={ExternalLinkGlassIcon} className="size-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
                 </div>
               </Link>
             ))}

@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { GripVerticalIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { GripVerticalGlassIcon } from "@thesvg/ui-react"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -288,7 +288,7 @@ export function BucketFilesTable({
                         className="inline-flex shrink-0 cursor-grab opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-active:opacity-100 group-focus-within:opacity-100 text-muted-foreground/50 hover:text-foreground active:cursor-grabbing"
                         title="Drag to move"
                       >
-                        <HugeiconsIcon icon={GripVerticalIcon} className="size-4 shrink-0" strokeWidth={1.75} />
+                        <Icon icon={GripVerticalGlassIcon} className="size-4 shrink-0" strokeWidth={1.75} />
                       </span>
                     ) : null}
                     <BucketFileIcon path={entry.file.path} />

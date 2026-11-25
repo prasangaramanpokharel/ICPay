@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useRef, useState, type InputHTMLAttributes } from "react"
 import { createPortal } from "react-dom"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowDown01Icon, Folder02Icon, Upload01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowDownGlassIcon, FileDropzoneGlassIcon, FolderGlassIcon, UploadGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import {
@@ -268,7 +268,7 @@ export function BucketUploadControl({
             onClick={() => inputRef.current?.click()}
             className="gap-1.5"
           >
-            <HugeiconsIcon icon={Upload01Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={UploadGlassIcon} className="size-4" strokeWidth={1.75} />
             <span>{t("upload")}</span>
           </Button>
           <DropdownMenu>
@@ -283,15 +283,15 @@ export function BucketUploadControl({
                 />
               }
             >
-              <HugeiconsIcon icon={ArrowDown01Icon} className="size-3.5" strokeWidth={2} />
+              <Icon icon={ArrowDownGlassIcon} className="size-3.5" strokeWidth={2} />
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-44">
               <DropdownMenuItem
                 onClick={() => inputRef.current?.click()}
                 className="gap-2"
               >
-                <HugeiconsIcon
-                  icon={Upload01Icon}
+                <Icon
+                  icon={UploadGlassIcon}
                   className="size-4 text-muted-foreground"
                   strokeWidth={1.75}
                 />
@@ -301,8 +301,8 @@ export function BucketUploadControl({
                 onClick={() => folderInputRef.current?.click()}
                 className="gap-2"
               >
-                <HugeiconsIcon
-                  icon={Folder02Icon}
+                <Icon
+                  icon={FolderGlassIcon}
                   className="size-4 text-muted-foreground"
                   strokeWidth={1.75}
                 />
@@ -339,7 +339,7 @@ export function BucketUploadControl({
             >
               <div className="relative flex flex-col items-center justify-center w-full max-w-lg p-10 text-center border-2 border-dashed rounded-3xl border-primary bg-card/95 shadow-2xl pointer-events-none">
                 <div className="flex items-center justify-center size-16 mb-4 rounded-2xl border border-primary/20 bg-primary/10 text-primary animate-bounce shadow-sm">
-                  <HugeiconsIcon icon={Upload01Icon} className="size-8" strokeWidth={1.75} />
+                  <Icon icon={FileDropzoneGlassIcon} className="size-8" strokeWidth={1.75} />
                 </div>
                 <h3 className="text-xl font-semibold text-foreground">
                   Drop files or folders to upload

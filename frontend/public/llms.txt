@@ -23,6 +23,9 @@ For the comprehensive, complete text documentation and technical specs, see:
 ## Core Products & Public Landing Pages
 - [ICPay Home](https://icpay.app/): Main platform overview for sending, receiving, and managing ICP and ICRC tokens.
 - [icBucket Cloud Storage Overview](https://icpay.app/icbucket): Decentralized S3-compatible cloud storage on the Internet Computer. Predictable 30-day ICP plans, zero egress fees, and AWS S3 pricing alternative.
+- [icCron Autonomous Scheduler](https://icpay.app/iccron): Decentralized, sub-second on-chain cron scheduler and HTTPS webhook dispatcher on the Internet Computer. 60 free runs/month, bypasses Vercel Pro cron tax.
+- [icCron Pricing](https://icpay.app/iccron/pricing): Pay-as-you-go execution pricing at $0.0005 per run with zero monthly server fees.
+- [icCron Security Architecture](https://icpay.app/iccron/security): SHA-256 hashed API keys, SSRF protection, and deterministic subnet consensus model.
 - [icBucket Product Details](https://icpay.app/products/icBucket): In-depth product features, security specs, and architecture overview.
 - [icBucket Storage Packages](https://icpay.app/products/icBucket/packages): 30-day storage plans from 0.5 ICP (1GB, 5GB, 10GB, 25GB, 50GB, 100GB+).
 - [icFalcon Framework](https://icpay.app/icfalcon): High-performance developer CLI and canister operations suite.
@@ -38,9 +41,12 @@ For the comprehensive, complete text documentation and technical specs, see:
 ## Authenticated Web Application (Requires Internet Identity)
 - [Wallet Dashboard](https://icpay.app/wallet): Multi-token wallet balances, addresses, subaccounts, and transaction history.
 - [Bucket Workspace](https://icpay.app/bucket): Interactive cloud file manager, folder creation, and drag-and-drop uploads.
+- [Cron Dashboard](https://icpay.app/cron): Autonomous job scheduling dashboard, execution logs, API keys, and dead letter queue.
 
 ## Developer Documentation & APIs
 - [icBucket Documentation](https://icpay.app/bucket/docs): REST, Python SDK, and TypeScript SDK integration guides for icBucket.
+- [icCron Documentation](https://icpay.app/cron/docs): Architecture, 5 SDK integration guides (npm, Python, Go, Rust, PHP), and HTTP gateway dispatch reference.
+- [icCron Knowledge Base](https://icpay.app/iccron/llm.txt): Raw markdown specs and canister API reference for LLMs and autonomous agents.
 - [Quickstart Guide](https://icpay.app/bucket/docs/getting-started/quickstart): 5-minute guide to upload and retrieve files.
 - [API Authentication](https://icpay.app/bucket/docs/api/auth): Generate and manage read/write API keys for scripts, bots, and agents.
 - [API Methods & Endpoints](https://icpay.app/bucket/docs/api/methods): Full reference for listFolder, uploadChunk, and getFile.

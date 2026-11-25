@@ -1,0 +1,44 @@
+---
+title: "icCron Documentation"
+description: "Autonomous on-chain cron scheduler and HTTP webhook dispatcher running natively on the Internet Computer with sub-second precision."
+group: "Overview"
+order: 0
+---
+
+# icCron Documentation
+
+Welcome to the official developer documentation for **icCron**, the autonomous, serverless on-chain job scheduler and webhook dispatcher engineered natively in Rust on the Internet Computer (`w2fxo-5qaaa-aaaan-q6zxq-cai`).
+
+icCron replaces centralized cron infrastructure (AWS EventBridge, Google Cloud Scheduler, Vercel Cron Jobs, fragile VPS daemons) with a 100% on-chain, replicated time machine that sleeps at zero cycles between jobs and executes with 1-second consensus precision.
+
+## Core Highlights
+
+- **Zero Idle Cycle Burn**: Native IC Canister Timers sleep until the exact scheduled second, slashing idle cycle consumption by 99.4% compared to legacy heartbeats.
+- **O(1) Bitmask Scheduler**: Standard 5-field cron strings (`* * * * *`) are compiled into compact 64-bit/32-bit/16-bit integer bitmasks for microsecond next-tick calculations.
+- **Multi-Language SDK Ecosystem**: Official production client libraries for TypeScript/Node.js, Python, Go, Rust, and PHP, alongside standard REST APIs and Candid interfaces.
+- **Subnet HTTPS Consensus**: Outbound webhooks are threshold-signed and dispatched across dozens of independent node providers worldwide.
+- **Dead Letter Queue (DLQ)**: Automatic exponential retries and auto-pause circuit breakers prevent credit burn on broken downstream servers.
+- **Developer Economics**: 60 free executions every month per principal, with $0.0005 per run on prepaid ICP credit packs — zero monthly SaaS tax.
+
+## Prerequisites
+
+Before getting started, make sure you have:
+
+- An active ICPay account with Internet Identity authentication.
+- An icCron Project created via the [icCron Dashboard](/cron) or REST API.
+- A generated project-scoped API key (`icp_cron_<64-hex-chars>`).
+
+## Getting Started
+
+Explore the task-oriented documentation sections below:
+
+<CronDocHubCards />
+
+## Quick Links
+
+- [Quick Start Guide](./overview/quick-start)
+- [SDK Installation](./overview/installation)
+- [Multi-Language Integration](./guides/integration)
+- [REST API Reference](./api/endpoints)
+- [Consensus Rules & HTTPS Outcalls](./api/consensus)
+- [Canister Dashboard on IC Explorer](https://dashboard.internetcomputer.org/canister/w2fxo-5qaaa-aaaan-q6zxq-cai)

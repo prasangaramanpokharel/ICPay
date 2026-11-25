@@ -1,8 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowDown01Icon } from "@hugeicons/core-free-icons"
+import { cn } from "@/lib/ui/utils"
+import { Icon } from "@/components/ui/icon"
+import { ChevronDownGlassIcon } from "@thesvg/ui-react"
 import {
   Markdown,
   Openai,
@@ -87,7 +88,7 @@ export function BucketDocsCopyMenu({ markdown, title = "ICBucket Documentation" 
         className="inline-flex h-8 items-center gap-1.5 px-2.5 rounded-l-lg hover:bg-muted/40 cursor-pointer transition-colors"
       >
         <CopyIconIndicator copied={copied} iconClassName="size-3.5" />
-        <span>{copied ? "Copied" : "Copy Page"}</span>
+        <span className={cn(copied && "text-success font-medium")}>{copied ? "Copied" : "Copy Page"}</span>
       </button>
 
       <div className="h-4 w-px bg-border/70" />
@@ -102,7 +103,7 @@ export function BucketDocsCopyMenu({ markdown, title = "ICBucket Documentation" 
             />
           }
         >
-          <HugeiconsIcon icon={ArrowDown01Icon} className="size-3 text-muted-foreground" />
+          <Icon icon={ChevronDownGlassIcon} className="size-3 text-muted-foreground" />
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="start" className="w-48 p-1 rounded-xl border-border/60 bg-popover/95 backdrop-blur-md shadow-xl">

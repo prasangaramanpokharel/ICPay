@@ -448,7 +448,13 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Ký hiệu",
+    "colName": "Tên",
+    "colQuantity": "Số lượng",
+    "colValue": "Giá trị",
+    "totalIcpBalance": "Tổng số dư ICP",
+    "yourAssets": "Tài sản của bạn"
   },
   "token": {
     "back": "Ví",
@@ -456,7 +462,7 @@
     "send": "Gửi",
     "deposit": "Nạp",
     "swap": "Hoán đổi",
-    "depositTitle": "Địa chỉ nạp",
+    "depositTitle": "Nạp",
     "depositSubtitle": "Gửi {symbol} vào đây để nạp ví.",
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Địa chỉ cá nhân — chỉ bạn nạp được. Gửi {symbol} để nạp số dư.",
@@ -472,7 +478,7 @@
     "selfCustodyNet": "Bạn nhận",
     "selfCustodyDust": "Dưới phí mạng {symbol}, không thể chuyển.",
     "selfCustodyEmpty": "Không có gì để chuyển — token chưa gửi vào principal.",
-    "historyTitle": "Lịch sử on-chain",
+    "historyTitle": "Lịch sử",
     "snsLink": "Xem SNS",
     "snsDashboard": "Bảng điều khiển SNS",
     "snsSwap": "Swap SNS",
@@ -540,7 +546,8 @@
     "suggested": "Gợi ý cho bạn",
     "noneFound": "Không tìm thấy ai với “{query}”.",
     "empty": "Chưa có tài khoản có tên. Hãy là người đầu tiên.",
-    "premium": "Handle premium đã xác minh"
+    "premium": "Handle premium đã xác minh",
+    "subtitle": "Khám phá hồ sơ người dùng trên toàn mạng lưới"
   },
   "success": {
     "send": "Gửi thành công",
@@ -1381,6 +1388,10 @@
         "blog": {
           "title": "Blog",
           "description": "Hướng dẫn, tutorial và bài viết hệ sinh thái ICP."
+        },
+        "launch": {
+          "title": "Phát hành token",
+          "description": "Tạo token ICRC-1 trên Internet Computer."
         }
       },
       "legal": {

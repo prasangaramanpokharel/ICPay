@@ -2,8 +2,6 @@
 
 import { useMemo, useState } from "react"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ConnectIcon } from "@hugeicons/core-free-icons"
 import {
   Dialog,
   DialogContent,
@@ -99,9 +97,8 @@ export function ConnectControllerDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md gap-5 w-full min-w-0 overflow-hidden">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <HugeiconsIcon icon={ConnectIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
-            <span>Connect Canister via CLI</span>
+          <DialogTitle>
+            Connect Canister via CLI
           </DialogTitle>
           <DialogDescription className="text-xs">
             Add your Internet Identity as a controller to manage this canister.

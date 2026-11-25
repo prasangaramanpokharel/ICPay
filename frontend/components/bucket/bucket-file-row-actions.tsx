@@ -3,16 +3,8 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Copy01Icon,
-  Delete02Icon,
-  Download01Icon,
-  Folder02Icon,
-  LinkSquare02Icon,
-  MoreVerticalIcon,
-  ViewIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CopyGlassIcon, DeleteGlassIcon, DownloadGlassIcon, FolderGlassIcon, ExternalLinkGlassIcon, EllipsisVerticalGlassIcon, EyeGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -105,24 +97,24 @@ export function BucketFileRowActions({
             />
           }
         >
-          <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" strokeWidth={1.75} />
+          <Icon icon={EllipsisVerticalGlassIcon} className="size-4" strokeWidth={1.75} />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuItem onClick={() => onOpenFile(file)} className="gap-2 text-xs">
-            <HugeiconsIcon icon={ViewIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+            <Icon icon={EyeGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
             <span>Preview & Details</span>
           </DropdownMenuItem>
 
           {cdnUrl ? (
             <DropdownMenuItem onClick={() => void handleCopy(cdnUrl)} className="gap-2 text-xs">
-              <HugeiconsIcon icon={Copy01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+              <Icon icon={CopyGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
               <span>Copy CDN Link</span>
             </DropdownMenuItem>
           ) : null}
 
           {rawUrl ? (
             <DropdownMenuItem onClick={() => void handleCopy(rawUrl)} className="gap-2 text-xs">
-              <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+              <Icon icon={ExternalLinkGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
               <span>Copy Raw Link</span>
             </DropdownMenuItem>
           ) : null}
@@ -132,7 +124,7 @@ export function BucketFileRowActions({
             disabled={downloading}
             className="gap-2 text-xs"
           >
-            <HugeiconsIcon icon={Download01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+            <Icon icon={DownloadGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
             <span>{downloading ? "Downloading..." : "Download"}</span>
           </DropdownMenuItem>
 
@@ -143,7 +135,7 @@ export function BucketFileRowActions({
                 onClick={() => onDeleteFile(file.path)}
                 className="gap-2 text-xs text-destructive focus:bg-destructive/10 focus:text-destructive"
               >
-                <HugeiconsIcon icon={Delete02Icon} className="size-3.5 text-destructive" strokeWidth={1.75} />
+                <Icon icon={DeleteGlassIcon} className="size-3.5 text-destructive" strokeWidth={1.75} />
                 <span>Delete</span>
               </DropdownMenuItem>
             </>
@@ -178,11 +170,11 @@ export function BucketFolderRowActions({
             />
           }
         >
-          <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" strokeWidth={1.75} />
+          <Icon icon={EllipsisVerticalGlassIcon} className="size-4" strokeWidth={1.75} />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-44">
           <DropdownMenuItem onClick={() => onOpenFolder(folderName)} className="gap-2 text-xs">
-            <HugeiconsIcon icon={Folder02Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+            <Icon icon={FolderGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
             <span>Open Folder</span>
           </DropdownMenuItem>
           {canWrite && onDeleteFolder ? (
@@ -192,7 +184,7 @@ export function BucketFolderRowActions({
                 onClick={() => onDeleteFolder(folderName)}
                 className="gap-2 text-xs text-destructive focus:bg-destructive/10 focus:text-destructive"
               >
-                <HugeiconsIcon icon={Delete02Icon} className="size-3.5 text-destructive" strokeWidth={1.75} />
+                <Icon icon={DeleteGlassIcon} className="size-3.5 text-destructive" strokeWidth={1.75} />
                 <span>Delete Folder</span>
               </DropdownMenuItem>
             </>

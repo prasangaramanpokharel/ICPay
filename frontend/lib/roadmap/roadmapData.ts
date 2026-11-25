@@ -1,15 +1,5 @@
-import type { IconSvgElement } from "@hugeicons/react"
-import {
-  ShieldKeyIcon,
-  UserIcon,
-  Coins01Icon,
-  ArrowDataTransferHorizontalIcon,
-  PlusSignCircleIcon,
-  ChartLineData01Icon,
-  LockKeyIcon,
-  Store01Icon,
-  ShoppingBag01Icon,
-} from "@hugeicons/core-free-icons"
+import type { UiIcon } from "@thesvg/ui-react"
+import { ShieldGlassIcon, UserGlassIcon, CoinsGlassIcon, ReplaceGlassIcon, CirclePlusGlassIcon, ChartLineGlassIcon, LockGlassIcon, StoreGlassIcon, ShoppingBagGlassIcon } from "@thesvg/ui-react"
 
 export type PhaseStatus = "shipped" | "active" | "next" | "planned"
 
@@ -25,7 +15,7 @@ export type Phase = {
   title: string
   summary: string
   status: PhaseStatus
-  icon: IconSvgElement
+  icon: UiIcon
   milestones: Milestone[]
   dependsOn?: string[]
   risks?: string[]
@@ -49,7 +39,7 @@ export const PHASES: Phase[] = [
     title: "Custody foundation",
     summary: "Per-user subaccounts, and no path by which one user moves another's funds.",
     status: "shipped",
-    icon: ShieldKeyIcon,
+    icon: ShieldGlassIcon,
     milestones: [
       {
         label: "Deterministic per-user subaccount",
@@ -77,7 +67,7 @@ export const PHASES: Phase[] = [
     title: "Username as the address",
     summary: "Send to @handle instead of a 63-character principal.",
     status: "shipped",
-    icon: UserIcon,
+    icon: UserGlassIcon,
     milestones: [
       {
         label: "Claim 5–8 characters free",
@@ -105,7 +95,7 @@ export const PHASES: Phase[] = [
     title: "Multi-token visibility",
     summary: "See every ICRC-1 holding, with live balances and metadata.",
     status: "shipped",
-    icon: Coins01Icon,
+    icon: CoinsGlassIcon,
     milestones: [
       { label: "Discover SNS ledgers from SNS-W", done: true },
       {
@@ -129,7 +119,7 @@ export const PHASES: Phase[] = [
     title: "Multi-token transfers",
     summary: "Every token on screen moves, by username, at its own decimals.",
     status: "shipped",
-    icon: ArrowDataTransferHorizontalIcon,
+    icon: ReplaceGlassIcon,
     dependsOn: ["Phase 2"],
     milestones: [
       { label: "Generalize the ledger client to any ICRC-1 canister", done: true },
@@ -162,7 +152,7 @@ export const PHASES: Phase[] = [
     title: "Token creation",
     summary: "Launch a token from the wallet without touching dfx.",
     status: "shipped",
-    icon: PlusSignCircleIcon,
+    icon: CirclePlusGlassIcon,
     dependsOn: ["Phase 3"],
     milestones: [
       {
@@ -209,7 +199,7 @@ export const PHASES: Phase[] = [
     title: "Liquidity and on-chain trading",
     summary: "Swap, then pay a handle, in one flow.",
     status: "next",
-    icon: ChartLineData01Icon,
+    icon: ChartLineGlassIcon,
     dependsOn: ["Phase 3", "Phase 4"],
     milestones: [
       {
@@ -246,7 +236,7 @@ export const PHASES: Phase[] = [
     title: "Decentralizing custody",
     summary: "Stop one key being able to change the rules.",
     status: "planned",
-    icon: LockKeyIcon,
+    icon: LockGlassIcon,
     milestones: [
       {
         label: "Controller moves to SNS or NNS",
@@ -274,7 +264,7 @@ export const PHASES: Phase[] = [
     title: "Merchants and payments",
     summary: "Payment requests, settlement, refunds as first-class objects.",
     status: "planned",
-    icon: Store01Icon,
+    icon: StoreGlassIcon,
     dependsOn: ["Phase 3", "Phase 6"],
     milestones: [
       {
@@ -308,7 +298,7 @@ export const PHASES: Phase[] = [
     title: "Shopping",
     summary: "A merchant directory, listings, and orders in the wallet.",
     status: "planned",
-    icon: ShoppingBag01Icon,
+    icon: ShoppingBagGlassIcon,
     dependsOn: ["Phase 7"],
     milestones: [
       { label: "Browsable merchant directory", done: false },

@@ -4,12 +4,8 @@ import { useMemo } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  ArrowRight01Icon,
-  ConnectIcon,
-  FuelStationIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { FuelGaugeGlassIcon } from "@thesvg/ui-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -151,10 +147,9 @@ export function MyCanisterCard({
       <div className="border-t border-border/40 pt-2.5 flex items-center justify-between gap-2">
         <Link
           href={`/canister?id=${id}`}
-          className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+          className="inline-flex items-center text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
         >
           <span>{t("view")}</span>
-          <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
         </Link>
 
         <div className="flex items-center gap-1.5">
@@ -164,9 +159,8 @@ export function MyCanisterCard({
               variant="outline"
               size="sm"
               onClick={onConnect}
-              className="h-7 gap-1 px-2 text-xs font-medium cursor-pointer"
+              className="h-7 px-2 text-xs font-medium cursor-pointer"
             >
-              <HugeiconsIcon icon={ConnectIcon} className="size-3 text-muted-foreground" strokeWidth={1.75} />
               <span>Connect</span>
             </Button>
           ) : null}
@@ -177,7 +171,7 @@ export function MyCanisterCard({
             onClick={onTopUp}
             className="h-7 gap-1.5 px-2.5 text-xs font-medium cursor-pointer"
           >
-            <HugeiconsIcon icon={FuelStationIcon} className="size-3 text-muted-foreground" strokeWidth={1.75} />
+            <Icon icon={FuelGaugeGlassIcon} className="size-3 text-muted-foreground" strokeWidth={1.75} />
             <span>{t("topUp")}</span>
           </Button>
         </div>

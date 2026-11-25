@@ -1,8 +1,19 @@
 import type { Metadata } from "next"
 import { HeroSection } from "@/components/products/icfalcon/hero-section"
 import { ProblemSolution } from "@/components/products/icfalcon/problem-solution"
+import { ArchitectureSection } from "@/components/products/icfalcon/architecture-section"
+import { OrmSection } from "@/components/products/icfalcon/orm-section"
+import { MoneyLayerSection } from "@/components/products/icfalcon/money-layer-section"
+import { AuthSection } from "@/components/products/icfalcon/auth-section"
+import { UniverseSection } from "@/components/products/icfalcon/universe-section"
+import { AgentSkillsSection } from "@/components/products/icfalcon/agent-skills-section"
+import { CliSection } from "@/components/products/icfalcon/cli-section"
+import { WalkthroughSection } from "@/components/products/icfalcon/walkthrough-section"
+import { DirectoryLayoutSection } from "@/components/products/icfalcon/directory-layout-section"
+import { UpdaterSection } from "@/components/products/icfalcon/updater-section"
 import { ArticleSection } from "@/components/products/icfalcon/article-section"
 import { FaqSection } from "@/components/products/icfalcon/faq-section"
+import { CtaSection } from "@/components/products/icfalcon/cta-section"
 import { PAGE_IMAGES, pageImageUrl } from "@/lib/public/page-images"
 
 export const metadata: Metadata = {
@@ -54,8 +65,19 @@ export default function ICFalconPage() {
     <div className="min-h-screen bg-background">
       <HeroSection />
       <ProblemSolution />
+      <ArchitectureSection />
+      <OrmSection />
+      <MoneyLayerSection />
+      <AuthSection />
+      <UniverseSection />
+      <AgentSkillsSection />
+      <CliSection />
+      <WalkthroughSection />
+      <DirectoryLayoutSection />
+      <UpdaterSection />
       <ArticleSection />
       <FaqSection />
+      <CtaSection />
     </div>
   )
 }

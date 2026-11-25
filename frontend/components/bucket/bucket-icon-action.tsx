@@ -1,7 +1,7 @@
 "use client"
 
-import { HugeiconsIcon } from "@hugeicons/react"
-import type { IconSvgElement } from "@hugeicons/react"
+import { Icon } from "@/components/ui/icon"
+import type { UiIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/ui/utils"
@@ -15,7 +15,7 @@ export function BucketIconAction({
   className,
   destructive,
 }: {
-  icon: IconSvgElement
+  icon: UiIcon
   label: string
   onClick?: () => void
   disabled?: boolean
@@ -36,7 +36,7 @@ export function BucketIconAction({
             onClick={onClick}
             aria-label={label}
           >
-            <HugeiconsIcon icon={icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={icon} className="size-4" strokeWidth={1.75} />
           </Button>
         }
       />

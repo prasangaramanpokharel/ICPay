@@ -5,8 +5,8 @@ import Link from "next/link"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { SentIcon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { SendGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import {
@@ -138,7 +138,7 @@ export function MyCanisterTransferDialog({
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="gap-1.5">
             <DialogTitle className="flex items-center gap-2">
-              <HugeiconsIcon icon={SentIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
+              <Icon icon={SendGlassIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
               <span>{t("transferTitle")}</span>
             </DialogTitle>
             <DialogDescription>

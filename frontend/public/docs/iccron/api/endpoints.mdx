@@ -1,0 +1,152 @@
+---
+title: "REST API Reference"
+description: "Comprehensive REST API endpoint specifications for icCron job management, execution triggers, and logs."
+group: "API Reference"
+order: 0
+---
+
+# REST API Reference
+
+All requests must be directed to the mainnet canister gateway:
+
+```
+https://w2fxo-5qaaa-aaaan-q6zxq-cai.raw.icp0.io
+```
+
+Authenticate every call with:
+```http
+Authorization: Bearer icp_cron_<64-hex-chars>
+Content-Type: application/json
+```
+
+---
+
+## Create Job
+
+`POST /api/v1/cron/jobs`
+
+Creates a new scheduled cron job inside the API key's project.
+
+### Request Body
+
+```json
+{
+  "label": "Hourly Webhook",
+  "cron_expression": "0 * * * *",
+  "max_retries": 10,
+  "target": {
+    "type": "HttpWebhook",
+    "url": "https://api.example.com/webhook",
+    "method": "POST",
+    "headers": [["Content-Type", "application/json"]],
+    "body": "{\"ping\":true}"
+  }
+}
+```
+
+### Response (201 Created)
+
+```json
+{
+  "job_id": 42,
+  "ok": true
+}
+```
+
+---
+
+## List Project Jobs
+
+`GET /api/v1/cron/jobs`
+
+Returns all jobs belonging to the API key's project. Served via fast query call with 0 cycle burn.
+
+### Response (200 OK)
+
+```json
+{
+  "jobs": [
+    {
+      "id": 1,
+      "project_id": 1,
+      "label": "Hourly Webhook",
+      "cron_expression": "0 * * * *",
+      "status": "Active",
+      "target_type": "HttpWebhook",
+      "target_preview": "POST https://api.example.com/webhook",
+      "total_runs": 24,
+      "consecutive_failures": 0,
+      "last_run_at": 1795588663,
+      "next_run_at": 1795590000,
+      "created_at": 1795500000,
+      "updated_at": 1795588663
+    }
+  ],
+  "ok": true,
+  "project_id": 1
+}
+```
+
+---
+
+## Trigger Job Immediately
+
+`POST /api/v1/cron/trigger`
+
+Triggers an immediate execution out-of-band without altering the scheduled `next_run_at` timestamp.
+
+### Request Body
+
+```json
+{
+  "project_id": 1,
+  "job_id": 1
+}
+```
+
+---
+
+## Pause Job
+
+`POST /api/v1/cron/jobs/{job_id}/pause`
+
+Transitions the job to `Paused`. The timer slot is released immediately.
+
+---
+
+## Resume Job
+
+`POST /api/v1/cron/jobs/{job_id}/resume`
+
+Transitions a paused or AutoPausedDormant job back to `Active`, recomputing the next run time from the current moment.
+
+---
+
+## Delete Job
+
+`DELETE /api/v1/cron/jobs/{job_id}`
+
+Permanently deletes the job and purges its execution logs from stable memory.
+
+---
+
+## Get Execution Logs
+
+- **Per-Job Logs**: `GET /api/v1/cron/jobs/{job_id}/logs` (last 50 executions)
+- **Project-Wide Logs**: `GET /api/v1/cron/logs` (last 100 executions across all jobs)
+
+### Sample Log Object
+
+```json
+{
+  "log_id": 104,
+  "job_id": 1,
+  "job_label": "Hourly Webhook",
+  "started_at": 1795588663,
+  "duration_ms": 2402,
+  "status_code": 200,
+  "success": true,
+  "response_snippet": "{\"ok\":true}",
+  "error": null
+}
+```

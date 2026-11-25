@@ -3,17 +3,8 @@
 import { useState } from "react"
 import { useTranslations } from "next-intl"
 import Image from "next/image"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Tick02Icon,
-  Cancel01Icon,
-  Alert02Icon,
-  InformationCircleIcon,
-  Globe02Icon,
-  ArrowDown01Icon,
-  Coins01Icon,
-  AiSecurity01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassIcon, XGlassIcon, TriangleAlertGlassIcon, InfoGlassIcon, GlobeGlassIcon, ArrowDownGlassIcon, CoinsGlassIcon, ShieldCheckGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -168,7 +159,7 @@ export function LaunchForm({
       <div className="flex flex-col gap-6">
         {ready === false && (
           <Alert variant="destructive">
-            <HugeiconsIcon icon={Alert02Icon} className="size-4" />
+            <Icon icon={TriangleAlertGlassIcon} className="size-4" />
             <AlertDescription>{t("notReady")}</AlertDescription>
           </Alert>
         )}
@@ -181,7 +172,7 @@ export function LaunchForm({
                 {logo ? (
                   <Image src={logo} alt="" width={44} height={44} className="size-full object-cover" unoptimized />
                 ) : (
-                  <HugeiconsIcon icon={Coins01Icon} className="size-5 text-primary" />
+                  <Icon icon={CoinsGlassIcon} className="size-5 text-primary" />
                 )}
               </div>
               <div className="min-w-0 flex-1">
@@ -256,8 +247,8 @@ export function LaunchForm({
                   />
                   {symbolSettled && !checking && available !== null && (
                     <span className="absolute right-3 top-1/2 -translate-y-1/2">
-                      <HugeiconsIcon
-                        icon={available ? Tick02Icon : Cancel01Icon}
+                      <Icon
+                        icon={available ? CheckGlassIcon : XGlassIcon}
                         className={cn("size-5", available ? "text-success" : "text-destructive")}
                       />
                     </span>
@@ -345,11 +336,11 @@ export function LaunchForm({
                   className="flex w-full items-center justify-between"
                 >
                   <div className="flex items-center gap-2">
-                    <HugeiconsIcon icon={Globe02Icon} className="size-4 text-primary" strokeWidth={1.75} />
+                    <Icon icon={GlobeGlassIcon} className="size-4 text-primary" strokeWidth={1.75} />
                     <span>{t("socialsToggle")}</span>
                   </div>
-                  <HugeiconsIcon
-                    icon={ArrowDown01Icon}
+                  <Icon
+                    icon={ArrowDownGlassIcon}
                     className={cn(
                       "size-4 text-muted-foreground transition-transform duration-200",
                       socialsOpen && "rotate-180"
@@ -381,8 +372,8 @@ export function LaunchForm({
           {/* Immutable Guarantee Banner */}
           <div className="flex items-center justify-between gap-3 rounded-2xl border border-border/70 bg-muted/30 p-4">
             <div className="flex items-center gap-2.5">
-              <HugeiconsIcon
-                icon={AiSecurity01Icon}
+              <Icon
+                icon={ShieldCheckGlassIcon}
                 className="size-4.5 text-primary"
                 strokeWidth={1.75}
               />
@@ -394,7 +385,7 @@ export function LaunchForm({
                 aria-label={t("immutableTitle")}
                 className="inline-flex size-6 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
               >
-                <HugeiconsIcon icon={InformationCircleIcon} className="size-4 text-primary" strokeWidth={1.75} />
+                <Icon icon={InfoGlassIcon} className="size-4 text-primary" strokeWidth={1.75} />
               </TooltipTrigger>
               <TooltipContent
                 side="top"
@@ -488,7 +479,7 @@ export function LaunchForm({
               </div>
 
               <Alert>
-                <HugeiconsIcon icon={Alert02Icon} className="size-4" />
+                <Icon icon={TriangleAlertGlassIcon} className="size-4" />
                 <AlertDescription>{t("confirmImmutableWarning")}</AlertDescription>
               </Alert>
             </div>

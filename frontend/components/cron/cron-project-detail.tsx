@@ -58,37 +58,25 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Spinner } from "@/components/ui/spinner"
-import { toast } from "sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Add01Icon,
-  ArrowLeft01Icon,
-  Clock01Icon,
-  Delete02Icon,
-  Edit01Icon,
-  Folder01Icon,
-  MoreHorizontalIcon,
-  PauseIcon,
-  PlayIcon,
-  Search01Icon,
-  ViewIcon,
-} from "@hugeicons/core-free-icons"
+import { toast } from "@/components/ui/sonner"
+import { Icon } from "@/components/ui/icon"
+import { PlusGlassIcon, ArrowLeftGlassIcon, CronJobGlassIcon, DeleteGlassIcon, KeyGlassIcon, PencilGlassIcon, FolderGlassIcon, EllipsisGlassIcon, PauseGlassIcon, PlayGlassIcon, SearchGlassIcon, EyeGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
+import {
+  useCronJobs,
+  useCronProjects,
+  useInvalidateCronCache,
+} from "@/hooks/cron/useCron"
 import {
   deleteJob,
   deleteProject,
-  listJobs,
-  listProjects,
   pauseJob,
   pauseProject,
   renameProject,
   resumeJob,
   resumeProject,
 } from "@/services/cron/client"
-import type {
-  RemoteJobSummary,
-  RemoteProjectRecord,
-} from "@/services/cron/types"
+import type { RemoteJobSummary } from "@/services/cron/types"
 import { formatHumanSchedule, formatProjectId, formatRelativeTime, parseProjectId } from "./cron-types"
 import { CronOutputDrawer } from "./cron-output-drawer"
 import { CronConnectModal } from "./cron-connect-modal"
@@ -105,10 +93,31 @@ export function CronProjectDetail({
   const t = useTranslations("cron")
   const tCommon = useTranslations("common")
 
-  const [project, setProject] = React.useState<RemoteProjectRecord | null>(null)
-  const [allProjects, setAllProjects] = React.useState<RemoteProjectRecord[]>([])
-  const [jobs, setJobs] = React.useState<RemoteJobSummary[]>([])
-  const [loading, setLoading] = React.useState(Boolean(identity))
+  const { projects: allProjects, isLoading: projectsLoading, mutate: mutateProjects } =
+    useCronProjects()
+  const { jobs: allJobs, isLoading: jobsLoading, mutate: mutateJobs } = useCronJobs()
+  const invalidateCron = useInvalidateCronCache()
+
+  const project = React.useMemo(() => {
+    const decodedParam = decodeURIComponent(projectNameOrId).trim().toLowerCase()
+    const parsedParamId = parseProjectId(projectNameOrId)
+    return (
+      allProjects.find(
+        (p) =>
+          p.name.toLowerCase() === decodedParam ||
+          p.id.toString() === projectNameOrId ||
+          formatProjectId(p.id).toLowerCase() === decodedParam ||
+          (parsedParamId > 0n && p.id === parsedParamId)
+      ) ?? null
+    )
+  }, [allProjects, projectNameOrId])
+
+  const jobs = React.useMemo(() => {
+    if (!project) return []
+    return allJobs.filter((j) => j.project_id === project.id)
+  }, [allJobs, project])
+
+  const loading = projectsLoading || (Boolean(project) && jobsLoading && allJobs.length === 0)
 
   const [query, setQuery] = React.useState("")
   const [filter, setFilter] = React.useState<FilterTab>("all")
@@ -120,89 +129,20 @@ export function CronProjectDetail({
   const [deleteProjectOpen, setDeleteProjectOpen] = React.useState(false)
   const [connectOpen, setConnectOpen] = React.useState(false)
   const [jobToDelete, setJobToDelete] = React.useState<RemoteJobSummary | null>(null)
-  const [selectedJobForDrawer, setSelectedJobForDrawer] = React.useState<RemoteJobSummary | null>(null)
+  const [selectedJobIdForDrawer, setSelectedJobIdForDrawer] = React.useState<bigint | null>(null)
   const [drawerOpen, setDrawerOpen] = React.useState(false)
+
+  const selectedJobForDrawer = React.useMemo(
+    () => (selectedJobIdForDrawer !== null ? jobs.find((j) => j.id === selectedJobIdForDrawer) ?? null : null),
+    [jobs, selectedJobIdForDrawer]
+  )
 
   const [actionLoading, setActionLoading] = React.useState(false)
   const [jobActionId, setJobActionId] = React.useState<bigint | null>(null)
 
   const loadProjectData = React.useCallback(async () => {
-    if (!identity) {
-      setLoading(false)
-      return
-    }
-    try {
-      const projs = await listProjects(identity)
-      setAllProjects(projs)
-      const decodedParam = decodeURIComponent(projectNameOrId).trim().toLowerCase()
-      const parsedParamId = parseProjectId(projectNameOrId)
-      const found = projs.find(
-        (p) =>
-          p.name.toLowerCase() === decodedParam ||
-          p.id.toString() === projectNameOrId ||
-          formatProjectId(p.id).toLowerCase() === decodedParam ||
-          (parsedParamId > 0n && p.id === parsedParamId)
-      )
-
-      if (found) {
-        setProject(found)
-        const jobList = await listJobs(found.id, identity)
-        setJobs(jobList)
-      } else {
-        setProject(null)
-        setJobs([])
-      }
-    } catch {
-      setProject(null)
-      setJobs([])
-    } finally {
-      setLoading(false)
-    }
-  }, [identity, projectNameOrId])
-
-  React.useEffect(() => {
-    let active = true
-    if (!identity) {
-      return () => {
-        active = false
-      }
-    }
-    listProjects(identity)
-      .then(async (projs) => {
-        if (!active) return
-        setAllProjects(projs)
-        const decodedParam = decodeURIComponent(projectNameOrId).trim().toLowerCase()
-        const parsedParamId = parseProjectId(projectNameOrId)
-        const found = projs.find(
-          (p) =>
-            p.name.toLowerCase() === decodedParam ||
-            p.id.toString() === projectNameOrId ||
-            formatProjectId(p.id).toLowerCase() === decodedParam ||
-            (parsedParamId > 0n && p.id === parsedParamId)
-        )
-
-        if (found) {
-          setProject(found)
-          const jobList = await listJobs(found.id, identity)
-          if (active) setJobs(jobList)
-        } else {
-          setProject(null)
-          setJobs([])
-        }
-      })
-      .catch(() => {
-        if (!active) return
-        setProject(null)
-        setJobs([])
-      })
-      .finally(() => {
-        if (active) setLoading(false)
-      })
-
-    return () => {
-      active = false
-    }
-  }, [identity, projectNameOrId])
+    await invalidateCron()
+  }, [invalidateCron])
 
   const filteredJobs = React.useMemo(() => {
     const needle = query.trim().toLowerCase()
@@ -256,7 +196,10 @@ export function CronProjectDetail({
     setRenaming(true)
     try {
       const updated = await renameProject(project.id, renameName.trim(), identity)
-      setProject(updated)
+      await mutateProjects(
+        (prev) => (prev ?? []).map((p) => (p.id === updated.id ? updated : p)),
+        { revalidate: true }
+      )
       setRenameOpen(false)
       toast.success(`Project renamed to "${updated.name}" successfully.`)
       router.replace(`/cron?id=${encodeURIComponent(updated.name)}`)
@@ -271,8 +214,17 @@ export function CronProjectDetail({
     if (!project || !identity) return
     setActionLoading(true)
     try {
-      await deleteProject(project.id, identity)
-      toast.success(`Project "${project.name}" deleted successfully.`)
+      const deleted = project
+      await deleteProject(deleted.id, identity)
+      await Promise.all([
+        mutateProjects((prev) => (prev ?? []).filter((p) => p.id !== deleted.id), {
+          revalidate: true,
+        }),
+        mutateJobs((prev) => (prev ?? []).filter((j) => j.project_id !== deleted.id), {
+          revalidate: true,
+        }),
+      ])
+      toast.success(`Project "${deleted.name}" deleted successfully.`)
       router.push("/cron")
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to delete project.")
@@ -292,10 +244,7 @@ export function CronProjectDetail({
         await resumeJob(job.id, identity)
         toast.success(`Job "${job.label}" resumed.`)
       }
-      if (project) {
-        const updated = await listJobs(project.id, identity)
-        setJobs(updated)
-      }
+      await mutateJobs()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to update job status.")
     } finally {
@@ -307,9 +256,12 @@ export function CronProjectDetail({
     if (!jobToDelete || !identity) return
     setJobActionId(jobToDelete.id)
     try {
-      await deleteJob(jobToDelete.id, identity)
-      toast.success(`Job "${jobToDelete.label}" deleted successfully.`)
-      setJobs((prev) => prev.filter((j) => j.id !== jobToDelete.id))
+      const deleted = jobToDelete
+      await deleteJob(deleted.id, identity)
+      toast.success(`Job "${deleted.label}" deleted successfully.`)
+      await mutateJobs((prev) => (prev ?? []).filter((j) => j.id !== deleted.id), {
+        revalidate: true,
+      })
       setJobToDelete(null)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to delete job.")
@@ -319,7 +271,7 @@ export function CronProjectDetail({
   }
 
   const handleOpenDrawer = (job: RemoteJobSummary) => {
-    setSelectedJobForDrawer(job)
+    setSelectedJobIdForDrawer(job.id)
     setDrawerOpen(true)
   }
 
@@ -341,10 +293,10 @@ export function CronProjectDetail({
   if (!project) {
     return (
       <AppPage className="w-full space-y-6">
-        <Empty className="rounded-2xl border border-dashed py-14">
+        <Empty className="rounded-(--radius) border border-dashed py-14">
           <EmptyHeader>
             <EmptyMedia variant="icon">
-              <HugeiconsIcon icon={Folder01Icon} className="size-6 text-muted-foreground" />
+              <Icon icon={FolderGlassIcon} className="size-6 text-muted-foreground" />
             </EmptyMedia>
             <EmptyTitle>{t("projectNotFound")}</EmptyTitle>
             <EmptyDescription>
@@ -358,7 +310,7 @@ export function CronProjectDetail({
               onClick={() => router.push("/cron")}
               className="gap-1.5"
             >
-              <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" />
+              <Icon icon={ArrowLeftGlassIcon} className="size-4" />
               <span>{t("backToProjects")}</span>
             </Button>
           </EmptyContent>
@@ -397,6 +349,16 @@ export function CronProjectDetail({
           <Button
             variant="outline"
             size="sm"
+            nativeButton={false}
+            render={<Link href={`/cron/api?projectId=${encodeURIComponent(String(project.id))}`} />}
+            className="gap-1.5 text-xs font-medium"
+          >
+            <Icon icon={KeyGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+            <span>API Key</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => setConnectOpen(true)}
             className="text-xs font-medium"
           >
@@ -413,7 +375,7 @@ export function CronProjectDetail({
                   aria-label="Project options"
                   disabled={actionLoading}
                 >
-                  <HugeiconsIcon icon={MoreHorizontalIcon} className="size-4" />
+                  <Icon icon={EllipsisGlassIcon} className="size-4" />
                 </Button>
               }
             />
@@ -425,7 +387,7 @@ export function CronProjectDetail({
                 }}
                 className="gap-2 text-xs cursor-pointer"
               >
-                <HugeiconsIcon icon={Edit01Icon} className="size-3.5" />
+                <Icon icon={PencilGlassIcon} className="size-3.5" />
                 <span>{t("rename")}</span>
               </DropdownMenuItem>
               {jobs.length > 0 && (
@@ -434,8 +396,8 @@ export function CronProjectDetail({
                   disabled={actionLoading}
                   className="gap-2 text-xs cursor-pointer"
                 >
-                  <HugeiconsIcon
-                    icon={hasActiveJobs ? PauseIcon : PlayIcon}
+                  <Icon
+                    icon={hasActiveJobs ? PauseGlassIcon : PlayGlassIcon}
                     className="size-3.5"
                   />
                   <span>{hasActiveJobs ? t("pauseAllJobs") : t("resumeAllJobs")}</span>
@@ -448,7 +410,7 @@ export function CronProjectDetail({
                 disabled={allProjects.length <= 1}
                 className="gap-2 text-xs text-destructive cursor-pointer"
               >
-                <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                <Icon icon={DeleteGlassIcon} className="size-3.5" />
                 <span>{t("delete")}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -460,7 +422,7 @@ export function CronProjectDetail({
             render={<Link href={`/cron/create?id=${encodeURIComponent(project.name)}&projectId=${formatProjectId(project.id)}`} />}
             className="gap-1.5"
           >
-            <HugeiconsIcon icon={Add01Icon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={PlusGlassIcon} className="size-4" strokeWidth={1.75} />
             <span>{t("createJob")}</span>
           </Button>
         </div>
@@ -470,8 +432,8 @@ export function CronProjectDetail({
         {jobs.length > 0 && (
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative flex-1">
-              <HugeiconsIcon
-                icon={Search01Icon}
+              <Icon
+                icon={SearchGlassIcon}
                 className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
               />
               <Input
@@ -500,10 +462,10 @@ export function CronProjectDetail({
         )}
 
         {jobs.length === 0 ? (
-          <Empty className="rounded-2xl border border-dashed py-16">
+          <Empty className="rounded-(--radius) border border-dashed py-16">
             <EmptyHeader>
               <EmptyMedia variant="icon" className="size-12 rounded-full bg-muted flex items-center justify-center">
-                <HugeiconsIcon icon={Clock01Icon} className="size-6 text-muted-foreground" />
+                <Icon icon={CronJobGlassIcon} className="size-6 text-muted-foreground" />
               </EmptyMedia>
               <EmptyTitle>{t("noJobsTitle")}</EmptyTitle>
               <EmptyDescription className="max-w-md">
@@ -512,10 +474,10 @@ export function CronProjectDetail({
             </EmptyHeader>
           </Empty>
         ) : filteredJobs.length === 0 ? (
-          <Empty className="rounded-2xl border border-dashed py-14">
+          <Empty className="rounded-(--radius) border border-dashed py-14">
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <HugeiconsIcon icon={Search01Icon} className="size-6 text-muted-foreground" />
+                <Icon icon={SearchGlassIcon} className="size-6 text-muted-foreground" />
               </EmptyMedia>
               <EmptyTitle>{t("noJobsMatch")}</EmptyTitle>
               <EmptyDescription>
@@ -633,8 +595,8 @@ export function CronProjectDetail({
                                     {isBusy ? (
                                       <Spinner className="size-3.5" />
                                     ) : (
-                                      <HugeiconsIcon
-                                        icon={job.status === "Active" ? PauseIcon : PlayIcon}
+                                      <Icon
+                                        icon={job.status === "Active" ? PauseGlassIcon : PlayGlassIcon}
                                         className="size-3.5 text-muted-foreground hover:text-foreground"
                                       />
                                     )}
@@ -657,7 +619,7 @@ export function CronProjectDetail({
                                     onClick={() => handleOpenDrawer(job)}
                                     aria-label={t("viewLogs")}
                                   >
-                                    <HugeiconsIcon icon={ViewIcon} className="size-3.5" />
+                                    <Icon icon={EyeGlassIcon} className="size-3.5" />
                                   </Button>
                                 }
                               />
@@ -676,7 +638,7 @@ export function CronProjectDetail({
                                     aria-label={t("deleteJob")}
                                     disabled={isBusy}
                                   >
-                                    <HugeiconsIcon icon={Delete02Icon} className="size-3.5" />
+                                    <Icon icon={DeleteGlassIcon} className="size-3.5" />
                                   </Button>
                                 }
                               />

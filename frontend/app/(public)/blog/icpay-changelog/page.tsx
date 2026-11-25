@@ -6,13 +6,8 @@ import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Clock01Icon,
-  GlobalIcon,
-  ArrowRight01Icon,
-  CheckmarkCircle02Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ClockGlassIcon, GlobeGlassIcon, ArrowRightGlassIcon, CircleCheckGlassIcon } from "@thesvg/ui-react"
 
 const SLUG = "icpay-changelog"
 const TITLE = "ICPay v1.7.0 Changelog: Introducing icCron Autonomous Scheduler, Dead Letter Queues & On-Chain Automation"
@@ -79,7 +74,7 @@ const faqJsonLd = {
       name: "What is the headline feature of ICPay v1.7.0?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "The flagship addition of ICPay v1.7.0 is icCron, an independent Rust canister (uzt4z-lp777-77774-qaabq-cai) that enables decentralized, sub-second cron scheduling, automated retries with Dead Letter Queues (DLQ), inter-canister smart contract calls, and threshold-signed HTTPS outcalls to Web2 webhooks without servers or keeper bots.",
+        text: "The flagship addition of ICPay v1.7.0 is icCron, an independent Rust canister (w2fxo-5qaaa-aaaan-q6zxq-cai) that enables decentralized, sub-second cron scheduling, automated retries with Dead Letter Queues (DLQ), inter-canister smart contract calls, and threshold-signed HTTPS outcalls to Web2 webhooks without servers or keeper bots.",
       },
     },
     {
@@ -150,7 +145,7 @@ export default function IcpayChangelogPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
         <div className="absolute bottom-6 left-6 right-6 flex flex-wrap items-center justify-between gap-4">
           <Badge variant="secondary" className="bg-background/80 backdrop-blur-md font-mono text-xs text-primary font-bold">
-            Canister ID: uzt4z-lp777-77774-qaabq-cai
+            Canister ID: w2fxo-5qaaa-aaaan-q6zxq-cai
           </Badge>
           <span className="text-xs text-muted-foreground font-semibold">
             Replicated State Consensus
@@ -175,7 +170,7 @@ export default function IcpayChangelogPage() {
         <div className="grid gap-4 sm:grid-cols-2 pt-2">
           <Card className="rounded-2xl border border-border/80 bg-card p-5 space-y-2">
             <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-              <HugeiconsIcon icon={Clock01Icon} className="size-4" />
+              <Icon icon={ClockGlassIcon} className="size-4" />
               Sub-Second Canister Timers
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -185,7 +180,7 @@ export default function IcpayChangelogPage() {
 
           <Card className="rounded-2xl border border-border/80 bg-card p-5 space-y-2">
             <div className="flex items-center gap-2 text-primary font-semibold text-sm">
-              <HugeiconsIcon icon={GlobalIcon} className="size-4" />
+              <Icon icon={GlobeGlassIcon} className="size-4" />
               Threshold HTTPS Outcalls
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -219,21 +214,21 @@ export default function IcpayChangelogPage() {
 
         <ul className="space-y-3 text-sm text-muted-foreground pl-2">
           <li className="flex items-start gap-2.5">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="mt-0.5 size-4 text-primary shrink-0" />
+            <Icon icon={CircleCheckGlassIcon} className="mt-0.5 size-4 text-primary shrink-0" />
             <span>
               <strong className="text-foreground">O(1) Bitmask Cron Engine:</strong> Standard 5-field cron strings are parsed into binary bitmasks (<code className="font-mono text-xs">minutes: u64, hours: u32, days: u32, months: u16, weekdays: u8</code>). Scheduler tick evaluation is calculated using bitwise AND operations with zero regular expression parsing overhead.
             </span>
           </li>
           <li className="flex items-start gap-2.5">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="mt-0.5 size-4 text-primary shrink-0" />
+            <Icon icon={CircleCheckGlassIcon} className="mt-0.5 size-4 text-primary shrink-0" />
             <span>
               <strong className="text-foreground">Dead Letter Queue (DLQ) & Circuit Breaker:</strong> Downstream targets experiencing consecutive HTTP 500 or timeout failures trigger an automatic circuit breaker (<code className="font-mono text-xs">AutoPausedDormant</code>), moving the task to a persistent Dead Letter Queue with full status code and latency diagnostics.
             </span>
           </li>
           <li className="flex items-start gap-2.5">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="mt-0.5 size-4 text-primary shrink-0" />
+            <Icon icon={CircleCheckGlassIcon} className="mt-0.5 size-4 text-primary shrink-0" />
             <span>
-              <strong className="text-foreground">Zero-Key Caller Authentication:</strong> Canister-to-canister invocations authenticate using the authentic canister principal (<code className="font-mono text-xs">uzt4z-lp777-77774-qaabq-cai</code>). No private keys, seed phrases, or credentials ever exist to be compromised.
+              <strong className="text-foreground">Zero-Key Caller Authentication:</strong> Canister-to-canister invocations authenticate using the authentic canister principal (<code className="font-mono text-xs">w2fxo-5qaaa-aaaan-q6zxq-cai</code>). No private keys, seed phrases, or credentials ever exist to be compromised.
             </span>
           </li>
         </ul>
@@ -307,15 +302,15 @@ export async function POST(req: NextRequest) {
         </p>
         <ul className="space-y-2 text-sm text-muted-foreground pl-2">
           <li className="flex items-center gap-2">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 text-primary shrink-0" />
+            <Icon icon={CircleCheckGlassIcon} className="size-4 text-primary shrink-0" />
             <span>Cleaned navigation chrome in ICBucket developer documentation by removing redundant navigation arrows and headers.</span>
           </li>
           <li className="flex items-center gap-2">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 text-primary shrink-0" />
+            <Icon icon={CircleCheckGlassIcon} className="size-4 text-primary shrink-0" />
             <span>Streamlined clipboard copy UX across API keys and code snippets.</span>
           </li>
           <li className="flex items-center gap-2">
-            <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 text-primary shrink-0" />
+            <Icon icon={CircleCheckGlassIcon} className="size-4 text-primary shrink-0" />
             <span>Maintained 100% multilingual key parity across all 17 supported locales.</span>
           </li>
         </ul>
@@ -336,7 +331,7 @@ export async function POST(req: NextRequest) {
             render={<Link href="/iccron" />}
           >
             Explore icCron
-            <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+            <Icon icon={ArrowRightGlassIcon} className="size-4" />
           </Button>
           <Button
             variant="outline"
@@ -345,7 +340,7 @@ export async function POST(req: NextRequest) {
             nativeButton={false}
             render={
               <Link
-                href="https://dashboard.internetcomputer.org/canister/uzt4z-lp777-77774-qaabq-cai"
+                href="https://dashboard.internetcomputer.org/canister/w2fxo-5qaaa-aaaan-q6zxq-cai"
                 target="_blank"
                 rel="noopener noreferrer"
               />

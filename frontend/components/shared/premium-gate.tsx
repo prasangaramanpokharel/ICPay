@@ -2,12 +2,8 @@
 
 import { useRef } from "react"
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  CrownIcon,
-  SparklesIcon,
-  ArrowRight01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CrownGlassIcon, SparklesGlassIcon, ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import {
@@ -45,7 +41,7 @@ function PremiumBeamShowcase() {
         ref={crownRef}
         className="z-10 flex size-9 items-center justify-center rounded-full border border-primary/40 bg-card text-primary shadow-xs"
       >
-        <HugeiconsIcon icon={CrownIcon} className="size-4.5 text-primary" strokeWidth={2} />
+        <Icon icon={CrownGlassIcon} className="size-4.5 text-primary" strokeWidth={2} />
       </div>
 
       <div
@@ -113,7 +109,7 @@ export function PremiumLockedCard({
 
       <div className="relative z-10 flex flex-col items-center">
         {/* Crown Icon - Primary Only, No Background Box */}
-        <HugeiconsIcon icon={CrownIcon} className="size-8 text-primary" strokeWidth={2} />
+        <Icon icon={CrownGlassIcon} className="size-8 text-primary" strokeWidth={2} />
 
         <h3 className="mt-3.5 text-base font-semibold tracking-tight text-foreground sm:text-lg">
           {title}
@@ -159,7 +155,7 @@ export function PremiumLockedCard({
             className="gap-2 font-medium shadow-sm"
           >
             <span>{actionText}</span>
-            <HugeiconsIcon icon={ArrowRight01Icon} className="size-4" />
+            <Icon icon={ArrowRightGlassIcon} className="size-4" />
           </Button>
         </div>
       </div>
@@ -190,7 +186,7 @@ export function PremiumGateDialog({
         <DialogHeader className="text-center sm:text-left">
           {/* Crown Icon - Primary Only, No Background Box, No Badge Below */}
           <div className="flex items-center justify-center sm:justify-start">
-            <HugeiconsIcon icon={CrownIcon} className="size-7 text-primary" strokeWidth={2} />
+            <Icon icon={CrownGlassIcon} className="size-7 text-primary" strokeWidth={2} />
           </div>
 
           <DialogTitle className="pt-2">
@@ -217,7 +213,7 @@ export function PremiumGateDialog({
             {/* Header with verified tick chips */}
             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/50 pb-2.5">
               <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                <HugeiconsIcon icon={SparklesIcon} className="size-3.5 text-primary" />
+                <Icon icon={SparklesGlassIcon} className="size-3.5 text-primary" />
                 <span>Premium Membership Perks</span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -288,7 +284,7 @@ export function PremiumGateDialog({
             className="flex-1 gap-1.5 font-medium shadow-sm sm:flex-initial"
           >
             <span>{actionText}</span>
-            <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" />
+            <Icon icon={ArrowRightGlassIcon} className="size-3.5" />
           </Button>
         </DialogFooter>
       </DialogContent>

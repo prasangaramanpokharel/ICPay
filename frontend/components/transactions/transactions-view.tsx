@@ -20,10 +20,27 @@ function TransactionsPageContent() {
   return (
     <AppPage title={t("title")} description={t("subtitle")}>
       {isLoading && items.length === 0 ? (
-        <div className="space-y-3">
-          <Skeleton className="h-16 w-full rounded-2xl" />
-          <Skeleton className="h-16 w-full rounded-2xl" />
-          <Skeleton className="h-16 w-full rounded-2xl" />
+        <div className="space-y-5">
+          <section>
+            <Skeleton className="mb-2 h-3.5 w-24 rounded-md" />
+            <div className="divide-y divide-border/60 overflow-hidden rounded-(--radius) border border-border/60 bg-card">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between p-3.5">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="size-9 rounded-full" />
+                    <div className="space-y-1.5">
+                      <Skeleton className="h-4 w-28 rounded-md" />
+                      <Skeleton className="h-3 w-16 rounded-md" />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5 text-right flex flex-col items-end">
+                    <Skeleton className="h-4 w-20 rounded-md" />
+                    <Skeleton className="h-3 w-12 rounded-md" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
       ) : (
         <TransactionList

@@ -398,14 +398,20 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "Символ",
+    "colName": "Название",
+    "colQuantity": "Количество",
+    "colValue": "Стоимость",
+    "totalIcpBalance": "Общий баланс ICP",
+    "yourAssets": "Ваши активы"
   },
   "token": {
     "back": "Кошелёк",
     "notFound": "Не удалось загрузить этот токен.",
     "send": "Отправить",
     "deposit": "Пополнение",
-    "depositTitle": "Адрес для пополнения",
+    "depositTitle": "Депозит",
     "depositSubtitle": "Отправьте {symbol} сюда, чтобы пополнить кошелёк.",
     "warning": "Отправляйте на этот адрес только {symbol}. Другие токены будут потеряны.",
     "selfCustodyTitle": "Хранится вне ICPay",
@@ -422,7 +428,7 @@
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
     "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet.",
-    "historyTitle": "On-chain history",
+    "historyTitle": "История",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
@@ -451,7 +457,8 @@
     "suggested": "Рекомендации для вас",
     "noneFound": "По запросу “{query}” никого не найдено.",
     "empty": "Аккаунтов с именами пока нет. Будьте первым.",
-    "premium": "Проверенный премиальный ник"
+    "premium": "Проверенный премиальный ник",
+    "subtitle": "Исследуйте профили пользователей по всей сети"
   },
   "success": {
     "send": "Отправлено",
@@ -1381,6 +1388,10 @@
         "blog": {
           "title": "Блог",
           "description": "Руководства, туториалы и статьи об экосистеме ICP."
+        },
+        "launch": {
+          "title": "Запустить токен",
+          "description": "Создайте токен ICRC-1 в Internet Computer."
         }
       },
       "legal": {

@@ -2,25 +2,35 @@
 
 import { useMemo, useState, useSyncExternalStore } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Add01Icon, Search01Icon } from "@hugeicons/core-free-icons"
-import { motion } from "motion/react"
-import { MotionList, MotionListItem } from "@/components/ui/motion-list"
+import { Icon } from "@/components/ui/icon"
+import { PlusGlassIcon, SearchGlassIcon } from "@thesvg/ui-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Empty, EmptyHeader, EmptyTitle } from "@/components/ui/empty"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
+import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { formatTokenAmount, resolveTokenDisplayName } from "@/lib/wallet/utils"
 import { type TokenHolding, type TokenMetadata } from "@/services/tokens"
 import { TokenLogo } from "@/components/token/token-logo"
 import { AddTokenDrawer } from "@/components/wallet/add-token-drawer"
 import { TokenDetailDrawer } from "@/components/wallet/token-detail-drawer"
 import { readHideZeroBalances, writeHideZeroBalances, HIDE_ZERO_EVENT } from "@/lib/wallet/tokenListPrefs"
+import { useTokenRegistry } from "@/lib/token/registry"
+import { useIcpPrice } from "@/hooks/market/useIcpPrice"
+import { useFiatValue } from "@/hooks/fiat/useFiatValue"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { cn } from "@/lib/ui/utils"
 
-const PAGE_SIZE = 12
+const PAGE_SIZE = 20
 
 function useHideZeroBalances() {
   return useSyncExternalStore(
@@ -74,6 +84,10 @@ export function TokenList({
   const page = pageState.key === filterKey ? pageState.page : 0
   const setPage = (next: number) => setPageState({ key: filterKey, page: next })
 
+  const registry = useTokenRegistry()
+  const { price: icpPrice } = useIcpPrice()
+  const fiat = useFiatValue(null)
+
   const effectiveId = selectedLedgerId === false ? null : (selectedLedgerId ?? initialSelectedLedgerId ?? null)
   const selectedToken = useMemo(
     () => (effectiveId ? holdings.find((h) => h.ledgerId === effectiveId) ?? null : null),
@@ -81,9 +95,16 @@ export function TokenList({
   )
 
   const filtered = useMemo(() => {
-    return holdings.filter((token) => {
+    const list = holdings.filter((token) => {
       if (hideZero && token.balance === 0n) return false
       return matchesSearch(token, query)
+    })
+    return list.sort((a, b) => {
+      if (a.balance > 0n && b.balance === 0n) return -1
+      if (a.balance === 0n && b.balance > 0n) return 1
+      if (a.symbol === "ICP") return -1
+      if (b.symbol === "ICP") return 1
+      return 0
     })
   }, [holdings, hideZero, query])
 
@@ -94,35 +115,20 @@ export function TokenList({
   const hasPrev = safePage > 0
 
   const toolbar = (
-    <div className="space-y-3 border-b border-border/60 pb-4">
+    <div className="space-y-3.5 border-b border-border/60 pb-4">
       <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <p className="text-sm font-semibold text-foreground">{t("tokens")}</p>
-          {holdings.length > 0 ? (
-            <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground tabular-nums">
-              {filtered.length}
-            </span>
-          ) : null}
-        </div>
-        {onAddCustom ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="h-8 gap-1.5 rounded-full px-3 text-xs font-medium cursor-pointer"
-            aria-label={t("addToken")}
-            onClick={() => setAddOpen(true)}
-          >
-            <HugeiconsIcon icon={Add01Icon} className="size-3.5" strokeWidth={2} />
-            <span>{t("addToken")}</span>
-          </Button>
-        ) : null}
+        <h2 className="text-base font-semibold text-foreground tracking-tight">
+          {t("yourAssets")}
+        </h2>
+        <span className="text-xs text-muted-foreground tabular-nums">
+          {filtered.length} {t("tokens")}
+        </span>
       </div>
 
       <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1">
-          <HugeiconsIcon
-            icon={Search01Icon}
+          <Icon
+            icon={SearchGlassIcon}
             className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
             strokeWidth={1.75}
           />
@@ -130,22 +136,38 @@ export function TokenList({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={t("searchTokens")}
-            className="h-9 pl-9"
+            className="h-9 rounded-lg pl-9"
             aria-label={t("searchTokens")}
           />
         </div>
 
-        <div className="flex shrink-0 items-center gap-2">
-          <Checkbox
-            id="hide-zero-balances"
-            checked={hideZero}
-            onCheckedChange={(checked) => {
-              writeHideZeroBalances(checked === true)
-            }}
-          />
-          <Label htmlFor="hide-zero-balances" className="text-xs font-normal text-muted-foreground cursor-pointer">
-            {t("hideZeroBalances")}
-          </Label>
+        <div className="flex shrink-0 items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Switch
+              id="hide-zero-balances"
+              checked={hideZero}
+              onCheckedChange={(checked) => {
+                writeHideZeroBalances(checked === true)
+              }}
+            />
+            <Label htmlFor="hide-zero-balances" className="text-xs font-medium text-muted-foreground cursor-pointer hover:text-foreground">
+              {t("hideZeroBalances")}
+            </Label>
+          </div>
+
+          {onAddCustom ? (
+            <Button
+              type="button"
+              variant="default"
+              size="sm"
+              className="h-9 gap-1.5 rounded-lg px-3.5 text-xs font-semibold cursor-pointer shadow-xs"
+              aria-label={t("addToken")}
+              onClick={() => setAddOpen(true)}
+            >
+              <Icon icon={PlusGlassIcon} className="size-3.5" strokeWidth={2.25} />
+              <span>{t("addToken")}</span>
+            </Button>
+          ) : null}
         </div>
       </div>
     </div>
@@ -153,19 +175,40 @@ export function TokenList({
 
   if (isLoading && holdings.length === 0) {
     return (
-      <div className="rounded-2xl border border-border/60 bg-card p-4">
+      <div className="rounded-(--radius) border border-border/60 bg-card p-5">
         {toolbar}
-        <div className="mt-4 space-y-2">
-          {[0, 1, 2].map((i) => (
-            <div key={i} className="flex items-center gap-3 rounded-xl px-2 py-2.5">
-              <Skeleton className="size-9 rounded-full" />
-              <div className="flex-1 space-y-1.5">
-                <Skeleton className="h-3.5 w-16" />
-                <Skeleton className="h-3 w-24" />
-              </div>
-              <Skeleton className="h-4 w-14" />
-            </div>
-          ))}
+        <div className="mt-4">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-border/60 hover:bg-transparent">
+                <TableHead className="w-[180px] sm:w-[220px] text-xs font-medium text-muted-foreground">{t("colSymbol")}</TableHead>
+                <TableHead className="text-xs font-medium text-muted-foreground">{t("colName")}</TableHead>
+                <TableHead className="text-right text-xs font-medium text-muted-foreground">{t("colQuantity")}</TableHead>
+                <TableHead className="text-right text-xs font-medium text-muted-foreground">{t("colValue")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {[0, 1, 2, 3].map((i) => (
+                <TableRow key={i} className="border-border/60">
+                  <TableCell className="py-3">
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="size-8 rounded-full" />
+                      <Skeleton className="h-4 w-16" />
+                    </div>
+                  </TableCell>
+                  <TableCell className="py-3">
+                    <Skeleton className="h-3.5 w-28" />
+                  </TableCell>
+                  <TableCell className="py-3 text-right">
+                    <Skeleton className="ml-auto h-4 w-20" />
+                  </TableCell>
+                  <TableCell className="py-3 text-right">
+                    <Skeleton className="ml-auto h-4 w-14" />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </div>
     )
@@ -173,7 +216,7 @@ export function TokenList({
 
   if (holdings.length === 0) {
     return (
-      <div className="rounded-2xl border border-border/60 bg-card p-4">
+      <div className="rounded-(--radius) border border-border/60 bg-card p-5">
         {toolbar}
         <Empty className="py-8">
           <EmptyHeader>
@@ -193,7 +236,7 @@ export function TokenList({
   }
 
   return (
-    <div className="rounded-2xl border border-border/60 bg-card p-4">
+    <div className="rounded-(--radius) border border-border/60 bg-card p-5">
       {toolbar}
 
       {pageItems.length === 0 ? (
@@ -203,21 +246,39 @@ export function TokenList({
           </EmptyHeader>
         </Empty>
       ) : (
-        <MotionList key={`token-page-${safePage}-${hideZero}`} className="mt-2 divide-y divide-border/60">
-          {pageItems.map((token) => (
-            <MotionListItem key={token.ledgerId}>
-              <TokenRow
-                token={token}
-                onClick={() => setSelectedLedgerId(token.ledgerId)}
-                outside={
-                  (outside?.get(token.ledgerId) ?? 0n) > token.fee
-                    ? outside!.get(token.ledgerId)!
-                    : undefined
-                }
-              />
-            </MotionListItem>
-          ))}
-        </MotionList>
+        <div className="mt-2 overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-border/60 hover:bg-transparent">
+                <TableHead className="w-[180px] sm:w-[220px] text-xs font-medium text-muted-foreground">{t("colSymbol")}</TableHead>
+                <TableHead className="text-xs font-medium text-muted-foreground">{t("colName")}</TableHead>
+                <TableHead className="text-right text-xs font-medium text-muted-foreground">{t("colQuantity")}</TableHead>
+                <TableHead className="text-right text-xs font-medium text-muted-foreground">{t("colValue")}</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {pageItems.map((token) => {
+                const priceUsd =
+                  token.symbol === "ICP" ? icpPrice?.usd : registry?.get(token.ledgerId)?.priceUsd
+                return (
+                  <TokenTableRow
+                    key={token.ledgerId}
+                    token={token}
+                    priceUsd={priceUsd}
+                    fiatSymbol={fiat.symbol}
+                    fiatRate={fiat.rate ?? 1}
+                    onClick={() => setSelectedLedgerId(token.ledgerId)}
+                    outside={
+                      (outside?.get(token.ledgerId) ?? 0n) > token.fee
+                        ? outside!.get(token.ledgerId)!
+                        : undefined
+                    }
+                  />
+                )
+              })}
+            </TableBody>
+          </Table>
+        </div>
       )}
 
       {filtered.length > PAGE_SIZE ? (
@@ -256,48 +317,71 @@ export function TokenList({
   )
 }
 
-function TokenRow({
+function TokenTableRow({
   token,
+  priceUsd,
+  fiatSymbol,
+  fiatRate,
   outside,
   onClick,
 }: {
   token: TokenHolding
+  priceUsd?: number
+  fiatSymbol: string
+  fiatRate: number
   outside?: bigint
   onClick: () => void
 }) {
   const t = useTranslations("wallet")
+  const { hidden } = useBalanceVisibility()
   const displayName = resolveTokenDisplayName(token.symbol, token.name)
 
+  const fiatFormatted = useMemo(() => {
+    if (!priceUsd || priceUsd <= 0) return null
+    const tokenAmount = Number(token.balance) / 10 ** token.decimals
+    const val = tokenAmount * priceUsd * fiatRate
+    return val.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+  }, [token.balance, token.decimals, priceUsd, fiatRate])
+
   return (
-    <motion.button
-      type="button"
-      whileTap={{ scale: 0.99 }}
+    <TableRow
       onClick={onClick}
-      className={cn(
-        "w-full flex items-center gap-3 rounded-xl px-2 py-3 transition-colors cursor-pointer text-left select-none",
-        "hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none"
-      )}
+      className="cursor-pointer border-border/60 transition-colors hover:bg-muted/50"
     >
-      <TokenLogo token={token} />
-
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-foreground">{token.symbol}</p>
-        <p className="truncate text-xs text-muted-foreground">{displayName}</p>
-      </div>
-
-      <div className="shrink-0 text-right">
-        <p className="text-sm font-semibold tabular-nums text-foreground">
-          {formatTokenAmount(token.balance, token.decimals)}{" "}
-          <span className="text-xs font-normal text-muted-foreground">{token.symbol}</span>
+      <TableCell className="py-3">
+        <div className="flex items-center gap-3">
+          <TokenLogo token={token} />
+          <span className="font-semibold text-foreground text-sm">{token.symbol}</span>
+        </div>
+      </TableCell>
+      <TableCell className="py-3">
+        <span className="text-xs text-muted-foreground truncate block max-w-44 sm:max-w-xs">{displayName}</span>
+      </TableCell>
+      <TableCell className="py-3 text-right">
+        <p
+          className={cn(
+            "text-sm tabular-nums",
+            token.balance === 0n ? "font-normal text-muted-foreground" : "font-semibold text-foreground"
+          )}
+        >
+          {hidden ? "••••••" : formatTokenAmount(token.balance, token.decimals, 4)}
         </p>
         {outside !== undefined ? (
           <p className="mt-0.5 text-[11px] font-medium text-primary tabular-nums">
             {t("outsideAmount", {
-              amount: formatTokenAmount(outside, token.decimals),
+              amount: hidden ? "••••••" : formatTokenAmount(outside, token.decimals, 4),
             })}
           </p>
         ) : null}
-      </div>
-    </motion.button>
+      </TableCell>
+      <TableCell className="py-3 text-right">
+        <span className="text-sm tabular-nums text-muted-foreground">
+          {hidden ? "••••" : (fiatFormatted ? `${fiatSymbol}${fiatFormatted}` : "—")}
+        </span>
+      </TableCell>
+    </TableRow>
   )
 }

@@ -8,7 +8,7 @@ import { AppPage } from "@/components/layout/dashboard/app-page"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { RadialMeter } from "@/components/ui/radial-meter"
@@ -59,34 +59,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Spinner } from "@/components/ui/spinner"
-import { toast } from "sonner"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Delete02Icon,
-  Folder01Icon,
-  InformationCircleIcon,
-  Key01Icon,
-  MoreVerticalIcon,
-  PauseIcon,
-  PlayIcon,
-  PlusSignIcon,
-  Search01Icon,
-} from "@hugeicons/core-free-icons"
+import { toast } from "@/components/ui/sonner"
+import { Icon } from "@/components/ui/icon"
+import { DeleteGlassIcon, FolderGlassIcon, InfoGlassIcon, KeyGlassIcon, EllipsisVerticalGlassIcon, PauseGlassIcon, PlayGlassIcon, PlusGlassIcon, SearchGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
+import {
+  useCronCredits,
+  useCronJobs,
+  useCronProjects,
+  useInvalidateCronCache,
+} from "@/hooks/cron/useCron"
 import {
   createProject,
   deleteProject,
-  getMyCredits,
-  listJobs,
-  listProjects,
   pauseProject,
   resumeProject,
 } from "@/services/cron/client"
-import type {
-  RemoteCreditBalance,
-  RemoteJobSummary,
-  RemoteProjectRecord,
-} from "@/services/cron/types"
+import type { RemoteJobSummary, RemoteProjectRecord } from "@/services/cron/types"
 import { CronBuyPackModal } from "./cron-buy-pack-modal"
 import { formatProjectId } from "./cron-types"
 
@@ -98,10 +87,11 @@ export function CronProjectListPanel() {
   const t = useTranslations("cron")
   const tCommon = useTranslations("common")
 
-  const [projects, setProjects] = React.useState<RemoteProjectRecord[]>([])
-  const [allJobs, setAllJobs] = React.useState<RemoteJobSummary[]>([])
-  const [credits, setCredits] = React.useState<RemoteCreditBalance | null>(null)
-  const [loading, setLoading] = React.useState(Boolean(identity))
+  const { projects, isLoading: projectsLoading, mutate: mutateProjects } = useCronProjects()
+  const { jobs: allJobs, isLoading: jobsLoading, mutate: mutateJobs } = useCronJobs()
+  const { credits } = useCronCredits()
+  const invalidateCron = useInvalidateCronCache()
+  const loading = projectsLoading || jobsLoading
 
   const [query, setQuery] = React.useState("")
   const [filter, setFilter] = React.useState<FilterTab>("all")
@@ -115,58 +105,8 @@ export function CronProjectListPanel() {
   const [actionLoadingId, setActionLoadingId] = React.useState<bigint | null>(null)
 
   const loadData = React.useCallback(async () => {
-    if (!identity) {
-      setLoading(false)
-      return
-    }
-    try {
-      const [projs, jobsData, creds] = await Promise.all([
-        listProjects(identity),
-        listJobs(undefined, identity),
-        getMyCredits(identity).catch(() => null),
-      ])
-      setProjects(projs)
-      setAllJobs(jobsData)
-      setCredits(creds)
-    } catch {
-      setProjects([])
-      setAllJobs([])
-    } finally {
-      setLoading(false)
-    }
-  }, [identity])
-
-  React.useEffect(() => {
-    let active = true
-    if (!identity) {
-      return () => {
-        active = false
-      }
-    }
-    Promise.all([
-      listProjects(identity),
-      listJobs(undefined, identity),
-      getMyCredits(identity).catch(() => null),
-    ])
-      .then(([projs, jobsData, creds]) => {
-        if (!active) return
-        setProjects(projs)
-        setAllJobs(jobsData)
-        setCredits(creds)
-      })
-      .catch(() => {
-        if (!active) return
-        setProjects([])
-        setAllJobs([])
-      })
-      .finally(() => {
-        if (active) setLoading(false)
-      })
-
-    return () => {
-      active = false
-    }
-  }, [identity])
+    await invalidateCron()
+  }, [invalidateCron])
 
   const jobsByProject = React.useMemo(() => {
     const map = new Map<string, RemoteJobSummary[]>()
@@ -205,7 +145,7 @@ export function CronProjectListPanel() {
     setCreatingProject(true)
     try {
       const proj = await createProject(newProjectName.trim(), identity)
-      setProjects((prev) => [...prev, proj])
+      await mutateProjects((prev) => [...(prev ?? []), proj], { revalidate: true })
       setNewProjectName("")
       setCreateOpen(false)
       toast.success(`Project "${proj.name}" created successfully.`)
@@ -231,8 +171,7 @@ export function CronProjectListPanel() {
         const count = await resumeProject(proj.id, identity)
         toast.success(`Resumed project "${proj.name}" (${count.toString()} jobs resumed).`)
       }
-      const updatedJobs = await listJobs(undefined, identity)
-      setAllJobs(updatedJobs)
+      await mutateJobs()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to update project status.")
     } finally {
@@ -244,10 +183,17 @@ export function CronProjectListPanel() {
     if (!projectToDelete || !identity) return
     setActionLoadingId(projectToDelete.id)
     try {
-      await deleteProject(projectToDelete.id, identity)
-      setProjects((prev) => prev.filter((p) => p.id !== projectToDelete.id))
-      setAllJobs((prev) => prev.filter((j) => j.project_id !== projectToDelete.id))
-      toast.success(`Project "${projectToDelete.name}" deleted successfully.`)
+      const deleted = projectToDelete
+      await deleteProject(deleted.id, identity)
+      await Promise.all([
+        mutateProjects((prev) => (prev ?? []).filter((p) => p.id !== deleted.id), {
+          revalidate: true,
+        }),
+        mutateJobs((prev) => (prev ?? []).filter((j) => j.project_id !== deleted.id), {
+          revalidate: true,
+        }),
+      ])
+      toast.success(`Project "${deleted.name}" deleted successfully.`)
       setProjectToDelete(null)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to delete project.")
@@ -273,7 +219,7 @@ export function CronProjectListPanel() {
             render={<Link href="/cron/api" />}
             className="gap-1.5"
           >
-            <HugeiconsIcon icon={Key01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+            <Icon icon={KeyGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
             <span>{t("api")}</span>
           </Button>
           <Button
@@ -288,7 +234,7 @@ export function CronProjectListPanel() {
             onClick={() => setCreateOpen(true)}
             className="gap-1.5"
           >
-            <HugeiconsIcon icon={PlusSignIcon} className="size-4" strokeWidth={1.75} />
+            <Icon icon={PlusGlassIcon} className="size-4" strokeWidth={1.75} />
             <span>{t("newProject")}</span>
           </Button>
         </div>
@@ -326,7 +272,7 @@ export function CronProjectListPanel() {
                         type="button"
                         className="inline-flex cursor-help text-muted-foreground/70 transition-colors hover:text-foreground outline-none"
                       >
-                        <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5" />
+                        <Icon icon={InfoGlassIcon} className="size-3.5" />
                         <span className="sr-only">{t("prepaidCredits")}</span>
                       </TooltipTrigger>
                       <TooltipContent side="top" className="max-w-xs text-xs">
@@ -362,8 +308,8 @@ export function CronProjectListPanel() {
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative flex-1">
-            <HugeiconsIcon
-              icon={Search01Icon}
+            <Icon
+              icon={SearchGlassIcon}
               className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
             />
             <Input
@@ -391,18 +337,47 @@ export function CronProjectListPanel() {
         </div>
 
         {loading ? (
-          <Card className="rounded-lg border border-border/80 p-4">
-            <CardContent className="space-y-3 p-0">
-              {Array.from({ length: 4 }, (_, i) => (
-                <Skeleton key={i} className="h-12 w-full rounded-lg" />
-              ))}
-            </CardContent>
+          <Card className="overflow-hidden py-0 rounded-lg border border-border/80">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="font-semibold text-muted-foreground py-3.5">{t("project")}</TableHead>
+                  <TableHead className="font-semibold text-muted-foreground py-3.5 hidden sm:table-cell">{t("jobs")}</TableHead>
+                  <TableHead className="font-semibold text-muted-foreground py-3.5 hidden sm:table-cell">{t("status")}</TableHead>
+                  <TableHead className="text-right font-semibold text-muted-foreground py-3.5 pr-4 w-16">{t("action")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <TableRow key={i} className="border-border/40">
+                    <TableCell className="py-3.5">
+                      <div className="flex items-center gap-2.5">
+                        <Skeleton className="size-8 rounded-md" />
+                        <div className="space-y-1.5">
+                          <Skeleton className="h-4 w-32 rounded-md" />
+                          <Skeleton className="h-3 w-28 rounded-md font-mono" />
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-3.5 hidden sm:table-cell">
+                      <Skeleton className="h-4 w-8 rounded-md" />
+                    </TableCell>
+                    <TableCell className="py-3.5 hidden sm:table-cell">
+                      <Skeleton className="h-5 w-16 rounded-full" />
+                    </TableCell>
+                    <TableCell className="py-3.5 pr-4 text-right">
+                      <Skeleton className="ml-auto size-7 rounded-md" />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </Card>
         ) : projects.length === 0 ? (
-          <Empty className="rounded-2xl border border-dashed py-14">
+          <Empty className="rounded-(--radius) border border-dashed py-14">
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <HugeiconsIcon icon={Folder01Icon} className="size-6 text-muted-foreground" strokeWidth={1.75} />
+                <Icon icon={FolderGlassIcon} className="size-6 text-muted-foreground" strokeWidth={1.75} />
               </EmptyMedia>
               <EmptyTitle>{t("noProjectsTitle")}</EmptyTitle>
               <EmptyDescription>
@@ -411,16 +386,16 @@ export function CronProjectListPanel() {
             </EmptyHeader>
             <EmptyContent>
               <Button onClick={() => setCreateOpen(true)} className="gap-1.5">
-                <HugeiconsIcon icon={PlusSignIcon} className="size-4" strokeWidth={1.75} />
+                <Icon icon={PlusGlassIcon} className="size-4" strokeWidth={1.75} />
                 {t("createFirstProject")}
               </Button>
             </EmptyContent>
           </Empty>
         ) : filteredProjects.length === 0 ? (
-          <Empty className="rounded-2xl border border-dashed py-14">
+          <Empty className="rounded-(--radius) border border-dashed py-14">
             <EmptyHeader>
               <EmptyMedia variant="icon">
-                <HugeiconsIcon icon={Search01Icon} className="size-6 text-muted-foreground" strokeWidth={1.75} />
+                <Icon icon={SearchGlassIcon} className="size-6 text-muted-foreground" strokeWidth={1.75} />
               </EmptyMedia>
               <EmptyTitle>{t("noProjectsMatch")}</EmptyTitle>
               <EmptyDescription>
@@ -467,7 +442,7 @@ export function CronProjectListPanel() {
                         <TableCell className="font-medium text-foreground py-3.5">
                           <div className="flex items-center gap-2.5">
                             <div className="flex size-8 items-center justify-center rounded-md border border-border/70 bg-muted/30">
-                              <HugeiconsIcon icon={Folder01Icon} className="size-4 text-primary" strokeWidth={1.75} />
+                              <Icon icon={FolderGlassIcon} className="size-4 text-primary" strokeWidth={1.75} />
                             </div>
                             <div className="flex flex-col">
                               <span className="font-semibold text-sm">{proj.name}</span>
@@ -503,14 +478,14 @@ export function CronProjectListPanel() {
                                   />
                                 }
                               >
-                                <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" strokeWidth={1.75} />
+                                <Icon icon={EllipsisVerticalGlassIcon} className="size-4" strokeWidth={1.75} />
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-48">
                                 <DropdownMenuItem
                                   onClick={() => router.push(`/cron?id=${encodeURIComponent(proj.name)}`)}
                                   className="gap-2 text-xs"
                                 >
-                                  <HugeiconsIcon icon={Folder01Icon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+                                  <Icon icon={FolderGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
                                   <span>{t("projectDetails")}</span>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
@@ -521,8 +496,8 @@ export function CronProjectListPanel() {
                                   {isBusy ? (
                                     <Spinner className="size-3.5" />
                                   ) : (
-                                    <HugeiconsIcon
-                                      icon={hasActive ? PauseIcon : PlayIcon}
+                                    <Icon
+                                      icon={hasActive ? PauseGlassIcon : PlayGlassIcon}
                                       className="size-3.5 text-muted-foreground"
                                       strokeWidth={1.75}
                                     />
@@ -536,7 +511,7 @@ export function CronProjectListPanel() {
                                   disabled={isBusy || projects.length <= 1}
                                   className="gap-2 text-xs text-destructive focus:bg-destructive/10 focus:text-destructive"
                                 >
-                                  <HugeiconsIcon icon={Delete02Icon} className="size-3.5 text-destructive" strokeWidth={1.75} />
+                                  <Icon icon={DeleteGlassIcon} className="size-3.5 text-destructive" strokeWidth={1.75} />
                                   <span>{t("deleteProject")}</span>
                                 </DropdownMenuItem>
                               </DropdownMenuContent>

@@ -108,7 +108,7 @@ export function WithdrawForm({ balance, onWithdraw }: WithdrawFormProps) {
           />
         </Field>
 
-        <div className="space-y-1.5 rounded-2xl bg-muted/40 p-4">
+        <div className="space-y-1.5 rounded-(--radius) bg-muted/40 p-4">
           <Row label={t("networkFee")} value={`${formatAmount(ICP_FEE)} ICP`} />
           <Row
             label={t("totalDeducted")}

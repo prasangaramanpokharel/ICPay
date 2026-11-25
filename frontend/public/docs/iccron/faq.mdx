@@ -1,0 +1,30 @@
+---
+title: "Frequently Asked Questions"
+description: "Answers to common technical questions about icCron pricing, cycle usage, uptime, and security."
+group: "FAQ"
+order: 0
+---
+
+# Frequently Asked Questions
+
+## General
+
+### How is icCron different from a cron job on a Linux VPS?
+A Linux VPS or EC2 instance represents a single point of failure: memory exhaustion, kernel reboots, or network cuts will drop jobs silently. icCron runs as a Byzantine fault-tolerant state machine replicated across independent data centers worldwide, delivering 99.99% uptime with zero server maintenance.
+
+### Do I need to hold cryptocurrency or ICP tokens to use icCron?
+No. Every account receives **60 free execution credits every month** simply by authenticating with Internet Identity. For higher volume, you can purchase credit packs starting at $5.00 for 10,000 runs using ICP or standard payment methods right within the ICPay dashboard.
+
+### What are the limits on scheduling frequency?
+The minimum scheduling interval is 1 minute (e.g. `* * * * *`). The canister timer evaluates with 1-second consensus precision.
+
+## Webhooks & Outcalls
+
+### Can icCron reach endpoints hosted on Vercel, AWS, or Supabase?
+Yes. icCron makes outbound HTTPS calls to any publicly routable web address. Because requests originate from authenticated Internet Computer subnet nodes, you can pass custom secret tokens in request headers to verify incoming calls.
+
+### Can I test locally on my machine?
+Yes! Use a tunnel tool like [Cloudflare Tunnels](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) or [ngrok](https://ngrok.com/) to expose your local development server (`https://your-tunnel.ngrok-free.app/api/cron`) to the public Internet, and point your icCron job to that HTTPS URL.
+
+### Are query calls free?
+Yes! `listJobs`, `getJobLogs`, and `getProjectLogs` are served via IC query calls through `http_request` and consume **zero developer credits and zero cycles**. Only dispatched job executions consume credits.

@@ -398,14 +398,20 @@
     "addTokenExists": "This token is already in your list.",
     "addTokenNotFound": "Could not load token metadata from this canister.",
     "addTokenAction": "Add token",
-    "customToken": "Custom token"
+    "customToken": "Custom token",
+    "colSymbol": "符号",
+    "colName": "名称",
+    "colQuantity": "数量",
+    "colValue": "价值",
+    "totalIcpBalance": "ICP 总余额",
+    "yourAssets": "您的资产"
   },
   "token": {
     "back": "钱包",
     "notFound": "无法加载此代币。",
     "send": "发送",
     "deposit": "充值",
-    "depositTitle": "充值地址",
+    "depositTitle": "充值",
     "depositSubtitle": "将 {symbol} 发送至此以充值钱包。",
     "warning": "请仅向此地址转入 {symbol}，其他代币将会丢失。",
     "selfCustodyTitle": "在 ICPay 之外持有",
@@ -422,7 +428,7 @@
     "depositIcpayTab": "ICPay",
     "depositIcpayNote": "Your personal address — only you can deposit here. Send {symbol} to top up your balance.",
     "depositNativeNote": "Send {asset} on {network}. {symbol} is credited to your ICPay wallet.",
-    "historyTitle": "On-chain history",
+    "historyTitle": "历史",
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
@@ -451,7 +457,8 @@
     "suggested": "为您推荐",
     "noneFound": "未找到与“{query}”相关的用户。",
     "empty": "暂无设置用户名的账户，快来抢先注册。",
-    "premium": "已验证的高级名称"
+    "premium": "已验证的高级名称",
+    "subtitle": "探索全网用户个人资料"
   },
   "success": {
     "send": "发送成功",
@@ -1381,6 +1388,10 @@
         "blog": {
           "title": "博客",
           "description": "指南、教程与 ICP 生态文章。"
+        },
+        "launch": {
+          "title": "发行代币",
+          "description": "在 Internet Computer 上创建 ICRC-1 代币。"
         }
       },
       "legal": {

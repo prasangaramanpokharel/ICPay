@@ -3,8 +3,8 @@ import Link from "next/link"
 import { BlogAuthorMeta } from "@/components/blog/blog-author-meta"
 import { MediumArticleCard, MediumIcon } from "@/components/blog/medium-article-card"
 import { blogArticleJsonLd, blogCanonical } from "@/lib/blog/seo"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowUpRight01Icon, Rocket01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ArrowUpRightGlassIcon, RocketGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 
 const SLUG = "drafting-a-tool-agnostic-guide-to-building-without-code"
@@ -344,7 +344,7 @@ export default function ToolAgnosticNoCodeGuidePage() {
       <div className="rounded-2xl border border-primary/20 bg-primary/5 p-6 md:p-8 space-y-4">
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <HugeiconsIcon icon={Rocket01Icon} className="size-5" />
+            <Icon icon={RocketGlassIcon} className="size-5" />
           </div>
           <div>
             <h3 className="text-base font-bold text-foreground">Launch Your ICRC-1 Token in 5 Minutes</h3>
@@ -368,7 +368,7 @@ export default function ToolAgnosticNoCodeGuidePage() {
             className="gap-1.5 rounded-full px-4 text-xs font-medium"
           >
             <span>Read on Medium</span>
-            <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-3.5" />
+            <Icon icon={ArrowUpRightGlassIcon} className="size-3.5" />
           </Button>
         </div>
       </div>

@@ -5,10 +5,10 @@ description: Search engine optimization and automated URL indexing for ICPay (Go
 
 # ICPay SEO & Search Engine Indexing
 
-Automated indexing and search engine optimization workflows for `https://icpay.app`.
+Automated indexing and search engine optimization workflows for `https://icpay.app` and `https://icpay.cloud`.
 
 The project uses a unified CLI command to push instant crawl and index requests to:
-1. **Google Indexing API** (instant indexing for pages, updates, and deletes)
+1. **Google Indexing API** (instant indexing for pages, updates, and deletes across both `icpay.app` and `icpay.cloud`)
 2. **IndexNow Mesh** (instant index distribution across Microsoft Bing, Copilot, DuckDuckGo, Yandex, Naver, Seznam.cz, and Yep)
 3. **Baidu Link Submission** (instant push via Baidu Ziyuan Token API if configured)
 4. **AI & LLM Crawlers** (`OAI-SearchBot`, `ChatGPT-User`, `PerplexityBot`, `ClaudeBot`, `Bravebot` via `robots.ts` and `llms.txt`)
@@ -17,31 +17,35 @@ The project uses a unified CLI command to push instant crawl and index requests 
 
 ## 1. Quick Start / CLI Usage
 
-The operations CLI entry point is `npm run ci -- seo:index`.
+The operations CLI entry point is `npm run ci -- seo:index`. By default, it submits URLs to **both** `icpay.app` and `icpay.cloud`.
 
 > ⚠️ **Important:** Always pass the bare `--` before arguments (e.g., `npm run ci -- seo:index ...`). Otherwise, npm swallows flags like `--google` or `--yandex`.
 
 ```bash
-# Submit all core public pages and blog posts to both Google & Yandex
+# Submit all core public pages and blog posts across both icpay.app and icpay.cloud
 npm run ci -- seo:index
 
-# Submit a single page (e.g. icFalcon)
+# Submit a single page (e.g. icFalcon) across both domains
 npm run ci -- seo:index /icfalcon
 
 # Submit multiple pages
 npm run ci -- seo:index /icfalcon /products/icFalcon /products/icFalcon/packages
 
+# Target only a single domain
+npm run ci -- seo:index /icfalcon --domain=cloud   # only icpay.cloud
+npm run ci -- seo:index /icfalcon --domain=app     # only icpay.app
+
 # Submit only to Google
 npm run ci -- seo:index /icfalcon --google
 
-# Submit only to Yandex (IndexNow)
+# Submit only to IndexNow (Bing, Yandex, etc.)
 npm run ci -- seo:index /icfalcon --yandex
 
 # Notify search engines that a page was removed/deleted
 npm run ci -- seo:index /outdated-page --delete
 ```
 
-Relative paths (e.g., `/bucket`, `/blog/instant-crypto-payments-icpay`) are automatically normalized to `https://icpay.app/<path>`. Full URLs (`https://icpay.app/...`) are also accepted.
+Relative paths (e.g., `/icfalcon`, `/bucket`, `/blog/instant-crypto-payments-icpay`) are automatically expanded to both `https://icpay.app/<path>` and `https://icpay.cloud/<path>`.
 
 ---
 

@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import { usePathname } from "next/navigation"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { CheckmarkCircle02Icon, Copy01Icon, Share08Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CheckGlassOutlineIcon, CopyGlassIcon, Share2GlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { BLOG_POSTS } from "@/services/blog/blog"
 
@@ -60,7 +60,7 @@ export function BlogSocialShare({
   return (
     <div className="flex items-center gap-2">
       <span className="flex items-center justify-center text-muted-foreground/80" title="Share">
-        <HugeiconsIcon icon={Share08Icon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
+        <Icon icon={Share2GlassIcon} className="size-4 text-muted-foreground" strokeWidth={1.75} />
       </span>
 
       {/* Facebook Button */}
@@ -113,9 +113,9 @@ export function BlogSocialShare({
         className="size-8 rounded-full border-border/70 bg-background/80 text-muted-foreground hover:border-primary/50 hover:bg-primary/10 hover:text-primary hover:scale-105 shadow-2xs"
       >
         {copied ? (
-          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 text-success" />
+          <Icon icon={CheckGlassOutlineIcon} className="size-4 text-success" strokeWidth={2.5} />
         ) : (
-          <HugeiconsIcon icon={Copy01Icon} className="size-3.5" />
+          <Icon icon={CopyGlassIcon} className="size-3.5" />
         )}
       </Button>
     </div>

@@ -28,7 +28,7 @@ import {
 import { prefetchAppRoute } from "@/lib/navigation/prefetchRoute"
 
 const itemClass =
-  "h-9 gap-2.5 rounded-lg px-2.5 text-sm font-medium text-foreground [&>svg]:size-5 data-active:bg-muted data-active:font-semibold"
+  "h-9 gap-2.5 rounded-lg px-2.5 text-sm font-medium text-foreground [&>svg]:size-5 data-active:bg-accent data-active:text-foreground data-active:font-semibold"
 
 export function DashboardNavMain() {
   const pathname = usePathname()
@@ -45,7 +45,7 @@ export function DashboardNavMain() {
       {SIDEBAR_SECTIONS.map((section) => (
         <SidebarGroup key={section.sectionKey} className="py-1">
           {section.sectionKey !== "overview" ? (
-            <SidebarGroupLabel className="mb-0.5 h-6 px-2.5 text-xs font-semibold tracking-wider text-muted-foreground/90 uppercase">
+            <SidebarGroupLabel className="mt-3 mb-1 h-6 px-2.5 text-xs font-medium tracking-normal text-muted-foreground capitalize">
               {t(`settings.sections.${section.sectionKey}`)}
             </SidebarGroupLabel>
           ) : null}
@@ -124,9 +124,11 @@ function NavRow({
         <SidebarMenuButton
           tooltip={label}
           isActive={isParentActive}
+          aria-current={isParentActive ? "page" : undefined}
           className={cn(
             itemClass,
-            "hover:bg-transparent data-open:hover:bg-transparent data-active:hover:bg-muted",
+            "hover:bg-transparent data-open:hover:bg-transparent data-active:bg-accent data-active:text-foreground",
+            isParentActive && "bg-accent text-foreground font-semibold"
           )}
           render={<Link href={item.href} />}
           onMouseEnter={onWarm}
@@ -183,7 +185,7 @@ function NavRowContent({
         icon={item.icon}
         className={cn(
           active
-            ? "text-primary"
+            ? "text-foreground"
             : "text-muted-foreground transition-colors group-hover/menu-button:text-foreground",
           pending && "opacity-70"
         )}
@@ -193,8 +195,8 @@ function NavRowContent({
       </span>
       {item.badgeKey ? (
         <Badge
-          variant={item.badgeVariant ?? "secondary"}
-          className="ml-auto h-5 px-1.5 text-[10px] font-semibold tracking-wider uppercase"
+          variant="outline"
+          className="ml-auto h-4 px-1 text-[10px] font-normal leading-none capitalize"
         >
           {t(item.badgeKey as never)}
         </Badge>

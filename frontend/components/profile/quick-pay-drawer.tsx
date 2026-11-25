@@ -22,9 +22,10 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { LinkSquare02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { ExternalLinkGlassIcon, CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import { AmountInput } from "@/components/shared/amount-input"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { primeSuccessChime, playSuccessChime } from "@/lib/ui/successChime"
 import {
   E8S,
@@ -73,6 +74,7 @@ export function QuickPayDrawer({
 }) {
   const t = useTranslations("quickPay")
   const tc = useTranslations("common")
+  const { hidden } = useBalanceVisibility()
   const [selected, setSelected] = useState<bigint | null>(E8S)
   const [custom, setCustom] = useState("")
   const [purpose, setPurpose] = useState<PurposeKey>(PURPOSES[0].key)
@@ -141,7 +143,7 @@ export function QuickPayDrawer({
                     <Badge variant="secondary" className="mx-auto mt-2 font-normal tabular-nums">
                       {tc("balance")}{" "}
                       <span className="font-semibold text-foreground">
-                        {formatAmount(balance)} ICP
+                        {hidden ? "••••••" : `${formatAmount(balance)} ICP`}
                       </span>
                     </Badge>
                   )}
@@ -158,7 +160,7 @@ export function QuickPayDrawer({
                         <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
                           {tc("balance")}{" "}
                           <span className="font-semibold text-foreground">
-                            {formatAmount(balance)} ICP
+                            {hidden ? "••••••" : `${formatAmount(balance)} ICP`}
                           </span>
                         </Badge>
                       )}
@@ -314,8 +316,8 @@ function PaySuccess({
   return (
     <div className="flex flex-col items-center px-4 pb-8 pt-10 text-center">
       <div className="animate-in fade-in zoom-in-75 flex size-18 items-center justify-center rounded-full bg-success/10 duration-300 ease-out">
-        <span className="flex size-13 items-center justify-center rounded-full bg-success text-background shadow-sm">
-          <HugeiconsIcon icon={Tick02Icon} className="size-8" strokeWidth={3} />
+        <span className="flex size-13 items-center justify-center rounded-full bg-success text-success-foreground shadow-sm">
+          <Icon icon={CheckGlassOutlineIcon} className="size-8 text-success-foreground" strokeWidth={3} />
         </span>
       </div>
 
@@ -331,7 +333,7 @@ function PaySuccess({
         className="mt-4 inline-flex items-center gap-1 text-xs text-muted-foreground underline underline-offset-2"
       >
         {t("viewOnDashboard")}
-        <HugeiconsIcon icon={LinkSquare02Icon} className="size-3" />
+        <Icon icon={ExternalLinkGlassIcon} className="size-3" />
       </a>
 
       <div className="mt-8 flex w-full items-center gap-2">

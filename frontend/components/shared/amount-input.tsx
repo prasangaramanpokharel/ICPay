@@ -9,6 +9,7 @@ import { cn } from "@/lib/ui/utils"
 import { formatAmount, parseIcp, E8S } from "@/lib/wallet/utils"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 
 const PERCENTAGES = [25, 50, 75, 100]
 
@@ -38,6 +39,7 @@ export function AmountInput({
   description?: string
 }) {
   const t = useTranslations("common")
+  const { hidden } = useBalanceVisibility()
   const { price } = useIcpPrice()
   const parsed = parseIcp(value)
   const usd = parsed !== null && price ? (Number(parsed) / Number(E8S)) * price.usd : null
@@ -55,7 +57,7 @@ export function AmountInput({
           <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
             {t("balance")}{" "}
             <span className="font-semibold text-foreground">
-              {formatAmount(balance)} ICP
+              {hidden ? "••••••" : `${formatAmount(balance)} ICP`}
             </span>
           </Badge>
         )}

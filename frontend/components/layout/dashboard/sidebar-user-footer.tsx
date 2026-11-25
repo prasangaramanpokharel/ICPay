@@ -3,14 +3,8 @@
 import { useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  CloudIcon,
-  Coins01Icon,
-  Logout01Icon,
-  MoreVerticalIcon,
-  UserCircleIcon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { CloudGlassIcon, CoinsGlassIcon, LogOutGlassIcon, EllipsisVerticalGlassIcon, CircleUserGlassIcon } from "@thesvg/ui-react"
 
 import { PremiumBadge } from "@/components/verified/premium-badge"
 import {
@@ -90,7 +84,7 @@ export function NavUser({ user }: NavUserProps) {
                     {subtitle}
                   </span>
                 </div>
-                <HugeiconsIcon icon={MoreVerticalIcon} className="ml-auto size-4" />
+                <Icon icon={EllipsisVerticalGlassIcon} className="ml-auto size-4" />
               </SidebarMenuButton>
             }
           />
@@ -122,21 +116,21 @@ export function NavUser({ user }: NavUserProps) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => router.push("/profile")}>
-                <HugeiconsIcon icon={UserCircleIcon} className="size-4" />
+                <Icon icon={CircleUserGlassIcon} className="size-4" />
                 {tCommon("account")}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/bucket")}>
-                <HugeiconsIcon icon={CloudIcon} className="size-4" />
+                <Icon icon={CloudGlassIcon} className="size-4" />
                 {t("items.bucket")}
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => router.push("/wallet")}>
-                <HugeiconsIcon icon={Coins01Icon} className="size-4" />
+                <Icon icon={CoinsGlassIcon} className="size-4" />
                 {t("items.tokens")}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => void logout()}>
-              <HugeiconsIcon icon={Logout01Icon} className="size-4" />
+              <Icon icon={LogOutGlassIcon} className="size-4" />
               {t("signOut")}
             </DropdownMenuItem>
           </DropdownMenuContent>

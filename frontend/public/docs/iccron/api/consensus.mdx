@@ -1,0 +1,43 @@
+---
+title: "Outcall Consensus Rules"
+description: "How Internet Computer HTTPS outcalls reach deterministic consensus across independent subnet nodes."
+group: "API Reference"
+order: 1
+---
+
+# Outcall Consensus Rules
+
+Unlike centralized servers where a single machine executes `curl` or `fetch`, an Internet Computer canister executes on a replicated subnet of 13 to 40 independent physical nodes worldwide.
+
+When icCron fires an `HttpWebhook`, every node on the subnet independently transmits the HTTPS request to your destination server.
+
+## The Deterministic Response Requirement
+
+Before the canister commits the execution result to its state machine, a supermajority of subnet nodes must agree on the identical response.
+
+> **CRITICAL**: If your webhook target returns non-deterministic data (such as the caller's IP address, randomized tokens, or dynamic millisecond timestamps), the IC replica consensus rejects the call with:
+> `CallRejected { raw_reject_code: 2, reject_message: "No consensus could be reached. Replicas had different responses." }`
+
+### How to Build a Consensus-Friendly Webhook
+
+Return a fixed, deterministic JSON response payload:
+
+```typescript
+// Good: Deterministic response across all subnet nodes
+export async function POST(req: Request) {
+  // perform your task...
+  return Response.json({ ok: true, status: "processed" });
+}
+
+// Bad: Non-deterministic response (consensus fails!)
+export async function POST(req: Request) {
+  return Response.json({
+    caller_ip: req.headers.get("x-forwarded-for"), // Replicas have different IPs!
+    time: Date.now(), // Replicas arrive at slightly different milliseconds!
+  });
+}
+```
+
+## Response Header Normalization
+
+icCron automatically registers a `transform_http_response` callback on every HTTPS outcall. This function strips all non-deterministic HTTP response headers (such as `Date`, `Set-Cookie`, `CF-RAY`, `Server`, and `ETag`) before consensus evaluation, preserving only the HTTP status code and a 200-byte body snippet.

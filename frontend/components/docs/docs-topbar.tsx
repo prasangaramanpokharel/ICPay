@@ -1,8 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon } from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { SearchGlassIcon } from "@thesvg/ui-react"
 import { Gitlab } from "@dev.icons/react"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
@@ -62,7 +62,7 @@ export function DocsTopbar({ doc, onOpenSearch }: DocsTopbarProps) {
           onClick={onOpenSearch}
           className="hidden md:flex h-8 gap-2 rounded-lg px-2.5 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
         >
-          <HugeiconsIcon icon={Search01Icon} className="size-3.5" />
+          <Icon icon={SearchGlassIcon} className="size-3.5" />
           <span>Search docs...</span>
           <kbd className="pointer-events-none inline-flex h-4 items-center rounded border border-border/70 bg-muted/50 px-1 font-mono text-[10px] text-muted-foreground">
             ⌘K
@@ -76,7 +76,7 @@ export function DocsTopbar({ doc, onOpenSearch }: DocsTopbarProps) {
           className="md:hidden size-8 text-muted-foreground hover:text-foreground cursor-pointer"
           aria-label="Search docs"
         >
-          <HugeiconsIcon icon={Search01Icon} className="size-4" />
+          <Icon icon={SearchGlassIcon} className="size-4" />
         </Button>
         <Button
           variant="ghost"

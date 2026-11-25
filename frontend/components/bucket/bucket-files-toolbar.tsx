@@ -1,13 +1,8 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  GridViewIcon,
-  ListViewIcon,
-  Refresh01Icon,
-  Search01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { LayoutGridGlassIcon, ListGlassIcon, RefreshCwGlassIcon, SearchGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Input } from "@/components/ui/input"
@@ -66,8 +61,8 @@ export function BucketFilesToolbar({
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
       <div className="relative min-w-0 flex-1">
-        <HugeiconsIcon
-          icon={Search01Icon}
+        <Icon
+          icon={SearchGlassIcon}
           className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
         />
         <Input
@@ -128,7 +123,7 @@ export function BucketFilesToolbar({
               aria-label="List view"
               onClick={() => onViewModeChange("list")}
             >
-              <HugeiconsIcon icon={ListViewIcon} className="size-3.5" />
+              <Icon icon={ListGlassIcon} className="size-3.5" />
             </Button>
             <Button
               type="button"
@@ -138,7 +133,7 @@ export function BucketFilesToolbar({
               aria-label="Grid view"
               onClick={() => onViewModeChange("grid")}
             >
-              <HugeiconsIcon icon={GridViewIcon} className="size-3.5" />
+              <Icon icon={LayoutGridGlassIcon} className="size-3.5" />
             </Button>
           </ButtonGroup>
         ) : null}
@@ -151,8 +146,8 @@ export function BucketFilesToolbar({
           disabled={refreshing}
           onClick={onRefresh}
         >
-          <HugeiconsIcon
-            icon={Refresh01Icon}
+          <Icon
+            icon={RefreshCwGlassIcon}
             className={refreshing ? "size-4 animate-spin" : "size-4"}
             strokeWidth={1.75}
           />

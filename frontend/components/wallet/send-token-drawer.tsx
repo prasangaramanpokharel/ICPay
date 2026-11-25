@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useLocale, useTranslations } from "next-intl"
 import useSWR from "swr"
+import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -40,6 +41,7 @@ import { useResolvedUsername } from "@/hooks/wallet/useWalletData"
 import { useAuth } from "@/components/auth/auth-provider"
 import { fetchTransferConsentMessage } from "@/services/ledger/consent"
 import { useDebounced } from "@/hooks/ui/useDebounced"
+import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { cn } from "@/lib/ui/utils"
 import type { TokenHolding } from "@/services/tokens"
 import { ICP_LEDGER_ID } from "@/services/tokens"
@@ -76,6 +78,7 @@ export function SendTokenDrawer({
   const locale = useLocale()
   const { identity } = useAuth()
   const tt = useTranslations("transfer")
+  const { hidden } = useBalanceVisibility()
   const [username, setUsername] = useState("")
   const [value, setValue] = useState("")
   const [memo, setMemo] = useState("")
@@ -202,35 +205,50 @@ export function SendTokenDrawer({
           </DrawerDescription>
         </DrawerHeader>
 
-        {confirming ? (
-          <div className="space-y-4 px-4">
-            <div className="space-y-2 rounded-2xl bg-muted/40 p-4 text-sm">
-              <Row label={t("recipient")} value={recipient || "—"} />
-              <Row
-                label={tc("amount")}
-                value={amount === null ? "—" : `${full(amount)} ${token.symbol}`}
-                emphasis
-              />
-              <Row label={tc("fee")} value={`${full(token.fee)} ${token.symbol}`} />
-              <Row
-                label={t("total")}
-                value={total === null ? "—" : `${full(total)} ${token.symbol}`}
-                emphasis
-              />
-            </div>
-            {consentText ? (
-              <p className="rounded-xl border border-border/40 p-3 text-xs leading-relaxed text-muted-foreground">
-                {consentText}
-              </p>
-            ) : null}
-            {error ? (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            ) : null}
-          </div>
-        ) : (
-        <FieldGroup className="gap-4 px-4">
+        <AnimatePresence mode="wait">
+          {confirming ? (
+            <motion.div
+              key="confirm-step"
+              initial={{ opacity: 0, x: 12 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -12 }}
+              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+              className="space-y-4 px-4"
+            >
+              <div className="space-y-2 rounded-2xl bg-muted/40 p-4 text-sm">
+                <Row label={t("recipient")} value={recipient || "—"} />
+                <Row
+                  label={tc("amount")}
+                  value={amount === null ? "—" : `${full(amount)} ${token.symbol}`}
+                  emphasis
+                />
+                <Row label={tc("fee")} value={`${full(token.fee)} ${token.symbol}`} />
+                <Row
+                  label={t("total")}
+                  value={total === null ? "—" : `${full(total)} ${token.symbol}`}
+                  emphasis
+                />
+              </div>
+              {consentText ? (
+                <p className="rounded-xl border border-border/40 p-3 text-xs leading-relaxed text-muted-foreground">
+                  {consentText}
+                </p>
+              ) : null}
+              {error ? (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
+              ) : null}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="compose-step"
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 12 }}
+              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+            >
+              <FieldGroup className="gap-4 px-4">
           <Field className="gap-2">
             <div className="flex min-h-6 items-center justify-between gap-2">
               <FieldLabel htmlFor="send-username" className="shrink-0">
@@ -288,7 +306,7 @@ export function SendTokenDrawer({
               <Badge variant="secondary" className="shrink-0 max-w-[65%] truncate font-normal tabular-nums">
                 {tc("balance")}{" "}
                 <span className="font-semibold text-foreground">
-                  {full(token.balance)}
+                  {hidden ? "••••••" : full(token.balance)}
                 </span>
               </Badge>
             </div>
@@ -376,8 +394,10 @@ export function SendTokenDrawer({
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-        </FieldGroup>
-        )}
+              </FieldGroup>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <DrawerFooter className={confirming ? "flex-row gap-2" : undefined}>
           {confirming ? (

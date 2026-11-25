@@ -6,12 +6,8 @@ import { useTranslations } from "next-intl"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { HugeiconsIcon } from "@hugeicons/react"
-import {
-  Search01Icon,
-  Crown02Icon,
-  ArrowUpRight01Icon,
-} from "@hugeicons/core-free-icons"
+import { Icon } from "@/components/ui/icon"
+import { SearchGlassIcon, CrownGlassIcon, ArrowUpRightGlassIcon } from "@thesvg/ui-react"
 import { RESERVED_BRANDS } from "@/lib/profile/reservedBrands"
 
 const CONTACT_HANDLE = "@IcpayOfficial"
@@ -52,8 +48,8 @@ export function BrandDirectory() {
   return (
     <div className="space-y-5">
       <div className="relative">
-        <HugeiconsIcon
-          icon={Search01Icon}
+        <Icon
+          icon={SearchGlassIcon}
           className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
         />
         <Input
@@ -83,7 +79,7 @@ export function BrandDirectory() {
             {filtered.map((name) => (
               <li key={name} className="flex items-center gap-3 py-2.5">
                 <div className="flex size-9 items-center justify-center rounded-xl bg-muted">
-                  <HugeiconsIcon icon={Crown02Icon} className="size-4 text-muted-foreground" />
+                  <Icon icon={CrownGlassIcon} className="size-4 text-muted-foreground" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold">@{name}</p>
@@ -98,7 +94,7 @@ export function BrandDirectory() {
 
       <section className="rounded-2xl border border-primary/30 bg-primary/5 p-4">
         <div className="flex items-center gap-2">
-          <HugeiconsIcon icon={Crown02Icon} className="size-5 text-primary" />
+          <Icon icon={CrownGlassIcon} className="size-5 text-primary" />
           <h2 className="text-sm font-semibold">{t("ownItTitle")}</h2>
         </div>
         <p className="mt-1.5 text-sm text-muted-foreground">{t("ownItBody")}</p>
@@ -111,7 +107,7 @@ export function BrandDirectory() {
             className="inline-flex h-8 items-center gap-1.5 rounded-full bg-primary px-3 text-xs font-semibold text-primary-foreground"
           >
             {CONTACT_HANDLE}
-            <HugeiconsIcon icon={ArrowUpRight01Icon} className="size-3.5" />
+            <Icon icon={ArrowUpRightGlassIcon} className="size-3.5" />
           </a>
           <Button
             variant="outline"
