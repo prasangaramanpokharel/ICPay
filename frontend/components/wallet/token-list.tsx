@@ -141,7 +141,7 @@ export function TokenList({
           />
         </div>
 
-        <div className="flex shrink-0 items-center gap-3">
+        <div className="flex shrink-0 items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
           <div className="flex items-center gap-2">
             <Switch
               id="hide-zero-balances"
@@ -160,7 +160,7 @@ export function TokenList({
               type="button"
               variant="default"
               size="sm"
-              className="h-9 gap-1.5 rounded-lg px-3.5 text-xs font-semibold cursor-pointer shadow-xs"
+              className="h-9 gap-1.5 rounded-lg px-3.5 text-xs font-semibold cursor-pointer shadow-xs shrink-0"
               aria-label={t("addToken")}
               onClick={() => setAddOpen(true)}
             >
@@ -175,16 +175,16 @@ export function TokenList({
 
   if (isLoading && holdings.length === 0) {
     return (
-      <div className="rounded-(--radius) border border-border/60 bg-card p-5">
+      <div className="rounded-(--radius) border border-border/60 bg-card p-4 sm:p-5">
         {toolbar}
         <div className="mt-4">
           <Table>
             <TableHeader>
               <TableRow className="border-border/60 hover:bg-transparent">
-                <TableHead className="w-[180px] sm:w-[220px] text-xs font-medium text-muted-foreground">{t("colSymbol")}</TableHead>
-                <TableHead className="text-xs font-medium text-muted-foreground">{t("colName")}</TableHead>
+                <TableHead className="text-xs font-medium text-muted-foreground">{t("colSymbol")}</TableHead>
+                <TableHead className="hidden sm:table-cell text-xs font-medium text-muted-foreground">{t("colName")}</TableHead>
                 <TableHead className="text-right text-xs font-medium text-muted-foreground">{t("colQuantity")}</TableHead>
-                <TableHead className="text-right text-xs font-medium text-muted-foreground">{t("colValue")}</TableHead>
+                <TableHead className="hidden sm:table-cell text-right text-xs font-medium text-muted-foreground">{t("colValue")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -192,17 +192,23 @@ export function TokenList({
                 <TableRow key={i} className="border-border/60">
                   <TableCell className="py-3">
                     <div className="flex items-center gap-3">
-                      <Skeleton className="size-8 rounded-full" />
-                      <Skeleton className="h-4 w-16" />
+                      <Skeleton className="size-8 rounded-full shrink-0" />
+                      <div className="space-y-1">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-3 w-24 sm:hidden" />
+                      </div>
                     </div>
                   </TableCell>
-                  <TableCell className="py-3">
+                  <TableCell className="hidden sm:table-cell py-3">
                     <Skeleton className="h-3.5 w-28" />
                   </TableCell>
                   <TableCell className="py-3 text-right">
-                    <Skeleton className="ml-auto h-4 w-20" />
+                    <div className="ml-auto flex flex-col items-end gap-1">
+                      <Skeleton className="h-4 w-20" />
+                      <Skeleton className="h-3 w-14 sm:hidden" />
+                    </div>
                   </TableCell>
-                  <TableCell className="py-3 text-right">
+                  <TableCell className="hidden sm:table-cell py-3 text-right">
                     <Skeleton className="ml-auto h-4 w-14" />
                   </TableCell>
                 </TableRow>
@@ -216,7 +222,7 @@ export function TokenList({
 
   if (holdings.length === 0) {
     return (
-      <div className="rounded-(--radius) border border-border/60 bg-card p-5">
+      <div className="rounded-(--radius) border border-border/60 bg-card p-4 sm:p-5">
         {toolbar}
         <Empty className="py-8">
           <EmptyHeader>
@@ -236,7 +242,7 @@ export function TokenList({
   }
 
   return (
-    <div className="rounded-(--radius) border border-border/60 bg-card p-5">
+    <div className="rounded-(--radius) border border-border/60 bg-card p-4 sm:p-5">
       {toolbar}
 
       {pageItems.length === 0 ? (
@@ -250,10 +256,10 @@ export function TokenList({
           <Table>
             <TableHeader>
               <TableRow className="border-border/60 hover:bg-transparent">
-                <TableHead className="w-[180px] sm:w-[220px] text-xs font-medium text-muted-foreground">{t("colSymbol")}</TableHead>
-                <TableHead className="text-xs font-medium text-muted-foreground">{t("colName")}</TableHead>
+                <TableHead className="text-xs font-medium text-muted-foreground">{t("colSymbol")}</TableHead>
+                <TableHead className="hidden sm:table-cell text-xs font-medium text-muted-foreground">{t("colName")}</TableHead>
                 <TableHead className="text-right text-xs font-medium text-muted-foreground">{t("colQuantity")}</TableHead>
-                <TableHead className="text-right text-xs font-medium text-muted-foreground">{t("colValue")}</TableHead>
+                <TableHead className="hidden sm:table-cell text-right text-xs font-medium text-muted-foreground">{t("colValue")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -354,10 +360,13 @@ function TokenTableRow({
       <TableCell className="py-3">
         <div className="flex items-center gap-3">
           <TokenLogo token={token} />
-          <span className="font-semibold text-foreground text-sm">{token.symbol}</span>
+          <div className="min-w-0">
+            <span className="font-semibold text-foreground text-sm block">{token.symbol}</span>
+            <span className="text-xs text-muted-foreground truncate block max-w-32 sm:hidden">{displayName}</span>
+          </div>
         </div>
       </TableCell>
-      <TableCell className="py-3">
+      <TableCell className="hidden sm:table-cell py-3">
         <span className="text-xs text-muted-foreground truncate block max-w-44 sm:max-w-xs">{displayName}</span>
       </TableCell>
       <TableCell className="py-3 text-right">
@@ -369,6 +378,9 @@ function TokenTableRow({
         >
           {hidden ? "••••••" : formatTokenAmount(token.balance, token.decimals, 4)}
         </p>
+        <span className="text-xs tabular-nums text-muted-foreground sm:hidden block">
+          {hidden ? "••••" : (fiatFormatted ? `${fiatSymbol}${fiatFormatted}` : "—")}
+        </span>
         {outside !== undefined ? (
           <p className="mt-0.5 text-[11px] font-medium text-primary tabular-nums">
             {t("outsideAmount", {
@@ -377,7 +389,7 @@ function TokenTableRow({
           </p>
         ) : null}
       </TableCell>
-      <TableCell className="py-3 text-right">
+      <TableCell className="hidden sm:table-cell py-3 text-right">
         <span className="text-sm tabular-nums text-muted-foreground">
           {hidden ? "••••" : (fiatFormatted ? `${fiatSymbol}${fiatFormatted}` : "—")}
         </span>

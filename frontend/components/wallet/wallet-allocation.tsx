@@ -135,7 +135,7 @@ export function WalletAllocation({
         <ul className="space-y-1.5 text-xs">
           {slices.map((slice, index) => (
             <li key={slice.symbol} className="grid grid-cols-12 items-center text-xs">
-              <span className="col-span-5 flex min-w-0 items-center gap-1.5 truncate">
+              <span className="col-span-4 sm:col-span-5 flex min-w-0 items-center gap-1.5 truncate">
                 <span
                   aria-hidden="true"
                   className="size-2 shrink-0 rounded-xs"
@@ -150,7 +150,7 @@ export function WalletAllocation({
               <span className="col-span-3 text-end text-muted-foreground text-[11px] tabular-nums">
                 {formatPercent(slice.percent)}
               </span>
-              <span className="col-span-4 text-end font-medium text-foreground text-[11px] tabular-nums">
+              <span className="col-span-5 sm:col-span-4 text-end font-medium text-foreground text-[11px] tabular-nums truncate">
                 {hidden ? "••••••" : formatValue(slice.value)}
               </span>
             </li>
@@ -162,17 +162,17 @@ export function WalletAllocation({
             <ul className="space-y-1.5 text-xs">
               {unpricedHoldings.map((token) => (
                 <li key={token.symbol} className="grid grid-cols-12 items-center text-xs">
-                  <span className="col-span-5 flex min-w-0 items-center gap-1.5 truncate">
+                  <span className="col-span-4 sm:col-span-5 flex min-w-0 items-center gap-1.5 truncate">
                     <span
                       aria-hidden="true"
                       className="size-2 shrink-0 rounded-xs bg-muted-foreground/40"
                     />
                     <span className="truncate font-medium text-muted-foreground">{token.symbol}</span>
                   </span>
-                  <span className="col-span-3 text-end text-muted-foreground text-[11px] tabular-nums">
+                  <span className="col-span-2 sm:col-span-3 text-end text-muted-foreground text-[11px] tabular-nums">
                     —
                   </span>
-                  <span className="col-span-4 text-end font-medium text-foreground text-[11px] tabular-nums">
+                  <span className="col-span-6 sm:col-span-4 text-end font-medium text-foreground text-[11px] tabular-nums truncate">
                     {hidden ? "••••••" : token.amount}
                   </span>
                 </li>
