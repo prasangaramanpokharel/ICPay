@@ -1,5 +1,4 @@
 import type { Identity } from "@icp-sdk/core/agent"
-import { fromNullable } from "@dfinity/utils"
 import { fetchTokenMetadata, ICP_LEDGER_ID, ICPAY_LEDGER_ID } from "@/services/tokens"
 import { icrcLedger } from "@/services/ledger/icrc"
 
@@ -68,7 +67,7 @@ async function fetchLedgerFacts(
     ledger.totalTokensSupply({ certified: false }),
     ledger.getMintingAccount({ certified: false }).catch((): [] => []),
   ])
-  const account = fromNullable(minting)
+  const account = minting[0] ?? null
 
   return {
     totalSupply,
