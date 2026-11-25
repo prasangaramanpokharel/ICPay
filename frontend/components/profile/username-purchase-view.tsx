@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
-import { motion, AnimatePresence } from "motion/react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -151,34 +150,18 @@ export function UsernamePurchaseView() {
   return (
     <AppPage title={bought ? undefined : t("title")} description={bought ? undefined : t("subtitle")}>
       <div className="mx-auto w-full max-w-md">
-        <AnimatePresence mode="wait">
-          {bought ? (
-            <motion.div
-              key="bought-success"
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.96 }}
-              transition={{ type: "spring", stiffness: 350, damping: 30 }}
-            >
-              <SendSuccess
-                amount={bought.price}
-                recipient={`@${bought.username}`}
-                blockIndex={bought.blockIndex}
-                kind="purchase"
-                symbol={purchasedCurrency === "ICPAY" ? "$ICPAY" : "ICP"}
-                decimals={8}
-                onDone={() => router.push("/profile")}
-              />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="purchase-form"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ type: "spring", stiffness: 350, damping: 30 }}
-              className="space-y-4"
-            >
+        {bought ? (
+          <SendSuccess
+            amount={bought.price}
+            recipient={`@${bought.username}`}
+            blockIndex={bought.blockIndex}
+            kind="purchase"
+            symbol={purchasedCurrency === "ICPAY" ? "$ICPAY" : "ICP"}
+            decimals={8}
+            onDone={() => router.push("/profile")}
+          />
+        ) : (
+          <div className="space-y-4">
         {isExistingPro && !perkClaimed && (
           <Card className="border-primary/40 bg-linear-to-r from-primary/10 via-background to-card shadow-sm">
             <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -543,9 +526,8 @@ export function UsernamePurchaseView() {
             </div>
           </CardContent>
         </Card>
-            </motion.div>
-          )}
-        </AnimatePresence>
+          </div>
+        )}
       </div>
     </AppPage>
   )

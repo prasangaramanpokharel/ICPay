@@ -14,52 +14,15 @@ import { playSuccessChime } from "@/lib/ui/successChime"
 import { avatarUriFor } from "@/lib/profile/avatar"
 import { cn } from "@/lib/ui/utils"
 
-const containerVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.04,
-    },
-  },
-}
-
 const checkBadgeVariants: Variants = {
-  hidden: { scale: 0.4, opacity: 0 },
+  hidden: { scale: 0.8, opacity: 0 },
   visible: {
     scale: 1,
     opacity: 1,
     transition: {
       type: "spring",
-      stiffness: 420,
-      damping: 24,
-    },
-  },
-}
-
-const checkIconVariants: Variants = {
-  hidden: { scale: 0 },
-  visible: {
-    scale: 1,
-    transition: {
-      delay: 0.08,
-      type: "spring",
-      stiffness: 500,
+      stiffness: 450,
       damping: 25,
-    },
-  },
-}
-
-const itemVariants: Variants = {
-  hidden: { opacity: 0, y: 12 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      type: "spring",
-      stiffness: 380,
-      damping: 30,
     },
   },
 }
@@ -122,39 +85,33 @@ export function SendSuccess({
       : recipient
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-      className="flex flex-col items-center pt-6 text-center"
-    >
+    <div className="flex flex-col items-center pt-6 text-center">
       <motion.div
         variants={checkBadgeVariants}
+        initial="hidden"
+        animate="visible"
         className="mb-5 flex size-18 items-center justify-center rounded-full bg-success/10"
       >
-        <motion.span
-          variants={checkIconVariants}
-          className="flex size-13 items-center justify-center rounded-full bg-success text-success-foreground shadow-sm"
-        >
+        <span className="flex size-13 items-center justify-center rounded-full bg-success text-success-foreground shadow-sm">
           <Icon icon={CheckGlassOutlineIcon} className="size-8 text-success-foreground" strokeWidth={3} />
-        </motion.span>
+        </span>
       </motion.div>
 
-      <motion.div variants={itemVariants}>
+      <div>
         <h1 className="mt-2 text-2xl font-bold tracking-tight">{t(kind)}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           {t(`${kind}Body`, { name: label, symbol })}
         </p>
-      </motion.div>
+      </div>
 
-      <motion.div variants={itemVariants} className="mt-8">
+      <div className="mt-8">
         <p className="text-xs text-muted-foreground">{t("total")}</p>
         <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums">
           {formatTokenAmount(amount, decimals, decimals)} {symbol}
         </p>
-      </motion.div>
+      </div>
 
-      <motion.div variants={itemVariants} className="mt-8 w-full border-t border-dashed pt-6 text-left">
+      <div className="mt-8 w-full border-t border-dashed pt-6 text-left">
         <p className="text-xs text-muted-foreground">
           {kind === "purchase"
             ? t("username")
@@ -184,9 +141,9 @@ export function SendSuccess({
             </a>
           </div>
         </div>
-      </motion.div>
+      </div>
 
-      <motion.div variants={itemVariants} className="mt-8 flex w-full items-center gap-2">
+      <div className="mt-8 flex w-full items-center gap-2">
         <Button className="flex-1" onClick={onDone}>
           {tc("done")}
         </Button>
@@ -207,7 +164,7 @@ export function SendSuccess({
             />
           </>
         )}
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   )
 }
