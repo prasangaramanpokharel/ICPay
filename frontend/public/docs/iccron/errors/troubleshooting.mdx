@@ -1,0 +1,46 @@
+---
+title: "Errors & Troubleshooting"
+description: "Resolving consensus rejections, Dead Letter Queue (DLQ) transitions, and API error codes."
+group: "Errors"
+order: 0
+---
+
+# Errors & Troubleshooting
+
+icCron provides detailed error tracking and automated circuit breakers to protect developer cycle reserves.
+
+## HTTP Status Codes
+
+| Status | Error Meaning | Resolution |
+|---|---|---|
+| `400 Bad Request` | Invalid cron expression, non-HTTPS URL, or private IP address | Ensure 5-field syntax and public `https://` target |
+| `401 Unauthorized` | Missing or malformed `Authorization: Bearer` header | Check that your API key is correctly prefixed with `icp_cron_` |
+| `403 Forbidden` | The requested `job_id` does not belong to the API key's project | Verify that you are accessing jobs inside the correct project |
+| `404 Not Found` | Job ID does not exist | Verify job ID via `GET /api/v1/cron/jobs` |
+| `429 Too Many Requests` | Project credit balance exhausted | Top up your credit pack via the [icCron Dashboard](/cron) |
+| `500 Internal Error` | Canister execution error | Check canister status or report via Discord / GitHub |
+
+## Consensus Mismatch (`raw_reject_code: 2`)
+
+### Symptom
+Job logs show:
+```
+CallRejected { raw_reject_code: 2, reject_message: "No consensus could be reached. Replicas had different responses." }
+```
+
+### Cause
+Subnet nodes received differing response bodies from your webhook endpoint. For example, testing with `httpbin.org/post` echoes the caller's origin IP address, which differs for every subnet node.
+
+### Solution
+Ensure your endpoint returns a static or deterministic response (e.g. `{"ok":true}`). If testing webhooks, use deterministic endpoints like `https://httpbin.org/status/200`.
+
+## Dead Letter Queue (DLQ) & `AutoPausedDormant`
+
+When a job's target fails consecutively beyond `max_retries`:
+1. The job transitions into `AutoPausedDormant`.
+2. The timer slot is released, halting all cycle consumption.
+3. The latest response code, duration, and error snippet are recorded in the ring buffer.
+
+### How to Recover
+1. Fix the downstream service or update the job URL.
+2. Call `POST /api/v1/cron/jobs/{id}/resume` via the SDK or click **Resume** in the dashboard.
