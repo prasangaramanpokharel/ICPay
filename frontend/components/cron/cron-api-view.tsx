@@ -82,7 +82,8 @@ export function CronApiView() {
   const { keys, isLoading: loadingKeys, mutate: mutateKeys } = useCronApiKeys(projects)
 
   const [createOpen, setCreateOpen] = React.useState(false)
-  const [targetProjectId, setTargetProjectId] = React.useState<string>("")
+  const [manualTargetProjectId, setTargetProjectId] = React.useState<string>("")
+  const targetProjectId = manualTargetProjectId || (projects.length > 0 ? projects[0].id.toString() : "")
   const [newKeyLabel, setNewKeyLabel] = React.useState("")
   const [creatingKey, setCreatingKey] = React.useState(false)
 
@@ -92,12 +93,6 @@ export function CronApiView() {
   const [actionInProgress, setActionInProgress] = React.useState<string | null>(null)
   const [visibleKeys, setVisibleKeys] = React.useState<Record<string, boolean>>({})
   const [copiedHex, setCopiedHex] = React.useState<string | null>(null)
-
-  React.useEffect(() => {
-    if (projects.length > 0 && !targetProjectId) {
-      setTargetProjectId(projects[0].id.toString())
-    }
-  }, [projects, targetProjectId])
 
   const handleCopyKey = async (keyText: string, hex: string) => {
     await copyText(keyText)

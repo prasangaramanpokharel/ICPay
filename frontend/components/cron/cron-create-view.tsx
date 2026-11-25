@@ -24,7 +24,7 @@ function CronCreateContent() {
   const queryProjectName = searchParams.get("id") || searchParams.get("name")
 
   const { projects, isLoading: loading } = useCronProjects()
-  const [selectedProjectId, setSelectedProjectId] = React.useState<bigint | null>(() => {
+  const [manualSelectedProjectId, setSelectedProjectId] = React.useState<bigint | null>(() => {
     if (!queryProjectId) return null
     try {
       return parseProjectId(queryProjectId)
@@ -33,8 +33,9 @@ function CronCreateContent() {
     }
   })
 
-  React.useEffect(() => {
-    if (selectedProjectId !== null || projects.length === 0) return
+  const selectedProjectId = React.useMemo<bigint | null>(() => {
+    if (manualSelectedProjectId !== null) return manualSelectedProjectId
+    if (projects.length === 0) return null
     if (queryProjectId) {
       const parsed = parseProjectId(queryProjectId)
       const found = projects.find(
@@ -43,15 +44,15 @@ function CronCreateContent() {
           p.id.toString() === queryProjectId ||
           formatProjectId(p.id) === queryProjectId
       )
-      setSelectedProjectId(found ? found.id : projects[0].id)
-    } else if (queryProjectName) {
+      return found ? found.id : projects[0].id
+    }
+    if (queryProjectName) {
       const decoded = decodeURIComponent(queryProjectName).toLowerCase()
       const found = projects.find((p) => p.name.toLowerCase() === decoded)
-      setSelectedProjectId(found ? found.id : projects[0].id)
-    } else {
-      setSelectedProjectId(projects[0].id)
+      return found ? found.id : projects[0].id
     }
-  }, [projects, queryProjectId, queryProjectName, selectedProjectId])
+    return projects[0].id
+  }, [manualSelectedProjectId, projects, queryProjectId, queryProjectName])
 
   const currentProject = React.useMemo(() => {
     return projects.find((p) => p.id === selectedProjectId) ?? null
