@@ -19,6 +19,7 @@ import {
 export type LoginOptions = {
   openIdProvider?: OpenIdProvider
   transport?: "window" | "redirect"
+  returnTo?: string
 }
 
 let clientPromise: Promise<AuthClient> | null = null
@@ -46,10 +47,11 @@ function clientOptions(options?: LoginOptions) {
   }
 }
 
-function signInOptions() {
+function signInOptions(returnTo?: string) {
   return {
     maxTimeToLive: DELEGATION_TTL,
     maxTimeToIdle: DELEGATION_TTL,
+    ...(returnTo ? { returnTo } : {}),
   }
 }
 
@@ -79,8 +81,19 @@ export class PopupBlockedError extends Error {
 
 async function signInWithAttributes(
   authClient: AuthClient,
+  returnTo?: string,
 ): Promise<Identity | null> {
-  return await authClient.signIn(signInOptions())
+  return await authClient.signIn(signInOptions(returnTo))
+}
+
+export async function memoizeRedirectState<T>(
+  produce: () => T | Promise<T>,
+): Promise<T> {
+  if (typeof window === "undefined") {
+    return produce()
+  }
+  const authClient = await createAuthClient()
+  return authClient.memoize(produce)
 }
 
 export async function resumeRedirectSignIn(): Promise<Identity | null> {
@@ -104,7 +117,7 @@ export async function login(options?: LoginOptions): Promise<Identity | null> {
   if (wantsRedirectTransport(options)) markRedirectPending()
   const authClient = createClient(options)
 
-  return signInWithAttributes(authClient)
+  return signInWithAttributes(authClient, options?.returnTo)
     .then((identity) => {
       if (wantsRedirectTransport(options)) {
         clearRedirectPending()
