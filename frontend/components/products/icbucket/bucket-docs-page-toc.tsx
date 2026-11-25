@@ -44,12 +44,12 @@ export function BucketDocsPageToc({
         On this page
       </p>
       <div className="space-y-1 border-l border-border/60">
-        {headings.map((heading) => {
+        {headings.map((heading, idx) => {
           const isActive = activeId === heading.id
 
           return (
             <a
-              key={heading.id}
+              key={`${heading.id}-${idx}`}
               href={`#${heading.id}`}
               className={cn(
                 "block border-l-2 py-1 text-xs transition-colors -ml-px",
