@@ -7,7 +7,6 @@ import {
   logout as iiLogout,
   createAuthClient,
   openBackendSession,
-  discardRejectedSession,
   type LoginOptions,
 } from "@/services/auth/auth"
 import { playLoginChime } from "@/lib/ui/successChime"
@@ -21,15 +20,11 @@ type AuthContextType = {
   logout: () => Promise<void>
 }
 
-// Keyed by principal so a second account still gets its one chime, and so
-// clearing site data resets it the same way it resets the session.
 const SOUND_KEY = "icpay:login-sound:"
 
 function playLoginChimeOnce(principal: string) {
   const key = SOUND_KEY + principal
   if (localStorage.getItem(key)) return
-  // Written before playback, not after: a browser that blocks the sound must
-  // not leave the flag unset and retry on every future sign-in.
   localStorage.setItem(key, "1")
   playLoginChime()
 }
@@ -48,25 +43,55 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
+    let unsubscribe: (() => void) | undefined
+    let cancelled = false
+
     async function init() {
       try {
         const authClient = await createAuthClient()
+        if (cancelled) return
+
+        unsubscribe = authClient.subscribe(async () => {
+          if (cancelled) return
+          if (!authClient.isAuthenticated()) {
+            setIdentity(undefined)
+            return
+          }
+          try {
+            const nextId = await authClient.getIdentity()
+            if (!cancelled) {
+              setIdentity(nextId)
+            }
+          } catch {
+            if (!cancelled) {
+              setIdentity(undefined)
+            }
+          }
+        })
+
         if (!authClient.isAuthenticated()) return
         const id = await authClient.getIdentity()
+        if (cancelled) return
 
-        try {
-          await openBackendSession(id)
-          setIdentity(id)
-        } catch {
-          await discardRejectedSession()
-        }
+        setIdentity(id)
+        openBackendSession(id).catch((e) => {
+          console.warn("Backend session sync warning:", e)
+        })
       } catch (e) {
         console.error("Auth init error:", e)
       } finally {
-        setIsLoading(false)
+        if (!cancelled) {
+          setIsLoading(false)
+        }
       }
     }
+
     init()
+
+    return () => {
+      cancelled = true
+      unsubscribe?.()
+    }
   }, [])
 
   const acceptIdentity = useCallback(async (id: Identity) => {
@@ -88,9 +113,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     await iiLogout()
-    // A full document load rather than router.replace: the SWR cache, the
-    // wallet actor and the auth client are all module-level singletons that
-    // would otherwise outlive the identity and stay readable after sign-out.
     window.location.replace("/login")
   }, [])
 
