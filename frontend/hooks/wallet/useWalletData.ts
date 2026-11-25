@@ -89,7 +89,7 @@ export function useDashboard() {
       ...FETCH_ONCE,
       revalidateIfStale: true,
       revalidateOnMount: true,
-      dedupingInterval: 60_000,
+      dedupingInterval: 4_000,
       cacheKey: principal ? dashboardCacheKey(principal) : null,
       maxAgeMs: 5 * 60_000,
       authPending: authLoading,
@@ -143,7 +143,7 @@ function useLedgerBalance(ledgerId: string | null) {
       }
       return balance
     },
-    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
+    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 4_000 }
   )
 
   return {
@@ -212,7 +212,7 @@ export function useTransactions(page = 0, pageSize = 20) {
       ...FETCH_ONCE,
       revalidateIfStale: true,
       revalidateOnMount: true,
-      dedupingInterval: 60_000,
+      dedupingInterval: 4_000,
       cacheKey: page === 0 && principal ? txsCacheKey(principal, pageSize) : null,
       maxAgeMs: 5 * 60_000,
       authPending: authLoading,
@@ -255,6 +255,12 @@ export function useRefreshWallet() {
   return () => {
     if (!identity) return
     const principal = identity.getPrincipal().toText()
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.removeItem(`icpay:wallet:dashboard:${principal}`)
+        localStorage.removeItem(`icpay:wallet:txs:${principal}:0:20`)
+      } catch {}
+    }
     mutate(
       (key) =>
         Array.isArray(key) &&
@@ -530,7 +536,7 @@ export function useTokenHoldings(customLedgerIds: string[] = []) {
       syncBalanceCaches(map)
       return map
     },
-    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 60_000 }
+    { revalidateOnFocus: false, keepPreviousData: true, dedupingInterval: 4_000 }
   )
 
   const displayIds = balances ? [...balances.keys()].sort() : []

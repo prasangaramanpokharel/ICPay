@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
+import { mutate as globalMutate } from "swr"
 import { Principal } from "@icp-sdk/core/principal"
 import { IcrcLedgerCanister } from "@icp-sdk/canisters/ledger/icrc"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -10,6 +11,9 @@ import { createAgent } from "@/services/icp"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { playSuccessChime } from "@/lib/ui/successChime"
 import { toast } from "@/components/ui/toast"
+import { syncDeposits } from "@/services/deposit/deposit"
+import { patchHoldings } from "@/lib/wallet/holdingsCache"
+import { walletKey } from "@/lib/wallet/walletCache"
 
 const POLL_INTERVAL_MS = 4000
 
@@ -152,7 +156,38 @@ export function useIncomingBalanceDetector() {
                 duration: 6000,
               })
             }
-            void refreshWallet()
+
+            const p = identity.getPrincipal().toText()
+            patchHoldings(
+              p,
+              increases.map((inc) => ({ ledgerId: inc.ledgerId, delta: inc.delta }))
+            )
+
+            for (const [id, bal] of currentMap.entries()) {
+              const tokenKey = walletKey(identity, "token-balance", id)
+              if (tokenKey) void globalMutate(tokenKey, bal, { revalidate: false })
+            }
+
+            void globalMutate(
+              (key) =>
+                Array.isArray(key) &&
+                key[0] === "token-balances" &&
+                key[key.length - 1] === p,
+              currentMap,
+              { revalidate: false }
+            )
+
+            void Promise.allSettled(
+              increases.map((inc) => syncDeposits(identity, inc.ledgerId))
+            ).finally(() => {
+              if (typeof window !== "undefined") {
+                try {
+                  localStorage.removeItem(`icpay:wallet:dashboard:${p}`)
+                  localStorage.removeItem(`icpay:wallet:txs:${p}:0:20`)
+                } catch {}
+              }
+              refreshWallet()
+            })
           }
 
           previousBalancesRef.current = currentMap

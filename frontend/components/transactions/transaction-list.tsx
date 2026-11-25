@@ -169,7 +169,9 @@ function TransactionRow({
         <Avatar className="size-11 shrink-0">
           <AvatarImage src={avatarUri} alt="" />
           <AvatarFallback className="bg-muted text-xs">
-            {counterparty.replace(/^@/, "").slice(0, 2).toUpperCase()}
+            {"deposit" in tx.txType && (counterparty === "1" || (!counterparty.includes("-") && counterparty.length <= 4))
+              ? "DP"
+              : counterparty.replace(/^@/, "").slice(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
       </ItemMedia>
@@ -181,7 +183,9 @@ function TransactionRow({
             !handle && "font-mono tracking-tight"
           )}
         >
-          {handle ?? shortenCounterparty(counterparty)}
+          {"deposit" in tx.txType && (counterparty === "1" || (!counterparty.includes("-") && counterparty.length <= 4))
+            ? t("type.deposit")
+            : (handle ?? shortenCounterparty(counterparty))}
           <PremiumBadge name={handle} className="size-3.5" />
         </ItemTitle>
         <ItemDescription className="text-xs text-muted-foreground">

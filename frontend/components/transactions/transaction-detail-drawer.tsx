@@ -160,7 +160,9 @@ function TransactionDrawerBody({ tx }: { tx: TransactionPublic }) {
         <Avatar className="mx-auto size-16 shadow-xs">
           <AvatarImage src={avatarUri} alt="" />
           <AvatarFallback className="bg-muted text-sm">
-            {counterparty.replace(/^@/, "").slice(0, 2).toUpperCase()}
+            {"deposit" in tx.txType && (counterparty === "1" || (!counterparty.includes("-") && counterparty.length <= 4))
+              ? "DP"
+              : counterparty.replace(/^@/, "").slice(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
 
@@ -171,7 +173,9 @@ function TransactionDrawerBody({ tx }: { tx: TransactionPublic }) {
             </Link>
           ) : (
             <span className="font-mono text-sm tracking-tight text-foreground">
-              {shortenCounterparty(counterparty)}
+              {"deposit" in tx.txType && (counterparty === "1" || (!counterparty.includes("-") && counterparty.length <= 4))
+                ? t("type.deposit")
+                : shortenCounterparty(counterparty)}
             </span>
           )}
           <PremiumBadge name={handle} className="size-3.5" />

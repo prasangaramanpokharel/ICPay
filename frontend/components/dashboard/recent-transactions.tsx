@@ -128,14 +128,18 @@ function TransactionRow({ tx, embedded }: { tx: TransactionPublic; embedded?: bo
         <Avatar className="size-9 shrink-0">
           <AvatarImage src={avatarUri} alt="" />
           <AvatarFallback className="bg-muted text-[11px] font-semibold">
-            {counterparty.replace(/^@/, "").slice(0, 2).toUpperCase()}
+            {"deposit" in tx.txType && (counterparty === "1" || (!counterparty.includes("-") && counterparty.length <= 4))
+              ? "DP"
+              : counterparty.replace(/^@/, "").slice(0, 2).toUpperCase()}
           </AvatarFallback>
         </Avatar>
       </ItemMedia>
 
       <ItemContent className="min-w-0 flex-1 gap-0">
         <ItemTitle className={cn("text-[13px] font-semibold leading-snug", !handle && "font-mono text-xs tracking-tight")}>
-          {handle ?? shortenCounterparty(counterparty)}
+          {"deposit" in tx.txType && (counterparty === "1" || (!counterparty.includes("-") && counterparty.length <= 4))
+            ? t("type.deposit")
+            : (handle ?? shortenCounterparty(counterparty))}
           {handle ? <PremiumBadge name={handle} className="size-3" /> : null}
         </ItemTitle>
         <ItemDescription className="text-[11px] text-muted-foreground leading-snug" title={formatDetailTime(tx.createdAt)}>
