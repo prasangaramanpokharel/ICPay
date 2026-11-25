@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Icon } from "@/components/ui/icon"
 import { PlusGlassIcon, LinkGlassIcon, Grid2x2GlassIcon, ListGlassIcon, PackageGlassIcon } from "@thesvg/ui-react"
-import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 import { Card, CardContent } from "@/components/ui/card"
@@ -164,7 +164,7 @@ export function MyCanistersPanel() {
       title={t("title")}
       description={t("subtitle")}
       actions={
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <OnboardAgentButton principal={principal} />
           <Button
             type="button"
@@ -188,25 +188,27 @@ export function MyCanistersPanel() {
         </div>
       }
     >
-      <Alert className="bg-muted/30 pr-28">
-        <AlertTitle>{t("yourPrincipal")}</AlertTitle>
-        <AlertDescription>
-          <div className="flex items-center gap-1.5">
-            <span className="break-all font-mono text-xs text-foreground">{principal ?? "—"}</span>
-            {principal ? (
-              <CopyButton
-                variant="ghost"
-                size="icon-xs"
-                value={principal}
-                className="size-5 shrink-0 p-0 text-muted-foreground hover:bg-transparent hover:text-foreground cursor-pointer"
-                iconClassName="size-3.5"
-                aria-label="Copy principal"
-              />
-            ) : null}
-          </div>
-        </AlertDescription>
+      <Alert className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-muted/30">
+        <div className="space-y-1 min-w-0 flex-1">
+          <AlertTitle>{t("yourPrincipal")}</AlertTitle>
+          <AlertDescription>
+            <div className="flex items-center gap-1.5">
+              <span className="break-all font-mono text-xs text-foreground">{principal ?? "—"}</span>
+              {principal ? (
+                <CopyButton
+                  variant="ghost"
+                  size="icon-xs"
+                  value={principal}
+                  className="size-5 shrink-0 p-0 text-muted-foreground hover:bg-transparent hover:text-foreground cursor-pointer"
+                  iconClassName="size-3.5"
+                  aria-label="Copy principal"
+                />
+              ) : null}
+            </div>
+          </AlertDescription>
+        </div>
         {principal ? (
-          <AlertAction className="top-1/2 -translate-y-1/2 right-3">
+          <div className="shrink-0 self-start sm:self-auto">
             <Button
               type="button"
               variant="outline"
@@ -216,7 +218,7 @@ export function MyCanistersPanel() {
             >
               <span>Connect</span>
             </Button>
-          </AlertAction>
+          </div>
         ) : null}
       </Alert>
 

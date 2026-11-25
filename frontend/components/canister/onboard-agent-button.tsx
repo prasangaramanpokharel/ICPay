@@ -192,24 +192,24 @@ Once added as a controller, the canister will automatically appear and be manage
   }
 
   return (
-    <div className="inline-flex items-center gap-1">
+    <div className="inline-flex items-center gap-1 shrink-0">
       <Tooltip>
         <TooltipTrigger
           render={
             <button
               type="button"
               onClick={handleCopyPrompt}
-              className="inline-flex h-8 items-center gap-2 rounded-full border border-border/70 bg-card hover:bg-accent/60 px-3 py-1 text-xs font-medium text-foreground transition-all cursor-pointer shadow-xs"
+              className="inline-flex h-8 shrink-0 items-center gap-2 rounded-full border border-border/70 bg-card hover:bg-accent/60 px-3 py-1 text-xs font-medium text-foreground transition-all cursor-pointer shadow-xs whitespace-nowrap"
             />
           }
         >
           {copied ? (
-            <span className="inline-flex items-center gap-1.5 text-success font-medium">
+            <span className="inline-flex items-center gap-1.5 text-success font-medium whitespace-nowrap">
               <Icon icon={CheckGlassOutlineIcon} className="size-3.5 text-success" strokeWidth={2.5} />
               <span>{t("onboardAgentCopied")}</span>
             </span>
           ) : (
-            <span>{t("onboardAgentTitle")}</span>
+            <span className="whitespace-nowrap">{t("onboardAgentTitle")}</span>
           )}
           <div className="flex items-center gap-1.5 shrink-0">
             <ClaudeCodeIcon className="size-3.5 shrink-0" />

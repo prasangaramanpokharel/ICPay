@@ -431,7 +431,7 @@ export function BucketDetail({ bucketId: bucketIdProp }: { bucketId?: string } =
   )
 
   const headerActions = (
-    <div className="flex flex-wrap items-center justify-end gap-2">
+    <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto sm:justify-end">
       {stats ? (
         <OnboardBucketAgentButton
           bucketId={bucketId}

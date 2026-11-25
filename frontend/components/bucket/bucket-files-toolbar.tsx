@@ -81,7 +81,7 @@ export function BucketFilesToolbar({
             onValueChange={(value) => onCategoryChange(value as FileCategory)}
             items={CATEGORY_ITEMS}
           >
-            <SelectTrigger size="sm" className="w-[7.5rem]" aria-label="Filter by type">
+            <SelectTrigger size="sm" className="flex-1 min-w-[7rem] sm:w-[7.5rem] sm:flex-initial" aria-label="Filter by type">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -101,7 +101,7 @@ export function BucketFilesToolbar({
           }}
           items={items}
         >
-          <SelectTrigger size="sm" className="w-[8rem]" aria-label={t("sortBy")}>
+          <SelectTrigger size="sm" className="flex-1 min-w-[7rem] sm:w-[8rem] sm:flex-initial" aria-label={t("sortBy")}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
