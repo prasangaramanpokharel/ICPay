@@ -1,4 +1,4 @@
-import { CanisterStatus, type Identity } from "@icp-sdk/core/agent"
+import { CanisterStatus, fetchCandid, type Identity } from "@icp-sdk/core/agent"
 import { Principal } from "@icp-sdk/core/principal"
 import { createAgent } from "@/services/icp"
 
@@ -44,7 +44,18 @@ export async function fetchPublicCanisterState(
   const time = rawTime instanceof Date ? rawTime : null
 
   const rawCandid = status.get("candid") as string | undefined
-  const candid = typeof rawCandid === "string" ? rawCandid : null
+  let candid = typeof rawCandid === "string" && rawCandid.length > 0 ? rawCandid : null
+
+  if (!candid) {
+    try {
+      const fallbackCandid = await fetchCandid(canisterId.toText(), agent)
+      if (typeof fallbackCandid === "string" && fallbackCandid.length > 0) {
+        candid = fallbackCandid
+      }
+    } catch {
+      // Fallback is best-effort when canister does not publish Candid metadata
+    }
+  }
 
   return {
     controllers,

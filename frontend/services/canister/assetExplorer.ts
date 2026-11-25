@@ -4,6 +4,7 @@ import { createAgent } from "@/services/icp"
 import { parseCanisterId } from "@/services/cycles/topUp"
 import { formatBytes, formatNsTimestamp } from "@/lib/canister/format"
 import { triggerFileDownload } from "@/services/canister/management"
+import { runPool } from "@/lib/bucket/runPool"
 
 export type CanisterAssetItem = {
   key: string
@@ -379,6 +380,7 @@ export async function downloadCanisterAsset(
 }
 
 const CHUNK_SIZE = 1500000
+const UPLOAD_CONCURRENCY = 8
 
 export async function uploadCanisterAsset(
   identity: Identity,
@@ -413,10 +415,12 @@ export async function uploadCanisterAsset(
   }
 
   const { batch_id } = await actor.create_batch()
-  const chunkIds: bigint[] = []
   const totalChunks = Math.ceil(bytes.length / CHUNK_SIZE) || 1
+  const chunkIds: bigint[] = new Array(totalChunks)
+  const indices = Array.from({ length: totalChunks }, (_, i) => i)
+  let completed = 0
 
-  for (let i = 0; i < totalChunks; i++) {
+  await runPool(indices, UPLOAD_CONCURRENCY, async (i) => {
     const start = i * CHUNK_SIZE
     const end = Math.min(start + CHUNK_SIZE, bytes.length)
     const slice = bytes.slice(start, end)
@@ -424,9 +428,10 @@ export async function uploadCanisterAsset(
       batch_id,
       content: slice,
     })
-    chunkIds.push(chunk_id)
-    onProgress?.({ current: i + 1, total: totalChunks })
-  }
+    chunkIds[i] = chunk_id
+    completed += 1
+    onProgress?.({ current: completed, total: totalChunks })
+  })
 
   await actor.commit_batch({
     batch_id,
