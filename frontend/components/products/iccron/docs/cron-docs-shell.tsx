@@ -40,7 +40,7 @@ export function CronDocsShell({ doc, navGroups, allDocs }: CronDocsShellProps) {
                   </p>
                 )}
                 <div className="pt-2">
-                  <CronDocsCopyMenu markdown={doc.fullMarkdown} title={doc.title} />
+                  <CronDocsCopyMenu markdown={doc.fullMarkdown} />
                 </div>
                 <div className="border-b border-border/40 pt-4" />
               </header>

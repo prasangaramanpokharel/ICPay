@@ -11,6 +11,7 @@ export function extractHeadings(markdown: string): CronDocHeading[] {
   const headings: CronDocHeading[] = []
   const lines = markdown.split(/\r?\n/)
   let inCodeBlock = false
+  const seen = new Map<string, number>()
 
   for (const line of lines) {
     if (line.trim().startsWith("```")) {
@@ -22,14 +23,22 @@ export function extractHeadings(markdown: string): CronDocHeading[] {
     const h2Match = line.match(/^##\s+(.+)$/)
     if (h2Match) {
       const text = h2Match[1].trim()
-      headings.push({ id: slugify(text), text, level: 2 })
+      const base = slugify(text)
+      const count = seen.get(base) ?? 0
+      seen.set(base, count + 1)
+      const id = count === 0 ? base : `${base}-${count}`
+      headings.push({ id, text, level: 2 })
       continue
     }
 
     const h3Match = line.match(/^###\s+(.+)$/)
     if (h3Match) {
       const text = h3Match[1].trim()
-      headings.push({ id: slugify(text), text, level: 3 })
+      const base = slugify(text)
+      const count = seen.get(base) ?? 0
+      seen.set(base, count + 1)
+      const id = count === 0 ? base : `${base}-${count}`
+      headings.push({ id, text, level: 3 })
     }
   }
 

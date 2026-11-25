@@ -38,9 +38,58 @@ export const metadata: Metadata = {
     locale: "en_US",
     type: "website",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: "icCron Security Architecture | ICPay",
+    description:
+      "Defense-in-depth security model for icCron: SHA-256 hashed API keys, strict SSRF guard, and deterministic subnet outcall consensus.",
+    images: [pageImageUrl(PAGE_IMAGES.iccron.og)],
+    creator: "@IcpayOfficial",
+  },
   alternates: {
     canonical: "https://icpay.app/iccron/security",
   },
+}
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "TechArticle",
+      "headline": "icCron Security & Consensus Architecture",
+      "description":
+        "Detailed security specification for icCron on the Internet Computer: SHA-256 API keys, SSRF validation, and subnet consensus.",
+      "url": "https://icpay.app/iccron/security",
+      "author": {
+        "@type": "Organization",
+        "name": "ICPay",
+        "url": "https://icpay.app",
+      },
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://icpay.app",
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "icCron",
+          "item": "https://icpay.app/iccron",
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Security",
+          "item": "https://icpay.app/iccron/security",
+        },
+      ],
+    },
+  ],
 }
 
 const SECURITY_PILLARS = [
@@ -91,6 +140,10 @@ const SECURITY_PILLARS = [
 export default function IcCronSecurityPage() {
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="border-b border-border/60 bg-background py-14 md:py-20">
         <div className="mx-auto max-w-5xl px-4 md:px-6 space-y-8">
           <div className="flex flex-wrap items-center justify-between gap-3">

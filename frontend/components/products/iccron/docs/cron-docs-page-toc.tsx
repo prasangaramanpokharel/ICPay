@@ -42,12 +42,12 @@ export function CronDocsPageToc({
     <nav className={cn("space-y-3", className)} aria-label="On this page">
       <p className="text-xs font-semibold text-muted-foreground">On this page</p>
       <div className="space-y-1 border-l border-border/60">
-        {headings.map((heading) => {
+        {headings.map((heading, idx) => {
           const isActive = activeId === heading.id
 
           return (
             <a
-              key={heading.id}
+              key={`${heading.id}-${idx}`}
               href={`#${heading.id}`}
               className={cn(
                 "block text-xs leading-relaxed transition-colors -ml-px border-l-2 py-1",

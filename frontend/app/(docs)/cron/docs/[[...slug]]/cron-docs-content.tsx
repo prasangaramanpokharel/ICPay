@@ -14,5 +14,54 @@ export async function CronDocsContent({
 
   const allDocs = loadAllCronDocMeta()
   const navGroups = buildCronNavGroups(allDocs)
-  return <CronDocsShell doc={doc} navGroups={navGroups} allDocs={allDocs} />
+
+  const path = slug.length > 0 ? `/cron/docs/${slug.join("/")}` : "/cron/docs"
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "TechArticle",
+        headline: doc.title,
+        description: doc.description,
+        url: `https://icpay.app${path}`,
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Home",
+            item: "https://icpay.app",
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "icCron Docs",
+            item: "https://icpay.app/cron/docs",
+          },
+          ...(slug.length > 0
+            ? [
+                {
+                  "@type": "ListItem",
+                  position: 3,
+                  name: doc.title,
+                  item: `https://icpay.app${path}`,
+                },
+              ]
+            : []),
+        ],
+      },
+    ],
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <CronDocsShell doc={doc} navGroups={navGroups} allDocs={allDocs} />
+    </>
+  )
 }

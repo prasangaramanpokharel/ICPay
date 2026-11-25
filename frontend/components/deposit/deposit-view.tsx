@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo, useEffect } from "react"
 import { DepositAddressCard } from "@/components/deposit/deposit-address-card"
 import { useTranslations } from "next-intl"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -7,25 +8,58 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { AppPage } from "@/components/layout/dashboard/app-page"
 import { useDepositAddress } from "@/hooks/wallet/useWalletData"
 import { useAuth } from "@/components/auth/auth-provider"
+import { useEffectivePrincipal } from "@/lib/auth/lastPrincipal"
+import { readCache, writeCache } from "@/lib/cache/persistCache"
 import { ICP_LEDGER_ID } from "@/services/tokens"
 import { resolveTokenIcon } from "@/lib/token/icon"
 import { useTokenRegistry } from "@/lib/token/registry"
 import { icrc1Account } from "@/lib/wallet/accountId"
 import { copyText } from "@/lib/wallet/utils"
 
+type CachedDeposit = {
+  icrcAddress: string
+  accountId: string
+}
+
+const DEPOSIT_CACHE_TTL = 30 * 24 * 60 * 60 * 1000
+
 export function DepositView() {
   const t = useTranslations("deposit")
   const { data, error, isLoading } = useDepositAddress()
-  const { identity } = useAuth()
+  const { identity, isLoading: authLoading } = useAuth()
+  const { principal } = useEffectivePrincipal()
   const registry = useTokenRegistry()
   const icpIcon = resolveTokenIcon(ICP_LEDGER_ID, undefined, registry)
 
-  const icrcAddress = data ? icrc1Account(data.address.owner, data.address.subaccount[0]) : ""
-  const accountId = data?.accountId ?? ""
+  const cacheKey = principal ? `icpay:wallet:deposit-strings:${principal}` : null
+
+  const cached = useMemo(() => {
+    if (!cacheKey) return undefined
+    return readCache<CachedDeposit>(cacheKey, DEPOSIT_CACHE_TTL)
+  }, [cacheKey])
+
+  const icrcAddress = data
+    ? icrc1Account(data.address.owner, data.address.subaccount[0])
+    : cached?.icrcAddress ?? ""
+
+  const accountId = data?.accountId ?? cached?.accountId ?? ""
+
+  useEffect(() => {
+    if (cacheKey && data) {
+      const derivedIcrc = icrc1Account(data.address.owner, data.address.subaccount[0])
+      writeCache(cacheKey, {
+        icrcAddress: derivedIcrc,
+        accountId: data.accountId,
+      })
+    }
+  }, [cacheKey, data])
+
+  const hasAddress = Boolean(icrcAddress)
+  const isResolving = (isLoading || authLoading) && !hasAddress && !error
 
   return (
     <AppPage title={t("title")} description={t("subtitle")}>
-      {isLoading ? (
+      {isResolving ? (
         <div className="mx-auto w-full max-w-md space-y-4 rounded-(--radius) border border-border/70 bg-card p-6 shadow-xs">
           <Skeleton className="h-9 w-full rounded-(--radius)" />
           <div className="flex flex-col items-center justify-center p-4">
@@ -37,7 +71,7 @@ export function DepositView() {
           </div>
           <Skeleton className="h-9 w-full rounded-(--radius)" />
         </div>
-      ) : error ? (
+      ) : error && !hasAddress ? (
         <Alert variant="destructive">
           <AlertDescription>
             {error instanceof Error ? error.message : t("loadFailed")}
@@ -47,7 +81,7 @@ export function DepositView() {
         <DepositAddressCard
           accountId={accountId}
           icrcAddress={icrcAddress}
-          principal={identity?.getPrincipal().toText()}
+          principal={principal ?? identity?.getPrincipal().toText()}
           logo={icpIcon}
           onCopy={copyText}
         />

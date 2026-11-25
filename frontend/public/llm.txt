@@ -22,6 +22,10 @@ ICPay (https://icpay.app) is an Internet Computer (ICP) native platform featurin
 - [Wallet](https://icpay.app/wallet): Multi-token wallet management, address book, subaccounts, and transaction history.
 - [icBucket Cloud Storage](https://icpay.app/bucket): Decentralized, encrypted-at-rest file storage and global CDN hosting on the Internet Computer.
 - [icBucket Landing Page](https://icpay.app/icbucket): Product overview, pricing tiers, and architecture comparisons with AWS S3.
+- [icCron Landing Page](https://icpay.app/iccron): Decentralized, sub-second on-chain cron scheduler and HTTPS webhook dispatcher.
+- [icCron Pricing](https://icpay.app/iccron/pricing): Pay-as-you-go execution pricing at $0.0005 per run with zero monthly server fees.
+- [icCron Security Architecture](https://icpay.app/iccron/security): SHA-256 hashed API keys, SSRF protection, and deterministic subnet consensus model.
+- [Cron Dashboard](https://icpay.app/cron): Autonomous job scheduling dashboard, execution logs, API keys, and dead letter queue.
 - [icFalcon Framework](https://icpay.app/icfalcon): High-performance developer CLI and canister operations suite.
 - [Token Launcher](https://icpay.app/token/create): Launch custom ICRC-1 / ICRC-2 tokens on the Internet Computer in one click.
 - [Canister Manager](https://icpay.app/canister): Deploy, monitor cycles, snapshot, and manage ICP canisters.
@@ -31,6 +35,8 @@ ICPay (https://icpay.app) is an Internet Computer (ICP) native platform featurin
 
 ## Developer Documentation & APIs
 - [icBucket Documentation](https://icpay.app/bucket/docs): REST, Python SDK, and TypeScript SDK integration guides for icBucket.
+- [icCron Documentation](https://icpay.app/cron/docs): Architecture, 5 SDK integration guides (npm, Python, Go, Rust, PHP), and HTTP gateway dispatch reference.
+- [icCron Knowledge Base](https://icpay.app/iccron/llm.txt): Raw markdown specs and canister API reference for LLMs and autonomous agents.
 - [Quickstart Guide](https://icpay.app/bucket/docs/getting-started/quickstart): 5-minute guide to upload and retrieve files.
 - [API Authentication](https://icpay.app/bucket/docs/api/auth): Generate and manage read/write API keys for scripts, bots, and agents.
 - [API Methods & Endpoints](https://icpay.app/bucket/docs/api/methods): Full reference for listFolder, uploadChunk, and getFile.

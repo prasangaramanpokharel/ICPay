@@ -1,4 +1,12 @@
+import type { Metadata } from "next"
 import { PublicProfile } from "./public-profile"
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: true,
+  },
+}
 
 // output: "export" cannot prerender a route whose parameter values only exist at
 // runtime, so a single shell is emitted here and the real handle is read from

@@ -1,10 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { cn } from "@/lib/ui/utils"
 import { Icon } from "@/components/ui/icon"
 import { ChevronDownGlassIcon } from "@thesvg/ui-react"
-import { Markdown, Openai, Claude, Mcp } from "@dev.icons/react"
+import { Markdown, Openai, Claude } from "@dev.icons/react"
 import { CopyIconIndicator } from "@/components/ui/copy-button"
 import {
   DropdownMenu,
@@ -18,10 +17,9 @@ import { toast } from "@/components/ui/toast"
 
 type CronDocsCopyMenuProps = {
   markdown: string
-  title?: string
 }
 
-export function CronDocsCopyMenu({ markdown, title = "icCron Documentation" }: CronDocsCopyMenuProps) {
+export function CronDocsCopyMenu({ markdown }: CronDocsCopyMenuProps) {
   const [copied, setCopied] = useState(false)
 
   const handleCopyPage = async () => {

@@ -112,8 +112,8 @@ export function WhatIsSection() {
 
           <div className="relative my-6 overflow-hidden rounded-2xl border border-border/60 bg-muted/30 p-6 md:p-8">
             <div className="relative mx-auto max-w-4xl">
-              <div className="hidden sm:block absolute top-8 left-16 right-16 -z-0 h-0.5 border-t-2 border-dashed border-border" />
-              <div className="hidden sm:block absolute top-8 left-16 right-16 -z-0 h-0.5 bg-gradient-to-r from-primary via-accent to-success opacity-40" />
+              <div className="hidden sm:block absolute top-8 left-[14%] right-[14%] z-0 h-0.5 border-t-2 border-dashed border-border" />
+              <div className="hidden sm:block absolute top-8 left-[14%] right-[14%] z-0 h-0.5 bg-gradient-to-r from-primary via-accent to-success opacity-40" />
 
               <div className="grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-4">
                 {FLOW_STEPS.map((item) => (

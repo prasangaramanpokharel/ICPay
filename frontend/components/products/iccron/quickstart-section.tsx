@@ -206,6 +206,7 @@ export function QuickstartSection() {
                 height={20}
                 unoptimized
                 className="size-4 object-contain"
+                style={{ width: "auto", height: "auto" }}
               />
               <span className="underline underline-offset-4 hover:text-primary">npm: icpay-cron</span>
               <Badge variant="secondary" className="font-mono text-[10px]">
@@ -226,6 +227,7 @@ export function QuickstartSection() {
                 height={16}
                 unoptimized
                 className="size-4 object-contain dark:invert"
+                style={{ width: "auto", height: "auto" }}
               />
               <span className="underline underline-offset-4 hover:text-primary">GitHub: ICPay</span>
               <Badge variant="secondary" className="font-mono text-[10px]">
@@ -301,6 +303,7 @@ export function QuickstartSection() {
                       height={20}
                       unoptimized
                       className={pkg.invertInDark ? "size-5 object-contain dark:invert" : "size-5 object-contain"}
+                      style={{ width: "auto", height: "auto" }}
                     />
                   </div>
                   <Link

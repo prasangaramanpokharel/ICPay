@@ -156,6 +156,7 @@ export function SdkBenchmarkSection() {
                               height={20}
                               unoptimized
                               className={row.invertInDark ? "size-5 object-contain dark:invert" : "size-5 object-contain"}
+                              style={{ width: "auto", height: "auto" }}
                             />
                           </div>
                           <div className="min-w-0">

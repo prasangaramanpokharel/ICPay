@@ -49,6 +49,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title,
       description: doc.description,
       images: [pageImageUrl(PAGE_IMAGES.iccron.og)],
+      creator: "@IcpayOfficial",
     },
   }
 }

@@ -119,14 +119,7 @@ export function PublicProfile() {
   }
 
   if (!claimable || !principal) {
-    return (
-      <>
-        <head>
-          <meta name="robots" content="noindex, follow" />
-        </head>
-        <Custom404Page />
-      </>
-    )
+    return <Custom404Page />
   }
 
   const isSelf = principal === identity?.getPrincipal().toText()
