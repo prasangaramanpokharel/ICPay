@@ -24,7 +24,6 @@ import { useLedgerSymbol, useTransactionDetail } from "@/hooks/wallet/useWalletD
 import { useIsMobile } from "@/hooks/use-mobile"
 import type { TransactionPublic } from "@/services/types"
 import {
-  explorerTxUrl,
   formatDetailTime,
   formatTokenAmount,
   isIncomingTx,
@@ -239,7 +238,7 @@ function TransactionDrawerBody({ tx }: { tx: TransactionPublic }) {
           <DetailRow label={t("rowBlock")}>
             <div className="flex min-w-0 items-start justify-end gap-1.5">
               <a
-                href={explorerTxUrl(blockIndex)}
+                href={`https://dashboard.internetcomputer.org/transaction/${encodeURIComponent(blockIndex.toString())}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="min-w-0 break-all text-right underline underline-offset-2 hover:text-foreground font-mono text-xs"

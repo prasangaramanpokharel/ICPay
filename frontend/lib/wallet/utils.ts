@@ -125,7 +125,7 @@ export function formatPrincipal(p: string): string {
 }
 
 export function explorerTxUrl(blockIndex: bigint): string {
-  return `https://dashboard.internetcomputer.org/transaction/${blockIndex}`
+  return `https://dashboard.internetcomputer.org/transaction/${encodeURIComponent(blockIndex.toString())}`
 }
 
 export function formatTime(t: bigint): string {
