@@ -1,5 +1,5 @@
 import type { UiIcon } from "@thesvg/ui-react"
-import { BookOpenGlassIcon, ObjectStorageGlassIcon, LayoutDashboardGlassIcon, DownloadGlassIcon, HeartGlassIcon, ChartLineGlassIcon, FileGlassIcon, InfoGlassIcon, CircleQuestionMarkGlassIcon, NewspaperGlassIcon, CameraGlassIcon, PackageGlassIcon, RocketGlassIcon, RouteGlassIcon, SettingsGlassIcon, ShieldCheckGlassIcon, ShoppingBagGlassIcon, TerminalGlassIcon, EyeGlassIcon, WalletBalanceGlassIcon, ZapGlassIcon } from "@thesvg/ui-react"
+import { BookOpenGlassIcon, ObjectStorageGlassIcon, LayoutDashboardGlassIcon, DownloadGlassIcon, HeartGlassIcon, ChartLineGlassIcon, FileGlassIcon, InfoGlassIcon, CircleQuestionMarkGlassIcon, NewspaperGlassIcon, CameraGlassIcon, PackageGlassIcon, RocketGlassIcon, RouteGlassIcon, SettingsGlassIcon, ShieldCheckGlassIcon, ShoppingBagGlassIcon, TerminalGlassIcon, EyeGlassIcon, WalletBalanceGlassIcon, ZapGlassIcon, ClockGlassIcon } from "@thesvg/ui-react"
 
 export const NAV_MENU_ICONS: Record<string, UiIcon> = {
   "/downloads": DownloadGlassIcon,
@@ -17,6 +17,10 @@ export const NAV_MENU_ICONS: Record<string, UiIcon> = {
   "/topup": ZapGlassIcon,
   "/icbucket": ObjectStorageGlassIcon,
   "/icfalcon": RocketGlassIcon,
+  "/iccron": ClockGlassIcon,
+  "/cron": ClockGlassIcon,
+  "/cron/docs": BookOpenGlassIcon,
+  "/iccron/docs": BookOpenGlassIcon,
   "/products/icFalcon/commands": TerminalGlassIcon,
   "/products/icFalcon/packages": PackageGlassIcon,
   "/bucket/docs": BookOpenGlassIcon,

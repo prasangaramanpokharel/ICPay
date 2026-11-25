@@ -37,8 +37,7 @@
     { "source": "/products/icFalcon", "destination": "/icfalcon", "permanent": true },
     { "source": "/products/icFalcon/packages", "destination": "/icfalcon", "permanent": true },
     { "source": "/products/icFalcon/commands", "destination": "/icfalcon", "permanent": true },
-    { "source": "/charit", "destination": "/charity", "permanent": true },
-    { "source": "/home", "destination": "/", "permanent": true }
+    { "source": "/charit", "destination": "/charity", "permanent": true }
   ],
   "rewrites": [
     {
