@@ -1,10 +1,49 @@
 "use client"
 
-import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Icon } from "@/components/ui/icon"
-import { ClockGlassIcon, GlobeGlassIcon, ZapGlassIcon, ShieldGlassIcon, ChartLineGlassIcon } from "@thesvg/ui-react"
+import {
+  ClockGlassIcon,
+  GlobeGlassIcon,
+  ZapGlassIcon,
+  ShieldGlassIcon,
+  ChartLineGlassIcon,
+  CalendarClockGlassIcon,
+  CpuGlassIcon,
+  CircleCheckGlassIcon,
+} from "@thesvg/ui-react"
+
+const FLOW_STEPS = [
+  {
+    step: "01",
+    title: "Define Schedule",
+    subtitle: "Cron / Webhook",
+    icon: CalendarClockGlassIcon,
+    ringColor: "border-primary/50 text-primary shadow-primary/10",
+  },
+  {
+    step: "02",
+    title: "Compile Bitmask",
+    subtitle: "O(1) Time Math",
+    icon: ZapGlassIcon,
+    ringColor: "border-accent text-foreground shadow-accent/10",
+  },
+  {
+    step: "03",
+    title: "Autonomous Tick",
+    subtitle: "Zero Server Bots",
+    icon: CpuGlassIcon,
+    ringColor: "border-primary/50 text-primary shadow-primary/10",
+  },
+  {
+    step: "04",
+    title: "Execute & Log",
+    subtitle: "Auto-Retry & DLQ",
+    icon: CircleCheckGlassIcon,
+    ringColor: "border-success/50 text-success shadow-success/10",
+  },
+]
 
 const PILLARS = [
   {
@@ -53,7 +92,7 @@ export function WhatIsSection() {
           </p>
         </div>
 
-        <div className="mt-12 rounded-3xl border border-border/80 bg-card/60 p-6 shadow-sm md:p-8">
+        <div className="mt-12 rounded-3xl border border-border/80 bg-card p-6 shadow-sm md:p-8">
           <div className="mb-8 flex flex-col items-center justify-between gap-4 border-b border-border/50 pb-6 sm:flex-row">
             <div>
               <p className="text-sm font-semibold uppercase tracking-wider text-primary">
@@ -71,14 +110,37 @@ export function WhatIsSection() {
             </div>
           </div>
 
-          <div className="relative mx-auto my-4 flex justify-center overflow-hidden rounded-2xl bg-secondary/30 p-4">
-            <Image
-              src="/images/pages/iccron/cron-flow.svg"
-              alt="icCron 4-step execution flow"
-              width={900}
-              height={140}
-              className="h-auto w-full max-w-3xl object-contain dark:invert-0"
-            />
+          <div className="relative my-6 overflow-hidden rounded-2xl border border-border/60 bg-muted/30 p-6 md:p-8">
+            <div className="relative mx-auto max-w-4xl">
+              <div className="hidden sm:block absolute top-8 left-16 right-16 -z-0 h-0.5 border-t-2 border-dashed border-border" />
+              <div className="hidden sm:block absolute top-8 left-16 right-16 -z-0 h-0.5 bg-gradient-to-r from-primary via-accent to-success opacity-40" />
+
+              <div className="grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-4">
+                {FLOW_STEPS.map((item) => (
+                  <div key={item.step} className="flex flex-col items-center text-center space-y-3">
+                    <div className="relative flex flex-col items-center">
+                      <div
+                        className={`relative z-10 flex size-16 items-center justify-center rounded-full border-2 bg-card p-3 shadow-md backdrop-blur-md transition-all duration-300 hover:scale-105 ${item.ringColor}`}
+                      >
+                        <Icon icon={item.icon} className="size-7" />
+                      </div>
+                      <span className="mt-2 inline-flex items-center rounded-full border border-border/70 bg-background px-2 py-0.5 font-mono text-[10px] font-bold text-primary shadow-2xs">
+                        {item.step}
+                      </span>
+                    </div>
+
+                    <div className="space-y-1">
+                      <h4 className="text-xs sm:text-sm font-bold text-foreground leading-snug">
+                        {item.title}
+                      </h4>
+                      <p className="font-mono text-[10px] sm:text-[11px] text-muted-foreground">
+                        {item.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

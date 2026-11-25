@@ -1,0 +1,74 @@
+---
+title: "Quick Start"
+description: "Launch your first scheduled on-chain cron job in under 60 seconds."
+group: "Overview"
+order: 2
+---
+
+# Quick Start
+
+In this guide, you will create a project-scoped API key, configure an hourly webhook job pointing to your endpoint, and verify execution logs.
+
+## 1. Get an API Key
+
+1. Sign in to the [icCron Dashboard](/cron) using your Internet Identity passkey.
+2. Select your default project or click **New Project**.
+3. Navigate to **API Keys** and click **Create API Key**.
+4. Copy your raw secret key (`icp_cron_<64-hex-chars>`). Note: this secret is only displayed once and is hashed with SHA-256 on chain.
+
+## 2. Schedule Your First Job
+
+You can create a job using our official TypeScript SDK or cURL:
+
+<CronCodeTabs
+  examples={{
+    typescript: `import { IcCronClient } from "icpay-cron";
+
+const client = new IcCronClient({
+  apiKey: "icp_cron_your_api_key_here",
+});
+
+// Schedule an hourly webhook
+const job = await client.createJob({
+  label: "Hourly Sync",
+  cronExpression: "0 * * * *",
+  target: {
+    type: "HttpWebhook",
+    url: "https://your-domain.com/api/cron",
+    method: "POST",
+    headers: [["X-Cron-Secret", "my_secret_token"]],
+  },
+});
+
+console.log("Job created with ID:", job.id);`,
+    curl: `curl -X POST "https://w2fxo-5qaaa-aaaan-q6zxq-cai.raw.icp0.io/api/v1/cron/jobs" \\
+  -H "Authorization: Bearer icp_cron_your_api_key_here" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "label": "Hourly Sync",
+    "cron_expression": "0 * * * *",
+    "target": {
+      "type": "HttpWebhook",
+      "url": "https://your-domain.com/api/cron",
+      "method": "POST",
+      "headers": [["X-Cron-Secret", "my_secret_token"]]
+    }
+  }'`
+  }}
+/>
+
+## 3. Verify Execution Logs
+
+Once your job is active, query the latest execution logs directly via the SDK:
+
+```typescript
+const logs = await client.getProjectLogs();
+console.log("Recent execution logs:", logs);
+```
+
+Every log record includes:
+- `started_at`: Unix timestamp of execution start
+- `duration_ms`: Execution latency in milliseconds
+- `status_code`: HTTP response status code (e.g., `200`)
+- `success`: Boolean delivery indicator
+- `response_snippet`: 200-byte snippet of the consensus-verified response body

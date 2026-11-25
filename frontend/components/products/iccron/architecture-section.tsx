@@ -10,7 +10,7 @@ const SPECS = [
   {
     icon: CpuGlassIcon,
     title: "Rust Canister Core",
-    subtitle: "uzt4z-lp777-77774-qaabq-cai",
+    subtitle: "w2fxo-5qaaa-aaaan-q6zxq-cai",
     description:
       "Engineered in memory-safe Rust with ic-stable-structures. State persists safely across canister Wasm upgrades without serialization loss.",
   },
@@ -58,8 +58,8 @@ export function ArchitectureSection() {
             <Image
               src="/images/pages/iccron/architecture-diagram.svg"
               alt="icCron system architecture diagram"
-              width={1000}
-              height={450}
+              width={940}
+              height={480}
               className="h-auto w-full max-w-4xl object-contain dark:invert-0"
             />
           </div>
@@ -91,7 +91,7 @@ export function ArchitectureSection() {
               <Icon icon={DatabaseGlassIcon} className="size-5 text-primary shrink-0" />
               <div>
                 <p className="text-xs font-semibold text-foreground">
-                  Canister ID: <span className="font-mono text-primary">uzt4z-lp777-77774-qaabq-cai</span>
+                  Canister ID: <span className="font-mono text-primary">w2fxo-5qaaa-aaaan-q6zxq-cai</span>
                 </p>
                 <p className="text-[11px] text-muted-foreground">
                   Subnet: App Subnet · Replicated across 13 independent node machines

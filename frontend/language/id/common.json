@@ -1388,6 +1388,10 @@
         "blog": {
           "title": "Blog",
           "description": "Panduan, tutorial, dan artikel ekosistem ICP."
+        },
+        "launch": {
+          "title": "Luncurkan Token",
+          "description": "Buat token ICRC-1 di Internet Computer."
         }
       },
       "legal": {

@@ -1388,6 +1388,10 @@
         "blog": {
           "title": "Blog",
           "description": "Guías, tutoriales y artículos del ecosistema ICP."
+        },
+        "launch": {
+          "title": "Lanzar token",
+          "description": "Crea un token ICRC-1 en Internet Computer."
         }
       },
       "legal": {

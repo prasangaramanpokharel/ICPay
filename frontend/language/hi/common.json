@@ -1388,6 +1388,10 @@
         "blog": {
           "title": "ब्लॉग",
           "description": "गाइड, ट्यूटोरियल और ICP इकोसिस्टम लेख।"
+        },
+        "launch": {
+          "title": "टोकन लॉन्च करें",
+          "description": "Internet Computer पर ICRC-1 टोकन बनाएं।"
         }
       },
       "legal": {

@@ -1,0 +1,58 @@
+---
+title: "Installation"
+description: "Install official icCron SDK packages across TypeScript, Python, Go, Rust, and PHP."
+group: "Overview"
+order: 3
+---
+
+# Installation
+
+icCron provides official client SDKs across 5 programming languages. Every SDK exposes an identical 7-method interface for job management, pause/resume lifecycles, and ring-buffer execution log inspection.
+
+## Package Managers
+
+Install the client library using your ecosystem's package manager:
+
+```bash
+# npm (Node.js & TypeScript)
+npm install icpay-cron
+
+# pnpm
+pnpm add icpay-cron
+
+# yarn
+yarn add icpay-cron
+
+# bun
+bun add icpay-cron
+
+# Python (pip)
+pip install icpay-cron
+
+# Go
+go get github.com/prasangaramanpokharel/icpay-cron-go
+
+# Rust (Cargo)
+cargo add icpay-cron
+
+# PHP (Composer)
+composer require icpay/cron
+```
+
+## Package Registry Details
+
+| Language | Package Identifier | Registry Link | Install Command |
+|---|---|---|---|
+| **TypeScript / Node.js** | `icpay-cron` | [npm registry](https://www.npmjs.com/package/icpay-cron) | `npm i icpay-cron` |
+| **Python** | `icpay-cron` | [PyPI](https://pypi.org/project/icpay-cron/) | `pip install icpay-cron` |
+| **Go** | `icpay-cron-go` | [GitHub](https://github.com/prasangaramanpokharel/icpay-cron-go) | `go get github.com/prasangaramanpokharel/icpay-cron-go` |
+| **Rust** | `icpay-cron` | [crates.io](https://crates.io/crates/icpay-cron) | `cargo add icpay-cron` |
+| **PHP** | `icpay/cron` | [Packagist](https://packagist.org/packages/icpay/cron) | `composer require icpay/cron` |
+
+## Requirements
+
+- **Node.js**: v18.0.0 or higher
+- **Python**: v3.9 or higher
+- **Go**: v1.21 or higher
+- **Rust**: 2021 edition (Rust 1.75+)
+- **PHP**: v8.1 or higher with `curl` and `json` extensions

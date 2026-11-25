@@ -1388,6 +1388,10 @@
         "blog": {
           "title": "Blog",
           "description": "Mga gabay, tutorial, at artikulo tungkol sa ICP ecosystem."
+        },
+        "launch": {
+          "title": "Ilunsad ang token",
+          "description": "Gumawa ng ICRC-1 token sa Internet Computer."
         }
       },
       "legal": {

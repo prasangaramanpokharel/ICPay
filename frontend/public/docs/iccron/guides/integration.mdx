@@ -1,0 +1,280 @@
+---
+title: "Multi-Language Integration"
+description: "Complete integration examples with interactive language switcher across TypeScript, Python, Go, Rust, PHP, and cURL."
+group: "Guides"
+order: 0
+---
+
+# Multi-Language Integration
+
+Choose your preferred programming language below to see complete, runnable code examples for scheduling jobs, pausing, resuming, triggering, and inspecting project execution logs.
+
+## 1. Client Initialization & Job Creation
+
+<CronCodeTabs
+  examples={{
+    typescript: `import { IcCronClient } from "icpay-cron";
+
+const client = new IcCronClient({
+  apiKey: process.env.ICCRON_API_KEY!,
+});
+
+// Create an hourly webhook job
+const job = await client.createJob({
+  label: "Hourly Database Backup",
+  cronExpression: "0 * * * *",
+  maxRetries: 5,
+  target: {
+    type: "HttpWebhook",
+    url: "https://api.your-app.com/v1/jobs/backup",
+    method: "POST",
+    headers: [["Authorization", "Bearer my_secret_token"]],
+    body: JSON.stringify({ action: "snapshot" }),
+  },
+});
+
+console.log("Created job ID:", job.id);`,
+    python: `from icpay_cron import IcCronClient
+import os, json
+
+client = IcCronClient(api_key=os.environ["ICCRON_API_KEY"])
+
+job = client.create_job(
+    label="Hourly Database Backup",
+    cron_expression="0 * * * *",
+    max_retries=5,
+    target={
+        "type": "HttpWebhook",
+        "url": "https://api.your-app.com/v1/jobs/backup",
+        "method": "POST",
+        "headers": [["Authorization", "Bearer my_secret_token"]],
+        "body": json.dumps({"action": "snapshot"}),
+    },
+)
+
+print(f"Created job ID: {job['id']}")`,
+    go: `package main
+
+import (
+	"fmt"
+	"os"
+	iccron "github.com/prasangaramanpokharel/icpay-cron-go"
+)
+
+func main() {
+	client := iccron.NewClient(os.Getenv("ICCRON_API_KEY"))
+
+	job, err := client.CreateJob(iccron.CreateJobRequest{
+		Label:          "Hourly Database Backup",
+		CronExpression: "0 * * * *",
+		MaxRetries:     5,
+		Target: iccron.Target{
+			Type:    "HttpWebhook",
+			URL:     "https://api.your-app.com/v1/jobs/backup",
+			Method:  "POST",
+			Headers: [][2]string{{"Authorization", "Bearer my_secret_token"}},
+			Body:    \`{"action":"snapshot"}\`,
+		},
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Created job ID: %d\\n", job.ID)
+}`,
+    rust: `use icpay_cron::{IcCronClient, CreateJobRequest, Target};
+use std::env;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let api_key = env::var("ICCRON_API_KEY")?;
+    let client = IcCronClient::new(api_key);
+
+    let job = client.create_job(CreateJobRequest {
+        label: "Hourly Database Backup".into(),
+        cron_expression: "0 * * * *".into(),
+        max_retries: 5,
+        target: Target::HttpWebhook {
+            url: "https://api.your-app.com/v1/jobs/backup".into(),
+            method: "POST".into(),
+            headers: vec![("Authorization".into(), "Bearer my_secret_token".into())],
+            body: Some(r#"{"action":"snapshot"}"#.into()),
+        },
+    }).await?;
+
+    println!("Created job ID: {}", job.id);
+    Ok(())
+}`,
+    php: `<?php
+require 'vendor/autoload.php';
+
+use ICPay\\Cron\\IcCronClient;
+
+$client = new IcCronClient(getenv('ICCRON_API_KEY'));
+
+$job = $client->createJob([
+    'label'           => 'Hourly Database Backup',
+    'cron_expression' => '0 * * * *',
+    'max_retries'     => 5,
+    'target'          => [
+        'type'    => 'HttpWebhook',
+        'url'     => 'https://api.your-app.com/v1/jobs/backup',
+        'method'  => 'POST',
+        'headers' => [['Authorization', 'Bearer my_secret_token']],
+        'body'    => json_encode(['action' => 'snapshot']),
+    ],
+]);
+
+echo "Created job ID: " . $job['id'] . "\\n";`,
+    curl: `curl -X POST "https://w2fxo-5qaaa-aaaan-q6zxq-cai.raw.icp0.io/api/v1/cron/jobs" \\
+  -H "Authorization: Bearer icp_cron_your_api_key_here" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "label": "Hourly Database Backup",
+    "cron_expression": "0 * * * *",
+    "max_retries": 5,
+    "target": {
+      "type": "HttpWebhook",
+      "url": "https://api.your-app.com/v1/jobs/backup",
+      "method": "POST",
+      "headers": [["Authorization", "Bearer my_secret_token"]],
+      "body": "{\\"action\\":\\"snapshot\\"}"
+    }
+  }'`
+  }}
+/>
+
+## 2. Listing Jobs & Querying Execution Logs
+
+Query all scheduled jobs and inspect the execution history without burning any cycles (served via free IC query calls):
+
+<CronCodeTabs
+  examples={{
+    typescript: `// List all jobs in the project
+const jobs = await client.listJobs();
+console.log("Active jobs:", jobs);
+
+// Fetch recent execution logs (up to 100 entries, newest first)
+const projectLogs = await client.getProjectLogs();
+
+// Fetch logs for a specific job ID
+const jobLogs = await client.getJobLogs(job.id);
+console.log("Job logs:", jobLogs);`,
+    python: `# List all jobs
+jobs = client.list_jobs()
+
+# Fetch recent execution logs
+project_logs = client.get_project_logs()
+
+# Fetch per-job logs
+job_logs = client.get_job_logs(job["id"])
+print(f"Total runs: {len(job_logs)}")`,
+    go: `// List all jobs
+jobs, _ := client.ListJobs()
+
+// Fetch project logs
+projectLogs, _ := client.GetProjectLogs()
+
+// Fetch job logs
+jobLogs, _ := client.GetJobLogs(job.ID)
+fmt.Printf("Total runs: %d\\n", len(jobLogs))`,
+    rust: `// List all jobs
+let jobs = client.list_jobs().await?;
+
+// Fetch project logs
+let project_logs = client.get_project_logs().await?;
+
+// Fetch job logs
+let job_logs = client.get_job_logs(job.id).await?;
+println!("Total runs: {}", job_logs.len());`,
+    php: `// List all jobs
+$jobs = $client->listJobs();
+
+// Fetch project logs
+$projectLogs = $client->getProjectLogs();
+
+// Fetch job logs
+$jobLogs = $client->getJobLogs($job['id']);
+echo "Total runs: " . count($jobLogs) . "\\n";`,
+    curl: `# List all project jobs
+curl -X GET "https://w2fxo-5qaaa-aaaan-q6zxq-cai.raw.icp0.io/api/v1/cron/jobs" \\
+  -H "Authorization: Bearer icp_cron_your_api_key_here"
+
+# Fetch project execution logs
+curl -X GET "https://w2fxo-5qaaa-aaaan-q6zxq-cai.raw.icp0.io/api/v1/cron/logs" \\
+  -H "Authorization: Bearer icp_cron_your_api_key_here"`
+  }}
+/>
+
+## 3. Job Lifecycle (Pause, Resume, Trigger, Delete)
+
+Manage your jobs programmatically:
+
+<CronCodeTabs
+  examples={{
+    typescript: `// Trigger job immediately out-of-band
+await client.trigger({ projectId: 1, jobId: job.id });
+
+// Pause job (releases IC timer slot)
+await client.pauseJob(job.id);
+
+// Resume paused job (recomputes next run time)
+await client.resumeJob(job.id);
+
+// Permanently delete job and logs
+await client.deleteJob(job.id);`,
+    python: `# Trigger immediately
+client.trigger(project_id=1, job_id=job["id"])
+
+# Pause and Resume
+client.pause_job(job["id"])
+client.resume_job(job["id"])
+
+# Delete
+client.delete_job(job["id"])`,
+    go: `// Trigger immediately
+client.Trigger(1, job.ID)
+
+// Pause and Resume
+client.PauseJob(job.ID)
+client.ResumeJob(job.ID)
+
+// Delete
+client.DeleteJob(job.ID)`,
+    rust: `// Trigger immediately
+client.trigger(1, job.id).await?;
+
+// Pause and Resume
+client.pause_job(job.id).await?;
+client.resume_job(job.id).await?;
+
+// Delete
+client.delete_job(job.id).await?;`,
+    php: `// Trigger immediately
+$client->trigger(1, $job['id']);
+
+// Pause and Resume
+$client->pauseJob($job['id']);
+$client->resumeJob($job['id']);
+
+// Delete
+$client->deleteJob($job['id']);`,
+    curl: `# Trigger immediately
+curl -X POST "https://w2fxo-5qaaa-aaaan-q6zxq-cai.raw.icp0.io/api/v1/cron/trigger" \\
+  -H "Authorization: Bearer icp_cron_your_api_key_here" \\
+  -H "Content-Type: application/json" \\
+  -d '{"project_id": 1, "job_id": 1}'
+
+# Pause
+curl -X POST "https://w2fxo-5qaaa-aaaan-q6zxq-cai.raw.icp0.io/api/v1/cron/jobs/1/pause" \\
+  -H "Authorization: Bearer icp_cron_your_api_key_here"
+
+# Resume
+curl -X POST "https://w2fxo-5qaaa-aaaan-q6zxq-cai.raw.icp0.io/api/v1/cron/jobs/1/resume" \\
+  -H "Authorization: Bearer icp_cron_your_api_key_here"
+
+# Delete
+curl -X DELETE "https://w2fxo-5qaaa-aaaan-q6zxq-cai.raw.icp0.io/api/v1/cron/jobs/1" \\
+  -H "Authorization: Bearer icp_cron_your_api_key_here"`
+  }}
+/>

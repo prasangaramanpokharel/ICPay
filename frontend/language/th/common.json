@@ -1388,6 +1388,10 @@
         "blog": {
           "title": "บล็อก",
           "description": "คู่มือ บทเรียน และบทความระบบนิเวศ ICP"
+        },
+        "launch": {
+          "title": "เปิดตัวโทเค็น",
+          "description": "สร้างโทเค็น ICRC-1 บน Internet Computer"
         }
       },
       "legal": {

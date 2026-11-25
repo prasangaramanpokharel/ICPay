@@ -15,7 +15,7 @@ import type {
 } from "./types"
 
 export const CRON_CANISTER_ID =
-  process.env.NEXT_PUBLIC_CRON_CANISTER_ID?.trim() || "uzt4z-lp777-77774-qaabq-cai"
+  process.env.NEXT_PUBLIC_CRON_CANISTER_ID?.trim() || "w2fxo-5qaaa-aaaan-q6zxq-cai"
 
 export const CRON_HOST =
   process.env.NEXT_PUBLIC_CRON_HOST?.trim() || "https://icp0.io"

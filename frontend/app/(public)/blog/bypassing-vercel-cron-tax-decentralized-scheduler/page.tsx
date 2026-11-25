@@ -301,7 +301,7 @@ export async function POST(req: NextRequest) {
               Sign in to the icCron dashboard with Internet Identity (or use the cURL API). Specify your webhook URL, target expression <code className="font-mono text-xs">0 * * * *</code>, and add the secret header:
             </p>
             <div className="rounded-2xl border border-border bg-card p-4 font-mono text-xs text-muted-foreground overflow-x-auto">
-{`curl -X POST "https://uzt4z-lp777-77774-qaabq-cai.raw.icp0.io/api/v1/jobs" \\
+{`curl -X POST "https://w2fxo-5qaaa-aaaan-q6zxq-cai.raw.icp0.io/api/v1/jobs" \\
   -H "Authorization: Bearer <your_iccron_key>" \\
   -H "Content-Type: application/json" \\
   -d '{

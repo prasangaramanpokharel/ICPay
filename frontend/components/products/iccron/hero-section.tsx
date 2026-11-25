@@ -62,9 +62,9 @@ export function HeroSection() {
                 size="lg"
                 className="gap-2 rounded-xl px-7 font-semibold shadow-sm"
                 nativeButton={false}
-                render={<Link href="/login" />}
+                render={<Link href="/cron" />}
               >
-                Start
+                Get Started Free
                 <ArrowRightGlassIcon className="size-4" />
               </Button>
               <Button
@@ -74,7 +74,7 @@ export function HeroSection() {
                 nativeButton={false}
                 render={
                   <Link
-                    href="https://dashboard.internetcomputer.org/canister/uzt4z-lp777-77774-qaabq-cai"
+                    href="https://dashboard.internetcomputer.org/canister/w2fxo-5qaaa-aaaan-q6zxq-cai"
                     target="_blank"
                     rel="noopener noreferrer"
                   />

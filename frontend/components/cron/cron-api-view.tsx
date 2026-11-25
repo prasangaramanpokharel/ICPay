@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import { Icon } from "@/components/ui/icon"
 import { CopyIconIndicator } from "@/components/ui/copy-button"
 import { PlusGlassIcon, CircleXGlassIcon, DeleteGlassIcon, KeyGlassIcon, SearchGlassIcon, EyeGlassIcon, EyeOffGlassIcon } from "@thesvg/ui-react"
@@ -35,18 +35,18 @@ import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { useAuth } from "@/components/auth/auth-provider"
 import { copyText } from "@/lib/wallet/utils"
 import {
+  useCronApiKeys,
+  useCronProjects,
+  type EnrichedCronApiKey,
+} from "@/hooks/cron/useCron"
+import {
   createApiKey,
   deleteApiKey,
-  listApiKeys,
-  listProjects,
   revokeApiKey,
 } from "@/services/cron/client"
-import type { RemoteApiKeySummary, RemoteProjectRecord } from "@/services/cron/types"
 import { formatProjectId, parseProjectId } from "./cron-types"
 
-interface EnrichedApiKey extends RemoteApiKeySummary {
-  projectName: string
-}
+type EnrichedApiKey = EnrichedCronApiKey
 
 function hexFromBytes(bytes: Uint8Array | number[]): string {
   return Array.from(bytes)
@@ -72,16 +72,14 @@ export function CronApiView() {
   const t = useTranslations("cron")
   const tCommon = useTranslations("common")
 
-  const [projects, setProjects] = React.useState<RemoteProjectRecord[]>([])
-  const [loadingProjects, setLoadingProjects] = React.useState(true)
+  const { projects, isLoading: loadingProjects } = useCronProjects()
   const [selectedProjectId, setSelectedProjectId] = React.useState<string>(
     initialProjectParam ?? "all"
   )
   const [statusFilter, setStatusFilter] = React.useState<string>("all")
   const [query, setQuery] = React.useState("")
 
-  const [keys, setKeys] = React.useState<EnrichedApiKey[]>([])
-  const [loadingKeys, setLoadingKeys] = React.useState(true)
+  const { keys, isLoading: loadingKeys, mutate: mutateKeys } = useCronApiKeys(projects)
 
   const [createOpen, setCreateOpen] = React.useState(false)
   const [targetProjectId, setTargetProjectId] = React.useState<string>("")
@@ -95,6 +93,12 @@ export function CronApiView() {
   const [visibleKeys, setVisibleKeys] = React.useState<Record<string, boolean>>({})
   const [copiedHex, setCopiedHex] = React.useState<string | null>(null)
 
+  React.useEffect(() => {
+    if (projects.length > 0 && !targetProjectId) {
+      setTargetProjectId(projects[0].id.toString())
+    }
+  }, [projects, targetProjectId])
+
   const handleCopyKey = async (keyText: string, hex: string) => {
     await copyText(keyText)
     setCopiedHex(hex)
@@ -104,94 +108,9 @@ export function CronApiView() {
     }, 2000)
   }
 
-  const loadData = React.useCallback(async (callerIdentity: typeof identity) => {
-    if (!callerIdentity) {
-      setProjects([])
-      setKeys([])
-      setLoadingProjects(false)
-      setLoadingKeys(false)
-      return
-    }
-
-    try {
-      const projList = await listProjects(callerIdentity)
-      setProjects(projList)
-      if (projList.length > 0) {
-        setTargetProjectId((prev) => prev || projList[0].id.toString())
-      }
-
-      const allKeyPromises = projList.map(async (p) => {
-        try {
-          const projectKeys = await listApiKeys(p.id, callerIdentity)
-          return projectKeys.map((k) => ({
-            ...k,
-            projectName: p.name,
-          }))
-        } catch {
-          return []
-        }
-      })
-
-      const nested = await Promise.all(allKeyPromises)
-      const flat = nested.flat().sort((a, b) => Number(b.created_at - a.created_at))
-      setKeys(flat)
-    } catch {
-      setProjects([])
-      setKeys([])
-    } finally {
-      setLoadingProjects(false)
-      setLoadingKeys(false)
-    }
-  }, [])
-
-  React.useEffect(() => {
-    let active = true
-    if (!identity) {
-      return () => {
-        active = false
-      }
-    }
-
-    listProjects(identity)
-      .then(async (projList) => {
-        if (!active) return
-        setProjects(projList)
-        if (projList.length > 0) {
-          setTargetProjectId((prev) => prev || projList[0].id.toString())
-        }
-
-        const allKeyPromises = projList.map(async (p) => {
-          try {
-            const projectKeys = await listApiKeys(p.id, identity)
-            return projectKeys.map((k) => ({
-              ...k,
-              projectName: p.name,
-            }))
-          } catch {
-            return []
-          }
-        })
-
-        const nested = await Promise.all(allKeyPromises)
-        if (!active) return
-        const flat = nested.flat().sort((a, b) => Number(b.created_at - a.created_at))
-        setKeys(flat)
-      })
-      .catch(() => {
-        if (!active) return
-        setProjects([])
-        setKeys([])
-      })
-      .finally(() => {
-        if (!active) return
-        setLoadingProjects(false)
-        setLoadingKeys(false)
-      })
-
-    return () => {
-      active = false
-    }
-  }, [identity])
+  const loadData = React.useCallback(async () => {
+    await mutateKeys()
+  }, [mutateKeys])
 
   const filteredKeys = React.useMemo(() => {
     const needle = query.trim().toLowerCase()
@@ -230,7 +149,7 @@ export function CronApiView() {
       setResultModalOpen(true)
       setNewKeyLabel("")
       toast.success("API key generated successfully.")
-      await loadData(identity)
+      await loadData()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to generate API key.")
     } finally {
@@ -249,7 +168,7 @@ export function CronApiView() {
     try {
       await revokeApiKey(key.key_hash, identity)
       toast.success(`API key "${key.label}" revoked successfully.`)
-      await loadData(identity)
+      await loadData()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to revoke API key.")
     } finally {
@@ -268,7 +187,7 @@ export function CronApiView() {
     try {
       await deleteApiKey(key.key_hash, identity)
       toast.success(`API key "${key.label}" deleted successfully.`)
-      await loadData(identity)
+      await loadData()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to delete API key.")
     } finally {

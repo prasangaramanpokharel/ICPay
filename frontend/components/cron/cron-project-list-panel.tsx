@@ -59,24 +59,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Spinner } from "@/components/ui/spinner"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import { Icon } from "@/components/ui/icon"
 import { DeleteGlassIcon, FolderGlassIcon, InfoGlassIcon, KeyGlassIcon, EllipsisVerticalGlassIcon, PauseGlassIcon, PlayGlassIcon, PlusGlassIcon, SearchGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import {
+  useCronCredits,
+  useCronJobs,
+  useCronProjects,
+  useInvalidateCronCache,
+} from "@/hooks/cron/useCron"
+import {
   createProject,
   deleteProject,
-  getMyCredits,
-  listJobs,
-  listProjects,
   pauseProject,
   resumeProject,
 } from "@/services/cron/client"
-import type {
-  RemoteCreditBalance,
-  RemoteJobSummary,
-  RemoteProjectRecord,
-} from "@/services/cron/types"
+import type { RemoteJobSummary, RemoteProjectRecord } from "@/services/cron/types"
 import { CronBuyPackModal } from "./cron-buy-pack-modal"
 import { formatProjectId } from "./cron-types"
 
@@ -88,10 +87,11 @@ export function CronProjectListPanel() {
   const t = useTranslations("cron")
   const tCommon = useTranslations("common")
 
-  const [projects, setProjects] = React.useState<RemoteProjectRecord[]>([])
-  const [allJobs, setAllJobs] = React.useState<RemoteJobSummary[]>([])
-  const [credits, setCredits] = React.useState<RemoteCreditBalance | null>(null)
-  const [loading, setLoading] = React.useState(Boolean(identity))
+  const { projects, isLoading: projectsLoading, mutate: mutateProjects } = useCronProjects()
+  const { jobs: allJobs, isLoading: jobsLoading, mutate: mutateJobs } = useCronJobs()
+  const { credits } = useCronCredits()
+  const invalidateCron = useInvalidateCronCache()
+  const loading = projectsLoading || jobsLoading
 
   const [query, setQuery] = React.useState("")
   const [filter, setFilter] = React.useState<FilterTab>("all")
@@ -105,58 +105,8 @@ export function CronProjectListPanel() {
   const [actionLoadingId, setActionLoadingId] = React.useState<bigint | null>(null)
 
   const loadData = React.useCallback(async () => {
-    if (!identity) {
-      setLoading(false)
-      return
-    }
-    try {
-      const [projs, jobsData, creds] = await Promise.all([
-        listProjects(identity),
-        listJobs(undefined, identity),
-        getMyCredits(identity).catch(() => null),
-      ])
-      setProjects(projs)
-      setAllJobs(jobsData)
-      setCredits(creds)
-    } catch {
-      setProjects([])
-      setAllJobs([])
-    } finally {
-      setLoading(false)
-    }
-  }, [identity])
-
-  React.useEffect(() => {
-    let active = true
-    if (!identity) {
-      return () => {
-        active = false
-      }
-    }
-    Promise.all([
-      listProjects(identity),
-      listJobs(undefined, identity),
-      getMyCredits(identity).catch(() => null),
-    ])
-      .then(([projs, jobsData, creds]) => {
-        if (!active) return
-        setProjects(projs)
-        setAllJobs(jobsData)
-        setCredits(creds)
-      })
-      .catch(() => {
-        if (!active) return
-        setProjects([])
-        setAllJobs([])
-      })
-      .finally(() => {
-        if (active) setLoading(false)
-      })
-
-    return () => {
-      active = false
-    }
-  }, [identity])
+    await invalidateCron()
+  }, [invalidateCron])
 
   const jobsByProject = React.useMemo(() => {
     const map = new Map<string, RemoteJobSummary[]>()
@@ -195,7 +145,7 @@ export function CronProjectListPanel() {
     setCreatingProject(true)
     try {
       const proj = await createProject(newProjectName.trim(), identity)
-      setProjects((prev) => [...prev, proj])
+      await mutateProjects((prev) => [...(prev ?? []), proj], { revalidate: true })
       setNewProjectName("")
       setCreateOpen(false)
       toast.success(`Project "${proj.name}" created successfully.`)
@@ -221,8 +171,7 @@ export function CronProjectListPanel() {
         const count = await resumeProject(proj.id, identity)
         toast.success(`Resumed project "${proj.name}" (${count.toString()} jobs resumed).`)
       }
-      const updatedJobs = await listJobs(undefined, identity)
-      setAllJobs(updatedJobs)
+      await mutateJobs()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to update project status.")
     } finally {
@@ -234,10 +183,17 @@ export function CronProjectListPanel() {
     if (!projectToDelete || !identity) return
     setActionLoadingId(projectToDelete.id)
     try {
-      await deleteProject(projectToDelete.id, identity)
-      setProjects((prev) => prev.filter((p) => p.id !== projectToDelete.id))
-      setAllJobs((prev) => prev.filter((j) => j.project_id !== projectToDelete.id))
-      toast.success(`Project "${projectToDelete.name}" deleted successfully.`)
+      const deleted = projectToDelete
+      await deleteProject(deleted.id, identity)
+      await Promise.all([
+        mutateProjects((prev) => (prev ?? []).filter((p) => p.id !== deleted.id), {
+          revalidate: true,
+        }),
+        mutateJobs((prev) => (prev ?? []).filter((j) => j.project_id !== deleted.id), {
+          revalidate: true,
+        }),
+      ])
+      toast.success(`Project "${deleted.name}" deleted successfully.`)
       setProjectToDelete(null)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to delete project.")

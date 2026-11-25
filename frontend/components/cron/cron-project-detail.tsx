@@ -58,25 +58,25 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Spinner } from "@/components/ui/spinner"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import { Icon } from "@/components/ui/icon"
-import { PlusGlassIcon, ArrowLeftGlassIcon, CronJobGlassIcon, DeleteGlassIcon, PencilGlassIcon, FolderGlassIcon, EllipsisGlassIcon, PauseGlassIcon, PlayGlassIcon, SearchGlassIcon, EyeGlassIcon } from "@thesvg/ui-react"
+import { PlusGlassIcon, ArrowLeftGlassIcon, CronJobGlassIcon, DeleteGlassIcon, KeyGlassIcon, PencilGlassIcon, FolderGlassIcon, EllipsisGlassIcon, PauseGlassIcon, PlayGlassIcon, SearchGlassIcon, EyeGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
+import {
+  useCronJobs,
+  useCronProjects,
+  useInvalidateCronCache,
+} from "@/hooks/cron/useCron"
 import {
   deleteJob,
   deleteProject,
-  listJobs,
-  listProjects,
   pauseJob,
   pauseProject,
   renameProject,
   resumeJob,
   resumeProject,
 } from "@/services/cron/client"
-import type {
-  RemoteJobSummary,
-  RemoteProjectRecord,
-} from "@/services/cron/types"
+import type { RemoteJobSummary } from "@/services/cron/types"
 import { formatHumanSchedule, formatProjectId, formatRelativeTime, parseProjectId } from "./cron-types"
 import { CronOutputDrawer } from "./cron-output-drawer"
 import { CronConnectModal } from "./cron-connect-modal"
@@ -93,10 +93,31 @@ export function CronProjectDetail({
   const t = useTranslations("cron")
   const tCommon = useTranslations("common")
 
-  const [project, setProject] = React.useState<RemoteProjectRecord | null>(null)
-  const [allProjects, setAllProjects] = React.useState<RemoteProjectRecord[]>([])
-  const [jobs, setJobs] = React.useState<RemoteJobSummary[]>([])
-  const [loading, setLoading] = React.useState(Boolean(identity))
+  const { projects: allProjects, isLoading: projectsLoading, mutate: mutateProjects } =
+    useCronProjects()
+  const { jobs: allJobs, isLoading: jobsLoading, mutate: mutateJobs } = useCronJobs()
+  const invalidateCron = useInvalidateCronCache()
+
+  const project = React.useMemo(() => {
+    const decodedParam = decodeURIComponent(projectNameOrId).trim().toLowerCase()
+    const parsedParamId = parseProjectId(projectNameOrId)
+    return (
+      allProjects.find(
+        (p) =>
+          p.name.toLowerCase() === decodedParam ||
+          p.id.toString() === projectNameOrId ||
+          formatProjectId(p.id).toLowerCase() === decodedParam ||
+          (parsedParamId > 0n && p.id === parsedParamId)
+      ) ?? null
+    )
+  }, [allProjects, projectNameOrId])
+
+  const jobs = React.useMemo(() => {
+    if (!project) return []
+    return allJobs.filter((j) => j.project_id === project.id)
+  }, [allJobs, project])
+
+  const loading = projectsLoading || (Boolean(project) && jobsLoading && allJobs.length === 0)
 
   const [query, setQuery] = React.useState("")
   const [filter, setFilter] = React.useState<FilterTab>("all")
@@ -108,89 +129,20 @@ export function CronProjectDetail({
   const [deleteProjectOpen, setDeleteProjectOpen] = React.useState(false)
   const [connectOpen, setConnectOpen] = React.useState(false)
   const [jobToDelete, setJobToDelete] = React.useState<RemoteJobSummary | null>(null)
-  const [selectedJobForDrawer, setSelectedJobForDrawer] = React.useState<RemoteJobSummary | null>(null)
+  const [selectedJobIdForDrawer, setSelectedJobIdForDrawer] = React.useState<bigint | null>(null)
   const [drawerOpen, setDrawerOpen] = React.useState(false)
+
+  const selectedJobForDrawer = React.useMemo(
+    () => (selectedJobIdForDrawer !== null ? jobs.find((j) => j.id === selectedJobIdForDrawer) ?? null : null),
+    [jobs, selectedJobIdForDrawer]
+  )
 
   const [actionLoading, setActionLoading] = React.useState(false)
   const [jobActionId, setJobActionId] = React.useState<bigint | null>(null)
 
   const loadProjectData = React.useCallback(async () => {
-    if (!identity) {
-      setLoading(false)
-      return
-    }
-    try {
-      const projs = await listProjects(identity)
-      setAllProjects(projs)
-      const decodedParam = decodeURIComponent(projectNameOrId).trim().toLowerCase()
-      const parsedParamId = parseProjectId(projectNameOrId)
-      const found = projs.find(
-        (p) =>
-          p.name.toLowerCase() === decodedParam ||
-          p.id.toString() === projectNameOrId ||
-          formatProjectId(p.id).toLowerCase() === decodedParam ||
-          (parsedParamId > 0n && p.id === parsedParamId)
-      )
-
-      if (found) {
-        setProject(found)
-        const jobList = await listJobs(found.id, identity)
-        setJobs(jobList)
-      } else {
-        setProject(null)
-        setJobs([])
-      }
-    } catch {
-      setProject(null)
-      setJobs([])
-    } finally {
-      setLoading(false)
-    }
-  }, [identity, projectNameOrId])
-
-  React.useEffect(() => {
-    let active = true
-    if (!identity) {
-      return () => {
-        active = false
-      }
-    }
-    listProjects(identity)
-      .then(async (projs) => {
-        if (!active) return
-        setAllProjects(projs)
-        const decodedParam = decodeURIComponent(projectNameOrId).trim().toLowerCase()
-        const parsedParamId = parseProjectId(projectNameOrId)
-        const found = projs.find(
-          (p) =>
-            p.name.toLowerCase() === decodedParam ||
-            p.id.toString() === projectNameOrId ||
-            formatProjectId(p.id).toLowerCase() === decodedParam ||
-            (parsedParamId > 0n && p.id === parsedParamId)
-        )
-
-        if (found) {
-          setProject(found)
-          const jobList = await listJobs(found.id, identity)
-          if (active) setJobs(jobList)
-        } else {
-          setProject(null)
-          setJobs([])
-        }
-      })
-      .catch(() => {
-        if (!active) return
-        setProject(null)
-        setJobs([])
-      })
-      .finally(() => {
-        if (active) setLoading(false)
-      })
-
-    return () => {
-      active = false
-    }
-  }, [identity, projectNameOrId])
+    await invalidateCron()
+  }, [invalidateCron])
 
   const filteredJobs = React.useMemo(() => {
     const needle = query.trim().toLowerCase()
@@ -244,7 +196,10 @@ export function CronProjectDetail({
     setRenaming(true)
     try {
       const updated = await renameProject(project.id, renameName.trim(), identity)
-      setProject(updated)
+      await mutateProjects(
+        (prev) => (prev ?? []).map((p) => (p.id === updated.id ? updated : p)),
+        { revalidate: true }
+      )
       setRenameOpen(false)
       toast.success(`Project renamed to "${updated.name}" successfully.`)
       router.replace(`/cron?id=${encodeURIComponent(updated.name)}`)
@@ -259,8 +214,17 @@ export function CronProjectDetail({
     if (!project || !identity) return
     setActionLoading(true)
     try {
-      await deleteProject(project.id, identity)
-      toast.success(`Project "${project.name}" deleted successfully.`)
+      const deleted = project
+      await deleteProject(deleted.id, identity)
+      await Promise.all([
+        mutateProjects((prev) => (prev ?? []).filter((p) => p.id !== deleted.id), {
+          revalidate: true,
+        }),
+        mutateJobs((prev) => (prev ?? []).filter((j) => j.project_id !== deleted.id), {
+          revalidate: true,
+        }),
+      ])
+      toast.success(`Project "${deleted.name}" deleted successfully.`)
       router.push("/cron")
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to delete project.")
@@ -280,10 +244,7 @@ export function CronProjectDetail({
         await resumeJob(job.id, identity)
         toast.success(`Job "${job.label}" resumed.`)
       }
-      if (project) {
-        const updated = await listJobs(project.id, identity)
-        setJobs(updated)
-      }
+      await mutateJobs()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to update job status.")
     } finally {
@@ -295,9 +256,12 @@ export function CronProjectDetail({
     if (!jobToDelete || !identity) return
     setJobActionId(jobToDelete.id)
     try {
-      await deleteJob(jobToDelete.id, identity)
-      toast.success(`Job "${jobToDelete.label}" deleted successfully.`)
-      setJobs((prev) => prev.filter((j) => j.id !== jobToDelete.id))
+      const deleted = jobToDelete
+      await deleteJob(deleted.id, identity)
+      toast.success(`Job "${deleted.label}" deleted successfully.`)
+      await mutateJobs((prev) => (prev ?? []).filter((j) => j.id !== deleted.id), {
+        revalidate: true,
+      })
       setJobToDelete(null)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Failed to delete job.")
@@ -307,7 +271,7 @@ export function CronProjectDetail({
   }
 
   const handleOpenDrawer = (job: RemoteJobSummary) => {
-    setSelectedJobForDrawer(job)
+    setSelectedJobIdForDrawer(job.id)
     setDrawerOpen(true)
   }
 
@@ -382,6 +346,16 @@ export function CronProjectDetail({
       description={descriptionText}
       actions={
         <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            nativeButton={false}
+            render={<Link href={`/cron/api?projectId=${project.id}`} />}
+            className="gap-1.5 text-xs font-medium"
+          >
+            <Icon icon={KeyGlassIcon} className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
+            <span>API Key</span>
+          </Button>
           <Button
             variant="outline"
             size="sm"

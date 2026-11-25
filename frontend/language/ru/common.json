@@ -1388,6 +1388,10 @@
         "blog": {
           "title": "Блог",
           "description": "Руководства, туториалы и статьи об экосистеме ICP."
+        },
+        "launch": {
+          "title": "Запустить токен",
+          "description": "Создайте токен ICRC-1 в Internet Computer."
         }
       },
       "legal": {

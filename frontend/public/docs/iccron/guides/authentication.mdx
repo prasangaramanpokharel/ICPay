@@ -1,0 +1,39 @@
+---
+title: "Authentication & Security"
+description: "How icCron secures project access using SHA-256 hashed API keys and Internet Identity principal verification."
+group: "Guides"
+order: 1
+---
+
+# Authentication & Security
+
+icCron operates with a dual-layer security architecture:
+
+1. **Control Plane**: Internet Identity passkey authentication for project creation, name updates, credit top-ups, and API key issuance.
+2. **Data & Execution Plane**: Project-scoped API keys (`icp_cron_<64-hex-chars>`) for SDK automation, CI/CD pipelines, and HTTP management.
+
+## API Key Security Model
+
+- **One-Time Display**: When an API key is generated, the raw secret is returned to the user exactly once.
+- **SHA-256 On-Chain Hashing**: The raw API key is never stored on the blockchain. The canister computes a SHA-256 hash of the key and persists only the hash in stable memory (`ic-stable-structures`).
+- **Project Scoping**: Every incoming API request calculates `sha256(incoming_key)`. If matched, the request is permanently scoped to that key's `project_id` and `owner` principal. You cannot read or mutate jobs belonging to any other project.
+
+## Using the Authorization Header
+
+Include your API key as a Bearer token in the standard `Authorization` header:
+
+```http
+Authorization: Bearer icp_cron_8bc8dec2c4c1b19973f8ef101eebefa9ec7eee0154fee74dd09938e96abd4a2b
+Content-Type: application/json
+```
+
+The header name `x-api-key` is also accepted as a fallback.
+
+## SSRF (Server-Side Request Forgery) Protection
+
+Before storing any `HttpWebhook` destination, the canister runs strict URL validation:
+- **HTTPS Only**: Plain `http://` targets are rejected with HTTP 400.
+- **Private Network Blocking**: IP addresses belonging to private ranges (RFC 1918 `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`) are blocked.
+- **Loopback Blocking**: `localhost`, `127.0.0.1`, and `::1` are blocked.
+- **Cloud Metadata Protection**: Cloud instance metadata services (AWS/GCP `169.254.169.254`) are blocked.
+- **Port Restrictions**: Default HTTPS port 443 only.

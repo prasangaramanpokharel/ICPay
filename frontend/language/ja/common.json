@@ -1388,6 +1388,10 @@
         "blog": {
           "title": "ブログ",
           "description": "ガイド、チュートリアル、ICP エコシステムの記事。"
+        },
+        "launch": {
+          "title": "トークンをローンチ",
+          "description": "Internet Computer上でICRC-1トークンを作成。"
         }
       },
       "legal": {

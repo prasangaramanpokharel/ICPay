@@ -1388,6 +1388,10 @@
         "blog": {
           "title": "Blog",
           "description": "Kılavuzlar, eğitimler ve ICP ekosistemi makaleleri."
+        },
+        "launch": {
+          "title": "Token başlat",
+          "description": "Internet Computer üzerinde ICRC-1 token oluşturun."
         }
       },
       "legal": {

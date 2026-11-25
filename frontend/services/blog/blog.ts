@@ -31,6 +31,26 @@ export function filterBlogPostsByCategory(posts: BlogPost[], category: string): 
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: "chatty-pk-chatt-pakistan-sovereign-messenger-icp",
+    title:
+      "ChatT (chatty.pk): Inside Pakistan's Sovereign Messenger Built on the Internet Computer (ICP)",
+    description:
+      "A technical breakdown of ChatT (chatty.pk), Pakistan's national sovereign messaging platform developed with DFINITY and the Pakistan Digital Authority. How on-chain canisters and the Pakistan Cloud Engine redefine sovereign communication ahead of the December 1, 2026 launch.",
+    publishedAt: "2026-11-25",
+    readingMinutes: 10,
+    category: "Infrastructure",
+  },
+  {
+    slug: "chatgpt-pakistan-message-dawn-newspaper-blunder",
+    title:
+      "The Dawn Newspaper ChatGPT Blunder in Pakistan: What the Viral 'Snappier Version' Message Reveals About AI Journalism",
+    description:
+      "A deep dive into Pakistan's Dawn newspaper accidentally printing an unedited ChatGPT closing prompt in its business section, why multi-tiered editorial desks failed to catch it, and how programmatic verification prevents LLM pipeline leakage.",
+    publishedAt: "2026-11-25",
+    readingMinutes: 9,
+    category: "Technology",
+  },
+  {
     slug: "changelog-2026-11-13",
     title: "ICPay Changelog (Nov 13, 2026): Pro Username Shop, Free Storage Perks, Treasury Tokenomics & Multi-Handle Profiles",
     description:

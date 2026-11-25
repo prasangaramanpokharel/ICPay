@@ -74,7 +74,7 @@ const faqJsonLd = {
       name: "What is the headline feature of ICPay v1.7.0?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "The flagship addition of ICPay v1.7.0 is icCron, an independent Rust canister (uzt4z-lp777-77774-qaabq-cai) that enables decentralized, sub-second cron scheduling, automated retries with Dead Letter Queues (DLQ), inter-canister smart contract calls, and threshold-signed HTTPS outcalls to Web2 webhooks without servers or keeper bots.",
+        text: "The flagship addition of ICPay v1.7.0 is icCron, an independent Rust canister (w2fxo-5qaaa-aaaan-q6zxq-cai) that enables decentralized, sub-second cron scheduling, automated retries with Dead Letter Queues (DLQ), inter-canister smart contract calls, and threshold-signed HTTPS outcalls to Web2 webhooks without servers or keeper bots.",
       },
     },
     {
@@ -145,7 +145,7 @@ export default function IcpayChangelogPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
         <div className="absolute bottom-6 left-6 right-6 flex flex-wrap items-center justify-between gap-4">
           <Badge variant="secondary" className="bg-background/80 backdrop-blur-md font-mono text-xs text-primary font-bold">
-            Canister ID: uzt4z-lp777-77774-qaabq-cai
+            Canister ID: w2fxo-5qaaa-aaaan-q6zxq-cai
           </Badge>
           <span className="text-xs text-muted-foreground font-semibold">
             Replicated State Consensus
@@ -228,7 +228,7 @@ export default function IcpayChangelogPage() {
           <li className="flex items-start gap-2.5">
             <Icon icon={CircleCheckGlassIcon} className="mt-0.5 size-4 text-primary shrink-0" />
             <span>
-              <strong className="text-foreground">Zero-Key Caller Authentication:</strong> Canister-to-canister invocations authenticate using the authentic canister principal (<code className="font-mono text-xs">uzt4z-lp777-77774-qaabq-cai</code>). No private keys, seed phrases, or credentials ever exist to be compromised.
+              <strong className="text-foreground">Zero-Key Caller Authentication:</strong> Canister-to-canister invocations authenticate using the authentic canister principal (<code className="font-mono text-xs">w2fxo-5qaaa-aaaan-q6zxq-cai</code>). No private keys, seed phrases, or credentials ever exist to be compromised.
             </span>
           </li>
         </ul>
@@ -340,7 +340,7 @@ export async function POST(req: NextRequest) {
             nativeButton={false}
             render={
               <Link
-                href="https://dashboard.internetcomputer.org/canister/uzt4z-lp777-77774-qaabq-cai"
+                href="https://dashboard.internetcomputer.org/canister/w2fxo-5qaaa-aaaan-q6zxq-cai"
                 target="_blank"
                 rel="noopener noreferrer"
               />

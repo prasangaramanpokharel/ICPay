@@ -22,8 +22,9 @@ import {
   CircleCheckGlassIcon,
   InfoGlassIcon,
 } from "@thesvg/ui-react"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/sonner"
 import { useAuth } from "@/components/auth/auth-provider"
+import { useInvalidateCronCache } from "@/hooks/cron/useCron"
 import { createJob } from "@/services/cron/client"
 import type { RemoteJobTarget } from "@/services/cron/types"
 import {
@@ -43,6 +44,7 @@ interface CronCreateFormProps {
 
 export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps) {
   const { identity } = useAuth()
+  const invalidateCron = useInvalidateCronCache()
   const t = useTranslations("cron")
 
   const [template, setTemplate] = React.useState<TemplateType>("discord_telegram")
@@ -237,6 +239,7 @@ export function CronCreateForm({ projectId, onJobCreated }: CronCreateFormProps)
         identity
       )
 
+      await invalidateCron()
       setSuccess(true)
       toast.success(`Job "${created.label}" created successfully.`)
       if (onJobCreated) {

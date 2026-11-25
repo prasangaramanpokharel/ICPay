@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { HeroSection } from "@/components/products/iccron/hero-section"
+import { SdkBenchmarkSection } from "@/components/products/iccron/sdk-benchmark-section"
 import { ProblemSolution } from "@/components/products/iccron/problem-solution"
 import { WhatIsSection } from "@/components/products/iccron/what-is-section"
 import { GalleryShowcase } from "@/components/products/iccron/gallery-showcase"
@@ -110,6 +111,7 @@ export default function IcCronPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <HeroSection />
+      <SdkBenchmarkSection />
       <ProblemSolution />
       <WhatIsSection />
       <GalleryShowcase />

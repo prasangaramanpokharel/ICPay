@@ -1388,6 +1388,10 @@
         "blog": {
           "title": "博客",
           "description": "指南、教程与 ICP 生态文章。"
+        },
+        "launch": {
+          "title": "发行代币",
+          "description": "在 Internet Computer 上创建 ICRC-1 代币。"
         }
       },
       "legal": {

@@ -1388,6 +1388,10 @@
         "blog": {
           "title": "블로그",
           "description": "가이드, 튜토리얼, ICP 생태계 기사."
+        },
+        "launch": {
+          "title": "토큰 출시",
+          "description": "Internet Computer에서 ICRC-1 토큰을 만드세요."
         }
       },
       "legal": {

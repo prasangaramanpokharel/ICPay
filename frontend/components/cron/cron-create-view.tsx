@@ -12,9 +12,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Icon } from "@/components/ui/icon"
 import { CronJobGlassIcon, FolderGlassIcon } from "@thesvg/ui-react"
-import { useAuth } from "@/components/auth/auth-provider"
-import { listProjects } from "@/services/cron/client"
-import type { RemoteProjectRecord } from "@/services/cron/types"
+import { useCronProjects } from "@/hooks/cron/useCron"
 import { CronCreateForm } from "./cron-create-form"
 import { formatProjectId, parseProjectId } from "./cron-types"
 
@@ -25,8 +23,7 @@ function CronCreateContent() {
   const queryProjectId = searchParams.get("projectId")
   const queryProjectName = searchParams.get("id") || searchParams.get("name")
 
-  const { identity } = useAuth()
-  const [projects, setProjects] = React.useState<RemoteProjectRecord[]>([])
+  const { projects, isLoading: loading } = useCronProjects()
   const [selectedProjectId, setSelectedProjectId] = React.useState<bigint | null>(() => {
     if (!queryProjectId) return null
     try {
@@ -35,45 +32,26 @@ function CronCreateContent() {
       return null
     }
   })
-  const [loading, setLoading] = React.useState(true)
 
   React.useEffect(() => {
-    if (!identity) return
-    let active = true
-    listProjects(identity)
-      .then((data) => {
-        if (!active) return
-        setProjects(data)
-        if (selectedProjectId === null && data.length > 0) {
-          if (queryProjectId) {
-            const parsed = parseProjectId(queryProjectId)
-            const found = data.find(
-              (p) =>
-                p.id === parsed ||
-                p.id.toString() === queryProjectId ||
-                formatProjectId(p.id) === queryProjectId
-            )
-            setSelectedProjectId(found ? found.id : data[0].id)
-          } else if (queryProjectName) {
-            const decoded = decodeURIComponent(queryProjectName).toLowerCase()
-            const found = data.find((p) => p.name.toLowerCase() === decoded)
-            setSelectedProjectId(found ? found.id : data[0].id)
-          } else {
-            setSelectedProjectId(data[0].id)
-          }
-        }
-      })
-      .catch(() => {
-        if (active) setProjects([])
-      })
-      .finally(() => {
-        if (active) setLoading(false)
-      })
-
-    return () => {
-      active = false
+    if (selectedProjectId !== null || projects.length === 0) return
+    if (queryProjectId) {
+      const parsed = parseProjectId(queryProjectId)
+      const found = projects.find(
+        (p) =>
+          p.id === parsed ||
+          p.id.toString() === queryProjectId ||
+          formatProjectId(p.id) === queryProjectId
+      )
+      setSelectedProjectId(found ? found.id : projects[0].id)
+    } else if (queryProjectName) {
+      const decoded = decodeURIComponent(queryProjectName).toLowerCase()
+      const found = projects.find((p) => p.name.toLowerCase() === decoded)
+      setSelectedProjectId(found ? found.id : projects[0].id)
+    } else {
+      setSelectedProjectId(projects[0].id)
     }
-  }, [identity, queryProjectId, queryProjectName, selectedProjectId])
+  }, [projects, queryProjectId, queryProjectName, selectedProjectId])
 
   const currentProject = React.useMemo(() => {
     return projects.find((p) => p.id === selectedProjectId) ?? null
