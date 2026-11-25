@@ -49,6 +49,7 @@ function clientOptions(options?: LoginOptions) {
 function signInOptions() {
   return {
     maxTimeToLive: DELEGATION_TTL,
+    maxTimeToIdle: DELEGATION_TTL,
   }
 }
 
