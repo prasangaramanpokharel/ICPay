@@ -1,8 +1,10 @@
 "use client"
 
 import { useMemo } from "react"
-import useSWR, { preload } from "swr"
+import { preload } from "swr"
 import type { Identity } from "@icp-sdk/core/agent"
+import { usePersistedSWR } from "@/hooks/cache/usePersistedSWR"
+import { useEffectivePrincipal } from "@/lib/auth/lastPrincipal"
 import {
   fetchCanisterStatus,
   formatManageError,
@@ -10,6 +12,9 @@ import {
   type CanisterStatusView,
 } from "@/services/canister/management"
 import { rememberCanister } from "@/lib/canister/savedCanisters"
+
+const statusCacheKey = (principal: string, canisterId: string) =>
+  `icpay:canister:status:${principal}:${canisterId}`
 
 export type CanisterStatusState =
   | { kind: "idle" }
@@ -23,39 +28,43 @@ export function useCanisterStatus(
   canisterId: string,
   enabled: boolean
 ): CanisterStatusState & { refresh: () => void; isValidating: boolean } {
+  const { principal: effectivePrincipal } = useEffectivePrincipal()
   const trimmed = canisterId.trim()
-  const principal = identity?.getPrincipal().toText() ?? null
+  const principal = identity?.getPrincipal().toText() ?? effectivePrincipal ?? null
   const active = Boolean(enabled && identity && trimmed)
 
   const swrKey = active ? (["canister-status", trimmed, principal] as const) : null
 
-  const { data, error, isLoading, isValidating, mutate } = useSWR(
+  const { resolved, error, isLoading, isValidating, mutate } = usePersistedSWR(
     swrKey,
-    async ([, id]) => {
+    async () => {
       if (!identity) throw new Error("No identity")
-      const result = await fetchCanisterStatus(identity, id)
-      if (result.isController) rememberCanister(identity.getPrincipal().toText(), id)
+      const result = await fetchCanisterStatus(identity, trimmed)
+      if (result.isController) rememberCanister(identity.getPrincipal().toText(), trimmed)
       return result
     },
     {
       revalidateOnFocus: false,
+      revalidateOnMount: true,
       dedupingInterval: 30_000,
       keepPreviousData: true,
+      cacheKey: enabled && principal && trimmed ? statusCacheKey(principal, trimmed) : null,
+      maxAgeMs: 2 * 60_000,
     }
   )
 
   const state: CanisterStatusState = useMemo(() => {
-    if (!active) return { kind: "idle" }
-    if (isLoading && !data) return { kind: "loading" }
-    if (error) {
+    if (!active && !resolved) return { kind: "idle" }
+    if (isLoading && !resolved) return { kind: "loading" }
+    if (error && !resolved) {
       const message = formatManageError(error)
       return isControllerDenied(error)
         ? { kind: "denied", message }
         : { kind: "error", message }
     }
-    if (data) return { kind: "ok", data }
+    if (resolved) return { kind: "ok", data: resolved }
     return { kind: "loading" }
-  }, [active, isLoading, data, error])
+  }, [active, isLoading, resolved, error])
 
   return {
     ...state,

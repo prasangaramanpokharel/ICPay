@@ -3,6 +3,8 @@
 import { useEffect, useMemo } from "react"
 import useSWR from "swr"
 import { useSavedCanisters } from "@/hooks/canister/useSavedCanisters"
+import { usePersistedSWR } from "@/hooks/cache/usePersistedSWR"
+import { useEffectivePrincipal } from "@/lib/auth/lastPrincipal"
 import { rememberCanister } from "@/lib/canister/savedCanisters"
 import {
   fetchCanisterIndexMeta,
@@ -10,17 +12,23 @@ import {
   type ControlledCanister,
 } from "@/services/canister/controlledCanisters"
 
+const listCacheKey = (principal: string) => `icpay:canister:list:${principal}`
+
 export function useMineCanisters(principal: string | null | undefined) {
-  const key = principal?.trim() || null
+  const { principal: effectivePrincipal } = useEffectivePrincipal()
+  const key = principal?.trim() || effectivePrincipal || null
   const saved = useSavedCanisters(key)
 
-  const { data, error, isLoading, isValidating, mutate } = useSWR(
+  const { resolved: data, error, isLoading, isValidating, mutate } = usePersistedSWR(
     key ? (["controlled-canisters", key] as const) : null,
-    ([, controller]) => fetchControlledCanisters(controller),
+    () => fetchControlledCanisters(key!),
     {
       revalidateOnFocus: false,
+      revalidateOnMount: true,
       dedupingInterval: 60_000,
       keepPreviousData: true,
+      cacheKey: key ? listCacheKey(key) : null,
+      maxAgeMs: 5 * 60_000,
     }
   )
 

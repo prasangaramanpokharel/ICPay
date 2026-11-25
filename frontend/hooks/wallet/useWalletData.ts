@@ -5,6 +5,8 @@ import useSWR, { useSWRConfig } from "swr"
 import useSWRImmutable from "swr/immutable"
 import { Principal } from "@icp-sdk/core/principal"
 import { useAuth } from "@/components/auth/auth-provider"
+import { usePersistedSWR } from "@/hooks/cache/usePersistedSWR"
+import { useEffectivePrincipal } from "@/lib/auth/lastPrincipal"
 import { readHoldings, writeHoldings, patchHoldings, cachedBalanceMap } from "@/lib/wallet/holdingsCache"
 import {
   loadDashboard,
@@ -72,19 +74,32 @@ const FETCH_ONCE = {
   errorRetryCount: 3,
 } as const
 
-export function useDashboard() {
-  const { identity } = useAuth()
+const dashboardCacheKey = (principal: string) => `icpay:wallet:dashboard:${principal}`
+const txsCacheKey = (principal: string, pageSize: number) =>
+  `icpay:wallet:txs:${principal}:0:${pageSize}`
 
-  const { data, error, isLoading, mutate } = useSWR(
+export function useDashboard() {
+  const { identity, isLoading: authLoading } = useAuth()
+  const { principal } = useEffectivePrincipal()
+
+  const { resolved, error, isInitialLoading, mutate } = usePersistedSWR<DashboardData>(
     keyFor(identity, "dashboard", ICP_LEDGER_ID),
     () => loadDashboard(identity!),
-    FETCH_ONCE
+    {
+      ...FETCH_ONCE,
+      revalidateIfStale: true,
+      revalidateOnMount: true,
+      dedupingInterval: 60_000,
+      cacheKey: principal ? dashboardCacheKey(principal) : null,
+      maxAgeMs: 5 * 60_000,
+      authPending: authLoading,
+    }
   )
 
   return {
-    data: data as DashboardData | undefined,
+    data: resolved,
     error,
-    isLoading,
+    isLoading: isInitialLoading,
     refresh: mutate,
   }
 }
@@ -96,9 +111,10 @@ function useCustodian(): Principal | undefined {
 
 function useLedgerBalance(ledgerId: string | null) {
   const { identity } = useAuth()
+  const { principal: effectivePrincipal } = useEffectivePrincipal()
   const custodian = useCustodian()
   const { cache, mutate } = useSWRConfig()
-  const principal = identity?.getPrincipal().toText()
+  const principal = effectivePrincipal ?? undefined
   const cachedBalance =
     principal && ledgerId ? cachedBalanceMap(principal).get(ledgerId) : undefined
 
@@ -186,19 +202,28 @@ export function useDepositAddress() {
 }
 
 export function useTransactions(page = 0, pageSize = 20) {
-  const { identity } = useAuth()
+  const { identity, isLoading: authLoading } = useAuth()
+  const { principal } = useEffectivePrincipal()
 
-  const { data, error, isLoading, mutate } = useSWR(
+  const { resolved, error, isInitialLoading, mutate } = usePersistedSWR(
     keyFor(identity, "transactions", String(page), String(pageSize)),
     () => getTransactions(identity, page, pageSize),
-    FETCH_ONCE
+    {
+      ...FETCH_ONCE,
+      revalidateIfStale: true,
+      revalidateOnMount: true,
+      dedupingInterval: 60_000,
+      cacheKey: page === 0 && principal ? txsCacheKey(principal, pageSize) : null,
+      maxAgeMs: 5 * 60_000,
+      authPending: authLoading,
+    }
   )
 
   return {
-    items: data?.items ?? [],
-    total: data?.total ?? 0n,
+    items: resolved?.items ?? [],
+    total: resolved?.total ?? 0n,
     error,
-    isLoading,
+    isLoading: isInitialLoading,
     refresh: mutate,
   }
 }
@@ -430,7 +455,18 @@ export function useUserSearch(search: string, limit = 10) {
 
 export function useOwnProfile() {
   const { identity } = useAuth()
-  return useSWRImmutable(keyFor(identity, "profile"), () => resolveProfile(identity!))
+  const { principal } = useEffectivePrincipal()
+  return usePersistedSWR(
+    keyFor(identity, "profile"),
+    () => resolveProfile(identity!),
+    {
+      revalidateOnFocus: false,
+      revalidateIfStale: false,
+      revalidateOnReconnect: false,
+      cacheKey: principal ? `icpay:wallet:profile:${principal}` : null,
+      maxAgeMs: 10 * 60_000,
+    }
+  )
 }
 
 export function useOwnUsernames() {
@@ -459,10 +495,11 @@ function dedupeById(users: UserPublic[]): UserPublic[] {
 
 export function useTokenHoldings(customLedgerIds: string[] = []) {
   const { identity } = useAuth()
+  const { principal: effectivePrincipal } = useEffectivePrincipal()
   const custodian = useCustodian()
   const registry = useTokenRegistry()
   const { mutate: globalMutate } = useSWRConfig()
-  const principal = identity?.getPrincipal().toText()
+  const principal = effectivePrincipal ?? undefined
   const cachedBalances = useMemo(() => cachedBalanceMap(principal), [principal])
   const seededHoldings = seededHoldingsForLoad(principal, customLedgerIds)
   const { ledgerIds: registryLedgerIds, isLoading: loadingLedgerIds } = useWalletLedgerIds()
