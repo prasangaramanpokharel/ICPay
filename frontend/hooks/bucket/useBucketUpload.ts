@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import type { BucketUploadItem } from "@/components/bucket/bucket-upload-dock"
 import { prepareUploadFile, uploadValidationError } from "@/lib/bucket/prepareUpload"
 import { shouldEmitUploadProgress } from "@/lib/bucket/uploadProgress"
@@ -33,7 +33,7 @@ type ProgressSnapshot = { progress: number; speedLabel?: string; etaLabel?: stri
 const IGNORED_OS_FILENAMES = new Set([".ds_store", "thumbs.db", "desktop.ini"])
 const IGNORED_FOLDER_SEGMENTS = new Set([".git", "node_modules", "__macosx"])
 
-function isIgnoredSystemEntry(file: File, relativePath?: string): boolean {
+export function isIgnoredSystemEntry(file: File, relativePath?: string): boolean {
   const baseName = file.name.trim()
   const lowerName = baseName.toLowerCase()
   if (!baseName || IGNORED_OS_FILENAMES.has(lowerName) || baseName.startsWith("._")) {
@@ -297,6 +297,37 @@ export function useBucketUpload({
     [patch, scheduleWork]
   )
 
+  const retryAllFailed = useCallback(() => {
+    const failedItems = items.filter((item) => item.status === "error")
+    if (failedItems.length === 0) return
+    for (const item of failedItems) {
+      const file = fileMapRef.current.get(item.id)
+      if (!file) continue
+      const relativePath = relativePathMapRef.current.get(item.id)
+      patch(item.id, {
+        status: "queued",
+        progress: 0,
+        error: undefined,
+        speedLabel: undefined,
+        etaLabel: undefined,
+      })
+      queueRef.current.push({ id: item.id, file, relativePath })
+    }
+    setExpanded(true)
+    scheduleWork()
+  }, [items, patch, scheduleWork])
+
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (activeRef.current > 0 || queueRef.current.length > 0) {
+        e.preventDefault()
+        e.returnValue = ""
+      }
+    }
+    window.addEventListener("beforeunload", handleBeforeUnload)
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload)
+  }, [])
+
   const dismiss = useCallback(() => {
     const busy = items.some((item) => item.status === "queued" || item.status === "uploading")
     if (busy) return
@@ -320,6 +351,7 @@ export function useBucketUpload({
     doneCount,
     enqueue,
     retry,
+    retryAllFailed,
     dismiss,
     setExpanded,
   }

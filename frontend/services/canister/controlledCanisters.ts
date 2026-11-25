@@ -3,6 +3,9 @@ import {
   formatSubnetCountries,
   shortSubnetId,
 } from "@/services/canister/subnetLocations"
+import { resolveCanisterSubnetId } from "@/services/canister/subnetResolver"
+
+export { resolveCanisterSubnetId }
 
 const IC_API = "https://ic-api.internetcomputer.org/api/v3"
 const PAGE = 50

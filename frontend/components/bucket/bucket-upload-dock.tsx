@@ -106,6 +106,7 @@ export function BucketUploadDock({
   onToggle,
   onDismiss,
   onRetry,
+  onRetryAllFailed,
 }: {
   items: BucketUploadItem[]
   expanded: boolean
@@ -114,10 +115,12 @@ export function BucketUploadDock({
   onToggle: () => void
   onDismiss: () => void
   onRetry?: (id: string) => void
+  onRetryAllFailed?: () => void
 }) {
   if (items.length === 0) return null
 
   const busy = items.some((i) => i.status === "uploading" || i.status === "queued")
+  const failedCount = items.filter((i) => i.status === "error").length
   const activeBatch = items.filter((i) => i.status !== "error")
   const totalBytes = activeBatch.reduce((acc, i) => acc + (i.size ?? 0), 0)
   const uploadedBytes = activeBatch.reduce(
@@ -179,6 +182,23 @@ export function BucketUploadDock({
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
               className="max-h-56 space-y-2.5 overflow-y-auto border-t px-3 py-2.5"
             >
+              {failedCount > 1 && onRetryAllFailed ? (
+                <li className="flex items-center justify-between rounded-lg border border-border/70 bg-muted/40 px-2.5 py-1.5">
+                  <span className="text-[11px] font-medium text-destructive">
+                    {failedCount} failed
+                  </span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="xs"
+                    onClick={onRetryAllFailed}
+                    className="h-6 gap-1 px-2 text-[10px]"
+                  >
+                    <Icon icon={RefreshCwGlassIcon} className="size-3" strokeWidth={1.75} />
+                    <span>Retry all failed</span>
+                  </Button>
+                </li>
+              ) : null}
               {items.map((item) => (
                 <li key={item.id} className="space-y-1">
                   <div className="flex items-center justify-between gap-2">
