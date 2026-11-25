@@ -1,7 +1,6 @@
 "use client"
 
-import { HugeiconsIcon } from "@hugeicons/react"
-import { InformationCircleIcon } from "@hugeicons/core-free-icons"
+import { InfoGlassIcon } from "@thesvg/ui-react"
 import {
   Tooltip,
   TooltipContent,
@@ -15,9 +14,9 @@ export function TradeInfoHint({ label, text }: { label: string; text: string }) 
       <Tooltip>
         <TooltipTrigger
           aria-label={label}
-          className="inline-flex size-4 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground"
+          className="inline-flex size-4 shrink-0 items-center justify-center text-muted-foreground hover:text-foreground cursor-pointer"
         >
-          <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5" strokeWidth={1.75} />
+          <InfoGlassIcon className="size-3.5" />
         </TooltipTrigger>
         <TooltipContent side="bottom" align="start" className="max-w-xs text-left">
           {text}

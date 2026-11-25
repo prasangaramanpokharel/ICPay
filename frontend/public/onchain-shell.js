@@ -30,6 +30,12 @@
       location.replace("/token?id=" + encodeURIComponent(tokenSeg) + (location.search ? "&" + location.search.slice(1) : ""))
       return
     }
+  } else if (/^\/market\/trade\/[^/]+$/.test(path)) {
+    var tradeSeg = path.slice("/market/trade/".length)
+    if (tradeSeg) {
+      location.replace("/market/trade?pair=" + encodeURIComponent(tradeSeg) + (location.search ? "&" + location.search.slice(1) : ""))
+      return
+    }
   } else if (/^\/channels\/join\/[^/]+$/.test(path)) {
     var joinSeg = path.slice("/channels/join/".length)
     if (joinSeg) {

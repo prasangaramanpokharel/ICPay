@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card } from "@/components/ui/card"
 import { TokenAvatar } from "@/components/public/market/trade/token-avatar"
-import { InfoTooltip } from "@/components/ui/info-tooltip"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { ShineBorder } from "@/components/ui/shine-border"
 import { cn } from "@/lib/ui/utils"
 import { changeClass, formatPct, formatUsd, priceLayers, sanePriceRange } from "@/lib/market/format"
@@ -62,17 +62,18 @@ export function TradePairToolbar({
   const icp = priceLayers(snapshot.priceInIcp, snapshot.quote.symbol)
 
   return (
-    <Card
-      size="sm"
-      className="relative m-1 flex flex-row flex-wrap items-center gap-x-8 gap-y-3 overflow-hidden px-4 py-3"
-    >
-      <ShineBorder
-        borderWidth={1}
-        duration={12}
-        shineColor={["var(--primary)", "var(--success)", "var(--accent)"]}
-        className="opacity-30 dark:opacity-40"
-      />
-      <div className="flex items-center gap-3 pr-2">
+    <TooltipProvider delay={150}>
+      <Card
+        size="sm"
+        className="relative m-1 flex flex-row flex-wrap items-start gap-x-8 gap-y-3 overflow-hidden px-4 py-3"
+      >
+        <ShineBorder
+          borderWidth={1}
+          duration={12}
+          shineColor={["var(--primary)", "var(--success)", "var(--accent)"]}
+          className="opacity-30 dark:opacity-40"
+        />
+        <div className="flex items-center gap-3 self-center pr-2">
         <TokenAvatar
           symbol={snapshot.base.symbol}
           ledgerId={snapshot.baseLedgerId}
@@ -113,14 +114,20 @@ export function TradePairToolbar({
           <Metric
             label={t("rangeHigh")}
             value={priceLayers(range.high).main}
+            tooltip="24h highest price"
           />
           <Metric
             label={t("rangeLow")}
             value={priceLayers(range.low).main}
+            tooltip="24h lowest price"
           />
         </>
       )}
-      <Metric label={t("volume24h")} value={formatUsd(stats?.volume24hUsd)} />
+      <Metric
+        label={t("volume24h")}
+        value={formatUsd(stats?.volume24hUsd)}
+        tooltip="24h trading volume"
+      />
       {snapshot.fdv && (
         <Metric
           label={t("fdv")}
@@ -137,7 +144,8 @@ export function TradePairToolbar({
           tooltip="Number of unique wallet addresses holding this token"
         />
       )}
-    </Card>
+      </Card>
+    </TooltipProvider>
   )
 }
 
@@ -161,8 +169,18 @@ function Metric({
   return (
     <div className="min-w-0">
       <p className="flex items-center gap-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-        {label}
-        {tooltip && <InfoTooltip content={tooltip} />}
+        {tooltip ? (
+          <Tooltip>
+            <TooltipTrigger className="border-b border-dotted border-muted-foreground/60 cursor-help text-left uppercase">
+              {label}
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-xs">
+              <p className="text-xs">{tooltip}</p>
+            </TooltipContent>
+          </Tooltip>
+        ) : (
+          label
+        )}
       </p>
       <p
         className={cn(

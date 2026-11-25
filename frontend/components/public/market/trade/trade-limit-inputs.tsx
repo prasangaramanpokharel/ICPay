@@ -1,8 +1,7 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowDataTransferHorizontalIcon } from "@hugeicons/core-free-icons"
+import { ReplaceGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { formatUsd } from "@/lib/market/format"
@@ -13,6 +12,7 @@ export interface TradeLimitInputsProps {
   onPriceChange: (val: string) => void
   limitPriceMode: "quote" | "usd"
   onTogglePriceMode: () => void
+  onSnapToMarket?: () => void
   convertedPriceSubtext: string | null
   quoteSymbol: string
   baseSymbol: string
@@ -32,6 +32,7 @@ export function TradeLimitInputs({
   onPriceChange,
   limitPriceMode,
   onTogglePriceMode,
+  onSnapToMarket,
   convertedPriceSubtext,
   quoteSymbol,
   baseSymbol,
@@ -62,25 +63,34 @@ export function TradeLimitInputs({
             aria-label={t("limitPrice")}
             inputMode="decimal"
             placeholder="0.00"
-            className="h-10 border-0 bg-transparent pl-20 pr-24 text-right text-sm tabular-nums shadow-none focus-visible:ring-0"
+            className="h-10 border-0 bg-transparent pl-20 pr-32 text-right text-sm tabular-nums shadow-none focus-visible:ring-0"
             value={effectivePriceText}
             onChange={(e) => onPriceChange(e.target.value)}
           />
-          <Button
-            type="button"
-            variant="ghost"
-            size="xs"
-            onClick={onTogglePriceMode}
-            className="absolute right-2 top-1/2 -translate-y-1/2 h-6 flex items-center gap-1 rounded-md border border-border/60 bg-muted/40 px-1.5 py-0.5 text-[11px] font-semibold text-foreground transition-all hover:bg-muted hover:border-border active:scale-95 cursor-pointer"
-            title={limitPriceMode === "quote" ? t("switchToUsd") : t("switchToToken", { symbol: quoteSymbol })}
-          >
-            <span>{limitPriceMode === "quote" ? quoteSymbol : "USD"}</span>
-            <HugeiconsIcon
-              icon={ArrowDataTransferHorizontalIcon}
-              className="size-3 text-muted-foreground"
-              strokeWidth={2}
-            />
-          </Button>
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+            {onSnapToMarket ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="xs"
+                onClick={onSnapToMarket}
+                className="h-6 rounded-md px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
+              >
+                Last
+              </Button>
+            ) : null}
+            <Button
+              type="button"
+              variant="ghost"
+              size="xs"
+              onClick={onTogglePriceMode}
+              className="h-6 flex items-center gap-1 rounded-md border border-border/60 bg-muted/40 px-1.5 py-0.5 text-[11px] font-semibold text-foreground transition-all hover:bg-muted hover:border-border active:scale-95 cursor-pointer"
+              title={limitPriceMode === "quote" ? t("switchToUsd") : t("switchToToken", { symbol: quoteSymbol })}
+            >
+              <span>{limitPriceMode === "quote" ? quoteSymbol : "USD"}</span>
+              <ReplaceGlassIcon className="size-3 text-muted-foreground" />
+            </Button>
+          </div>
         </div>
         {convertedPriceSubtext ? (
           <div className="flex items-center justify-between border-t border-border/40 px-3 py-1 text-[10px] text-muted-foreground">

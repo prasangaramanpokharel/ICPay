@@ -9,7 +9,7 @@ export function pairSlug(symbol: string, quoteSymbol = QUOTE): string {
 export function parsePairSlug(
   pair: string
 ): { base: string; quote: string } | null {
-  const match = pair.trim().toUpperCase().match(/^([A-Z0-9]+)_([A-Z0-9]+)$/)
+  const match = pair.trim().toUpperCase().match(/^([A-Z0-9-]+)_([A-Z0-9]+)$/)
   if (!match?.[1] || !match[2]) return null
   return { base: match[1], quote: match[2] }
 }
@@ -37,8 +37,15 @@ export function ledgerForPairSlug(
   preferredLedger?: string | null
 ): string | null {
   const parsed = parsePairSlug(pair)
-  if (!parsed) return preferredLedger ?? null
-  const hits = listed.filter((row) => pairSlug(row.symbol) === `${parsed.base}_${parsed.quote}`)
+  if (!parsed) {
+    if (pair && listed.some((row) => row.ledgerId === pair)) return pair
+    return preferredLedger ?? null
+  }
+  const hits = listed.filter(
+    (row) =>
+      pairSlug(row.symbol) === `${parsed.base}_${parsed.quote}` ||
+      row.ledgerId.toUpperCase() === parsed.base
+  )
   if (preferredLedger && hits.some((row) => row.ledgerId === preferredLedger)) {
     return preferredLedger
   }

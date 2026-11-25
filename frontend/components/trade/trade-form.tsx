@@ -2,9 +2,11 @@
 
 import { useMemo, useRef, useState } from "react"
 import { useTranslations } from "next-intl"
+import { motion } from "motion/react"
 import { Icon } from "@/components/ui/icon"
 import { ReplaceGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
+import { Spinner } from "@/components/ui/spinner"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TradeConfirmDrawer } from "@/components/trade/trade-confirm-drawer"
@@ -107,6 +109,7 @@ export function TradeForm({
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [trading, setTrading] = useState(false)
+  const [flipDegree, setFlipDegree] = useState(0)
   const tradeLock = useRef(false)
 
   const pickIn = (token: TokenHolding) => {
@@ -168,6 +171,7 @@ export function TradeForm({
 
   const flip = () => {
     if (!tokenIn || !tokenOut) return
+    setFlipDegree((prev) => prev + 180)
     setPickedIn(tokenOut)
     setPickedOut(tokenIn)
     setAmountText("")
@@ -266,7 +270,13 @@ export function TradeForm({
                 className="size-10 rounded-xl border-4 border-card bg-background shadow-sm hover:bg-muted"
                 onClick={flip}
               >
-                <Icon icon={ReplaceGlassIcon} className="size-5" strokeWidth={2} />
+                <motion.span
+                  animate={{ rotate: flipDegree }}
+                  transition={{ type: "spring", stiffness: 350, damping: 25 }}
+                  className="flex items-center justify-center"
+                >
+                  <Icon icon={ReplaceGlassIcon} className="size-5" strokeWidth={2} />
+                </motion.span>
                 <span className="sr-only">{t("flip")}</span>
               </Button>
             </div>
@@ -321,7 +331,14 @@ export function TradeForm({
             disabled={!canReview}
             onClick={openReview}
           >
-            {quoteLoading ? t("fetchingQuote") : t("review")}
+            {quoteLoading ? (
+              <span className="flex items-center gap-2">
+                <Spinner className="size-4" />
+                <span>Quoting</span>
+              </span>
+            ) : (
+              t("review")
+            )}
           </Button>
 
           <p className="text-center text-xs text-muted-foreground">{t("processHint")}</p>

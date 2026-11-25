@@ -4,8 +4,8 @@ import { useMemo, useState } from "react"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
 import useSWR from "swr"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Exchange01Icon } from "@hugeicons/core-free-icons"
+import { motion, type Variants } from "motion/react"
+import { ArrowRightGlassIcon, ReplaceGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -35,6 +35,30 @@ import { playSuccessChime } from "@/lib/ui/successChime"
 import { formatTokenAmount, parseTokenAmount, toPlainTokenAmount } from "@/lib/wallet/utils"
 import { depositForTrade, getTradingBalance, withdrawFromTrade } from "@/services/trade/trade"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
+
+const successContainerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.07,
+      delayChildren: 0.03,
+    },
+  },
+}
+
+const successItemVariants: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 380,
+      damping: 28,
+    },
+  },
+}
 
 export function TradeWalletDialog({
   open,
@@ -126,25 +150,49 @@ export function TradeWalletDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md" showCloseButton={!done}>
         {done && token ? (
-          <div className="flex flex-col items-center gap-4 py-2 text-center">
+          <motion.div
+            variants={successContainerVariants}
+            initial="hidden"
+            animate="visible"
+            className="flex flex-col items-center gap-4 py-2 text-center"
+          >
             <SuccessTick size="sm" />
-            <DialogHeader className="items-center text-center">
-              <DialogTitle className="text-lg font-semibold tracking-tight">
-                {t("transferSuccess")}
-              </DialogTitle>
-              <DialogDescription>
-                {formatTokenAmount(doneAmount, token.decimals)} {token.symbol}
-                {" · "}
-                {toWallet ? t("tradingAccount") : t("mainWallet")} →{" "}
-                {toWallet ? t("mainWallet") : t("tradingAccount")}
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter className="w-full sm:justify-center">
-              <Button variant="outline" size="sm" onClick={() => handleOpenChange(false)}>
+            <motion.div variants={successItemVariants}>
+              <DialogHeader className="items-center text-center">
+                <DialogTitle className="text-xl font-bold tracking-tight">
+                  {t("transferSuccess")}
+                </DialogTitle>
+              </DialogHeader>
+            </motion.div>
+
+            <motion.div
+              variants={successItemVariants}
+              className="w-full rounded-2xl border border-border/60 bg-muted/25 p-4 space-y-3"
+            >
+              <p className="text-2xl font-bold tracking-tight tabular-nums text-foreground">
+                {formatTokenAmount(doneAmount, token.decimals)}{" "}
+                <span className="text-base font-semibold text-muted-foreground">{token.symbol}</span>
+              </p>
+              <div className="flex items-center justify-center gap-2 border-t border-border/40 pt-3 text-xs font-medium">
+                <span className="rounded-lg border border-border/50 bg-background/70 px-2.5 py-1 text-muted-foreground">
+                  {toWallet ? t("tradingAccount") : t("mainWallet")}
+                </span>
+                <ArrowRightGlassIcon className="size-3.5 shrink-0 text-success" />
+                <span className="rounded-lg border border-border/50 bg-background/70 px-2.5 py-1 text-foreground">
+                  {toWallet ? t("mainWallet") : t("tradingAccount")}
+                </span>
+              </div>
+            </motion.div>
+
+            <motion.div variants={successItemVariants} className="w-full pt-1">
+              <Button
+                className="h-10 w-full rounded-full font-semibold cursor-pointer"
+                onClick={() => handleOpenChange(false)}
+              >
                 {tc("done")}
               </Button>
-            </DialogFooter>
-          </div>
+            </motion.div>
+          </motion.div>
         ) : (
           <>
             <DialogHeader>
@@ -169,11 +217,7 @@ export function TradeWalletDialog({
                   }}
                   aria-label="Switch transfer direction"
                 >
-                  <HugeiconsIcon
-                    icon={Exchange01Icon}
-                    className="size-4 text-muted-foreground"
-                    strokeWidth={2}
-                  />
+                  <ReplaceGlassIcon className="size-4 text-muted-foreground" />
                 </Button>
                 <AccountCard
                   label={t("to")}

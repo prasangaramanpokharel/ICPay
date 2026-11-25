@@ -23,6 +23,8 @@ export interface TradeMarketInputsProps {
   canQuote: boolean
   quote: TradeQuoteResult | undefined
   quoting: boolean
+  slippageBps?: bigint
+  onRefreshQuote?: () => void
 }
 
 export function TradeMarketInputs({
@@ -41,6 +43,8 @@ export function TradeMarketInputs({
   canQuote,
   quote,
   quoting,
+  slippageBps,
+  onRefreshQuote,
 }: TradeMarketInputsProps) {
   const t = useTranslations("marketTrade")
 
@@ -88,6 +92,8 @@ export function TradeMarketInputs({
           receiveSymbol={receiveSymbol}
           payDecimals={tokenIn.decimals}
           outDecimals={tokenOut.decimals}
+          slippageBps={slippageBps}
+          onRefreshQuote={onRefreshQuote}
         />
       ) : null}
     </div>

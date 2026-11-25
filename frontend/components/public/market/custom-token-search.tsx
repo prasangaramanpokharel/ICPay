@@ -2,14 +2,14 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon, BadgePlusIcon } from "@hugeicons/core-free-icons"
+import { PlusGlassIcon, SearchGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
@@ -72,13 +72,23 @@ export function CustomTokenSearch({
   }
 
   return (
-    <Popover open={open} onOpenChange={handleOpenChange}>
-      <PopoverTrigger
-        className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground"
-        aria-label={t("addToken")}
-      >
-        <HugeiconsIcon icon={BadgePlusIcon} size={16} strokeWidth={2} />
-      </PopoverTrigger>
+    <TooltipProvider delay={200}>
+      <Popover open={open} onOpenChange={handleOpenChange}>
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <PopoverTrigger
+                className="flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
+                aria-label={t("addCustomToken")}
+              />
+            }
+          >
+            <PlusGlassIcon className="size-4" />
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p className="text-xs">{t("addCustomToken")}</p>
+          </TooltipContent>
+        </Tooltip>
       <PopoverContent className="w-[420px] p-4" align="end">
         <div className="space-y-4">
           <div>
@@ -112,7 +122,7 @@ export function CustomTokenSearch({
                 {searching ? (
                   <Spinner className="size-4" />
                 ) : (
-                  <HugeiconsIcon icon={Search01Icon} size={18} strokeWidth={2} />
+                  <SearchGlassIcon className="size-4.5" />
                 )}
               </Button>
             </div>
@@ -168,6 +178,7 @@ export function CustomTokenSearch({
           </div>
         </div>
       </PopoverContent>
-    </Popover>
+      </Popover>
+    </TooltipProvider>
   )
 }

@@ -14,6 +14,11 @@ import {
   withLedgerBalance,
 } from "@/lib/trade/fees"
 import { patchHoldings } from "@/lib/wallet/holdingsCache"
+import {
+  patchTradeBalancesCache,
+  readTradeBalancesCache,
+  writeTradeBalancesCache,
+} from "@/lib/market/tradeCache"
 import { walletKey } from "@/lib/wallet/walletCache"
 import {
   fetchTradeQuoteChecked,
@@ -47,10 +52,18 @@ export function useTradeTokens() {
     [swapHoldings]
   )
 
+  const principal = identity?.getPrincipal().toText()
   const { data: tradeBalances, isLoading: tradeLoading } = useSWR(
     identity && ledgerIds ? keyFor(identity, "trade-balances", ledgerIds) : null,
     () => fetchTradeBalances(identity!, swapHoldings.map((h) => h.ledgerId)),
-    { revalidateOnFocus: false, dedupingInterval: 15_000 }
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 15_000,
+      fallbackData: readTradeBalancesCache(principal),
+      onSuccess: (map) => {
+        if (principal) writeTradeBalancesCache(principal, map)
+      },
+    }
   )
 
   const tokens = useMemo(() => {
@@ -151,6 +164,10 @@ export function useApplyTradeBalances() {
       })
     }
 
+    patchTradeBalancesCache(principal, [
+      { ledgerId: update.tokenInId, delta: -update.amountIn },
+      { ledgerId: update.tokenOutId, delta: update.amountOut },
+    ])
     void refreshWallet()
   }
 }
@@ -221,6 +238,7 @@ export function useApplyInternalTransfer() {
       { revalidate: false }
     )
 
+    patchTradeBalancesCache(principal, [{ ledgerId: update.ledgerId, next: nextTrade }])
     patchHoldings(principal, [{ ledgerId: update.ledgerId, delta: walletDelta }])
     refreshWallet()
   }
@@ -263,10 +281,15 @@ export function useRefreshTradeBalances() {
 
 export function useTradingBalance(ledgerId: string | null) {
   const { isAuthenticated, identity } = useAuth()
+  const principal = identity?.getPrincipal().toText()
   const { data: tradeBal } = useSWR(
     identity && ledgerId ? tradeBalanceKey(identity, ledgerId) : null,
     () => getTradingBalance(identity, ledgerId!),
-    { revalidateOnFocus: false, dedupingInterval: 4_000 }
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 4_000,
+      fallbackData: principal && ledgerId ? readTradeBalancesCache(principal)?.get(ledgerId) : undefined,
+    }
   )
   if (!isAuthenticated || !ledgerId) return null
   if (tradeBal === undefined) return null
@@ -281,38 +304,38 @@ export function useSpendableBalance(ledgerId: string | null) {
   return mergeSpendable(token?.balance, tradeBal)
 }
 
-export function useUserLimitOrders(limit = 50) {
+export function useUserLimitOrders(limit = 50, enabled = true) {
   const { identity, isAuthenticated } = useAuth()
   const { data, error, isLoading, mutate } = useSWR(
-    isAuthenticated && identity
+    enabled && isAuthenticated && identity
       ? keyFor(identity, "user-limit-orders", limit.toString())
       : null,
     () => getUserLimitOrders(identity, limit),
-    { revalidateOnFocus: true, refreshInterval: 8_000 }
+    { revalidateOnFocus: false, refreshInterval: 30_000, dedupingInterval: 10_000 }
   )
   return { orders: data ?? [], error, isLoading, refresh: mutate }
 }
 
-export function useOpenLimitOrders(onlyUser = true) {
+export function useOpenLimitOrders(onlyUser = true, enabled = true) {
   const { identity, isAuthenticated } = useAuth()
   const { data, error, isLoading, mutate } = useSWR(
-    isAuthenticated && identity
+    enabled && isAuthenticated && identity
       ? keyFor(identity, "open-limit-orders", onlyUser ? "user" : "all")
       : null,
     () => getOpenLimitOrders(identity, onlyUser),
-    { revalidateOnFocus: true, refreshInterval: 8_000 }
+    { revalidateOnFocus: false, refreshInterval: 15_000, dedupingInterval: 8_000 }
   )
   return { openOrders: data ?? [], error, isLoading, refresh: mutate }
 }
 
-export function useUserTrades(limit = 50) {
+export function useUserTrades(limit = 50, enabled = true) {
   const { identity, isAuthenticated } = useAuth()
   const { data, error, isLoading, mutate } = useSWR(
-    isAuthenticated && identity
+    enabled && isAuthenticated && identity
       ? keyFor(identity, "user-trades", limit.toString())
       : null,
     () => getUserTrades(identity, limit),
-    { revalidateOnFocus: true, refreshInterval: 12_000 }
+    { revalidateOnFocus: false, refreshInterval: 30_000, dedupingInterval: 10_000 }
   )
   return { trades: data ?? [], error, isLoading, refresh: mutate }
 }

@@ -1,5 +1,5 @@
 import { createAgent } from "@/services/icp"
-import { ICP_LEDGER_ID, ICPAY_LEDGER_ID } from "@/services/tokens"
+import { ICP_LEDGER_ID } from "@/services/tokens"
 import { quoteIcpswapPool, resolveIcpswapPool, type IcpswapPoolRef } from "@/lib/swap/icpswap"
 import { TERMINAL_QUOTE_LEDGER_ID } from "@/lib/market/tradePairs"
 import {
@@ -76,21 +76,15 @@ function factsFromIcrcApi(token: IcrcApiToken): IcrcLedgerFacts {
   }
 }
 
-let terminalPairsCache: { data: TerminalPairRow[]; expiresAt: number } | null = null
-
 export async function fetchTerminalPairs(): Promise<TerminalPairRow[]> {
-  if (terminalPairsCache && Date.now() < terminalPairsCache.expiresAt) {
-    return terminalPairsCache.data
-  }
-
   const [tokens, listed] = await Promise.all([
     fetchIcrcTokens({ limit: 150, hasTransactions: true }),
     fetchIcpswapTokenAll(),
   ])
   const poolByLedger = new Map(listed.map((row) => [row.ledgerId, row]))
 
-  const rows: TerminalPairRow[] = tokens
-    .filter((t) => t.ledger_canister_id !== ICP_LEDGER_ID && t.ledger_canister_id !== ICPAY_LEDGER_ID)
+  return tokens
+    .filter((t) => t.ledger_canister_id !== ICP_LEDGER_ID)
     .map((t) => {
       const base = factsFromIcrcApi(t)
       const pool = poolByLedger.get(t.ledger_canister_id)
@@ -130,9 +124,6 @@ export async function fetchTerminalPairs(): Promise<TerminalPairRow[]> {
       if (volA !== volB) return volB - volA
       return a.base.symbol.localeCompare(b.base.symbol)
     })
-
-  terminalPairsCache = { data: rows, expiresAt: Date.now() + 60_000 }
-  return rows
 }
 
 export async function fetchTradePairSnapshot(
@@ -142,38 +133,40 @@ export async function fetchTradePairSnapshot(
   const quoteLedgerId = TERMINAL_QUOTE_LEDGER_ID
   const agent = await createAgent(undefined)
 
-  const [base, quote, stats, icrcDetail] = await Promise.all([
+  const [base, quote, stats, icrcDetail, resolvedPool] = await Promise.all([
     fetchEnhancedTokenFacts(baseLedgerId),
     fetchEnhancedTokenFacts(quoteLedgerId),
     cachedStats ? Promise.resolve(cachedStats) : fetchIcpswapTokenStats(baseLedgerId),
     fetchIcrcTokenDetail(baseLedgerId),
+    resolveIcpswapPool(agent, baseLedgerId, quoteLedgerId).catch(() => null),
   ])
 
   if (!base || !quote) {
     throw new Error("Failed to load ICRC ledger metadata for this pair")
   }
 
-  let pool: IcpswapPoolRef | null = null
+  let pool: IcpswapPoolRef | null = resolvedPool
   let unitQuoteOut: bigint | null = null
   let spotRate: number | null = null
   let priceInIcp: number | null = null
 
-  try {
-    pool = await resolveIcpswapPool(agent, baseLedgerId, quoteLedgerId)
-    const unitIn = 10n ** BigInt(Math.max(0, base.decimals))
-    const amountIn = unitIn > base.fee ? unitIn - base.fee : 0n
-    if (amountIn > 0n) {
-      const grossOut = await quoteIcpswapPool(agent, pool, amountIn)
-      unitQuoteOut = grossOut
-      if (grossOut > 0n) {
-        const inHuman = Number(amountIn) / 10 ** base.decimals
-        const outHuman = Number(grossOut) / 10 ** quote.decimals
-        spotRate = inHuman > 0 ? outHuman / inHuman : null
-        priceInIcp = spotRate
+  if (pool) {
+    try {
+      const unitIn = 10n ** BigInt(Math.max(0, base.decimals))
+      const amountIn = unitIn > base.fee ? unitIn - base.fee : 0n
+      if (amountIn > 0n) {
+        const grossOut = await quoteIcpswapPool(agent, pool, amountIn)
+        unitQuoteOut = grossOut
+        if (grossOut > 0n) {
+          const inHuman = Number(amountIn) / 10 ** base.decimals
+          const outHuman = Number(grossOut) / 10 ** quote.decimals
+          spotRate = inHuman > 0 ? outHuman / inHuman : null
+          priceInIcp = spotRate
+        }
       }
+    } catch {
+      pool = null
     }
-  } catch {
-    pool = null
   }
 
   if (base.logoUrl) rememberTokenLogo(baseLedgerId, base.logoUrl)

@@ -68,7 +68,7 @@ export function TradeDepositDrawer({
             <div className="flex flex-col items-center justify-center gap-4 py-8 text-center">
               <p className="text-sm text-muted-foreground">{tDeposit("warning")}</p>
               <Button onClick={() => login()} size="sm">
-                {tTrade("signInToTrade")}
+                Connect
               </Button>
             </div>
           ) : isLoading ? (
@@ -115,7 +115,7 @@ export function TradeDepositDrawer({
           <DrawerClose
             render={
               <Button type="button" size="sm" onClick={handleDone}>
-                {tTrade("cancel")}
+                Close
               </Button>
             }
           />

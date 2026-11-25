@@ -12,6 +12,9 @@ import {
   ReferenceLine,
   Cell,
 } from "recharts"
+import { CrosshairGlassIcon } from "@thesvg/ui-react"
+import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Spinner } from "@/components/ui/spinner"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
@@ -24,6 +27,7 @@ import {
 import { useIcpswapOhlc } from "@/hooks/market/useTradeTerminal"
 import { CHART_INTERVALS, type ChartWindow, type OhlcBar } from "@/lib/market/ohlc"
 import { formatPct, formatUsd, changeClass } from "@/lib/market/format"
+import { cn } from "@/lib/ui/utils"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
 import { TradeChartLimitDialog } from "./trade-chart-limit-dialog"
 
@@ -236,10 +240,6 @@ function TradeChartTooltipContent({
   )
 }
 
-function cn(...inputs: Array<string | boolean | undefined | null>): string {
-  return inputs.filter(Boolean).join(" ")
-}
-
 export function TradeChartPanel({
   snapshot,
   loading,
@@ -252,6 +252,7 @@ export function TradeChartPanel({
   const t = useTranslations("marketTrade")
   const [chartWindow, setChartWindow] = React.useState<ChartWindow>("1d")
   const [chartType, setChartType] = React.useState<ChartType>("area")
+  const [chartLimitMode, setChartLimitMode] = React.useState(false)
   const [limitDialogOpen, setLimitDialogOpen] = React.useState(false)
   const [dialogPriceUsd, setDialogPriceUsd] = React.useState(0)
   const [dialogIsAbove, setDialogIsAbove] = React.useState(false)
@@ -356,13 +357,33 @@ export function TradeChartPanel({
               Line
             </ToggleGroupItem>
           </ToggleGroup>
+
+          <Button
+            type="button"
+            variant="outline"
+            size="icon-xs"
+            onClick={() => setChartLimitMode((v) => !v)}
+            aria-pressed={chartLimitMode}
+            title={chartLimitMode ? "Disable chart limit click" : "Enable click-on-chart limit order"}
+            className={cn(
+              "size-6 border-border/60 cursor-pointer",
+              chartLimitMode
+                ? "bg-primary/15 text-primary border-primary/40 hover:bg-primary/20"
+                : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <CrosshairGlassIcon className="size-3.5" />
+          </Button>
         </div>
       </div>
 
-      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden p-2">
+      <div className={cn("relative flex min-h-0 flex-1 flex-col overflow-hidden p-2", chartLimitMode && "cursor-crosshair")}>
         {waiting && (
-          <div className="absolute inset-2 z-20 flex flex-col items-center justify-center rounded-xl bg-background/80 backdrop-blur-xs">
-            <Spinner className="size-8 text-muted-foreground/60" />
+          <div className="absolute inset-2 z-20 flex flex-col justify-between rounded-xl bg-background/80 p-4 backdrop-blur-xs">
+            <Skeleton className="h-full w-full rounded-lg opacity-40" />
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+              <Spinner className="size-6 text-muted-foreground/60" />
+            </div>
           </div>
         )}
 
@@ -377,6 +398,7 @@ export function TradeChartPanel({
             data={chartData}
             margin={{ top: 10, right: 10, bottom: 0, left: 10 }}
             onClick={(state) => {
+              if (!chartLimitMode) return
               if (state && typeof state.activeIndex === "number") {
                 const point = chartData[state.activeIndex]
                 if (point && point.close > 0) {

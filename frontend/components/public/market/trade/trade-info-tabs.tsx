@@ -2,8 +2,7 @@
 
 import { useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Copy01Icon, LinkSquare02Icon, Tick02Icon } from "@hugeicons/core-free-icons"
+import { CopyGlassIcon, ExternalLinkGlassIcon, CheckGlassOutlineIcon } from "@thesvg/ui-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -328,7 +327,11 @@ function InfoRow({
               aria-label={copied ? tc("copied") : tc("copy")}
               onClick={() => void copyId()}
             >
-              <HugeiconsIcon icon={copied ? Tick02Icon : Copy01Icon} className="size-3.5" strokeWidth={2} />
+              {copied ? (
+                <CheckGlassOutlineIcon className="size-3.5" />
+              ) : (
+                <CopyGlassIcon className="size-3.5" />
+              )}
             </Button>
             <a
               href={canisterDashboardUrl(canister)}
@@ -337,7 +340,7 @@ function InfoRow({
               className="rounded p-0.5 text-foreground/70 hover:bg-muted hover:text-foreground"
               aria-label={t("openCanister")}
             >
-              <HugeiconsIcon icon={LinkSquare02Icon} className="size-3.5" strokeWidth={2} />
+              <ExternalLinkGlassIcon className="size-3.5" />
             </a>
           </span>
         ) : null}

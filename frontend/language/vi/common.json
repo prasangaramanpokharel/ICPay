@@ -2817,7 +2817,7 @@
     "slippage": "Slippage tolerance",
     "openWalletTrade": "Trade in wallet",
     "signInToTrade": "Sign in to trade",
-    "orderDisclaimer": "Quotes are indicative. Execution happens in your ICPay wallet.",
+    "orderDisclaimer": "Secured by ICP and execution is fully on-chain.",
     "balance": "Balance",
     "recentSwaps": "Recent swaps",
     "recentSwapsHint": "Lệnh đã khớp của cặp này. Hash mở explorer sau khi lên chuỗi.",

@@ -13,7 +13,7 @@ export type LocalFill = {
 }
 
 export type TradeFillNotice = {
-  kind: "filled" | "failed"
+  kind: "filling" | "filled" | "failed"
   id: string
   isBuy: boolean
   symbol: string

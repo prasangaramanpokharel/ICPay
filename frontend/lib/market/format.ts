@@ -28,19 +28,12 @@ export function formatWatchlistPrice(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value) || value <= 0) {
     return "—"
   }
-  if (value >= 1_000) {
-    return `$${value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-  }
   if (value >= 1) {
-    return `$${value.toFixed(2)}`
+    return `$${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
   }
-  if (value >= 0.01) {
-    return `$${value.toFixed(4)}`
-  }
-  if (value >= 0.0001) {
-    return `$${value.toFixed(6)}`
-  }
-  return `$${value.toPrecision(4)}`
+  const sig = Number(value.toPrecision(4))
+  const decimals = Math.max(0, Math.min(10, 3 - Math.floor(Math.log10(sig))))
+  return `$${sig.toFixed(decimals)}`
 }
 
 /** Compact headline + full decimals underneath when the number is long. */
@@ -74,11 +67,11 @@ export function priceLayers(
 export function formatPct(value: number | null | undefined): string {
   if (value === null || value === undefined || !Number.isFinite(value)) return "0.00%"
 
-  // Clamp extreme values to reasonable display range (-100% to +1000%)
   const clamped = Math.max(-100, Math.min(1000, value))
 
-  const sign = clamped > 0 ? "+" : ""
-  return `${sign}${clamped.toFixed(2)}%`
+  if (clamped > 0) return `+${clamped.toFixed(2)}%`
+  if (clamped < 0) return `−${Math.abs(clamped).toFixed(2)}%`
+  return "0.00%"
 }
 
 export function changeClass(value: number | null | undefined): string {

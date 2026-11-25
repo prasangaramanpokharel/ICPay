@@ -2817,7 +2817,7 @@
     "slippage": "Slippage tolerance",
     "openWalletTrade": "Trade in wallet",
     "signInToTrade": "Sign in to trade",
-    "orderDisclaimer": "Quotes are indicative. Execution happens in your ICPay wallet.",
+    "orderDisclaimer": "Secured by ICP and execution is fully on-chain.",
     "balance": "Balance",
     "recentSwaps": "Recent swaps",
     "recentSwapsHint": "이 페어의 체결 내역입니다. 온체인 이후 해시에서 탐색기를 엽니다.",

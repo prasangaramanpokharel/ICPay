@@ -107,7 +107,7 @@ export function TradeConfirmDrawer({
             disabled={trading}
           >
             {trading && <Spinner data-icon="inline-start" />}
-            {trading ? t("trading") : t("confirmTrade")}
+            {trading ? t("trading") : "Confirm"}
           </Button>
         </DrawerFooter>
       </DrawerContent>

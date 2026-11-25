@@ -35,6 +35,7 @@ export interface UseTradeOrderSubmitProps {
   orderType: "limit" | "market"
   tradingBal: bigint | null
   quote: TradeQuoteResult | undefined
+  slippageBps?: bigint
   applyBalances: (b: { tokenInId: string; tokenOutId: string; amountIn: bigint; amountOut: bigint }) => void
   refreshTradeBalances: (ledgerId: string) => Promise<unknown>
   refreshWallet: () => void
@@ -50,6 +51,7 @@ export function useTradeOrderSubmit({
   orderType,
   tradingBal,
   quote,
+  slippageBps,
   applyBalances,
   refreshTradeBalances,
   refreshWallet,
@@ -118,6 +120,14 @@ export function useTradeOrderSubmit({
 
     setStatus("placing_limit")
     setTradeError(null)
+    const baseSymbol = snapshot?.base.symbol ?? ""
+    const limitToastId = `limit-${Date.now()}`
+    toast.add({
+      id: limitToastId,
+      title: t("fillFilling"),
+      description: `${side === "buy" ? t("swapBuy") : t("swapSell")} ${baseSymbol}`.trim(),
+      type: "loading",
+    })
 
     try {
       const inId = side === "buy" ? quoteToken.ledgerId : baseToken.ledgerId
@@ -127,8 +137,9 @@ export function useTradeOrderSubmit({
       if ("ok" in res) {
         setStatus("idle")
         onSuccess()
-        toast.add({
+        toast.update(limitToastId, {
           title: t("orderPlaced"),
+          description: `${side === "buy" ? t("swapBuy") : t("swapSell")} ${baseSymbol}`.trim(),
           type: "success",
         })
         await refreshTradeBalances(inId)
@@ -141,7 +152,7 @@ export function useTradeOrderSubmit({
         }
         setStatus("error")
         setTradeError(errMessage)
-        toast.add({
+        toast.update(limitToastId, {
           title: t("fillFailed"),
           description: errMessage,
           type: "error",
@@ -155,7 +166,7 @@ export function useTradeOrderSubmit({
       }
       setStatus("error")
       setTradeError(errMessage)
-      toast.add({
+      toast.update(limitToastId, {
         title: t("fillFailed"),
         description: errMessage,
         type: "error",
@@ -184,7 +195,7 @@ export function useTradeOrderSubmit({
       return
     }
 
-    const minOut = minAmountOut(quote.amountOut)
+    const minOut = minAmountOut(quote.amountOut, slippageBps)
     const fillAmount = side === "buy" ? quote.amountOut : amountIn
     const clientId = `trade-${now}-${Math.random().toString(36).slice(2, 8)}`
 
@@ -199,6 +210,15 @@ export function useTradeOrderSubmit({
       amount: fillAmount,
       decimals: snapshot.base.decimals,
       status: "filling",
+      at: now,
+    })
+    setTradeFillNotice({
+      kind: "filling",
+      id: clientId,
+      isBuy: side === "buy",
+      symbol: snapshot.base.symbol,
+      amount: fillAmount,
+      decimals: snapshot.base.decimals,
       at: now,
     })
     applyBalances({
@@ -241,11 +261,6 @@ export function useTradeOrderSubmit({
         }
         setStatus("error")
         setTradeError(formattedErr)
-        toast.add({
-          title: t("fillFailed"),
-          description: formattedErr,
-          type: "error",
-        })
         return
       }
 
@@ -262,7 +277,7 @@ export function useTradeOrderSubmit({
       })
       setTradeFillNotice({
         kind: "filled",
-        id: result.ok.txId || clientId,
+        id: clientId,
         isBuy: side === "buy",
         symbol: snapshot.base.symbol,
         amount: side === "buy" ? result.ok.amountOut : result.ok.amountIn,
@@ -293,11 +308,6 @@ export function useTradeOrderSubmit({
       }
       setStatus("error")
       setTradeError(formattedErr)
-      toast.add({
-        title: t("fillFailed"),
-        description: formattedErr,
-        type: "error",
-      })
     }
   }
 

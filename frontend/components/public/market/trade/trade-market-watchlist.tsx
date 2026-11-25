@@ -1,21 +1,17 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import { preload } from "swr"
 import { useTranslations } from "next-intl"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-} from "@/components/ui/input-group"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowDown01Icon, ArrowUp01Icon, Search01Icon } from "@hugeicons/core-free-icons"
+import { Input } from "@/components/ui/input"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { ArrowDownGlassIcon, ArrowUpGlassIcon, SearchGlassIcon, XGlassIcon } from "@thesvg/ui-react"
 import { TokenAvatar } from "./token-avatar"
 import { cn } from "@/lib/ui/utils"
 import { changeClass, formatPct, formatUsd, formatWatchlistPrice } from "@/lib/market/format"
@@ -25,7 +21,8 @@ import { pinWatchlistRows } from "@/lib/market/customWatchlist"
 import { MarketPager } from "@/components/public/market/market-pager"
 import { Separator } from "@/components/ui/separator"
 import { CustomTokenSearch } from "@/components/public/market/custom-token-search"
-import type { TerminalPairRow } from "@/services/market/tradePairSnapshot"
+import { terminalPairKey } from "@/lib/market/tradePairs"
+import { fetchTradePairSnapshot, type TerminalPairRow } from "@/services/market/tradePairSnapshot"
 
 type SortKey = "name" | "price" | "change" | "volume"
 type ChangeFilter = "all" | "up" | "down"
@@ -49,6 +46,7 @@ export function TradeMarketWatchlist({
 }) {
   const t = useTranslations("marketTrade")
   const [query, setQuery] = useState("")
+  const [isSearchOpen, setIsSearchOpen] = useState(false)
   const [changeFilter, setChangeFilter] = useState<ChangeFilter>("all")
   const [sortKey, setSortKey] = useState<SortKey>("volume")
   const [sortAsc, setSortAsc] = useState(false)
@@ -104,91 +102,139 @@ export function TradeMarketWatchlist({
   const shown = takeWatchlistRows(visible, safePage)
 
   return (
-    <Card size="sm" className="m-1 h-full min-h-0 gap-0 py-0">
-      <CardHeader className="border-b py-2">
-        <div className="flex items-center justify-between">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            {t("markets")}
-          </p>
-          {onAddCustomToken && <CustomTokenSearch onTokenFound={onAddCustomToken} />}
-        </div>
-        <InputGroup className="mt-1.5">
-          <InputGroupAddon>
-            <HugeiconsIcon icon={Search01Icon} className="size-4" strokeWidth={2} />
-          </InputGroupAddon>
-          <InputGroupInput
-            placeholder={t("searchPairs")}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          />
-        </InputGroup>
-        <ToggleGroup
-          value={[changeFilter]}
-          onValueChange={(val) => {
-            const k = val[0] as ChangeFilter | undefined
-            if (!k) return
-            setChangeFilter(k)
-            const defaults = sortDefaultsForChangeFilter(k)
-            if (defaults) {
-              setSortKey(defaults.sortKey as SortKey)
-              setSortAsc(defaults.sortAsc)
-            }
-          }}
-          className="mt-2 justify-start gap-1"
-        >
-          <ToggleGroupItem value="all" size="sm" className="h-6 px-2.5 text-[10px] font-medium">
-            {t("filterAll")}
-          </ToggleGroupItem>
-          <ToggleGroupItem value="up" size="sm" className="h-6 px-2.5 text-[10px] font-medium">
-            {t("filterGainers")}
-          </ToggleGroupItem>
-          <ToggleGroupItem value="down" size="sm" className="h-6 px-2.5 text-[10px] font-medium">
-            {t("filterLosers")}
-          </ToggleGroupItem>
-        </ToggleGroup>
-      </CardHeader>
-      <CardContent className="min-h-0 flex-1 p-0">
-        <ScrollArea className="h-full px-1.5 py-1">
-          <div className="grid grid-cols-[1fr_auto_auto] gap-x-3 px-1.5 pb-1 text-[9px] uppercase tracking-wide text-muted-foreground">
-            <SortHead
-              label={t("colName")}
-              active={sortKey === "name"}
-              asc={sortAsc}
-              onClick={() => toggleSort("name")}
-            />
-            <SortHead
-              label={t("price")}
-              active={sortKey === "price"}
-              asc={sortAsc}
-              onClick={() => toggleSort("price")}
-              right
-            />
-            <SortHead
-              label={t("change24h")}
-              active={sortKey === "change"}
-              asc={sortAsc}
-              onClick={() => toggleSort("change")}
-              right
-            />
-          </div>
-          <ul>
-            {loading && rows.length === 0 ? (
-              <li className="flex h-36 items-center justify-center p-4">
-                <Spinner className="size-5 text-muted-foreground/60" />
-              </li>
-            ) : shown.map((row) => (
-              <li key={row.baseLedgerId}>
-                <HoverCard>
-                  <HoverCardTrigger
-                    onClick={() => onSelect(row.baseLedgerId)}
-                    className={cn(
-                      "grid w-full grid-cols-[1fr_auto_auto] items-center gap-x-3 rounded-lg px-2 py-1.5 text-left text-xs transition-colors cursor-pointer",
-                      row.baseLedgerId === activeBaseId
-                        ? "bg-primary/15 font-medium text-foreground ring-1 ring-primary/30"
-                        : "hover:bg-muted/50 text-foreground/90"
-                    )}
+    <TooltipProvider delay={200}>
+      <Card size="sm" className="m-1 flex h-full min-h-0 flex-col gap-0 overflow-hidden py-0">
+        <CardHeader className="shrink-0 border-b py-2">
+          {isSearchOpen || query ? (
+            <div className="flex h-6 items-center gap-1.5">
+              <SearchGlassIcon className="size-3.5 shrink-0 text-muted-foreground" />
+              <Input
+                autoFocus
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    setQuery("")
+                    setIsSearchOpen(false)
+                  }
+                }}
+                placeholder={t("searchPairs")}
+                className="h-6 flex-1 border-border/60 bg-muted/40 px-1.5 py-0 text-xs"
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={t("searchPairs")}
+                className="size-6 shrink-0 cursor-pointer text-muted-foreground hover:text-foreground"
+                onClick={() => {
+                  setQuery("")
+                  setIsSearchOpen(false)
+                }}
+              >
+                <XGlassIcon className="size-3" />
+              </Button>
+            </div>
+          ) : (
+            <div className="flex h-6 items-center justify-between">
+              <p className="text-xs font-semibold text-muted-foreground">
+                {t("markets")}
+              </p>
+              <div className="flex items-center gap-1">
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="size-6 cursor-pointer text-muted-foreground hover:text-foreground"
+                        onClick={() => setIsSearchOpen(true)}
+                        aria-label={t("searchPairs")}
+                      />
+                    }
                   >
-                    <div className="flex min-w-0 items-center gap-2">
+                    <SearchGlassIcon className="size-3.5" />
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom">
+                    <p className="text-xs">{t("searchPairs")}</p>
+                  </TooltipContent>
+                </Tooltip>
+                {onAddCustomToken && <CustomTokenSearch onTokenFound={onAddCustomToken} />}
+              </div>
+            </div>
+          )}
+          <ToggleGroup
+            value={[changeFilter]}
+            onValueChange={(val) => {
+              const k = val[0] as ChangeFilter | undefined
+              if (!k) return
+              setChangeFilter(k)
+              const defaults = sortDefaultsForChangeFilter(k)
+              if (defaults) {
+                setSortKey(defaults.sortKey as SortKey)
+                setSortAsc(defaults.sortAsc)
+              }
+            }}
+            className="mt-1.5 justify-start gap-1"
+          >
+            <ToggleGroupItem value="all" size="sm" className="h-6 px-2.5 text-xs font-medium">
+              {t("filterAll")}
+            </ToggleGroupItem>
+            <ToggleGroupItem value="up" size="sm" className="h-6 px-2.5 text-xs font-medium">
+              {t("filterGainers")}
+            </ToggleGroupItem>
+            <ToggleGroupItem value="down" size="sm" className="h-6 px-2.5 text-xs font-medium">
+              {t("filterLosers")}
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </CardHeader>
+        <CardContent className="min-h-0 flex-1 overflow-hidden p-0">
+          <ScrollArea className="h-full px-1.5 py-1">
+            <div className="flex w-full items-center justify-between gap-2 px-3 pb-1.5 text-xs text-muted-foreground">
+              <SortHead
+                label={t("colName")}
+                active={sortKey === "name"}
+                asc={sortAsc}
+                onClick={() => toggleSort("name")}
+              />
+              <SortHead
+                label={`${t("price")} (USD)`}
+                active={sortKey === "price"}
+                asc={sortAsc}
+                onClick={() => toggleSort("price")}
+              />
+            </div>
+            <ul>
+              {loading && rows.length === 0 ? (
+                Array.from({ length: 8 }).map((_, i) => (
+                  <li key={i} className="grid grid-cols-12 items-center gap-2 px-3 py-2">
+                    <Skeleton className="col-span-2 size-7 rounded-full" />
+                    <div className="col-span-5 grid gap-1.5">
+                      <Skeleton className="h-3.5 w-14" />
+                      <Skeleton className="h-2.5 w-20" />
+                    </div>
+                    <div className="col-span-5 grid justify-items-end gap-1.5">
+                      <Skeleton className="h-3.5 w-14" />
+                      <Skeleton className="h-2.5 w-10" />
+                    </div>
+                  </li>
+                ))
+              ) : shown.map((row) => (
+                <li key={row.baseLedgerId}>
+                  <HoverCard>
+                    <HoverCardTrigger
+                      onClick={() => onSelect(row.baseLedgerId)}
+                      onMouseEnter={() => {
+                        void preload(["terminal-pair", terminalPairKey(row.baseLedgerId)], () =>
+                          fetchTradePairSnapshot(row.baseLedgerId, row.stats)
+                        )
+                      }}
+                      className={cn(
+                        "grid w-full grid-cols-12 items-center gap-1.5 rounded-lg px-2.5 py-2 text-left transition-colors cursor-pointer",
+                        row.baseLedgerId === activeBaseId
+                          ? "bg-accent text-accent-foreground"
+                          : "hover:bg-accent/50 text-foreground"
+                      )}
+                    >
                       <TokenAvatar
                         symbol={row.base.symbol}
                         ledgerId={row.baseLedgerId}
@@ -197,32 +243,30 @@ export function TradeMarketWatchlist({
                             ? (activeLogoUrl ?? row.base.logoUrl)
                             : row.base.logoUrl
                         }
-                        className="size-6 shrink-0"
+                        className="col-span-2 size-7 shrink-0"
                       />
-                      <span className="min-w-0 flex-1 truncate">
-                        <span className="flex items-center gap-1">
-                          <span className="truncate font-semibold leading-none">{row.base.symbol}</span>
-                          <span className="text-[10px] text-muted-foreground">/ ICP</span>
-                          {!row.hasPool && (
-                            <Badge variant="secondary" className="h-3.5 shrink-0 px-1 text-[8px] text-warning border-warning/30 bg-warning/10">
-                              {t("noPool")}
-                            </Badge>
-                          )}
+                      <div className="col-span-4 grid min-w-0">
+                        <span className="truncate text-sm font-medium leading-tight">
+                          {row.base.symbol}
                         </span>
-                      </span>
-                    </div>
-                    <span className="text-right text-[11px] font-medium tabular-nums leading-none">
-                      {formatWatchlistPrice(row.stats?.priceUsd)}
-                    </span>
-                    <span
-                      className={cn(
-                        "text-right text-[10px] font-medium tabular-nums",
-                        changeClass(row.stats?.priceChange24h)
-                      )}
-                    >
-                      {formatPct(row.stats?.priceChange24h)}
-                    </span>
-                  </HoverCardTrigger>
+                        <span className="truncate text-xs text-muted-foreground leading-tight">
+                          {row.base.name}
+                        </span>
+                      </div>
+                      <div className="col-span-6 grid text-end tabular-nums">
+                        <span className="text-sm leading-tight">
+                          {formatWatchlistPrice(row.stats?.priceUsd)}
+                        </span>
+                        <span
+                          className={cn(
+                            "text-xs leading-tight",
+                            changeClass(row.stats?.priceChange24h)
+                          )}
+                        >
+                          {formatPct(row.stats?.priceChange24h)}
+                        </span>
+                      </div>
+                    </HoverCardTrigger>
                   <HoverCardContent side="right" align="start" className="w-56 p-3 text-xs">
                     <div className="flex items-center gap-2 mb-2">
                       <TokenAvatar
@@ -264,8 +308,9 @@ export function TradeMarketWatchlist({
             </>
           )}
         </ScrollArea>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </TooltipProvider>
   )
 }
 
@@ -274,31 +319,31 @@ function SortHead({
   active,
   asc,
   onClick,
-  right,
 }: {
   label: string
   active: boolean
   asc: boolean
   onClick: () => void
-  right?: boolean
 }) {
   return (
     <Button
       variant="ghost"
       size="xs"
       onClick={onClick}
+      aria-sort={active ? (asc ? "ascending" : "descending") : "none"}
       className={cn(
-        "h-auto p-0 font-normal uppercase tracking-wide hover:bg-transparent text-muted-foreground hover:text-foreground inline-flex items-center gap-0.5",
-        right && "justify-end",
-        active && "text-foreground font-semibold"
+        "h-auto min-w-0 px-0! py-0 font-normal hover:bg-transparent text-muted-foreground hover:text-foreground inline-flex items-center gap-1 whitespace-nowrap cursor-pointer",
+        active && "text-foreground font-medium"
       )}
     >
-      {label}
-      <HugeiconsIcon
-        icon={active && asc ? ArrowUp01Icon : ArrowDown01Icon}
-        className="size-2.5 opacity-60"
-        strokeWidth={2}
-      />
+      <span>{label}</span>
+      {active ? (
+        asc ? (
+          <ArrowUpGlassIcon className="size-3 shrink-0" />
+        ) : (
+          <ArrowDownGlassIcon className="size-3 shrink-0" />
+        )
+      ) : null}
     </Button>
   )
 }

@@ -59,6 +59,7 @@ function TradeStackedLayout({
   const t = useTranslations("marketTrade")
   const tNav = useTranslations("nav")
   const [mobileTab, setMobileTab] = useState<"chart" | "trade" | "markets" | "history">("chart")
+  const [mobileSide, setMobileSide] = useState<"buy" | "sell">("buy")
 
   return (
     <div className="flex flex-col gap-2 p-2 pb-16">
@@ -74,15 +75,21 @@ function TradeStackedLayout({
           <div className="grid grid-cols-2 gap-2 pt-1">
             <Button
               className="w-full bg-success hover:bg-success/90 text-success-foreground font-semibold"
-              onClick={() => setMobileTab("trade")}
+              onClick={() => {
+                setMobileSide("buy")
+                setMobileTab("trade")
+              }}
             >
-              {t("buy")} {snapshot?.base.symbol}
+              {t("buy")}
             </Button>
             <Button
               className="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground font-semibold"
-              onClick={() => setMobileTab("trade")}
+              onClick={() => {
+                setMobileSide("sell")
+                setMobileTab("trade")
+              }}
             >
-              {t("sell")} {snapshot?.base.symbol}
+              {t("sell")}
             </Button>
           </div>
         </TabsContent>
@@ -95,6 +102,7 @@ function TradeStackedLayout({
             listLoading={listLoading}
             onSelectPair={onSelect}
             onOpenWalletTrade={onOpenWalletTrade}
+            defaultSide={mobileSide}
           />
         </TabsContent>
         <TabsContent value="markets" className="mt-2">
@@ -155,15 +163,19 @@ function TradeTerminalInner() {
     [allRows]
   )
 
-  const pairParam = typeof routeParams.pair === "string" ? routeParams.pair : ""
+  const pairParam =
+    (typeof routeParams.pair === "string" && routeParams.pair ? routeParams.pair : null) ||
+    params.get("pair") ||
+    ""
   const baseFromUrl = params.get("base")
   const fromSlug = pairParam ? ledgerForPairSlug(pairParam, listed, baseFromUrl) : null
 
   const activeBase = useMemo(() => {
     if (baseFromUrl && canSelectTradeBase(baseFromUrl)) return baseFromUrl
     if (fromSlug && canSelectTradeBase(fromSlug)) return fromSlug
+    if (pairParam && canSelectTradeBase(pairParam)) return pairParam
     return allRows[0]?.baseLedgerId ?? ""
-  }, [baseFromUrl, fromSlug, allRows])
+  }, [baseFromUrl, fromSlug, pairParam, allRows])
 
   const hrefForRow = useCallback(
     (row: TerminalPairRow, list = listed) =>
@@ -199,6 +211,7 @@ function TradeTerminalInner() {
     activeBase || null,
     cachedStats
   )
+  const terminalLoading = pairLoading || (!snapshot && listLoading)
 
   useEffect(() => {
     if (!snapshot || listed.length === 0) return
@@ -238,7 +251,7 @@ function TradeTerminalInner() {
         loading={listLoading}
         onSelect={selectPair}
       />
-      <TradePairToolbar snapshot={snapshot} loading={pairLoading} />
+      <TradePairToolbar snapshot={snapshot} loading={terminalLoading} />
 
       {isTradeDesktop ? (
         <ResizablePanelGroup
@@ -278,7 +291,7 @@ function TradeTerminalInner() {
                 minSize="40%"
                 className="h-full overflow-hidden"
               >
-                <TradeChartWorkspace snapshot={snapshot} loading={pairLoading} />
+                <TradeChartWorkspace snapshot={snapshot} loading={terminalLoading} />
               </ResizablePanel>
               <ResizableHandle withHandle />
               <ResizablePanel
@@ -303,7 +316,7 @@ function TradeTerminalInner() {
           >
             <TradeOrderPanel
               snapshot={snapshot}
-              loading={pairLoading}
+              loading={terminalLoading}
               rows={allRows}
               activeBaseId={activeBase}
               listLoading={listLoading}
@@ -316,7 +329,7 @@ function TradeTerminalInner() {
         <div className="min-h-0 flex-1 overflow-y-auto">
           <TradeStackedLayout
             snapshot={snapshot}
-            pairLoading={pairLoading}
+            pairLoading={terminalLoading}
             rows={allRows}
             listLoading={listLoading}
             activeBase={activeBase}

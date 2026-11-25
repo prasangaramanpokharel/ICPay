@@ -3,8 +3,7 @@
 import Link from "next/link"
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowLeft01Icon } from "@hugeicons/core-free-icons"
+import { ArrowLeftGlassIcon } from "@thesvg/ui-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/ui/utils"
@@ -109,7 +108,7 @@ export function MarketRankingDetail({ type }: { type: RankingType }) {
           className="inline-flex size-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
           aria-label="Back to rankings"
         >
-          <HugeiconsIcon icon={ArrowLeft01Icon} className="size-4" strokeWidth={2} />
+          <ArrowLeftGlassIcon className="size-4" />
         </Link>
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">{cfg.title}</h1>

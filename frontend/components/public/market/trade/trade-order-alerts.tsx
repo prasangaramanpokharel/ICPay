@@ -1,15 +1,15 @@
 "use client"
 
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Alert02Icon, Cancel01Icon } from "@hugeicons/core-free-icons"
+import { TriangleAlertGlassIcon, XGlassIcon } from "@thesvg/ui-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { isInsufficientBalanceError } from "@/lib/market/tradeQuoteError"
+import { cn } from "@/lib/ui/utils"
 
 export interface TradeOrderAlertsProps {
   orderType: "limit" | "market"
-  guard: { key: string; values?: Record<string, string | number | Date> } | null
+  guard: { key: string; values?: Record<string, string | number | Date>; destructive?: boolean } | null
   status: "idle" | "error" | "placing_limit"
   tradeError: string | null
   onDismissError: () => void
@@ -29,7 +29,12 @@ export function TradeOrderAlerts({
 
   if (orderType === "market" && guard) {
     return (
-      <div className="px-0.5 py-0.5 text-xs text-muted-foreground">
+      <div
+        className={cn(
+          "px-0.5 py-0.5 text-xs",
+          guard.destructive ? "font-medium text-destructive" : "text-muted-foreground"
+        )}
+      >
         {guard.values && "pct" in guard.values
           ? t(guard.key as "highPriceImpact", guard.values)
           : guard.values && "icp" in guard.values
@@ -48,10 +53,7 @@ export function TradeOrderAlerts({
         className="border-destructive/30 bg-destructive/10 text-destructive dark:bg-destructive/15 py-2.5 px-3"
       >
         <div className="flex items-start gap-2">
-          <HugeiconsIcon
-            icon={Alert02Icon}
-            className="size-4 shrink-0 mt-0.5 text-destructive"
-          />
+          <TriangleAlertGlassIcon className="size-4 shrink-0 mt-0.5 text-destructive" />
           <div className="flex-1 space-y-1.5">
             <AlertDescription className="text-xs leading-relaxed font-medium text-destructive">
               {tradeError}
@@ -81,7 +83,7 @@ export function TradeOrderAlerts({
             className="size-5 text-destructive/70 hover:text-destructive hover:bg-destructive/20 text-xs p-0.5 -mr-1 -mt-0.5 rounded cursor-pointer transition-colors"
             aria-label="Dismiss error"
           >
-            <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
+            <XGlassIcon className="size-3.5" />
           </Button>
         </div>
       </Alert>

@@ -2,8 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { Search01Icon } from "@hugeicons/core-free-icons"
+import { SearchGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import {
   InputGroup,
@@ -142,7 +141,7 @@ export function MarketOverview() {
           </div>
           <InputGroup className="sm:max-w-xs">
             <InputGroupAddon>
-              <HugeiconsIcon icon={Search01Icon} className="size-4" strokeWidth={2} />
+              <SearchGlassIcon className="size-4" />
             </InputGroupAddon>
             <InputGroupInput
               placeholder={t("search")}

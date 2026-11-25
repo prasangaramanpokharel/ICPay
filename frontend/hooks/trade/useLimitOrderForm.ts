@@ -226,6 +226,27 @@ export function useLimitOrderForm({
     setLimitTotalText("")
   }
 
+  function snapToMarket() {
+    setLimitPriceText("")
+    onResetStatus()
+    if (!marketDefaultPrice) return
+    const p = parseFloat(marketDefaultPrice.replace(/,/g, ""))
+    if (Number.isNaN(p) || p <= 0) return
+    const pInIcp = limitPriceMode === "usd" ? (icpPriceUsd > 0 ? p / icpPriceUsd : 0) : p
+    if (pInIcp <= 0) return
+    if (lastEditedField.current === "total" && limitTotalText) {
+      const tot = parseFloat(limitTotalText.replace(/,/g, ""))
+      if (!Number.isNaN(tot) && tot > 0) {
+        setLimitBaseAmountText(formatCalculatedAmount(tot / pInIcp, baseToken?.decimals ?? 8))
+      }
+    } else if (limitBaseAmountText) {
+      const amt = parseFloat(limitBaseAmountText.replace(/,/g, ""))
+      if (!Number.isNaN(amt) && amt > 0) {
+        setLimitTotalText(formatCalculatedAmount(amt * pInIcp, quoteToken?.decimals ?? 8))
+      }
+    }
+  }
+
   return {
     limitPriceMode,
     limitPriceText,
@@ -242,5 +263,6 @@ export function useLimitOrderForm({
     setLimitTotalText,
     applyLimitFill,
     clearLimitAmounts,
+    snapToMarket,
   }
 }

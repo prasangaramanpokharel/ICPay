@@ -26,6 +26,10 @@ const toastCallable = (title: React.ReactNode, options?: ToastOptions) =>
 
 const toast = Object.assign(toastCallable, baseToast, {
   add: (options: ToastOptions & { title?: React.ReactNode }) => baseToast.add(options),
+  update: (id: string, options: ToastOptions & { title?: React.ReactNode }) =>
+    baseToast.update(id, options),
+  close: (id: string) => baseToast.close(id),
+  dismiss: (id: string) => baseToast.close(id),
   success: (title: React.ReactNode, options?: ToastOptions) =>
     baseToast.add({ title, type: "success", ...options }),
   error: (title: React.ReactNode, options?: ToastOptions) =>

@@ -1,10 +1,11 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, useSyncExternalStore } from "react"
 import useSWR, { useSWRConfig } from "swr"
 import { useTranslations } from "next-intl"
+import { ShieldGlassIcon } from "@thesvg/ui-react"
 import { Card } from "@/components/ui/card"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import { ShineBorder } from "@/components/ui/shine-border"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useAuth } from "@/components/auth/auth-provider"
@@ -16,7 +17,7 @@ import {
   useTradingBalance,
 } from "@/hooks/trade/useTrade"
 import { useRefreshWallet, useTokenHolding } from "@/hooks/wallet/useWalletData"
-import { parseTokenAmount } from "@/lib/wallet/utils"
+import { parseTokenAmount, toPlainTokenAmount } from "@/lib/wallet/utils"
 import {
   tradeOrderAlert,
   tradeOrderBlock,
@@ -35,9 +36,18 @@ import {
 } from "@/lib/market/tradePreflight"
 import { isSwapBlocked } from "@/lib/swap/config"
 import { tradeCta } from "@/lib/market/tradeAuthUi"
-import { maxTradeInput } from "@/lib/trade/fees"
+import { DEFAULT_SLIPPAGE_BPS, maxTradeInput } from "@/lib/trade/fees"
 import { meetsMinTrade, MIN_TRADE_ICP, tokenAmountUsd } from "@/lib/market/minTradeUsd"
 import { mergePositionBalances } from "@/lib/market/availableAssets"
+import { readHoldings } from "@/lib/wallet/holdingsCache"
+import {
+  clearLastPrincipal,
+  getLastPrincipalServerSnapshot,
+  getLastPrincipalSnapshot,
+  readTradeBalancesCache,
+  subscribeLastPrincipal,
+  writeLastPrincipal,
+} from "@/lib/market/tradeCache"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 import { fetchTradeQuoteChecked, warmTradeSession } from "@/services/trade/trade"
 import type { TerminalPairRow, TradePairSnapshot } from "@/services/market/tradePairSnapshot"
@@ -59,6 +69,7 @@ export function TradeOrderPanel({
   listLoading,
   onSelectPair,
   onOpenWalletTrade,
+  defaultSide,
 }: {
   snapshot: TradePairSnapshot | undefined
   loading?: boolean
@@ -67,6 +78,7 @@ export function TradeOrderPanel({
   listLoading?: boolean
   onSelectPair: (baseLedgerId: string) => void
   onOpenWalletTrade: () => void
+  defaultSide?: "buy" | "sell"
 }) {
   const t = useTranslations("marketTrade")
   const { isAuthenticated, isLoading: authLoading, identity } = useAuth()
@@ -76,10 +88,36 @@ export function TradeOrderPanel({
   const { mutate } = useSWRConfig()
   const { price: icpPrice } = useIcpPrice()
   const { swapHoldings, tradeBalances } = useTradeTokens()
+  const lastPrincipal = useSyncExternalStore(
+    subscribeLastPrincipal,
+    getLastPrincipalSnapshot,
+    getLastPrincipalServerSnapshot
+  )
+
+  useEffect(() => {
+    if (identity) {
+      writeLastPrincipal(identity.getPrincipal().toText())
+    } else if (!authLoading && !isAuthenticated) {
+      clearLastPrincipal()
+    }
+  }, [authLoading, identity, isAuthenticated])
+
+  const cachedPrincipal = authLoading && !isAuthenticated ? lastPrincipal : null
+  const fallbackHoldings = useMemo(
+    () => (cachedPrincipal ? readHoldings(cachedPrincipal) ?? [] : []),
+    [cachedPrincipal]
+  )
+  const fallbackTradeBalances = useMemo(
+    () => (cachedPrincipal ? readTradeBalancesCache(cachedPrincipal) ?? new Map<string, bigint>() : new Map<string, bigint>()),
+    [cachedPrincipal]
+  )
+
+  const effectiveHoldings = swapHoldings.length > 0 ? swapHoldings : fallbackHoldings
+  const effectiveTradeBalances = tradeBalances.size > 0 ? tradeBalances : fallbackTradeBalances
 
   const positionBalances = useMemo(
-    () => mergePositionBalances(swapHoldings, tradeBalances),
-    [swapHoldings, tradeBalances]
+    () => mergePositionBalances(effectiveHoldings, effectiveTradeBalances),
+    [effectiveHoldings, effectiveTradeBalances]
   )
 
   const availableAssets = (
@@ -87,7 +125,7 @@ export function TradeOrderPanel({
       rows={rows}
       balances={positionBalances}
       activeBaseId={activeBaseId}
-      loading={listLoading}
+      loading={listLoading && rows.length === 0}
       onSelect={onSelectPair}
     />
   )
@@ -96,20 +134,35 @@ export function TradeOrderPanel({
     void warmTradeSession(identity)
   }, [identity])
 
-  const [side, setSide] = useState<"buy" | "sell">("buy")
-  const [orderType, setOrderType] = useState<"limit" | "market">("limit")
+  const [side, setSide] = useState<"buy" | "sell">(defaultSide ?? "buy")
+  const [orderType, setOrderType] = useState<"limit" | "market">("market")
+  const [slippageBps, setSlippageBps] = useState<bigint>(DEFAULT_SLIPPAGE_BPS)
   const [impactConfirmed, setImpactConfirmed] = useState(false)
   const [depositDrawerOpen, setDepositDrawerOpen] = useState(false)
   const [marketAmountText, setMarketAmountText] = useState("")
+  const [prevBaseId, setPrevBaseId] = useState(activeBaseId)
+  const [prevDefaultSide, setPrevDefaultSide] = useState(defaultSide)
 
-  const { price: icpPriceData } = useIcpPrice()
+  if (prevBaseId !== activeBaseId) {
+    setPrevBaseId(activeBaseId)
+    setMarketAmountText("")
+    setImpactConfirmed(false)
+  }
+
+  if (defaultSide && prevDefaultSide !== defaultSide) {
+    setPrevDefaultSide(defaultSide)
+    setSide(defaultSide)
+    setMarketAmountText("")
+    setImpactConfirmed(false)
+  }
+
   const icpPriceUsd = useMemo(() => {
-    if (icpPriceData?.usd && icpPriceData.usd > 0) return icpPriceData.usd
+    if (icpPrice?.usd && icpPrice.usd > 0) return icpPrice.usd
     if (snapshot?.stats?.priceUsd && snapshot?.priceInIcp && snapshot.priceInIcp > 0) {
       return snapshot.stats.priceUsd / snapshot.priceInIcp
     }
     return 0
-  }, [icpPriceData, snapshot])
+  }, [icpPrice, snapshot])
 
   const baseSymbol = snapshot?.base.symbol ?? ""
   const quoteSymbol = snapshot?.quote.symbol ?? "ICP"
@@ -118,9 +171,16 @@ export function TradeOrderPanel({
   const tokenIn = side === "buy" ? quoteToken : baseToken
   const tokenOut = side === "buy" ? baseToken : quoteToken
 
-  const tradingBal = useTradingBalance(tokenIn?.ledgerId ?? null)
+  const rawTradingBal = useTradingBalance(tokenIn?.ledgerId ?? null)
+  const tradingBal =
+    rawTradingBal ??
+    (cachedPrincipal && tokenIn ? (fallbackTradeBalances.get(tokenIn.ledgerId) ?? null) : null)
   const { token: walletToken } = useTokenHolding(isAuthenticated ? (tokenIn?.ledgerId ?? null) : null)
-  const walletBal = walletToken?.balance ?? 0n
+  const walletBal =
+    walletToken?.balance ??
+    (cachedPrincipal && tokenIn
+      ? (fallbackHoldings.find((h) => h.ledgerId === tokenIn.ledgerId)?.balance ?? 0n)
+      : 0n)
 
   const limitForm = useLimitOrderForm({
     side,
@@ -179,7 +239,7 @@ export function TradeOrderPanel({
     impactBand,
   })
 
-  const { data: quote, error: quoteErr, isLoading: quoting } = useSWR(
+  const { data: quote, error: quoteErr, isLoading: quoting, mutate: refreshQuote } = useSWR(
     orderType === "market" && canQuote
       ? ["terminal-quote", side, snapshot!.baseLedgerId, debouncedIn!.toString()]
       : null,
@@ -209,6 +269,7 @@ export function TradeOrderPanel({
     orderType,
     tradingBal,
     quote,
+    slippageBps,
     applyBalances,
     refreshTradeBalances,
     refreshWallet,
@@ -251,7 +312,7 @@ export function TradeOrderPanel({
     const raw = (maxIn * BigInt(pct)) / 100n
 
     if (orderType === "market") {
-      setMarketAmountText(raw > 0n ? (Number(raw) / 10 ** tokenIn.decimals).toString() : "")
+      setMarketAmountText(raw > 0n ? toPlainTokenAmount(raw, tokenIn.decimals) : "")
       return
     }
 
@@ -260,8 +321,36 @@ export function TradeOrderPanel({
 
   if (loading && !snapshot) {
     return (
-      <div className="flex h-full min-h-[300px] items-center justify-center p-8">
-        <Spinner className="size-7 text-muted-foreground/60" />
+      <div className="flex h-full min-h-0 flex-col gap-2 overflow-y-auto pb-1">
+        <Card size="sm" className="m-1 shrink-0 space-y-3 p-3.5">
+          <div className="grid grid-cols-2 gap-1.5 rounded-xl bg-muted/40 p-1">
+            <Skeleton className="h-8 rounded-lg" />
+            <Skeleton className="h-8 rounded-lg" />
+          </div>
+          <div className="flex items-center justify-between border-b border-border/40 pb-2">
+            <div className="flex gap-1.5">
+              <Skeleton className="h-6 w-12 rounded-md" />
+              <Skeleton className="h-6 w-14 rounded-md" />
+            </div>
+            <Skeleton className="h-6 w-16 rounded-md" />
+          </div>
+          <div className="space-y-1.5">
+            <div className="flex justify-between">
+              <Skeleton className="h-3 w-14" />
+              <Skeleton className="h-3 w-24" />
+            </div>
+            <div className="flex justify-between">
+              <Skeleton className="h-3 w-18" />
+              <Skeleton className="h-3 w-20" />
+            </div>
+          </div>
+          <Skeleton className="h-10 w-full rounded-lg" />
+          <Skeleton className="h-6 w-full rounded-md" />
+          <Skeleton className="h-10 w-full rounded-full" />
+        </Card>
+        {isAuthenticated || authLoading ? (
+          <div className="flex min-h-0 flex-1 flex-col">{availableAssets}</div>
+        ) : null}
       </div>
     )
   }
@@ -301,7 +390,11 @@ export function TradeOrderPanel({
 
   const guard =
     tradeOrderAlert(block, MIN_TRADE_ICP, quoteError) ??
-    (canSubmitTrade(block) ? tradeImpactAlert(impactBand, impactPct) : null)
+    (impactBand === "block"
+      ? { key: "insufficientLiquidity", destructive: true }
+      : canSubmitTrade(block)
+        ? tradeImpactAlert(impactBand, impactPct)
+        : null)
   const needsImpactConfirm = impactBand === "confirm" && !impactConfirmed
   const cta = tradeCta(authLoading, isAuthenticated)
 
@@ -337,29 +430,31 @@ export function TradeOrderPanel({
                 value="buy"
                 className="h-8 rounded-lg font-bold transition-all data-[state=on]:bg-success data-[state=on]:text-success-foreground data-[state=on]:shadow-xs hover:bg-muted"
               >
-                {t("buy")} {baseSymbol}
+                {t("buy")}
               </ToggleGroupItem>
               <ToggleGroupItem
                 value="sell"
                 className="h-8 rounded-lg font-bold transition-all data-[state=on]:bg-destructive data-[state=on]:text-destructive-foreground data-[state=on]:shadow-xs hover:bg-muted"
               >
-                {t("sell")} {baseSymbol}
+                {t("sell")}
               </ToggleGroupItem>
             </ToggleGroup>
           </div>
 
-          <div className="flex min-h-0 flex-col gap-2.5 overflow-y-auto px-4 pb-3 pt-0">
+          <div className="flex flex-col gap-2.5 px-3.5 pb-3 pt-0">
             <TradeOrderBalanceBar
               orderType={orderType}
               onOrderTypeChange={(mode) => {
                 setOrderType(mode)
                 submitState.setTradeError(null)
               }}
-              isAuthenticated={isAuthenticated}
+              isAuthenticated={isAuthenticated || Boolean(cachedPrincipal)}
               tokenIn={tokenIn}
               tradingBal={tradingBal}
               walletBal={walletBal}
               paySymbol={paySymbol}
+              slippageBps={slippageBps}
+              onSlippageChange={setSlippageBps}
               onOpenDeposit={() => setDepositDrawerOpen(true)}
               onOpenTransfer={onOpenWalletTrade}
             />
@@ -370,6 +465,7 @@ export function TradeOrderPanel({
                 onPriceChange={limitForm.handlePriceChange}
                 limitPriceMode={limitForm.limitPriceMode}
                 onTogglePriceMode={limitForm.togglePriceMode}
+                onSnapToMarket={limitForm.snapToMarket}
                 convertedPriceSubtext={limitForm.convertedPriceSubtext}
                 quoteSymbol={quoteSymbol}
                 baseSymbol={baseSymbol}
@@ -405,6 +501,8 @@ export function TradeOrderPanel({
                 canQuote={canQuote}
                 quote={quote}
                 quoting={quoting}
+                slippageBps={slippageBps}
+                onRefreshQuote={() => void refreshQuote()}
               />
             )}
 
@@ -444,14 +542,15 @@ export function TradeOrderPanel({
               onSubmitTrade={() => void submitState.handleMarketTrade(amountIn, Date.now())}
             />
 
-            <p className="text-center text-[10px] leading-snug text-muted-foreground/50">
-              {t("orderDisclaimer")}
+            <p className="flex items-center justify-center gap-1.5 text-center text-[10px] leading-snug text-muted-foreground/60">
+              <ShieldGlassIcon className="size-3 shrink-0 text-success/80" />
+              <span>{t("orderDisclaimer")}</span>
             </p>
           </div>
         </div>
       </Card>
 
-      {isAuthenticated ? (
+      {isAuthenticated || authLoading ? (
         <div className="flex min-h-0 flex-1 flex-col">{availableAssets}</div>
       ) : null}
 

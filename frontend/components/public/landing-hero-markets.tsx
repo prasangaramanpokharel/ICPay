@@ -3,8 +3,7 @@
 import Link from "next/link"
 import { useMemo } from "react"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowRight01Icon } from "@hugeicons/core-free-icons"
+import { ArrowRightGlassIcon } from "@thesvg/ui-react"
 import { Card, CardAction, CardContent, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -41,7 +40,7 @@ export function LandingHeroMarkets() {
               className="inline-flex items-center gap-0.5 text-xs text-muted-foreground hover:text-foreground"
             >
               {t("more")}
-              <HugeiconsIcon icon={ArrowRight01Icon} className="size-3.5" strokeWidth={2} />
+              <ArrowRightGlassIcon className="size-3.5" />
             </Link>
           </CardAction>
         </CardHeader>

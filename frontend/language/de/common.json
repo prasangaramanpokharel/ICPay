@@ -2817,7 +2817,7 @@
     "slippage": "Slippage tolerance",
     "openWalletTrade": "Trade in wallet",
     "signInToTrade": "Sign in to trade",
-    "orderDisclaimer": "Quotes are indicative. Execution happens in your ICPay wallet.",
+    "orderDisclaimer": "Secured by ICP and execution is fully on-chain.",
     "balance": "Balance",
     "recentSwaps": "Recent swaps",
     "recentSwapsHint": "Deine Fills für dieses Paar. Der Hash öffnet den Explorer, sobald er on-chain ist.",

@@ -34,8 +34,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { toast } from "@/components/ui/toast"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ArrowDataTransferHorizontalIcon, Cancel01Icon } from "@hugeicons/core-free-icons"
+import { ReplaceGlassIcon, XGlassIcon } from "@thesvg/ui-react"
 import { useAuth } from "@/components/auth/auth-provider"
 import { useTokenHoldings, useTransactions } from "@/hooks/wallet/useWalletData"
 import { useTradeFills } from "@/hooks/market/useTradeFills"
@@ -89,9 +88,15 @@ export function TradeSwapHistory({
   const { items, isLoading: txLoading } = useTransactions(0, 80)
   const { holdings } = useTokenHoldings()
   const localFills = useTradeFills()
-  const { openOrders, isLoading: openLoading, refresh: refreshOpen } = useOpenLimitOrders(true)
-  const { orders: allOrders, isLoading: allLoading, refresh: refreshAll } = useUserLimitOrders(50)
-  const { trades, isLoading: tradesLoading, refresh: refreshTrades } = useUserTrades(50)
+  const { openOrders, isLoading: openLoading, refresh: refreshOpen } = useOpenLimitOrders(true, isAuthenticated)
+  const { orders: allOrders, isLoading: allLoading, refresh: refreshAll } = useUserLimitOrders(
+    50,
+    isAuthenticated && activeTab === "orderHistory"
+  )
+  const { trades, isLoading: tradesLoading, refresh: refreshTrades } = useUserTrades(
+    50,
+    isAuthenticated && activeTab === "audit"
+  )
   const refreshTradeBalances = useRefreshTradeBalances()
 
   const findToken = useMemo(() => {
@@ -123,6 +128,7 @@ export function TradeSwapHistory({
   async function handleCancelOrder(orderId: bigint) {
     if (!identity || cancellingId !== null) return
     setCancellingId(orderId)
+    void refreshOpen((prev) => prev?.filter((o) => o.id !== orderId), { revalidate: false })
     try {
       const res = await cancelLimitOrder(identity, orderId)
       if ("ok" in res) {
@@ -137,6 +143,7 @@ export function TradeSwapHistory({
           type: "success",
         })
       } else {
+        void refreshOpen()
         toast.add({
           title: t("fillFailed"),
           description: "err" in res && res.err ? String(res.err) : undefined,
@@ -144,6 +151,7 @@ export function TradeSwapHistory({
         })
       }
     } catch (e) {
+      void refreshOpen()
       toast.add({
         title: t("fillFailed"),
         description: e instanceof Error ? e.message : undefined,
@@ -198,7 +206,7 @@ export function TradeSwapHistory({
               <Empty className="border-0 py-6">
                 <EmptyHeader>
                   <EmptyMedia variant="icon">
-                    <HugeiconsIcon icon={ArrowDataTransferHorizontalIcon} className="size-5" strokeWidth={2} />
+                    <ReplaceGlassIcon className="size-5" />
                   </EmptyMedia>
                   <EmptyTitle className="text-sm">{t("recentSwaps")}</EmptyTitle>
                   <EmptyDescription className="text-xs">{t("noRecentSwaps")}</EmptyDescription>
@@ -253,7 +261,7 @@ export function TradeSwapHistory({
               <Empty className="border-0 py-6">
                 <EmptyHeader>
                   <EmptyMedia variant="icon">
-                    <HugeiconsIcon icon={ArrowDataTransferHorizontalIcon} className="size-5" strokeWidth={2} />
+                    <ReplaceGlassIcon className="size-5" />
                   </EmptyMedia>
                   <EmptyTitle className="text-sm">{t("tabOpenOrders")}</EmptyTitle>
                   <EmptyDescription className="text-xs">{t("noOpenOrders")}</EmptyDescription>
@@ -333,7 +341,7 @@ export function TradeSwapHistory({
                             {cancellingId === order.id ? (
                               <Spinner className="size-3" />
                             ) : (
-                              <HugeiconsIcon icon={Cancel01Icon} className="size-3" />
+                              <XGlassIcon className="size-3" />
                             )}
                             <span className="ml-1">{t("cancelOrder")}</span>
                           </Button>
@@ -353,7 +361,7 @@ export function TradeSwapHistory({
               <Empty className="border-0 py-6">
                 <EmptyHeader>
                   <EmptyMedia variant="icon">
-                    <HugeiconsIcon icon={ArrowDataTransferHorizontalIcon} className="size-5" strokeWidth={2} />
+                    <ReplaceGlassIcon className="size-5" />
                   </EmptyMedia>
                   <EmptyTitle className="text-sm">{t("tabOrderHistory")}</EmptyTitle>
                   <EmptyDescription className="text-xs">{t("noOrderHistory")}</EmptyDescription>
@@ -449,7 +457,7 @@ export function TradeSwapHistory({
               <Empty className="border-0 py-6">
                 <EmptyHeader>
                   <EmptyMedia variant="icon">
-                    <HugeiconsIcon icon={ArrowDataTransferHorizontalIcon} className="size-5" strokeWidth={2} />
+                    <ReplaceGlassIcon className="size-5" />
                   </EmptyMedia>
                   <EmptyTitle className="text-sm">{t("tabTrades")}</EmptyTitle>
                   <EmptyDescription className="text-xs">{t("noTradeAudit")}</EmptyDescription>

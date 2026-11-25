@@ -2,8 +2,7 @@
 
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { ChartHistogramIcon } from "@hugeicons/core-free-icons"
+import { ChartColumnGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/ui/utils"
 import {
@@ -109,7 +108,7 @@ export function MarketTokenTable({
               <TableCell className="tabular-nums">{formatUsd(pairTvl(row))}</TableCell>
               <TableCell className="text-right">
                 <Button variant="ghost" size="icon-sm" nativeButton={false} render={<Link href={href} />}>
-                  <HugeiconsIcon icon={ChartHistogramIcon} className="size-4" strokeWidth={2} />
+                  <ChartColumnGlassIcon className="size-4" />
                   <span className="sr-only">{t("trade")}</span>
                 </Button>
               </TableCell>

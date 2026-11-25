@@ -58,7 +58,7 @@ export function TradeSubmitButton({
       <Button
         variant="default"
         size="lg"
-        className="w-full"
+        className="w-full font-semibold"
         nativeButton={false}
         render={
           <a
@@ -66,7 +66,7 @@ export function TradeSubmitButton({
           />
         }
       >
-        {t("signIn")}
+        Connect
       </Button>
     )
   }
@@ -111,24 +111,24 @@ export function TradeSubmitButton({
       onClick={handleClick}
     >
       {rateLimitCooldown > 0 ? (
-        <span>{`Wait (${rateLimitCooldown}s)`}</span>
+        <span>Wait</span>
       ) : orderType === "limit" ? (
         status === "placing_limit" ? (
           <>
             <Spinner data-icon="inline-start" />
-            <span>{t("placingOrder")}</span>
+            <span>Order</span>
           </>
         ) : (
-          t("placeLimitOrder")
+          "Order"
         )
       ) : block === "need_transfer" || block === "insufficient" ? (
-        t("notEnough")
+        "Deposit"
       ) : needsImpactConfirm ? (
-        t("confirmImpact")
+        "Confirm"
       ) : isBuy ? (
-        `${t("buy")} ${baseSymbol}`
+        t("buy")
       ) : (
-        `${t("sell")} ${baseSymbol}`
+        t("sell")
       )}
     </Button>
   )

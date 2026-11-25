@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { memo, useMemo } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -59,7 +59,7 @@ export function TradePairMarquee({
   )
 }
 
-function MarqueeItem({
+const MarqueeItem = memo(function MarqueeItem({
   row,
   quoteSymbol,
   onSelect,
@@ -96,4 +96,4 @@ function MarqueeItem({
       <Separator orientation="vertical" className="h-6" />
     </div>
   )
-}
+})

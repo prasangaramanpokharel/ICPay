@@ -26,8 +26,7 @@ import { placeLimitOrder } from "@/services/trade/trade"
 import { cn } from "@/lib/ui/utils"
 import { MIN_TRADE_ICP } from "@/lib/market/minTradeUsd"
 import type { TradePairSnapshot } from "@/services/market/tradePairSnapshot"
-import { HugeiconsIcon } from "@hugeicons/react"
-import { AlertCircleIcon, CheckmarkCircle02Icon, Wallet01Icon } from "@hugeicons/core-free-icons"
+import { CircleAlertGlassIcon, CircleCheckGlassIcon, WalletBalanceGlassIcon } from "@thesvg/ui-react"
 
 function formatCalculatedAmount(num: number, maxDecimals: number = 8): string {
   if (!Number.isFinite(num) || num <= 0) return ""
@@ -345,7 +344,7 @@ function TradeChartLimitDialogContent({
               {side === "buy" ? `Amount to Buy (${baseSymbol})` : `Amount to Sell (${baseSymbol})`}
             </span>
             <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
-              <HugeiconsIcon icon={Wallet01Icon} className="size-3" />
+              <WalletBalanceGlassIcon className="size-3" />
               <span className="font-mono">
                 {tradingBalFormatted} {tokenIn?.symbol}
               </span>
@@ -417,14 +416,14 @@ function TradeChartLimitDialogContent({
 
       {errorMessage && (
         <Alert variant="destructive" className="py-2 px-3 text-xs flex items-center gap-2">
-          <HugeiconsIcon icon={AlertCircleIcon} className="size-4 shrink-0" />
+          <CircleAlertGlassIcon className="size-4 shrink-0" />
           <AlertDescription className="text-xs">{errorMessage}</AlertDescription>
         </Alert>
       )}
 
       {successMessage && (
         <Alert className="py-2 px-3 text-xs flex items-center gap-2 border-success/30 bg-success/10 text-success">
-          <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4 shrink-0 text-success" />
+          <CircleCheckGlassIcon className="size-4 shrink-0 text-success" />
           <AlertDescription className="text-xs">{successMessage}</AlertDescription>
         </Alert>
       )}
@@ -466,13 +465,13 @@ function TradeChartLimitDialogContent({
               </>
             ) : status === "success" ? (
               <>
-                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-3.5 mr-1.5" />
+                <CircleCheckGlassIcon className="size-3.5 mr-1.5" />
                 {t("orderPlaced")}
               </>
             ) : isInsufficient ? (
               t("notEnough")
             ) : (
-              `${side === "buy" ? "Place Buy Limit" : "Place Sell Limit"}`
+              `${side === "buy" ? "Buy" : "Sell"}`
             )}
           </Button>
         )}
