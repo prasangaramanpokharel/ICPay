@@ -15,6 +15,7 @@ import { LanguageSelect } from "@/components/i18n/language-select"
 import { FiatSelector } from "@/components/fiat/fiat-selector"
 import { ThemeSelector } from "@/components/settings/theme-selector"
 import { SoundSelector } from "@/components/settings/sound-selector"
+import { NotificationSelector } from "@/components/settings/notification-selector"
 import { useAuth } from "@/components/auth/auth-provider"
 
 export function SettingsDrawer({
@@ -45,6 +46,7 @@ export function SettingsDrawer({
           <FiatSelector />
           <ThemeSelector />
           <SoundSelector />
+          <NotificationSelector />
 
           <a
             href="mailto:contact@icpay.cloud"
