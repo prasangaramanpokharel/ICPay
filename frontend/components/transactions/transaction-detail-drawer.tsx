@@ -136,6 +136,7 @@ export function TransactionDetailDrawer({
 
 function TransactionDrawerBody({ tx }: { tx: TransactionPublic }) {
   const t = useTranslations("transactions")
+  const tc = useTranslations("common")
   const { hidden } = useBalanceVisibility()
   const type = txTypeKey(tx.txType)
   const incoming = isIncomingTx(tx.txType)
@@ -235,13 +236,24 @@ function TransactionDrawerBody({ tx }: { tx: TransactionPublic }) {
         {memo ? <DetailRow label={t("rowMemo")} value={memo} /> : null}
         <DetailRow label={t("rowId")} value={tx.id} copyable mono />
         {blockIndex !== undefined ? (
-          <DetailRow
-            label={t("rowBlock")}
-            value={blockIndex.toString()}
-            copyable
-            mono
-            href={explorerTxUrl(blockIndex)}
-          />
+          <DetailRow label={t("rowBlock")}>
+            <div className="flex min-w-0 items-start justify-end gap-1.5">
+              <a
+                href={explorerTxUrl(blockIndex)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="min-w-0 break-all text-right underline underline-offset-2 hover:text-foreground font-mono text-xs"
+              >
+                {blockIndex.toString()}
+              </a>
+              <CopyButton
+                value={blockIndex.toString()}
+                aria-label={tc("copy")}
+                className="size-5 text-muted-foreground hover:text-foreground"
+                iconClassName="size-3"
+              />
+            </div>
+          </DetailRow>
         ) : null}
       </div>
     </>
@@ -253,21 +265,19 @@ function DetailRow({
   value,
   mono,
   copyable,
-  href,
   children,
 }: {
   label: string
   value?: string
   mono?: boolean
   copyable?: boolean
-  href?: string
   children?: ReactNode
 }) {
   return (
     <div className="flex items-start justify-between gap-4 py-2.5 text-xs first:pt-0 last:pb-0">
       <span className="shrink-0 text-muted-foreground font-medium">{label}</span>
       {children ?? (
-        <DetailValue value={value ?? ""} mono={mono} copyable={copyable} href={href} />
+        <DetailValue value={value ?? ""} mono={mono} copyable={copyable} />
       )}
     </div>
   )
@@ -277,35 +287,18 @@ function DetailValue({
   value,
   mono,
   copyable,
-  href,
 }: {
   value: string
   mono?: boolean
   copyable?: boolean
-  href?: string
 }) {
   const tc = useTranslations("common")
-  const safeHref = href && (href.startsWith("https://") || href.startsWith("/")) ? href : undefined
 
   return (
     <div className="flex min-w-0 items-start justify-end gap-1.5">
-      {safeHref ? (
-        <a
-          href={safeHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(
-            "min-w-0 break-all text-right underline underline-offset-2 hover:text-foreground",
-            mono && "font-mono text-xs"
-          )}
-        >
-          {value}
-        </a>
-      ) : (
-        <span className={cn("min-w-0 break-all text-right text-foreground", mono && "font-mono text-xs")}>
-          {value}
-        </span>
-      )}
+      <span className={cn("min-w-0 break-all text-right text-foreground", mono && "font-mono text-xs")}>
+        {value}
+      </span>
       {copyable ? (
         <CopyButton
           value={value}

@@ -486,14 +486,7 @@ if (!onlyGoogle) {
             console.log(`  🟡  [${ep.name}] HTTP ${res.status}: ${res.msg ?? `Queued via mesh for ${domain.name}`}`)
           }
         } catch (e: unknown) {
-          const isYandex = (() => {
-            try {
-              return new URL(ep.url).hostname.endsWith("yandex.com")
-            } catch {
-              return false
-            }
-          })()
-          if (isYandex) {
+          if (ep.url === "https://yandex.com/indexnow") {
             console.log(`  ℹ️   [${ep.name}] Direct socket closed (Normal: handled automatically via IndexNow Global Hub)`)
           } else {
             console.error(`❌ ${ep.name} error for ${domain.name}:`, e instanceof Error ? e.message : e)
