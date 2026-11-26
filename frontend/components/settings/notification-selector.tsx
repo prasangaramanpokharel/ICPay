@@ -3,6 +3,7 @@
 import { Icon } from "@/components/ui/icon"
 import { BellGlassIcon } from "@thesvg/ui-react"
 import { Switch } from "@/components/ui/switch"
+import { toast } from "@/components/ui/sonner"
 import { useNotificationConsent } from "@/hooks/auth/useNotificationConsent"
 
 export function NotificationSelector() {
@@ -27,13 +28,25 @@ export function NotificationSelector() {
         disabled={isLoading}
         onCheckedChange={(checked) => {
           if (checked) {
-            void enableNotifications()
+            void enableNotifications().then((res) => {
+              if (res.granted) {
+                toast.success("Device notifications enabled")
+              } else if (res.needsPwaPrompt) {
+                toast.info("On iPhone, tap Share and select 'Add to Home Screen' to enable push notifications.")
+              } else if (res.error === "permission_denied") {
+                toast.error("Notifications are blocked in your browser settings. Please enable them to receive alerts.")
+              } else {
+                toast.error("Could not enable notifications on this device.")
+              }
+            })
           } else {
-            void disableNotifications()
+            void disableNotifications().then(() => {
+              toast.info("Device notifications disabled")
+            })
           }
         }}
         aria-label="Device Notifications"
-        className="shrink-0"
+        className="shrink-0 cursor-pointer"
       />
     </div>
   )
