@@ -2758,7 +2758,18 @@
     "canisterDeleted": "Canister dihapus",
     "onboardAgentTitle": "Hubungkan agen ke ICPay",
     "onboardAgentTooltip": "Salin prompt penyiapan untuk alat coding AI Anda",
-    "onboardAgentCopied": "Prompt penyiapan disalin!"
+    "onboardAgentCopied": "Prompt penyiapan disalin!",
+    "topUpTabIcp": "Dompet ICP",
+    "topUpTabCard": "Kartu / Apple Pay",
+    "cardAmountLabel": "Jumlah (USD)",
+    "cardAmountHint": "Biaya pemrosesan kartu (2,9% + $0,30) dipotong. Nol markup ICPay atau CyclePay.",
+    "cardMinMax": "Min $1 · Maks $200 per transaksi",
+    "cardPayButton": "Bayar dengan Kartu / Apple Pay",
+    "cardOpeningCheckout": "Membuka pembayaran aman…",
+    "cardAwaitingPayment": "Selesaikan pembayaran di Stripe. Cycles akan dicetak langsung ke canister Anda.",
+    "cardMintingCycles": "Pembayaran dikonfirmasi! Mencetak cycles ke canister…",
+    "cardOpenCheckout": "Buka Checkout Stripe",
+    "cardZeroMarkup": "Markup 0%"
   },
   "marketTrade": {
     "markets": "Markets",

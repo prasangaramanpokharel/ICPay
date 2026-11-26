@@ -2758,7 +2758,18 @@
     "canisterDeleted": "容器已删除",
     "onboardAgentTitle": "将您的 Agent 接入 ICPay",
     "onboardAgentTooltip": "复制适用于您 AI 编程工具的配置提示词",
-    "onboardAgentCopied": "配置提示词已复制！"
+    "onboardAgentCopied": "配置提示词已复制！",
+    "topUpTabIcp": "ICP 钱包",
+    "topUpTabCard": "银行卡 / Apple Pay",
+    "cardAmountLabel": "金额 (USD)",
+    "cardAmountHint": "扣除银行卡处理费 (2.9% + $0.30)。零 ICPay 或 CyclePay 加价。",
+    "cardMinMax": "单笔最低 $1 · 最高 $200",
+    "cardPayButton": "使用银行卡 / Apple Pay 支付",
+    "cardOpeningCheckout": "正在打开安全结账…",
+    "cardAwaitingPayment": "在 Stripe 完成支付。Cycles 将直接铸造到您的容器中。",
+    "cardMintingCycles": "支付已确认！正在铸造 Cycles 到容器…",
+    "cardOpenCheckout": "打开 Stripe 结账",
+    "cardZeroMarkup": "0% 加价"
   },
   "marketTrade": {
     "markets": "Markets",

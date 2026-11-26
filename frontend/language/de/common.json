@@ -2758,7 +2758,18 @@
     "canisterDeleted": "Canister gelöscht",
     "onboardAgentTitle": "Agenten bei ICPay einbinden",
     "onboardAgentTooltip": "Kopiert einen Setup-Prompt für dein KI-Coding-Tool",
-    "onboardAgentCopied": "Setup-Prompt kopiert!"
+    "onboardAgentCopied": "Setup-Prompt kopiert!",
+    "topUpTabIcp": "ICP-Wallet",
+    "topUpTabCard": "Karte / Apple Pay",
+    "cardAmountLabel": "Betrag (USD)",
+    "cardAmountHint": "Kartengebühr (2,9% + 0,30 $) abgezogen. Keine ICPay- oder CyclePay-Aufschläge.",
+    "cardMinMax": "Min. 1 $ · Max. 200 $ pro Transaktion",
+    "cardPayButton": "Mit Karte / Apple Pay bezahlen",
+    "cardOpeningCheckout": "Sichere Kasse wird geöffnet…",
+    "cardAwaitingPayment": "Schließen Sie die Zahlung bei Stripe ab. Cycles werden direkt in Ihren Canister geprägt.",
+    "cardMintingCycles": "Zahlung bestätigt! Cycles werden geprägt…",
+    "cardOpenCheckout": "Stripe-Kasse öffnen",
+    "cardZeroMarkup": "0 % Aufschlag"
   },
   "marketTrade": {
     "markets": "Markets",

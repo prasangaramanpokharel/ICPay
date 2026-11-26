@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, useRef } from "react"
 import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { toast } from "@/components/ui/toast"
@@ -15,6 +15,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Icon } from "@/components/ui/icon"
+import { CreditCardIcon, WalletBalanceIcon, ArrowRightIcon } from "@thesvg/ui-react"
 import { AmountInput } from "@/components/shared/amount-input"
 import { FieldError, FieldGroup } from "@/components/ui/field"
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
@@ -38,6 +43,17 @@ import {
   walletShortfall,
   type TopUpFlowStep,
 } from "@/services/cycles/topUp"
+import {
+  calculateStripeFee,
+  estimateCardCycles,
+  fetchCyclePayXdrRate,
+  formatUsdCents,
+  createCyclePayCardOrder,
+  pollCyclePayOrderStatus,
+  getCyclePayGuestUrl,
+} from "@/services/cycles/cyclepay"
+
+const PRESET_AMOUNTS = [10, 25, 50, 100]
 
 export function MyCanisterTopupDialog({
   open,
@@ -55,6 +71,9 @@ export function MyCanisterTopupDialog({
   const { identity, isAuthenticated } = useAuth()
   const walletBalance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
+
+  const [activeTab, setActiveTab] = useState<"card" | "icp">("card")
+
   const [amountText, setAmountText] = useState("")
   const [rate, setRate] = useState<bigint | null>(null)
   const [iiBalance, setIiBalance] = useState<bigint | null>(null)
@@ -62,6 +81,13 @@ export function MyCanisterTopupDialog({
   const [submitting, setSubmitting] = useState(false)
   const [flowStep, setFlowStep] = useState<TopUpFlowStep | null>(null)
   const [success, setSuccess] = useState<{ cycles: string; amount: string } | null>(null)
+
+  const [cardUsdText, setCardUsdText] = useState("25")
+  const [cyclePayRate, setCyclePayRate] = useState<bigint | null>(null)
+  const [cardSubmitting, setCardSubmitting] = useState(false)
+  const [cardOrderStatus, setCardOrderStatus] = useState<string | null>(null)
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
+  const pollTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   const amountE8s = useMemo(() => parseIcp(amountText), [amountText])
   const iiBal = iiBalance ?? 0n
@@ -81,25 +107,55 @@ export function MyCanisterTopupDialog({
     return null
   }, [amountText, amountE8s, walletBalance, walletCost, tt])
 
+  const parsedCardUsd = useMemo(() => {
+    const num = Number.parseFloat(cardUsdText)
+    return Number.isFinite(num) && num > 0 ? num : 0
+  }, [cardUsdText])
+
+  const cardCents = useMemo(() => {
+    return BigInt(Math.round(parsedCardUsd * 100))
+  }, [parsedCardUsd])
+
+  const cardFee = useMemo(() => {
+    return calculateStripeFee(cardCents)
+  }, [cardCents])
+
+  const cardNetCents = useMemo(() => {
+    return cardCents > cardFee ? cardCents - cardFee : 0n
+  }, [cardCents, cardFee])
+
+  const effectiveCardRate = cyclePayRate ?? 13450n
+  const cardCyclesEstimated = useMemo(() => {
+    return estimateCardCycles(cardCents, effectiveCardRate)
+  }, [cardCents, effectiveCardRate])
+
+  const cardError = useMemo(() => {
+    if (!cardUsdText.trim()) return null
+    if (parsedCardUsd < 1) return t("cardMinMax")
+    if (parsedCardUsd > 200) return t("cardMinMax")
+    return null
+  }, [cardUsdText, parsedCardUsd, t])
+
   useEffect(() => {
     if (!open) return
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setAmountText("")
-    setSuccess(null)
-    setFlowStep(null)
     let cancelled = false
     void (async () => {
       try {
-        const [r, f] = await Promise.all([
+        const [r, f, cRate] = await Promise.all([
           fetchCmcXdrPermyriad(identity),
           fetchIcpTransferFee(identity),
+          fetchCyclePayXdrRate(identity).catch(() => ({ ratePermyriad: 13450n, usdPerXdr: 1.345, stale: false })),
         ])
         if (!cancelled) {
           setRate(r)
           setFee(f)
+          setCyclePayRate(cRate.ratePermyriad)
         }
       } catch {
-        if (!cancelled) setRate(null)
+        if (!cancelled) {
+          setRate(null)
+          setCyclePayRate(13450n)
+        }
       }
     })()
     return () => {
@@ -123,7 +179,16 @@ export function MyCanisterTopupDialog({
     }
   }, [open, identity, isAuthenticated])
 
-  const onConfirm = async () => {
+  useEffect(() => {
+    return () => {
+      if (pollTimerRef.current) {
+        clearInterval(pollTimerRef.current)
+        pollTimerRef.current = null
+      }
+    }
+  }, [])
+
+  const onConfirmIcp = async () => {
     if (!identity || amountE8s == null) return
     setSubmitting(true)
     setFlowStep(shortfall > 0n ? "send" : "mint")
@@ -146,12 +211,77 @@ export function MyCanisterTopupDialog({
     }
   }
 
+  const onStartCardPayment = async () => {
+    if (parsedCardUsd < 1 || parsedCardUsd > 200) return
+    setCardSubmitting(true)
+    setCardOrderStatus("creating")
+
+    try {
+      let urlToOpen: string
+      let orderId: string | null = null
+
+      try {
+        const order = await createCyclePayCardOrder(canisterId, cardCents, identity)
+        orderId = order.orderId
+        urlToOpen = order.paymentUrl
+      } catch {
+        urlToOpen = getCyclePayGuestUrl(canisterId, parsedCardUsd)
+      }
+
+      setCheckoutUrl(urlToOpen)
+      window.open(urlToOpen, "_blank", "noopener,noreferrer")
+      setCardOrderStatus("awaiting_payment")
+
+      if (orderId) {
+        if (pollTimerRef.current) clearInterval(pollTimerRef.current)
+        pollTimerRef.current = setInterval(async () => {
+          try {
+            const status = await pollCyclePayOrderStatus(orderId, identity)
+            if (status.status === "Delivered") {
+              if (pollTimerRef.current) clearInterval(pollTimerRef.current)
+              setCardSubmitting(false)
+              setCardOrderStatus(null)
+              void invalidateCanisterStatus(canisterId)
+              setSuccess({
+                cycles: formatCycles(status.cyclesDelivered ?? cardCyclesEstimated),
+                amount: `$${parsedCardUsd}`,
+              })
+              onDone?.()
+            } else if (status.status === "Refunded" || status.status === "Refunding") {
+              if (pollTimerRef.current) clearInterval(pollTimerRef.current)
+              setCardSubmitting(false)
+              setCardOrderStatus(null)
+              toast.error("Payment refunded")
+            }
+          } catch {}
+        }, 3000)
+      }
+    } catch (err) {
+      setCardSubmitting(false)
+      setCardOrderStatus(null)
+      toast.error(err instanceof Error ? err.message : "Failed to initiate payment")
+    }
+  }
+
   return (
     <>
       <Dialog
         open={open && success == null}
         onOpenChange={(next) => {
-          if (!submitting) onOpenChange(next)
+          if (!submitting && !cardSubmitting) {
+            if (pollTimerRef.current) {
+              clearInterval(pollTimerRef.current)
+              pollTimerRef.current = null
+            }
+            if (!next) {
+              setAmountText("")
+              setSuccess(null)
+              setFlowStep(null)
+              setCardOrderStatus(null)
+              setCheckoutUrl(null)
+            }
+            onOpenChange(next)
+          }
         }}
       >
         <DialogContent className="sm:max-w-md">
@@ -171,69 +301,227 @@ export function MyCanisterTopupDialog({
             </DialogDescription>
           </DialogHeader>
 
-          <FieldGroup className="gap-4 py-2">
+          <div className="py-1">
             <p className="break-all font-mono text-xs text-muted-foreground">{canisterId}</p>
-            <AmountInput
-              id="mine-topup-amount"
-              label={tt("amount")}
-              value={amountText}
-              onChange={setAmountText}
-              balance={walletBalance}
-              maxE8s={maxSpend}
-              size="xl"
-            />
-            {amountError ? (
-              <FieldError className="text-xs">{amountError}</FieldError>
-            ) : estimated != null ? (
-              <div className="rounded-2xl border border-border/60 bg-muted/25 px-4 py-3.5">
-                <p className="text-xs font-medium text-muted-foreground">
-                  {t("topUpEstimateLabel")}
-                </p>
-                <div className="mt-1 flex items-center gap-2">
-                  <span className="text-2xl font-bold tracking-tight tabular-nums text-foreground sm:text-3xl">
-                    ≈ {formatCycles(estimated)}
+          </div>
+
+          <Tabs
+            value={activeTab}
+            onValueChange={(val) => {
+              if (!submitting && !cardSubmitting) {
+                setActiveTab(val as "card" | "icp")
+              }
+            }}
+            className="w-full"
+          >
+            <TabsList className="grid w-full grid-cols-2 rounded-xl bg-muted/60 p-1">
+              <TabsTrigger
+                value="card"
+                className="flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium cursor-pointer"
+              >
+                <Icon icon={CreditCardIcon} className="size-3.5" />
+                <span>{t("topUpTabCard")}</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="icp"
+                className="flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium cursor-pointer"
+              >
+                <Icon icon={WalletBalanceIcon} className="size-3.5" />
+                <span>{t("topUpTabIcp")}</span>
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="card" className="space-y-4 pt-3 outline-none">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-foreground">{t("cardAmountLabel")}</span>
+                  <Badge variant="outline" className="text-[10px] font-semibold text-primary border-primary/30">
+                    {t("cardZeroMarkup")}
+                  </Badge>
+                </div>
+
+                <div className="grid grid-cols-4 gap-2">
+                  {PRESET_AMOUNTS.map((amt) => {
+                    const isSelected = parsedCardUsd === amt
+                    return (
+                      <button
+                        key={amt}
+                        type="button"
+                        onClick={() => setCardUsdText(amt.toString())}
+                        className={`rounded-xl border py-2 text-center text-xs font-semibold transition-all cursor-pointer ${
+                          isSelected
+                            ? "border-primary bg-primary/10 text-primary"
+                            : "border-border/60 bg-muted/20 text-muted-foreground hover:border-border hover:bg-muted/40 hover:text-foreground"
+                        }`}
+                      >
+                        ${amt}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                <div className="relative mt-2">
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-semibold text-muted-foreground">
+                    $
                   </span>
-                  <Image
-                    src="/images/pages/canister/icon/tcycle.svg"
-                    alt="TC"
-                    width={24}
-                    height={24}
-                    className="size-5 sm:size-6 shrink-0 rounded-full select-none"
+                  <Input
+                    type="number"
+                    min="1"
+                    max="200"
+                    step="1"
+                    value={cardUsdText}
+                    onChange={(e) => setCardUsdText(e.target.value)}
+                    placeholder="25"
+                    className="pl-8 text-sm font-medium"
                   />
                 </div>
-                <p className="mt-1 text-[11px] text-muted-foreground">{t("topUpEstimateHint")}</p>
-              </div>
-            ) : null}
-          </FieldGroup>
 
-          <DialogFooter className="mt-2 gap-2 sm:gap-2">
-            <DialogClose
-              render={
-                <Button variant="outline" disabled={submitting}>
-                  {t("topUpCancel")}
+                {cardError && (
+                  <FieldError className="text-xs">{cardError}</FieldError>
+                )}
+              </div>
+
+              <div className="rounded-2xl border border-border/60 bg-muted/25 px-4 py-3.5 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    {t("topUpEstimateLabel")}
+                  </span>
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                    <span>≈ {formatCycles(cardCyclesEstimated)}</span>
+                    <Image
+                      src="/images/pages/canister/icon/tcycle.svg"
+                      alt="TC"
+                      width={18}
+                      height={18}
+                      className="size-4 shrink-0 rounded-full select-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between border-t border-border/40 pt-2 text-[11px] text-muted-foreground">
+                  <span>Net after Stripe fee ({formatUsdCents(cardFee)})</span>
+                  <span className="font-mono tabular-nums text-foreground">{formatUsdCents(cardNetCents)}</span>
+                </div>
+
+                <p className="text-[11px] text-muted-foreground leading-normal">
+                  {t("cardAmountHint")}
+                </p>
+              </div>
+
+              {cardOrderStatus && (
+                <div className="rounded-xl border border-border/60 bg-muted/40 p-3 space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-medium text-foreground">
+                    <Spinner className="size-3.5" />
+                    <span>
+                      {cardOrderStatus === "creating"
+                        ? t("cardOpeningCheckout")
+                        : t("cardAwaitingPayment")}
+                    </span>
+                  </div>
+                  {checkoutUrl && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full text-xs h-8 gap-1.5 cursor-pointer"
+                      onClick={() => window.open(checkoutUrl, "_blank", "noopener,noreferrer")}
+                    >
+                      <span>{t("cardOpenCheckout")}</span>
+                      <Icon icon={ArrowRightIcon} className="size-3" />
+                    </Button>
+                  )}
+                </div>
+              )}
+
+              <DialogFooter className="mt-2 gap-2 sm:gap-2">
+                <DialogClose
+                  render={
+                    <Button variant="outline" disabled={cardSubmitting}>
+                      {t("topUpCancel")}
+                    </Button>
+                  }
+                />
+                <Button
+                  type="button"
+                  disabled={cardSubmitting || parsedCardUsd < 1 || parsedCardUsd > 200 || cardError != null}
+                  onClick={() => void onStartCardPayment()}
+                  className="cursor-pointer"
+                >
+                  {cardSubmitting && <Spinner data-icon="inline-start" />}
+                  <span>
+                    {cardSubmitting
+                      ? t("cardOpeningCheckout")
+                      : t("cardPayButton")}
+                  </span>
                 </Button>
-              }
-            />
-            <Button
-              type="button"
-              disabled={
-                !isAuthenticated ||
-                submitting ||
-                amountE8s == null ||
-                amountError != null
-              }
-              onClick={() => void onConfirm()}
-            >
-              {submitting && <Spinner data-icon="inline-start" />}
-              <span>
-                {submitting
-                  ? flowStep === "send"
-                    ? tt("sending")
-                    : tt("toppingUp")
-                  : t("topUpConfirm")}
-              </span>
-            </Button>
-          </DialogFooter>
+              </DialogFooter>
+            </TabsContent>
+
+            <TabsContent value="icp" className="space-y-4 pt-3 outline-none">
+              <FieldGroup className="gap-4">
+                <AmountInput
+                  id="mine-topup-amount"
+                  label={tt("amount")}
+                  value={amountText}
+                  onChange={setAmountText}
+                  balance={walletBalance}
+                  maxE8s={maxSpend}
+                  size="xl"
+                />
+                {amountError ? (
+                  <FieldError className="text-xs">{amountError}</FieldError>
+                ) : estimated != null ? (
+                  <div className="rounded-2xl border border-border/60 bg-muted/25 px-4 py-3.5">
+                    <p className="text-xs font-medium text-muted-foreground">
+                      {t("topUpEstimateLabel")}
+                    </p>
+                    <div className="mt-1 flex items-center gap-2">
+                      <span className="text-2xl font-bold tracking-tight tabular-nums text-foreground sm:text-3xl">
+                        ≈ {formatCycles(estimated)}
+                      </span>
+                      <Image
+                        src="/images/pages/canister/icon/tcycle.svg"
+                        alt="TC"
+                        width={24}
+                        height={24}
+                        className="size-5 sm:size-6 shrink-0 rounded-full select-none"
+                      />
+                    </div>
+                    <p className="mt-1 text-[11px] text-muted-foreground">{t("topUpEstimateHint")}</p>
+                  </div>
+                ) : null}
+              </FieldGroup>
+
+              <DialogFooter className="mt-2 gap-2 sm:gap-2">
+                <DialogClose
+                  render={
+                    <Button variant="outline" disabled={submitting}>
+                      {t("topUpCancel")}
+                    </Button>
+                  }
+                />
+                <Button
+                  type="button"
+                  disabled={
+                    !isAuthenticated ||
+                    submitting ||
+                    amountE8s == null ||
+                    amountError != null
+                  }
+                  onClick={() => void onConfirmIcp()}
+                  className="cursor-pointer"
+                >
+                  {submitting && <Spinner data-icon="inline-start" />}
+                  <span>
+                    {submitting
+                      ? flowStep === "send"
+                        ? tt("sending")
+                        : tt("toppingUp")
+                      : t("topUpConfirm")}
+                  </span>
+                </Button>
+              </DialogFooter>
+            </TabsContent>
+          </Tabs>
         </DialogContent>
       </Dialog>
 
@@ -267,7 +555,7 @@ export function MyCanisterTopupDialog({
         detail={
           success ? (
             <p className="text-sm text-muted-foreground">
-              {tt("amountPaid")}: {success.amount} ICP
+              {tt("amountPaid")}: {success.amount}
             </p>
           ) : null
         }

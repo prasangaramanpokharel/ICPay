@@ -2758,7 +2758,18 @@
     "canisterDeleted": "Canister supprimé",
     "onboardAgentTitle": "Intégrez votre agent à ICPay",
     "onboardAgentTooltip": "Copie une invite de configuration pour votre outil d'IA",
-    "onboardAgentCopied": "Invite de configuration copiée !"
+    "onboardAgentCopied": "Invite de configuration copiée !",
+    "topUpTabIcp": "Portefeuille ICP",
+    "topUpTabCard": "Carte / Apple Pay",
+    "cardAmountLabel": "Montant (USD)",
+    "cardAmountHint": "Frais de traitement bancaire (2,9% + 0,30$) déduits. Zéro marge ICPay ou CyclePay.",
+    "cardMinMax": "Min 1$ · Max 200$ par transaction",
+    "cardPayButton": "Payer par Carte / Apple Pay",
+    "cardOpeningCheckout": "Ouverture du paiement sécurisé…",
+    "cardAwaitingPayment": "Complétez le paiement sur Stripe. Les cycles seront directement crédités sur votre canister.",
+    "cardMintingCycles": "Paiement confirmé ! Cycles en cours de création…",
+    "cardOpenCheckout": "Ouvrir le paiement Stripe",
+    "cardZeroMarkup": "0% de Marge"
   },
   "marketTrade": {
     "markets": "Markets",

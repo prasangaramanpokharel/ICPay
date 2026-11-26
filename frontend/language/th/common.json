@@ -2758,7 +2758,18 @@
     "canisterDeleted": "ลบแคนนิสเตอร์แล้ว",
     "onboardAgentTitle": "เชื่อมต่อเอเจนต์ของคุณกับ ICPay",
     "onboardAgentTooltip": "คัดลอกพรอมต์การตั้งค่าสำหรับเครื่องมือเขียนโค้ด AI ของคุณ",
-    "onboardAgentCopied": "คัดลอกพรอมต์การตั้งค่าแล้ว!"
+    "onboardAgentCopied": "คัดลอกพรอมต์การตั้งค่าแล้ว!",
+    "topUpTabIcp": "กระเป๋าเงิน ICP",
+    "topUpTabCard": "บัตร / Apple Pay",
+    "cardAmountLabel": "จำนวนเงิน (USD)",
+    "cardAmountHint": "หักค่าธรรมเนียมบัตร (2.9% + $0.30) ปราศจากมาร์กอัป ICPay หรือ CyclePay",
+    "cardMinMax": "ขั้นต่ำ $1 · สูงสุด $200 ต่อรายการ",
+    "cardPayButton": "ชำระเงินด้วยบัตร / Apple Pay",
+    "cardOpeningCheckout": "กำลังเปิดหน้าชำระเงินที่ปลอดภัย…",
+    "cardAwaitingPayment": "ชำระเงินให้เสร็จสิ้นใน Stripe ไซเคิลจะถูกมิ้นต์ไปยังแคนิสเตอร์ของคุณโดยตรง",
+    "cardMintingCycles": "ยืนยันการชำระเงินแล้ว! กำลังมิ้นต์ไซเคิลไปยังแคนิสเตอร์…",
+    "cardOpenCheckout": "เปิดหน้าชำระเงิน Stripe",
+    "cardZeroMarkup": "มาร์กอัป 0%"
   },
   "marketTrade": {
     "markets": "Markets",
