@@ -2769,7 +2769,8 @@
     "cardAwaitingPayment": "在 Stripe 完成支付。Cycles 将直接铸造到您的容器中。",
     "cardMintingCycles": "支付已确认！正在铸造 Cycles 到容器…",
     "cardOpenCheckout": "打开 Stripe 结账",
-    "cardZeroMarkup": "0% 加价"
+    "cardZeroMarkup": "0% 加价",
+    "cardProcessing": "正在处理您的付款…"
   },
   "marketTrade": {
     "markets": "Markets",

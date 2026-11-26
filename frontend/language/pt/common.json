@@ -2769,7 +2769,8 @@
     "cardAwaitingPayment": "Conclua o pagamento no Stripe. Os cycles serão cunhados diretamente no seu canister.",
     "cardMintingCycles": "Pagamento confirmado! Cunhando cycles no canister…",
     "cardOpenCheckout": "Abrir Checkout do Stripe",
-    "cardZeroMarkup": "0% de Margem"
+    "cardZeroMarkup": "0% de Margem",
+    "cardProcessing": "Seu pagamento está sendo processado…"
   },
   "marketTrade": {
     "markets": "Markets",

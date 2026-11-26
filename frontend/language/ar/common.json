@@ -2769,7 +2769,8 @@
     "cardAwaitingPayment": "أكمل الدفع على Stripe. سيتم صك الدورات مباشرة في العلبة الخاصة بك.",
     "cardMintingCycles": "تم تأكيد الدفع! جارٍ صك الدورات في العلبة…",
     "cardOpenCheckout": "فتح صفحة دفع Stripe",
-    "cardZeroMarkup": "0% هامش ربح"
+    "cardZeroMarkup": "0% هامش ربح",
+    "cardProcessing": "جارٍ معالجة دفعتك…"
   },
   "marketTrade": {
     "markets": "Markets",

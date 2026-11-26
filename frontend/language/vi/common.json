@@ -2769,7 +2769,8 @@
     "cardAwaitingPayment": "Hoàn tất thanh toán trên Stripe. Cycles sẽ được đúc trực tiếp vào canister của bạn.",
     "cardMintingCycles": "Đã xác nhận thanh toán! Đang đúc cycles vào canister…",
     "cardOpenCheckout": "Mở cổng Stripe",
-    "cardZeroMarkup": "0% Phụ phí"
+    "cardZeroMarkup": "0% Phụ phí",
+    "cardProcessing": "Khoản thanh toán của bạn đang được xử lý…"
   },
   "marketTrade": {
     "markets": "Markets",

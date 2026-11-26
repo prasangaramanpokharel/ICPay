@@ -2769,7 +2769,8 @@
     "cardAwaitingPayment": "Stripe에서 결제를 완료하세요. 사이클이 캐니스터에 직접 발행됩니다.",
     "cardMintingCycles": "결제 확인 완료! 캐니스터로 사이클 발행 중…",
     "cardOpenCheckout": "Stripe 결제 열기",
-    "cardZeroMarkup": "0% 마진"
+    "cardZeroMarkup": "0% 마진",
+    "cardProcessing": "결제가 처리 중입니다…"
   },
   "marketTrade": {
     "markets": "Markets",

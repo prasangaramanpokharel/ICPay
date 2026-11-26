@@ -2769,7 +2769,8 @@
     "cardAwaitingPayment": "ชำระเงินให้เสร็จสิ้นใน Stripe ไซเคิลจะถูกมิ้นต์ไปยังแคนิสเตอร์ของคุณโดยตรง",
     "cardMintingCycles": "ยืนยันการชำระเงินแล้ว! กำลังมิ้นต์ไซเคิลไปยังแคนิสเตอร์…",
     "cardOpenCheckout": "เปิดหน้าชำระเงิน Stripe",
-    "cardZeroMarkup": "มาร์กอัป 0%"
+    "cardZeroMarkup": "มาร์กอัป 0%",
+    "cardProcessing": "กำลังประมวลผลการชำระเงินของคุณ…"
   },
   "marketTrade": {
     "markets": "Markets",

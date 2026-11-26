@@ -2769,7 +2769,8 @@
     "cardAwaitingPayment": "Selesaikan pembayaran di Stripe. Cycles akan dicetak langsung ke canister Anda.",
     "cardMintingCycles": "Pembayaran dikonfirmasi! Mencetak cycles ke canister…",
     "cardOpenCheckout": "Buka Checkout Stripe",
-    "cardZeroMarkup": "Markup 0%"
+    "cardZeroMarkup": "Markup 0%",
+    "cardProcessing": "Pembayaran Anda sedang diproses…"
   },
   "marketTrade": {
     "markets": "Markets",

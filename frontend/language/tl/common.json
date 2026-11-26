@@ -2769,7 +2769,8 @@
     "cardAwaitingPayment": "Kumpletuhin ang pagbabayad sa Stripe. Ang mga cycles ay direktang mai-mint sa iyong canister.",
     "cardMintingCycles": "Kumpirmado ang bayad! Nagmimint ng cycles sa canister…",
     "cardOpenCheckout": "Buksan ang Stripe Checkout",
-    "cardZeroMarkup": "0% Patong"
+    "cardZeroMarkup": "0% Patong",
+    "cardProcessing": "Pinoproseso ang iyong bayad…"
   },
   "marketTrade": {
     "markets": "Markets",

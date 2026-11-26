@@ -2769,7 +2769,8 @@
     "cardAwaitingPayment": "Завершите оплату в Stripe. Cycles будут автоматически зачислены в ваш канистер.",
     "cardMintingCycles": "Оплата подтверждена! Зачисление cycles в канистер…",
     "cardOpenCheckout": "Открыть оплату Stripe",
-    "cardZeroMarkup": "Наценка 0%"
+    "cardZeroMarkup": "Наценка 0%",
+    "cardProcessing": "Ваш платеж обрабатывается…"
   },
   "marketTrade": {
     "markets": "Markets",

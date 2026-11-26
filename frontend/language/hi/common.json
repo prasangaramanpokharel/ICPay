@@ -2769,7 +2769,8 @@
     "cardAwaitingPayment": "Stripe पर भुगतान पूरा करें। साइकिल्स सीधे आपके कैनिस्टर में मिंट होंगे।",
     "cardMintingCycles": "भुगतान की पुष्टि हुई! कैनिस्टर में साइकिल्स मिंट हो रहे हैं…",
     "cardOpenCheckout": "Stripe चेकआउट खोलें",
-    "cardZeroMarkup": "0% मार्कअप"
+    "cardZeroMarkup": "0% मार्कअप",
+    "cardProcessing": "आपका भुगतान प्रोसेस हो रहा है…"
   },
   "marketTrade": {
     "markets": "Markets",

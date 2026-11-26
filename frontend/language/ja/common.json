@@ -2769,7 +2769,8 @@
     "cardAwaitingPayment": "Stripe でお支払いを完了してください。Cycles が直接キャニスターに発行されます。",
     "cardMintingCycles": "支払い確認完了！Cycles をキャニスターに発行中…",
     "cardOpenCheckout": "Stripe 決済を開く",
-    "cardZeroMarkup": "マークアップ 0%"
+    "cardZeroMarkup": "マークアップ 0%",
+    "cardProcessing": "支払いを処理しています…"
   },
   "marketTrade": {
     "markets": "Markets",

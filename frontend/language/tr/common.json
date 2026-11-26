@@ -2769,7 +2769,8 @@
     "cardAwaitingPayment": "Ödemeyi Stripe üzerinden tamamlayın. Cycles doğrudan canister'ınıza mint edilecektir.",
     "cardMintingCycles": "Ödeme onaylandı! Canister'a cycles mint ediliyor…",
     "cardOpenCheckout": "Stripe Ödemesini Aç",
-    "cardZeroMarkup": "%0 Ek Ücret"
+    "cardZeroMarkup": "%0 Ek Ücret",
+    "cardProcessing": "Ödemeniz işleniyor…"
   },
   "marketTrade": {
     "markets": "Markets",

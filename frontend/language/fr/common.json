@@ -2769,7 +2769,8 @@
     "cardAwaitingPayment": "Complétez le paiement sur Stripe. Les cycles seront directement crédités sur votre canister.",
     "cardMintingCycles": "Paiement confirmé ! Cycles en cours de création…",
     "cardOpenCheckout": "Ouvrir le paiement Stripe",
-    "cardZeroMarkup": "0% de Marge"
+    "cardZeroMarkup": "0% de Marge",
+    "cardProcessing": "Votre paiement est en cours de traitement…"
   },
   "marketTrade": {
     "markets": "Markets",
