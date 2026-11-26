@@ -1,11 +1,9 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs"
 import { join } from "node:path"
 import {
-  PUBLIC_LEGAL_MENU_DEFS,
   PUBLIC_PRIMARY_LINK_DEFS,
   PUBLIC_PRODUCT_LINK_DEFS,
   PUBLIC_PRODUCT_MENU_DEFS,
-  PUBLIC_RESOURCE_MENU_DEFS,
 } from "../../lib/public/site-link-defs"
 
 function assert(cond: boolean, msg: string) {
