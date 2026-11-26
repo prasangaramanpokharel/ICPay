@@ -41,6 +41,8 @@ frontend/.agents/skills/vercel-react-best-practices
 !/docs/compliance/**
 !/docs/costing/
 !/docs/costing/**
+!/docs/cyclepay/
+!/docs/cyclepay/**
 !/docs/dailyTask/
 !/docs/dailyTask/**
 !/docs/demo/
