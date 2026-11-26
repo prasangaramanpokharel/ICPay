@@ -44,12 +44,9 @@ export function PricingCalculator() {
   return (
     <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="mx-auto max-w-3xl text-center space-y-3">
-          <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
-            ROI & Pricing Calculator
-          </Badge>
+        <div className="max-w-3xl space-y-2">
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
-            Save Up to 98.2% on Cron Overhead
+            Pricing calculator
           </h2>
           <p className="text-base text-muted-foreground leading-relaxed">
             See how much your team saves by eliminating centralized cloud cron subscription taxes and switching to on-chain execution.

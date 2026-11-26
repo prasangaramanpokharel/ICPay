@@ -14,6 +14,7 @@ not all of them.
 | [`skills/icpay-backend/SKILL.md`](skills/icpay-backend/SKILL.md) | Touching any `.mo` file. Layering rules, the reserved-keyword traps, how to add an endpoint. |
 | [`skills/icpay-frontend/SKILL.md`](skills/icpay-frontend/SKILL.md) | Touching `frontend/`. Static-export limits, actor/agent code, i18n, the lint baseline. |
 | [`skills/icpay-ops/SKILL.md`](skills/icpay-ops/SKILL.md) | Deploying, cycles, rollback, reading logs. Every `npm run ci` command. |
+| [`skills/icpay-command/SKILL.md`](skills/icpay-command/SKILL.md) | Official icp-cli operations, recipe architecture, environments, and command mapping. |
 | [`skills/icpay-memory/SKILL.md`](skills/icpay-memory/SKILL.md) | Canister memory architecture, stable memory vs heap, high-water mark, upgrade safety. |
 | [`skills/icpay-git/SKILL.md`](skills/icpay-git/SKILL.md) | Committing, branching, opening a PR, cutting a release. |
 | [`skills/icpay-integration/SKILL.md`](skills/icpay-integration/SKILL.md) | Integrating new canisters & microservices (Rust/Motoko). Crate layout, dfx wiring, CI commands, cycles budgeting. |

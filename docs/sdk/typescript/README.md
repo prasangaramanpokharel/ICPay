@@ -71,6 +71,45 @@ await client.bulkCopyFiles("my-app", [{ source: "/a.txt", destination: "/copy.tx
 await client.bulkDeleteFiles("my-app", ["/copy.txt"])
 ```
 
+## Drop-in Compatibility: Migrate in 1 Line
+
+`icpay-bucket` provides 1-line drop-in compatibility for **Supabase Storage**, **Google Cloud Storage (GCS)**, **AWS S3**, and **Cloudflare R2**. Keep your exact code and functions; just swap the import!
+
+### 1. Supabase Storage (`@supabase/storage-js`)
+```ts
+import { createClient } from "icpay-bucket/supabase"
+const supabase = createClient({ apiKey: process.env.BUCKET_API_KEY })
+
+// Identical Supabase API!
+const { data, error } = await supabase.storage.from("avatars").upload("user.png", fileBuffer, {
+  contentType: "image/png",
+  upsert: true,
+})
+const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl("user.png")
+```
+
+### 2. Google Cloud Storage (`@google-cloud/storage`)
+```ts
+import { Storage } from "icpay-bucket/gcs"
+const storage = new Storage({ apiKey: process.env.BUCKET_API_KEY })
+
+// Identical GCS API!
+const bucket = storage.bucket("my-app")
+const file = bucket.file("report.pdf")
+await file.save(pdfBuffer, { contentType: "application/pdf" })
+const [contents] = await file.download()
+const url = file.publicUrl()
+```
+
+### 3. AWS S3 & Cloudflare R2 (`@aws-sdk/client-s3`)
+```ts
+import { S3Client, PutObjectCommand, GetObjectCommand } from "icpay-bucket"
+// or import from "icpay-bucket/s3"
+const s3 = new S3Client({ apiKey: process.env.BUCKET_API_KEY })
+
+await s3.send(new PutObjectCommand({ Bucket: "my-app", Key: "file.txt", Body: "Hello" }))
+```
+
 ## Responses
 
 Every method returns `ApiResult<T>`:

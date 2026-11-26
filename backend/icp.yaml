@@ -1,0 +1,79 @@
+canisters:
+  - name: icp_wallet_backend
+    recipe:
+      type: "@dfinity/motoko@v4.0.0"
+      configuration:
+        main: src/main.mo
+        args: ""
+
+  - name: icp_wallet_frontend
+    recipe:
+      type: "@dfinity/asset-canister@v2.2.1"
+      configuration:
+        dir: dist
+
+  - name: icpay_trade
+    recipe:
+      type: "@dfinity/rust@v3.4.0"
+      configuration:
+        package: icpay_trade
+        candid: rust/trade/icpay_trade.did
+
+  - name: cnsmangment
+    recipe:
+      type: "@dfinity/rust@v3.4.0"
+      configuration:
+        package: cnsmangment
+        candid: rust/cnsmangment/cnsmangment.did
+
+  - name: icpay_academy
+    recipe:
+      type: "@dfinity/rust@v3.4.0"
+      configuration:
+        package: icpay_academy
+        candid: rust/academy/icpay_academy.did
+
+  - name: iccron
+    recipe:
+      type: "@dfinity/rust@v3.4.0"
+      configuration:
+        package: iccron
+        candid: rust/iccron/iccron.did
+
+  - name: icp_blob_store
+    init_args: '(principal "6vbhm-nqaaa-aaaan-q6muq-cai")'
+    recipe:
+      type: "@dfinity/motoko@v4.0.0"
+      configuration:
+        main: blob_store/src/main.mo
+        args: ""
+
+  - name: icpay_notifier
+    init_args: '(principal "6vbhm-nqaaa-aaaan-q6muq-cai")'
+    recipe:
+      type: "@dfinity/motoko@v4.0.0"
+      configuration:
+        main: notifier/src/main.mo
+        args: ""
+
+  - name: icpay_index
+    init_args: '(opt variant { Init = record { ledger_id = principal "5fsnk-rqaaa-aaaan-q6m4q-cai" } })'
+    build:
+      steps:
+        - type: script
+          commands:
+            - cp deps/index/ic-icrc1-index-ng.wasm.gz "$ICP_WASM_OUTPUT_PATH"
+
+  - name: internet_identity
+    build:
+      steps:
+        - type: script
+          commands:
+            - cp deps/local/internet_identity.wasm.gz "$ICP_WASM_OUTPUT_PATH"
+
+  - name: test_icp_ledger
+    build:
+      steps:
+        - type: script
+          commands:
+            - if [ -f /tmp/icp_ledger_canister.wasm.gz ]; then cp /tmp/icp_ledger_canister.wasm.gz "$ICP_WASM_OUTPUT_PATH"; else touch "$ICP_WASM_OUTPUT_PATH"; fi

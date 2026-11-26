@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { Icon } from "@/components/ui/icon"
 import { PlusGlassIcon, LinkGlassIcon, Grid2x2GlassIcon, ListGlassIcon, PackageGlassIcon } from "@thesvg/ui-react"
@@ -121,15 +122,25 @@ function CanisterRowSkeleton() {
 
 export function MyCanistersPanel() {
   const t = useTranslations("myCanisters")
+  const searchParams = useSearchParams()
   const { identity, isAuthenticated } = useAuth()
   const principal = identity?.getPrincipal().toText() ?? null
   const mine = useMineCanisters(principal)
   const entries = useSavedCanisterEntries(principal)
   useSyncCloudCanisters(identity)
   const nameById = useMemo(() => new Map(entries.map((e) => [e.id, e.name])), [entries])
-  const [topUpTarget, setTopUpTarget] = useState<string | null>(null)
-  const [topUpOpen, setTopUpOpen] = useState(false)
-  const [linkOpen, setLinkOpen] = useState(false)
+  const urlAction = searchParams.get("action")
+  const urlCanister = searchParams.get("canister") || searchParams.get("topup")
+
+  const [topUpTargetOverride, setTopUpTargetOverride] = useState<string | null>(null)
+  const [topUpDismissed, setTopUpDismissed] = useState(false)
+  const [linkDismissed, setLinkDismissed] = useState(false)
+  const [linkExplicitOpen, setLinkExplicitOpen] = useState(false)
+
+  const topUpTarget = topUpTargetOverride ?? (urlAction === "topup" && urlCanister ? urlCanister : null)
+  const topUpOpen = Boolean(topUpTarget) && !topUpDismissed
+  const linkOpen = linkExplicitOpen || (urlAction === "link" && !linkDismissed)
+
   const [connectOpen, setConnectOpen] = useState(false)
   const [connectCanisterId, setConnectCanisterId] = useState<string | null>(null)
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
@@ -156,7 +167,13 @@ export function MyCanistersPanel() {
   }
 
   const openLink = () => {
-    setLinkOpen(true)
+    setLinkExplicitOpen(true)
+    setLinkDismissed(false)
+  }
+
+  const handleOpenTopUp = (canisterId: string) => {
+    setTopUpTargetOverride(canisterId)
+    setTopUpDismissed(false)
   }
 
   return (
@@ -305,10 +322,7 @@ export function MyCanistersPanel() {
                   label={label}
                   status={previews.map[id]}
                   statusLoading={previews.isLoading}
-                  onTopUp={() => {
-                    setTopUpTarget(id)
-                    setTopUpOpen(true)
-                  }}
+                  onTopUp={() => handleOpenTopUp(id)}
                   onConnect={() => handleOpenConnect(id)}
                 />
               )
@@ -332,10 +346,7 @@ export function MyCanistersPanel() {
                         selected={false}
                         status={previews.map[id]}
                         statusLoading={previews.isLoading}
-                        onTopUp={() => {
-                          setTopUpTarget(id)
-                          setTopUpOpen(true)
-                        }}
+                        onTopUp={() => handleOpenTopUp(id)}
                         onConnect={() => handleOpenConnect(id)}
                       />
                     )
@@ -349,7 +360,10 @@ export function MyCanistersPanel() {
 
       <LinkCanisterDialog
         open={linkOpen}
-        onOpenChange={setLinkOpen}
+        onOpenChange={(open) => {
+          if (!open) setLinkDismissed(true)
+          setLinkExplicitOpen(open)
+        }}
         onSuccess={() => {
           previews.refresh()
         }}
@@ -360,8 +374,12 @@ export function MyCanistersPanel() {
         <MyCanisterTopupDialog
           open={topUpOpen}
           onOpenChange={(open) => {
-            setTopUpOpen(open)
-            if (!open) setTopUpTarget(null)
+            if (!open) {
+              setTopUpDismissed(true)
+              setTopUpTargetOverride(null)
+            } else {
+              setTopUpDismissed(false)
+            }
           }}
           canisterId={topUpTarget}
           onDone={() => {

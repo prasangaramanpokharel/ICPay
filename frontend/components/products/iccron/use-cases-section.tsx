@@ -1,8 +1,6 @@
 "use client"
 
 import { useState } from "react"
-import Image from "next/image"
-import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -10,104 +8,60 @@ import { Icon } from "@/components/ui/icon"
 import {
   CoinsGlassIcon,
   CloudGlassIcon,
-  CodeGlassIcon,
   ShoppingBagGlassIcon,
   ShieldGlassIcon,
-  ArrowRightIcon,
-  CheckGlassOutlineIcon,
   CopyGlassIcon,
+  CheckGlassOutlineIcon,
 } from "@thesvg/ui-react"
 
 const RECIPES = [
   {
-    id: "defi",
-    title: "DeFi Yield Compounding",
+    id: "yield",
+    title: "Yield compounding",
     icon: CoinsGlassIcon,
-    image: "/images/pages/iccron/defi-finance.jpg",
     schedule: "0 0 * * *",
     scheduleLabel: "Daily at 00:00 UTC",
-    targetType: "Candid Canister Call",
-    endpoint: "swap_pool.harvest_and_distribute()",
+    targetType: "Candid canister call",
+    endpoint: "swap_pool.harvest_and_reinvest()",
     description:
-      "Automate liquidity pool reward collection and yield reinvestment without running an off-chain Python keeper bot or exposing a private key on a centralized cloud server.",
-    metrics: [
-      { label: "Execution Cost", value: "$0.0005/day" },
-      { label: "Key Security", value: "100% On-Chain" },
-      { label: "Failover", value: "Subnet Retry" },
-    ],
-    samplePayload: `{\n  "action": "harvest_and_reinvest",\n  "pool_id": "icp_ckbtc_lp",\n  "min_return": 100000\n}`,
+      "Automate liquidity pool reward collection and reinvestment without running an off-chain keeper bot or exposing a private key on a server.",
+    samplePayload: `{\n  "action": "harvest_and_reinvest",\n  "pool_id": "icp_ckbtc_lp",\n  "min_return_e8s": 100000000\n}`,
   },
   {
     id: "backup",
-    title: "Database Backup to icBucket",
+    title: "Database backup",
     icon: CloudGlassIcon,
-    image: "/images/pages/iccron/cloud-network.jpg",
     schedule: "0 2 * * *",
-    scheduleLabel: "Nightly at 02:00 UTC",
-    targetType: "HTTPS Webhook",
-    endpoint: "POST https://api.my-app.com/v1/jobs/db-dump",
+    scheduleLabel: "Daily at 02:00 UTC",
+    targetType: "HTTPS webhook",
+    endpoint: "POST https://api.example.com/v1/jobs/db-dump",
     description:
-      "Trigger an automated PostgreSQL or MongoDB snapshot, encrypt it with AES-256, and stream it directly to decentralized icBucket S3 on-chain storage.",
-    metrics: [
-      { label: "Cadence", value: "Nightly 2 AM" },
-      { label: "Storage Target", value: "icBucket S3" },
-      { label: "Egress Fees", value: "$0.00" },
-    ],
-    samplePayload: `{\n  "target": "icbucket://backups/prod-db.sql.gz",\n  "retention_days": 30\n}`,
+      "Trigger an automated database snapshot, encrypt it with AES-256, and stream it directly to decentralized object storage.",
+    samplePayload: `{\n  "target": "s3://backups/prod-db.sql.gz",\n  "retention_days": 30\n}`,
   },
   {
-    id: "vercel",
-    title: "Bypassing Vercel's Cron Tax",
-    icon: CodeGlassIcon,
-    image: "/images/pages/iccron/developer-code.jpg",
-    schedule: "0 * * * *",
-    scheduleLabel: "Hourly at minute 0",
-    targetType: "HTTPS Webhook",
-    endpoint: "POST https://my-app.vercel.app/api/cron/sync",
-    description:
-      "Vercel Free restricts cron jobs to once per 24 hours. icCron triggers your Next.js route handlers every hour (or every 5 minutes) for just pennies per year.",
-    metrics: [
-      { label: "Vercel Pro Cost", value: "$240.00/yr" },
-      { label: "icCron Cost", value: "$4.32/yr" },
-      { label: "Net Savings", value: "98.2%" },
-    ],
-    samplePayload: `{\n  "job": "sync_inventory",\n  "source": "shopify_webhook",\n  "batch_size": 250\n}`,
-  },
-  {
-    id: "commerce",
-    title: "Abandoned Cart Reminders",
+    id: "cart",
+    title: "Cart reminders",
     icon: ShoppingBagGlassIcon,
-    image: "/images/pages/iccron/workflow-automation.jpg",
     schedule: "*/30 * * * *",
     scheduleLabel: "Every 30 minutes",
-    targetType: "HTTPS Webhook",
-    endpoint: "POST https://store.com/api/webhooks/abandoned",
+    targetType: "HTTPS webhook",
+    endpoint: "POST https://store.example.com/api/webhooks/abandoned",
     description:
-      "Regularly query checkout sessions idle for more than 1 hour and dispatch personalized email discount drip notifications via Resend or SendGrid.",
-    metrics: [
-      { label: "Interval", value: "30 Min" },
-      { label: "Recovery Rate", value: "+14.8%" },
-      { label: "DLQ Protection", value: "Circuit Breaker" },
-    ],
+      "Query checkout sessions idle for more than 1 hour and dispatch notifications through your email service provider.",
     samplePayload: `{\n  "idle_threshold_minutes": 60,\n  "coupon_code": "SAVE10",\n  "max_notifications": 100\n}`,
   },
   {
-    id: "sentinel",
-    title: "Canister Cycle Top-Up Sentinel",
+    id: "cycles",
+    title: "Cycle top-up",
     icon: ShieldGlassIcon,
-    image: "/images/pages/iccron/security-shield.jpg",
     schedule: "0 */6 * * *",
     scheduleLabel: "Every 6 hours",
-    targetType: "Candid Canister Call",
-    endpoint: "sentinel.check_runway_and_mint()",
+    targetType: "Candid canister call",
+    endpoint: "sentinel.check_runway_and_top_up()",
     description:
-      "Monitor cycles balance across your entire canister fleet. When any canister drops below the 30-day freezing threshold, automatically mint cycles from your wallet.",
-    metrics: [
-      { label: "Fleet Protection", value: "Zero Downtime" },
-      { label: "Cycle Reserve", value: "> 30 Days" },
-      { label: "Auth Mode", value: "Caller Principal" },
-    ],
-    samplePayload: `{\n  "canister_ids": ["6vbhm-nqaaa-aaaan-q6muq-cai"],\n  "min_cycles": 500000000000\n}`,
+      "Monitor cycles balance across your canister fleet and automatically trigger top-up when balance drops below 30 days of runway.",
+    samplePayload: `{\n  "canister_ids": ["6vbhm-nqaaa-aaaan-q6muq-cai"],\n  "min_cycles_threshold": 500000000000\n}`,
   },
 ]
 
@@ -126,126 +80,82 @@ export function UseCasesSection() {
   return (
     <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="mx-auto max-w-3xl text-center space-y-3">
-          <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
-            Real-World Solutions
-          </Badge>
+        <div className="max-w-3xl space-y-2">
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
-            Production Automation Recipes
+            Example jobs
           </h2>
           <p className="text-base text-muted-foreground leading-relaxed">
-            See how forward-thinking engineering teams deploy icCron to power DeFi protocols, database syncs, and cloud workloads.
+            Common schedules and the payload each one sends.
           </p>
         </div>
 
-        <div className="mt-10 flex flex-wrap justify-center gap-2">
+        <div className="mt-8 flex flex-wrap gap-2">
           {RECIPES.map((recipe) => (
             <button
               key={recipe.id}
               type="button"
               onClick={() => setActiveTab(recipe.id)}
-              className={`flex items-center gap-2 rounded-2xl px-4 py-2.5 text-xs font-semibold transition-all ${
+              className={`flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-semibold transition-all cursor-pointer ${
                 activeTab === recipe.id
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "border border-border bg-card/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  ? "bg-foreground text-background shadow-xs"
+                  : "border border-border/70 bg-card text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
               <Icon icon={recipe.icon} className="size-4" />
-              {recipe.title}
+              <span>{recipe.title}</span>
             </button>
           ))}
         </div>
 
-        <div className="mt-8">
-          <Card className="overflow-hidden rounded-3xl border border-border/80 bg-card p-6 shadow-sm md:p-8">
-            <div className="grid gap-8 lg:grid-cols-12 lg:items-center">
-              <div className="space-y-6 lg:col-span-6">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="secondary" className="font-mono text-xs text-primary font-semibold">
-                      {activeRecipe.schedule}
-                    </Badge>
-                    <span className="text-xs text-muted-foreground font-medium">
-                      {activeRecipe.scheduleLabel}
-                    </span>
-                  </div>
-                  <h3 className="text-2xl font-bold tracking-tight text-foreground">
-                    {activeRecipe.title}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {activeRecipe.description}
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-3 gap-3 border-y border-border/50 py-4">
-                  {activeRecipe.metrics.map((metric, i) => (
-                    <div key={i}>
-                      <p className="text-[11px] text-muted-foreground">{metric.label}</p>
-                      <p className="text-sm font-bold text-foreground">{metric.value}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-semibold text-muted-foreground">Payload Preview</span>
-                    <button
-                      type="button"
-                      onClick={copyPayload}
-                      className="flex items-center gap-1 text-primary hover:underline font-medium"
-                    >
-                      {copied ? (
-                        <>
-                          <Icon icon={CheckGlassOutlineIcon} className="size-3.5 text-success" strokeWidth={2.5} />
-                          <span className="text-success font-medium">Copied</span>
-                        </>
-                      ) : (
-                        <>
-                          <Icon icon={CopyGlassIcon} className="size-3.5" />
-                          <span>Copy</span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-                  <pre className="overflow-x-auto rounded-xl border border-border bg-background p-3.5 font-mono text-xs text-muted-foreground">
-                    {activeRecipe.samplePayload}
-                  </pre>
-                </div>
-
-                <div className="pt-1">
-                  <Button
-                    size="default"
-                    className="gap-1.5 rounded-xl text-xs font-semibold"
-                    nativeButton={false}
-                    render={<Link href="/login" />}
-                  >
-                    Deploy
-                    <Icon icon={ArrowRightIcon} className="size-3.5" />
-                  </Button>
-                </div>
+        <div className="mt-6 rounded-2xl border border-border/80 bg-card p-6 shadow-sm md:p-8">
+          <div className="grid gap-8 lg:grid-cols-12 lg:items-start">
+            <div className="space-y-4 lg:col-span-5">
+              <div>
+                <Badge variant="outline" className="font-mono text-xs">
+                  {activeRecipe.targetType}
+                </Badge>
+                <h3 className="mt-2 text-xl font-bold text-foreground">
+                  {activeRecipe.title}
+                </h3>
               </div>
 
-              <div className="flex flex-col gap-3 lg:col-span-6">
-                <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-border/60 bg-muted shadow-sm">
-                  <Image
-                    src={activeRecipe.image}
-                    alt={activeRecipe.title}
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover object-top"
-                  />
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                {activeRecipe.description}
+              </p>
+
+              <div className="space-y-2 rounded-xl border border-border/60 bg-muted/20 p-4 text-xs">
+                <div>
+                  <span className="text-muted-foreground">Schedule: </span>
+                  <span className="font-mono font-semibold text-foreground">{activeRecipe.schedule}</span>
+                  <span className="text-muted-foreground"> ({activeRecipe.scheduleLabel})</span>
                 </div>
-                <div className="rounded-xl border border-border/70 bg-background/80 p-3">
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Target Execution
-                  </p>
-                  <p className="font-mono text-xs font-bold text-foreground truncate">
-                    {activeRecipe.endpoint}
-                  </p>
+                <div>
+                  <span className="text-muted-foreground">Target: </span>
+                  <span className="font-mono text-foreground break-all">{activeRecipe.endpoint}</span>
                 </div>
               </div>
             </div>
-          </Card>
+
+            <div className="lg:col-span-7">
+              <Card className="overflow-hidden rounded-xl border border-border/70 bg-zinc-950 text-zinc-100 dark:bg-black/80">
+                <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2.5">
+                  <span className="font-mono text-xs text-zinc-400">payload.json</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={copyPayload}
+                    className="h-7 gap-1.5 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100 cursor-pointer"
+                  >
+                    <Icon icon={copied ? CheckGlassOutlineIcon : CopyGlassIcon} className="size-3.5" />
+                    <span>{copied ? "Copied" : "Copy"}</span>
+                  </Button>
+                </div>
+                <pre className="overflow-x-auto p-4 font-mono text-xs leading-relaxed text-zinc-200">
+                  {activeRecipe.samplePayload}
+                </pre>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
     </section>

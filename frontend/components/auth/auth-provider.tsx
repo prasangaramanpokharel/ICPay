@@ -6,6 +6,7 @@ import {
   login as iiLogin,
   logout as iiLogout,
   createAuthClient,
+  silentAuth,
   openBackendSession,
   type LoginOptions,
 } from "@/services/auth/auth"
@@ -69,9 +70,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         })
 
-        if (!authClient.isAuthenticated()) return
-        const id = await authClient.getIdentity()
-        if (cancelled) return
+        let id: Identity | null = null
+        if (authClient.isAuthenticated()) {
+          id = await authClient.getIdentity()
+        } else {
+          id = await silentAuth()
+        }
+        if (cancelled || !id) return
 
         setIdentity(id)
         openBackendSession(id).catch((e) => {

@@ -9,31 +9,31 @@ import { LayersGlassIcon, CpuGlassIcon, GlobeGlassIcon, ShieldGlassIcon, Databas
 const SPECS = [
   {
     icon: CpuGlassIcon,
-    title: "Rust Canister Core",
-    subtitle: "w2fxo-5qaaa-aaaan-q6zxq-cai",
+    title: "Rust canister core",
+    subtitle: "State in stable memory",
     description:
-      "Engineered in memory-safe Rust with ic-stable-structures. State persists safely across canister Wasm upgrades without serialization loss.",
+      "Engineered in memory-safe Rust with ic-stable-structures. Job schedules, logs, and account balances persist across canister upgrades without data loss.",
   },
   {
     icon: LayersGlassIcon,
-    title: "Nanosecond Timer Loop",
-    subtitle: "Zero Heartbeat Idle Burn",
+    title: "Canister timers",
+    subtitle: "1-second ticks",
     description:
-      "Direct integration with Internet Computer system timers. Sleeps at zero cycles between jobs, waking up with 1-second consensus precision.",
+      "Native Internet Computer canister timers sleep at 0 cycles between jobs and wake up with 1-second consensus precision.",
   },
   {
     icon: GlobeGlassIcon,
-    title: "Subnet HTTPS Dispatch",
-    subtitle: "Threshold-Signed Calls",
+    title: "HTTPS outcalls",
+    subtitle: "Threshold-signed calls",
     description:
-      "Outbound HTTP calls to Web2 endpoints are verified and threshold-signed by independent node providers, ensuring verifiable webhook delivery.",
+      "Outbound HTTP requests to external endpoints are cryptographically threshold-signed by independent subnet node providers.",
   },
   {
     icon: ShieldGlassIcon,
-    title: "DLQ & Circuit Breaker",
-    subtitle: "Auto-Pause on Dormancy",
+    title: "Retries and DLQ",
+    subtitle: "Circuit breaker",
     description:
-      "Protects developer cycle balances by detecting broken endpoints, auto-pausing after consecutive failures, and recording status codes.",
+      "Configurable exponential backoff protects downstream targets. Persistent failures transition jobs to a dead letter queue.",
   },
 ]
 
@@ -41,20 +41,17 @@ export function ArchitectureSection() {
   return (
     <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="mx-auto max-w-3xl text-center space-y-3">
-          <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
-            System Architecture
-          </Badge>
+        <div className="max-w-3xl space-y-2">
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
-            Decentralized Architecture Under the Hood
+            Architecture
           </h2>
           <p className="text-base text-muted-foreground leading-relaxed">
-            How icCron bridges on-chain Motoko/Rust canisters and off-chain Web2 APIs through cryptographic subnet consensus.
+            How a job moves from a schedule to a target.
           </p>
         </div>
 
-        <div className="mt-12 rounded-3xl border border-border/80 bg-card/70 p-6 shadow-xl md:p-8">
-          <div className="relative mx-auto flex justify-center overflow-hidden rounded-2xl bg-secondary/30 p-4">
+        <div className="mt-10 rounded-2xl border border-border/80 bg-card p-6 shadow-sm md:p-8">
+          <div className="relative mx-auto flex justify-center overflow-hidden rounded-xl bg-muted/40 p-4">
             <Image
               src="/images/pages/iccron/architecture-diagram.svg"
               alt="icCron system architecture diagram"
@@ -68,15 +65,15 @@ export function ArchitectureSection() {
             {SPECS.map((spec, idx) => (
               <Card
                 key={idx}
-                className="rounded-2xl border border-border/60 bg-background/60 p-5 shadow-xs transition-colors hover:border-primary/40"
+                className="rounded-xl border border-border/60 bg-background/60 p-5 shadow-xs"
               >
                 <div className="space-y-3">
-                  <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <div className="flex size-8 items-center justify-center rounded-lg bg-muted text-foreground">
                     <Icon icon={spec.icon} className="size-4" />
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-foreground">{spec.title}</h3>
-                    <p className="font-mono text-[11px] text-primary">{spec.subtitle}</p>
+                    <p className="font-mono text-[11px] text-muted-foreground">{spec.subtitle}</p>
                   </div>
                   <p className="text-xs leading-relaxed text-muted-foreground">
                     {spec.description}
@@ -86,20 +83,20 @@ export function ArchitectureSection() {
             ))}
           </div>
 
-          <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-2xl border border-border/60 bg-secondary/30 p-4 sm:flex-row">
+          <div className="mt-8 flex flex-col items-center justify-between gap-4 rounded-xl border border-border/60 bg-muted/30 p-4 sm:flex-row">
             <div className="flex items-center gap-3">
-              <Icon icon={DatabaseGlassIcon} className="size-5 text-primary shrink-0" />
+              <Icon icon={DatabaseGlassIcon} className="size-5 text-muted-foreground shrink-0" />
               <div>
                 <p className="text-xs font-semibold text-foreground">
-                  Canister ID: <span className="font-mono text-primary">w2fxo-5qaaa-aaaan-q6zxq-cai</span>
+                  Canister ID: <span className="font-mono text-foreground">w2fxo-5qaaa-aaaan-q6zxq-cai</span>
                 </p>
                 <p className="text-[11px] text-muted-foreground">
-                  Subnet: App Subnet · Replicated across 13 independent node machines
+                  Application subnet · State replicated across 13 independent node machines
                 </p>
               </div>
             </div>
-            <Badge variant="outline" className="border-primary/30 bg-primary/10 text-xs font-mono text-primary">
-              Mainnet Verified
+            <Badge variant="outline" className="text-xs font-mono">
+              Mainnet verified
             </Badge>
           </div>
         </div>

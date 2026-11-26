@@ -1,74 +1,64 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 480" width="940" height="480" fill="none">
   <defs>
-    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ec4899" stop-opacity="0.8" />
-      <stop offset="50%" stop-color="#8b5cf6" stop-opacity="0.8" />
-      <stop offset="100%" stop-color="#3b82f6" stop-opacity="0.8" />
-    </linearGradient>
     <linearGradient id="cardBg" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#18181b" stop-opacity="0.9" />
-      <stop offset="100%" stop-color="#09090b" stop-opacity="0.95" />
+      <stop offset="0%" stop-color="#18181b" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#09090b" stop-opacity="0.98" />
     </linearGradient>
-    <filter id="blurGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="28" result="blur" />
-    </filter>
   </defs>
 
-  <circle cx="470" cy="240" r="170" fill="url(#glowGrad)" opacity="0.15" filter="url(#blurGlow)" />
-
-  <rect x="350" y="150" width="240" height="180" rx="24" fill="url(#cardBg)" stroke="url(#glowGrad)" stroke-width="2" />
-  <rect x="370" y="170" width="200" height="32" rx="10" fill="#27272a" opacity="0.6" />
-  <text x="470" y="191" text-anchor="middle" fill="#f43f5e" font-family="system-ui, sans-serif" font-size="12" font-weight="bold" letter-spacing="1.5">ICCRON CANISTER CORE</text>
-  <text x="470" y="230" text-anchor="middle" fill="#ffffff" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">Autonomous Timer Engine</text>
-  <text x="470" y="255" text-anchor="middle" fill="#a1a1aa" font-family="system-ui, sans-serif" font-size="12">Native IC Canister Timers</text>
-  <text x="470" y="275" text-anchor="middle" fill="#a1a1aa" font-family="system-ui, sans-serif" font-size="11">1-second Tick Precision</text>
-  <rect x="380" y="295" width="180" height="20" rx="6" fill="#10b981" fill-opacity="0.15" />
-  <text x="470" y="309" text-anchor="middle" fill="#34d399" font-family="monospace" font-size="10" font-weight="bold">100% ON-CHAIN ESCROW</text>
+  <rect x="340" y="140" width="260" height="200" rx="20" fill="url(#cardBg)" stroke="#3f3f46" stroke-width="1.5" />
+  <rect x="365" y="160" width="210" height="30" rx="8" fill="#27272a" />
+  <text x="470" y="180" text-anchor="middle" fill="#e4e4e7" font-family="system-ui, sans-serif" font-size="12" font-weight="600">icCron Canister Core</text>
+  <text x="470" y="222" text-anchor="middle" fill="#ffffff" font-family="system-ui, sans-serif" font-size="16" font-weight="bold">Timer Engine</text>
+  <text x="470" y="248" text-anchor="middle" fill="#d4d4d8" font-family="system-ui, sans-serif" font-size="12">Canister timers</text>
+  <text x="470" y="270" text-anchor="middle" fill="#a1a1aa" font-family="system-ui, sans-serif" font-size="11">1-second tick precision</text>
+  <rect x="375" y="295" width="190" height="24" rx="6" fill="#27272a" />
+  <text x="470" y="311" text-anchor="middle" fill="#a1a1aa" font-family="monospace" font-size="11">State in stable memory</text>
 
   <g transform="translate(25, 90)">
     <rect width="250" height="90" rx="16" fill="url(#cardBg)" stroke="#27272a" stroke-width="1.5" />
-    <circle cx="34" cy="45" r="18" fill="#3b82f6" fill-opacity="0.15" />
-    <path d="M27 45h14M34 38v14" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" />
-    <text x="64" y="40" fill="#ffffff" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">Cron Schedules</text>
+    <circle cx="34" cy="45" r="18" fill="#27272a" />
+    <path d="M27 45h14M34 38v14" stroke="#e4e4e7" stroke-width="2" stroke-linecap="round" />
+    <text x="64" y="40" fill="#ffffff" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">Cron schedule</text>
     <text x="64" y="58" fill="#a1a1aa" font-family="monospace" font-size="11">0 */2 * * *</text>
   </g>
 
   <g transform="translate(25, 210)">
     <rect width="250" height="90" rx="16" fill="url(#cardBg)" stroke="#27272a" stroke-width="1.5" />
-    <circle cx="34" cy="45" r="18" fill="#ec4899" fill-opacity="0.15" />
-    <path d="M27 45l5 5 10-10" stroke="#f472b6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <text x="64" y="40" fill="#ffffff" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">API Key Webhooks</text>
+    <circle cx="34" cy="45" r="18" fill="#27272a" />
+    <path d="M27 45l5 5 10-10" stroke="#e4e4e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="64" y="40" fill="#ffffff" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">API trigger</text>
     <text x="64" y="58" fill="#a1a1aa" font-family="monospace" font-size="10.5">POST /api/v1/cron/trigger</text>
   </g>
 
   <g transform="translate(25, 330)">
     <rect width="250" height="90" rx="16" fill="url(#cardBg)" stroke="#27272a" stroke-width="1.5" />
-    <circle cx="34" cy="45" r="18" fill="#8b5cf6" fill-opacity="0.15" />
-    <circle cx="34" cy="45" r="8" stroke="#a78bfa" stroke-width="2" />
-    <text x="64" y="40" fill="#ffffff" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">Event Driven</text>
-    <text x="64" y="58" fill="#a1a1aa" font-family="monospace" font-size="10.5">Dynamic Delays &amp; Retries</text>
+    <circle cx="34" cy="45" r="18" fill="#27272a" />
+    <circle cx="34" cy="45" r="8" stroke="#e4e4e7" stroke-width="2" />
+    <text x="64" y="40" fill="#ffffff" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">Event trigger</text>
+    <text x="64" y="58" fill="#a1a1aa" font-family="monospace" font-size="10.5">Dynamic delays and retries</text>
   </g>
 
   <g transform="translate(665, 140)">
     <rect width="250" height="90" rx="16" fill="url(#cardBg)" stroke="#27272a" stroke-width="1.5" />
-    <circle cx="34" cy="45" r="18" fill="#10b981" fill-opacity="0.15" />
-    <path d="M26 45h16M36 39l6 6-6 6" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <text x="64" y="40" fill="#ffffff" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">Canister Calls</text>
-    <text x="64" y="58" fill="#a1a1aa" font-family="monospace" font-size="10.5">Inter-canister Candid</text>
+    <circle cx="34" cy="45" r="18" fill="#27272a" />
+    <path d="M26 45h16M36 39l6 6-6 6" stroke="#e4e4e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="64" y="40" fill="#ffffff" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">Canister call</text>
+    <text x="64" y="58" fill="#a1a1aa" font-family="monospace" font-size="10.5">Inter-canister Candid call</text>
   </g>
 
   <g transform="translate(665, 260)">
     <rect width="250" height="90" rx="16" fill="url(#cardBg)" stroke="#27272a" stroke-width="1.5" />
-    <circle cx="34" cy="45" r="18" fill="#f59e0b" fill-opacity="0.15" />
-    <path d="M27 42l7-7 7 7M34 35v16" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    <text x="64" y="40" fill="#ffffff" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">HTTPS Outcalls</text>
-    <text x="64" y="58" fill="#a1a1aa" font-family="monospace" font-size="10.5">Vercel, AWS, Cloudflare</text>
+    <circle cx="34" cy="45" r="18" fill="#27272a" />
+    <path d="M27 42l7-7 7 7M34 35v16" stroke="#e4e4e7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+    <text x="64" y="40" fill="#ffffff" font-family="system-ui, sans-serif" font-size="13" font-weight="bold">HTTPS outcall</text>
+    <text x="64" y="58" fill="#a1a1aa" font-family="monospace" font-size="10.5">Webhooks to any API endpoint</text>
   </g>
 
-  <path d="M275 135 C 310 135, 310 200, 350 200" stroke="#3b82f6" stroke-width="2" stroke-dasharray="4 4" fill="none" />
-  <path d="M275 255 L 350 240" stroke="#ec4899" stroke-width="2" stroke-dasharray="4 4" fill="none" />
-  <path d="M275 375 C 310 375, 310 280, 350 280" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="4 4" fill="none" />
+  <path d="M275 135 C 305 135, 305 200, 340 200" stroke="#71717a" stroke-width="1.5" stroke-dasharray="4 4" fill="none" />
+  <path d="M275 255 L 340 240" stroke="#71717a" stroke-width="1.5" stroke-dasharray="4 4" fill="none" />
+  <path d="M275 375 C 305 375, 305 280, 340 280" stroke="#71717a" stroke-width="1.5" stroke-dasharray="4 4" fill="none" />
 
-  <path d="M590 210 C 630 210, 630 185, 665 185" stroke="#10b981" stroke-width="2" stroke-dasharray="4 4" fill="none" />
-  <path d="M590 270 C 630 270, 630 305, 665 305" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 4" fill="none" />
+  <path d="M600 210 C 635 210, 635 185, 665 185" stroke="#71717a" stroke-width="1.5" stroke-dasharray="4 4" fill="none" />
+  <path d="M600 270 C 635 270, 635 305, 665 305" stroke="#71717a" stroke-width="1.5" stroke-dasharray="4 4" fill="none" />
 </svg>

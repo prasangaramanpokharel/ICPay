@@ -156,12 +156,12 @@ export default function IcCronPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <HeroSection />
-      <SdkBenchmarkSection />
-      <ProblemSolution />
       <WhatIsSection />
+      <ArchitectureSection />
       <GalleryShowcase />
       <UseCasesSection />
-      <ArchitectureSection />
+      <SdkBenchmarkSection />
+      <ProblemSolution />
       <PricingCalculator />
       <QuickstartSection />
       <FaqSection />
