@@ -72,7 +72,7 @@ export function MyCanisterTopupDialog({
   const walletBalance = useLiveBalance()
   const refreshWallet = useRefreshWallet()
 
-  const [activeTab, setActiveTab] = useState<"card" | "icp">("card")
+  const [activeTab, setActiveTab] = useState<"icp" | "card">("icp")
 
   const [amountText, setAmountText] = useState("")
   const [rate, setRate] = useState<bigint | null>(null)
@@ -288,6 +288,7 @@ export function MyCanisterTopupDialog({
               setFlowStep(null)
               setCardOrderStatus(null)
               setCheckoutUrl(null)
+              setActiveTab("icp")
             }
             onOpenChange(next)
           }
@@ -318,25 +319,25 @@ export function MyCanisterTopupDialog({
             value={activeTab}
             onValueChange={(val) => {
               if (!submitting && !cardSubmitting) {
-                setActiveTab(val as "card" | "icp")
+                setActiveTab(val as "icp" | "card")
               }
             }}
             className="w-full"
           >
             <TabsList className="grid w-full grid-cols-2 rounded-xl bg-muted/60 p-1">
               <TabsTrigger
-                value="card"
-                className="flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium cursor-pointer"
-              >
-                <Icon icon={CreditCardIcon} className="size-3.5" />
-                <span>{t("topUpTabCard")}</span>
-              </TabsTrigger>
-              <TabsTrigger
                 value="icp"
                 className="flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium cursor-pointer"
               >
                 <Icon icon={WalletBalanceIcon} className="size-3.5" />
                 <span>{t("topUpTabIcp")}</span>
+              </TabsTrigger>
+              <TabsTrigger
+                value="card"
+                className="flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium cursor-pointer"
+              >
+                <Icon icon={CreditCardIcon} className="size-3.5" />
+                <span>{t("topUpTabCard")}</span>
               </TabsTrigger>
             </TabsList>
 
