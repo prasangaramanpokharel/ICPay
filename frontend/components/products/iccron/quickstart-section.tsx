@@ -181,53 +181,57 @@ export function QuickstartSection() {
 
   return (
     <section className="border-b border-border/60 bg-background py-16 md:py-24">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="max-w-3xl space-y-2">
+      <div className="mx-auto max-w-5xl px-4 md:px-6">
+        <div className="space-y-3">
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
             Quickstart
           </h2>
-          <p className="text-base text-muted-foreground leading-relaxed">
+          <p className="text-base text-muted-foreground leading-relaxed max-w-2xl">
             Integrate via official SDKs, standard REST APIs, Next.js route handlers, or native Candid interfaces.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+
+          <div className="flex flex-wrap items-center gap-3 pt-2">
             <Link
               href="https://www.npmjs.com/package/icpay-cron"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card px-3.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-primary/50"
+              className="inline-flex h-9 items-center gap-2.5 rounded-full border border-border/70 bg-card/80 px-3.5 text-xs font-medium text-foreground shadow-2xs backdrop-blur-xs transition-all hover:border-primary/50 hover:bg-card hover:text-primary"
             >
-              <Image
-                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/npm/npm-original-wordmark.svg"
-                alt="npm"
-                width={20}
-                height={20}
-                unoptimized
-                className="size-4 object-contain"
-                style={{ width: "auto", height: "auto" }}
-              />
-              <span className="underline underline-offset-4 hover:text-primary">npm: icpay-cron</span>
-              <Badge variant="secondary" className="font-mono text-[10px]">
+              <div className="flex size-5 shrink-0 items-center justify-center">
+                <Image
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/npm/npm-original-wordmark.svg"
+                  alt="npm"
+                  width={20}
+                  height={14}
+                  unoptimized
+                  className="h-3.5 w-auto object-contain"
+                />
+              </div>
+              <span className="font-mono text-[11px] font-semibold text-foreground">npm: icpay-cron</span>
+              <Badge variant="secondary" className="h-5 px-1.5 font-mono text-[10px] font-medium leading-none">
                 v{npmVersion}
               </Badge>
               <Icon icon={ExternalLinkGlassIcon} className="size-3 text-muted-foreground" />
             </Link>
+
             <Link
               href="https://github.com/prasangapokharel/ICPay/tree/main/pkg/iccron"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card px-3.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:border-primary/50"
+              className="inline-flex h-9 items-center gap-2.5 rounded-full border border-border/70 bg-card/80 px-3.5 text-xs font-medium text-foreground shadow-2xs backdrop-blur-xs transition-all hover:border-primary/50 hover:bg-card hover:text-primary"
             >
-              <Image
-                src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg"
-                alt="GitHub"
-                width={16}
-                height={16}
-                unoptimized
-                className="size-4 object-contain dark:invert"
-                style={{ width: "auto", height: "auto" }}
-              />
-              <span className="underline underline-offset-4 hover:text-primary">GitHub: ICPay</span>
-              <Badge variant="secondary" className="font-mono text-[10px]">
+              <div className="flex size-5 shrink-0 items-center justify-center">
+                <Image
+                  src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg"
+                  alt="GitHub"
+                  width={18}
+                  height={18}
+                  unoptimized
+                  className="size-4 object-contain dark:invert"
+                />
+              </div>
+              <span className="font-mono text-[11px] font-semibold text-foreground">GitHub: ICPay</span>
+              <Badge variant="secondary" className="h-5 px-1.5 font-mono text-[10px] font-medium leading-none">
                 {githubTag}
               </Badge>
               <Icon icon={ExternalLinkGlassIcon} className="size-3 text-muted-foreground" />
@@ -235,23 +239,23 @@ export function QuickstartSection() {
           </div>
         </div>
 
-        <div className="mt-12 mx-auto max-w-4xl">
-          <Card className="overflow-hidden rounded-3xl border border-border/80 bg-card shadow-2xl">
-            <div className="flex flex-wrap items-center justify-between border-b border-border/60 bg-secondary/30 px-4 py-3 sm:px-6">
-              <div className="flex flex-wrap gap-2">
+        <div className="mt-8">
+          <Card className="overflow-hidden rounded-2xl border border-border/80 bg-card shadow-xl">
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 bg-muted/40 px-3 py-2 sm:px-4">
+              <div className="flex flex-wrap gap-1.5">
                 {CODE_TABS.map((tab) => (
                   <button
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 rounded-xl px-3 py-1.5 text-xs font-semibold transition-colors ${
+                    className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer ${
                       activeTab === tab.id
-                        ? "bg-primary text-primary-foreground shadow-xs"
-                        : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                        ? "bg-primary text-primary-foreground shadow-xs font-semibold"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     }`}
                   >
                     <Icon icon={tab.icon} className="size-3.5" />
-                    {tab.label}
+                    <span>{tab.label}</span>
                   </button>
                 ))}
               </div>
@@ -260,7 +264,7 @@ export function QuickstartSection() {
                 variant="outline"
                 size="xs"
                 onClick={copyCode}
-                className="gap-1.5 rounded-lg text-xs font-medium"
+                className="gap-1.5 rounded-lg text-xs font-medium cursor-pointer"
               >
                 {copied ? (
                   <>
@@ -276,15 +280,15 @@ export function QuickstartSection() {
               </Button>
             </div>
 
-            <div className="bg-background p-6">
-              <pre className="overflow-x-auto font-mono text-xs leading-relaxed text-foreground/90">
+            <div className="bg-background/95 p-5 sm:p-6">
+              <pre className="overflow-x-auto font-mono text-[13px] leading-relaxed text-foreground">
                 <code>{activeSnippet.snippet}</code>
               </pre>
             </div>
           </Card>
         </div>
 
-        <div className="mt-10 mx-auto max-w-5xl grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {SDK_PACKAGES.map((pkg) => (
             <div
               key={pkg.ecosystem}
