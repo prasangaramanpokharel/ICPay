@@ -151,10 +151,27 @@ export function useIncomingBalanceDetector() {
             playSuccessChime()
             for (const inc of increases) {
               const formatted = formatTokenAmount(inc.delta, inc.decimals, 4)
-              toast.success(`+${formatted} ${inc.symbol} Received successfully`, {
-                description: "Your balance has been updated.",
+              const title = `+${formatted} ${inc.symbol} Received successfully`
+              const description = "Your balance has been updated."
+
+              toast.success(title, {
+                description,
                 duration: 6000,
               })
+
+              if (
+                typeof window !== "undefined" &&
+                "Notification" in window &&
+                Notification.permission === "granted" &&
+                localStorage.getItem("icpay_device_notifications") !== "false"
+              ) {
+                try {
+                  new Notification(title, {
+                    body: description,
+                    icon: "/images/logo/icpay-logo.png",
+                  })
+                } catch {}
+              }
             }
 
             const p = identity.getPrincipal().toText()
