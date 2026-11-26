@@ -71,6 +71,8 @@ frontend/.agents/skills/vercel-react-best-practices
 !/docs/learn/**
 !/docs/marketing/
 !/docs/marketing/**
+!/docs/migration/
+!/docs/migration/**
 !/docs/memory/
 !/docs/memory/**
 !/docs/motion/

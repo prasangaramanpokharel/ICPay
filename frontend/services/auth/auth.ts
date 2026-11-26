@@ -20,6 +20,7 @@ export type LoginOptions = {
   openIdProvider?: OpenIdProvider
   transport?: "window" | "redirect"
   returnTo?: string
+  prompt?: "none" | "login"
 }
 
 let clientPromise: Promise<AuthClient> | null = null
@@ -43,6 +44,8 @@ function clientOptions(options?: LoginOptions) {
     derivationOrigin: getDerivationOrigin(),
     windowOpenerFeatures: POPUP_FEATURES,
     transport: redirect ? ("redirect" as const) : ("window" as const),
+    resumable: true,
+    ...(options?.prompt ? { prompt: options.prompt } : {}),
     ...(options?.openIdProvider ? { openIdProvider: options.openIdProvider } : {}),
   }
 }
@@ -109,6 +112,20 @@ export async function resumeRedirectSignIn(): Promise<Identity | null> {
   } catch (e) {
     clearRedirectPending()
     console.error("II redirect resume error:", e)
+    return null
+  }
+}
+
+export async function silentAuth(): Promise<Identity | null> {
+  if (typeof window === "undefined") return null
+  try {
+    const authClient = await createAuthClient()
+    if (authClient.isAuthenticated()) {
+      return authClient.getIdentity()
+    }
+    const silentClient = createClient({ prompt: "none" })
+    return await signInWithAttributes(silentClient)
+  } catch {
     return null
   }
 }
