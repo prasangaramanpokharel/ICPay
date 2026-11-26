@@ -346,21 +346,18 @@ export function MyCanisterTopupDialog({
                 <div className="grid grid-cols-4 gap-2">
                   {PRESET_AMOUNTS.map((amt) => {
                     const isSelected = parsedCardUsd === amt
-                    const presetFeeCents = calculateStripeFee(BigInt(amt * 100))
-                    const presetFeePct = ((Number(presetFeeCents) / (amt * 100)) * 100).toFixed(1)
                     return (
                       <button
                         key={amt}
                         type="button"
                         onClick={() => setCardUsdText(amt.toString())}
-                        className={`flex flex-col items-center justify-center rounded-xl border py-2 text-center transition-all cursor-pointer ${
+                        className={`flex items-center justify-center rounded-xl border py-2 text-center text-xs transition-all cursor-pointer ${
                           isSelected
                             ? "border-primary bg-primary/10 text-primary font-semibold"
                             : "border-border/60 bg-muted/20 text-muted-foreground hover:border-border hover:bg-muted/40 hover:text-foreground font-medium"
                         }`}
                       >
-                        <span className="text-xs">${amt}</span>
-                        <span className="text-[10px] opacity-75">{presetFeePct}% fee</span>
+                        ${amt}
                       </button>
                     )
                   })}
