@@ -19,7 +19,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Icon } from "@/components/ui/icon"
-import { CreditCardIcon, WalletBalanceIcon } from "@thesvg/ui-react"
+import { CreditCardIcon, WalletBalanceIcon, ZapGlassIcon } from "@thesvg/ui-react"
 import { AmountInput } from "@/components/shared/amount-input"
 import { FieldError, FieldGroup } from "@/components/ui/field"
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
@@ -297,13 +297,7 @@ export function MyCanisterTopupDialog({
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="gap-1.5">
             <DialogTitle className="flex items-center gap-2">
-              <Image
-                src="/images/pages/canister/icon/tcycle.svg"
-                alt="Cycles"
-                width={20}
-                height={20}
-                className="size-5 shrink-0 rounded-full select-none"
-              />
+              <Icon icon={ZapGlassIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
               <span>{t("topUpTitle")}</span>
             </DialogTitle>
             <DialogDescription>
