@@ -147,6 +147,7 @@ frontend/next-env.d.ts
 
 # Backend dependencies and local canister output
 backend/.dfx/
+**/.icp/cache/
 backend/.mops/
 backend/rust/**/target/
 backend/target/

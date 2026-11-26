@@ -1,7 +1,7 @@
 // Shared helpers for every ci command. Kept deliberately small: each command
 // file should read as the dfx invocation it wraps, not as plumbing.
 import { spawn, spawnSync } from "node:child_process"
-import { accessSync, constants, readFileSync } from "node:fs"
+import { accessSync, constants, existsSync, readFileSync } from "node:fs"
 import { dirname, resolve } from "node:path"
 import { fileURLToPath } from "node:url"
 
@@ -26,7 +26,20 @@ export const OWNED_CANISTERS = [
 export type OwnedCanisterName = (typeof OWNED_CANISTERS)[number]["name"]
 
 export function canisterIds(): Record<string, { ic?: string }> {
-  return JSON.parse(readFileSync(resolve(BACKEND, "canister_ids.json"), "utf8"))
+  const dfxPath = resolve(BACKEND, "canister_ids.json")
+  if (existsSync(dfxPath)) {
+    return JSON.parse(readFileSync(dfxPath, "utf8"))
+  }
+  const icpPath = resolve(BACKEND, ".icp/data/mappings/ic.ids.json")
+  if (existsSync(icpPath)) {
+    const raw = JSON.parse(readFileSync(icpPath, "utf8"))
+    const mapped: Record<string, { ic?: string }> = {}
+    for (const [k, v] of Object.entries(raw)) {
+      mapped[k] = { ic: v as string }
+    }
+    return mapped
+  }
+  return {}
 }
 
 /** Resolve dfx canister name from shorthand: backend | frontend | blob | blob store | cns | notifier | academy | index | cron */
@@ -180,6 +193,14 @@ export const dfx = (args: string[], cwd?: string): void =>
 
 export const dfxOut = (args: string[], cwd?: string): string =>
   capture("dfx", [...args, "--network", network()], cwd)
+
+export const icpEnv = (): string => (process.argv.includes("--local") ? "local" : "ic")
+
+export const icp = (args: string[], cwd?: string): void =>
+  run("icp", [...args, "-e", icpEnv()], cwd)
+
+export const icpOut = (args: string[], cwd?: string): string =>
+  capture("icp", [...args, "-e", icpEnv()], cwd)
 
 // A round trip to a mainnet boundary node is ~7s regardless of how trivial the
 // method is, so a command making tens of calls has to overlap them or it takes

@@ -1,3 +1,4 @@
-import { CANISTER, arg, dfx } from "../lib.ts"
+import { CANISTER, arg, dfx, resolveOwnedCanister } from "../lib.ts"
 
-dfx(["canister", "id", arg(0) ?? CANISTER])
+const target = resolveOwnedCanister(arg(0)) ?? arg(0) ?? CANISTER
+dfx(["canister", "id", target])
