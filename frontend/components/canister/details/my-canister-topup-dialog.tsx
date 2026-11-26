@@ -15,6 +15,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card"
+import { Icon } from "@/components/ui/icon"
+import { InfoGlassIcon } from "@thesvg/ui-react"
 import { Input } from "@/components/ui/input"
 import { AmountInput } from "@/components/shared/amount-input"
 import { FieldError, FieldGroup } from "@/components/ui/field"
@@ -401,15 +404,29 @@ export function MyCanisterTopupDialog({
                   <span className="font-mono tabular-nums text-foreground">{formatUsdCents(cardNetCents)}</span>
                 </div>
                 <div className="flex items-center justify-between border-t border-border/50 pt-2 font-semibold">
-                  <span className="text-foreground">{t("youReceiveLabel")}</span>
+                  <div className="flex items-center gap-1.5 text-foreground">
+                    <span>{t("youReceiveLabel")}</span>
+                    <HoverCard>
+                      <HoverCardTrigger className="cursor-help inline-flex items-center text-muted-foreground hover:text-foreground transition-colors">
+                        <Icon icon={InfoGlassIcon} className="size-3.5" />
+                      </HoverCardTrigger>
+                      <HoverCardContent side="top" align="start" className="w-64 space-y-1.5 p-3 text-xs bg-popover text-popover-foreground shadow-md border border-border">
+                        <p className="font-semibold text-foreground">
+                          Rate: 1 T cycles = ${ratePerTrillionFormatted}
+                        </p>
+                        <p className="text-[11px] text-muted-foreground leading-normal">
+                          {t("cardFeeExplanation")}
+                        </p>
+                        {rateFetchedAt && (
+                          <p className="text-[10px] text-muted-foreground/80 pt-0.5">
+                            Updated {rateFetchedAt}
+                          </p>
+                        )}
+                      </HoverCardContent>
+                    </HoverCard>
+                  </div>
                   <span className="tabular-nums text-foreground">≈ {formatCycles(cardCyclesEstimated)} {tt("cyclesUnit")}</span>
                 </div>
-                <div className="border-t border-border/30 pt-2 text-[11px] text-muted-foreground flex items-center justify-between">
-                  <span>Rate: 1 T cycles = ${ratePerTrillionFormatted}{rateFetchedAt ? ` · updated ${rateFetchedAt}` : ""}</span>
-                </div>
-                <p className="text-[11px] text-muted-foreground pt-1 leading-normal">
-                  {t("cardFeeExplanation")}
-                </p>
               </div>
 
               {cardOrderStatus && (
