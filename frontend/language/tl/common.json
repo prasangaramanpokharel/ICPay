@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "Kumpirmado ang bayad! Nagmimint ng cycles sa canister…",
     "cardOpenCheckout": "Buksan ang Stripe Checkout",
     "cardZeroMarkup": "0% Patong",
-    "cardProcessing": "Pinoproseso ang iyong bayad…"
+    "cardProcessing": "Pinoproseso ang iyong bayad…",
+    "cardTopUpHint": "Magbayad gamit ang card para magdagdag ng cycles sa canister na ito.",
+    "tabIcp": "ICP",
+    "tabCard": "Card",
+    "amountLabel": "Halaga",
+    "cardFeeLabel": "Singil sa card",
+    "convertedLabel": "Na-convert",
+    "youReceiveLabel": "Matatanggap mo",
+    "cardFeeExplanation": "Singil sa card 2.9% + $0.30. Walang ibang bayarin.",
+    "payButton": "Magbayad"
   },
   "marketTrade": {
     "markets": "Markets",

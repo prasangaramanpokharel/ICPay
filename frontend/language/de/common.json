@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "Zahlung bestätigt! Cycles werden geprägt…",
     "cardOpenCheckout": "Stripe-Kasse öffnen",
     "cardZeroMarkup": "0 % Aufschlag",
-    "cardProcessing": "Ihre Zahlung wird verarbeitet…"
+    "cardProcessing": "Ihre Zahlung wird verarbeitet…",
+    "cardTopUpHint": "Bezahlen Sie per Karte, um diesem Canister Cycles hinzuzufügen.",
+    "tabIcp": "ICP",
+    "tabCard": "Karte",
+    "amountLabel": "Betrag",
+    "cardFeeLabel": "Kartengebühr",
+    "convertedLabel": "Umgewandelt",
+    "youReceiveLabel": "Sie erhalten",
+    "cardFeeExplanation": "Kartengebühr 2,9 % + 0,30 $. Keine weiteren Gebühren.",
+    "payButton": "Bezahlen"
   },
   "marketTrade": {
     "markets": "Markets",

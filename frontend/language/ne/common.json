@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "भुक्तानी पुष्टि भयो! क्यानिस्टरमा साइकल मिन्ट हुँदैछ…",
     "cardOpenCheckout": "Stripe चेकआउट खोल्नुहोस्",
     "cardZeroMarkup": "०% मार्कअप",
-    "cardProcessing": "तपाईंको भुक्तानी प्रक्रियामा छ…"
+    "cardProcessing": "तपाईंको भुक्तानी प्रक्रियामा छ…",
+    "cardTopUpHint": "यस क्यानिस्टरमा साइकल थप्न कार्डबाट भुक्तानी गर्नुहोस्।",
+    "tabIcp": "ICP",
+    "tabCard": "कार्ड",
+    "amountLabel": "रकम",
+    "cardFeeLabel": "कार्ड शुल्क",
+    "convertedLabel": "परिवर्तित",
+    "youReceiveLabel": "तपाईंले प्राप्त गर्नुहुन्छ",
+    "cardFeeExplanation": "कार्ड शुल्क २.९% + $०.३०। अन्य कुनै शुल्क छैन।",
+    "payButton": "भुक्तानी"
   },
   "marketTrade": {
     "markets": "Markets",

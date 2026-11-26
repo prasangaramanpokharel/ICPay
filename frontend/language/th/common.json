@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "ยืนยันการชำระเงินแล้ว! กำลังมิ้นต์ไซเคิลไปยังแคนิสเตอร์…",
     "cardOpenCheckout": "เปิดหน้าชำระเงิน Stripe",
     "cardZeroMarkup": "มาร์กอัป 0%",
-    "cardProcessing": "กำลังประมวลผลการชำระเงินของคุณ…"
+    "cardProcessing": "กำลังประมวลผลการชำระเงินของคุณ…",
+    "cardTopUpHint": "ชำระเงินด้วยบัตรเพื่อเพิ่มไซเคิลในแคนิสเตอร์นี้",
+    "tabIcp": "ICP",
+    "tabCard": "บัตร",
+    "amountLabel": "จำนวน",
+    "cardFeeLabel": "ค่าธรรมเนียมบัตร",
+    "convertedLabel": "แปลงแล้ว",
+    "youReceiveLabel": "คุณจะได้รับ",
+    "cardFeeExplanation": "ค่าธรรมเนียมบัตร 2.9% + $0.30 ไม่มีค่าใช้จ่ายอื่น",
+    "payButton": "ชำระเงิน"
   },
   "marketTrade": {
     "markets": "Markets",

@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "Ödeme onaylandı! Canister'a cycles mint ediliyor…",
     "cardOpenCheckout": "Stripe Ödemesini Aç",
     "cardZeroMarkup": "%0 Ek Ücret",
-    "cardProcessing": "Ödemeniz işleniyor…"
+    "cardProcessing": "Ödemeniz işleniyor…",
+    "cardTopUpHint": "Bu canister'a cycles eklemek için kartla ödeyin.",
+    "tabIcp": "ICP",
+    "tabCard": "Kart",
+    "amountLabel": "Tutar",
+    "cardFeeLabel": "Kart ücreti",
+    "convertedLabel": "Dönüştürülen",
+    "youReceiveLabel": "Alacağınız",
+    "cardFeeExplanation": "Kart ücreti %2,9 + $0,30. Başka ücret yoktur.",
+    "payButton": "Öde"
   },
   "marketTrade": {
     "markets": "Markets",

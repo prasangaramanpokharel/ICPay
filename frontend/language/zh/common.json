@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "支付已确认！正在铸造 Cycles 到容器…",
     "cardOpenCheckout": "打开 Stripe 结账",
     "cardZeroMarkup": "0% 加价",
-    "cardProcessing": "正在处理您的付款…"
+    "cardProcessing": "正在处理您的付款…",
+    "cardTopUpHint": "通过银行卡支付为该容器添加 Cycles。",
+    "tabIcp": "ICP",
+    "tabCard": "银行卡",
+    "amountLabel": "金额",
+    "cardFeeLabel": "银行卡手续费",
+    "convertedLabel": "已兑换",
+    "youReceiveLabel": "您将收到",
+    "cardFeeExplanation": "银行卡手续费 2.9% + $0.30。无其他费用。",
+    "payButton": "支付"
   },
   "marketTrade": {
     "markets": "Markets",

@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "결제 확인 완료! 캐니스터로 사이클 발행 중…",
     "cardOpenCheckout": "Stripe 결제 열기",
     "cardZeroMarkup": "0% 마진",
-    "cardProcessing": "결제가 처리 중입니다…"
+    "cardProcessing": "결제가 처리 중입니다…",
+    "cardTopUpHint": "카드로 결제하여 이 캐니스터에 사이클을 충전하세요.",
+    "tabIcp": "ICP",
+    "tabCard": "카드",
+    "amountLabel": "금액",
+    "cardFeeLabel": "카드 수수료",
+    "convertedLabel": "환전 금액",
+    "youReceiveLabel": "받는 수량",
+    "cardFeeExplanation": "카드 수수료 2.9% + $0.30. 기타 수수료 없음.",
+    "payButton": "결제"
   },
   "marketTrade": {
     "markets": "Markets",

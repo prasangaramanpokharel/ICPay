@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "Pagamento confirmado! Cunhando cycles no canister…",
     "cardOpenCheckout": "Abrir Checkout do Stripe",
     "cardZeroMarkup": "0% de Margem",
-    "cardProcessing": "Seu pagamento está sendo processado…"
+    "cardProcessing": "Seu pagamento está sendo processado…",
+    "cardTopUpHint": "Pague com cartão para adicionar cycles a este canister.",
+    "tabIcp": "ICP",
+    "tabCard": "Cartão",
+    "amountLabel": "Valor",
+    "cardFeeLabel": "Taxa do cartão",
+    "convertedLabel": "Convertido",
+    "youReceiveLabel": "Você recebe",
+    "cardFeeExplanation": "Taxa do cartão 2,9% + $0,30. Sem outras cobranças.",
+    "payButton": "Pagar"
   },
   "marketTrade": {
     "markets": "Markets",

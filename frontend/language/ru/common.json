@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "Оплата подтверждена! Зачисление cycles в канистер…",
     "cardOpenCheckout": "Открыть оплату Stripe",
     "cardZeroMarkup": "Наценка 0%",
-    "cardProcessing": "Ваш платеж обрабатывается…"
+    "cardProcessing": "Ваш платеж обрабатывается…",
+    "cardTopUpHint": "Оплатите картой, чтобы добавить cycles в этот канистер.",
+    "tabIcp": "ICP",
+    "tabCard": "Карта",
+    "amountLabel": "Сумма",
+    "cardFeeLabel": "Комиссия карты",
+    "convertedLabel": "Конвертировано",
+    "youReceiveLabel": "Вы получаете",
+    "cardFeeExplanation": "Комиссия карты 2.9% + $0.30. Без скрытых платежей.",
+    "payButton": "Оплатить"
   },
   "marketTrade": {
     "markets": "Markets",

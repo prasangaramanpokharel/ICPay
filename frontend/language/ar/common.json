@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "تم تأكيد الدفع! جارٍ صك الدورات في العلبة…",
     "cardOpenCheckout": "فتح صفحة دفع Stripe",
     "cardZeroMarkup": "0% هامش ربح",
-    "cardProcessing": "جارٍ معالجة دفعتك…"
+    "cardProcessing": "جارٍ معالجة دفعتك…",
+    "cardTopUpHint": "ادفع بالبطاقة لإضافة دورات إلى هذه العلبة.",
+    "tabIcp": "ICP",
+    "tabCard": "بطاقة",
+    "amountLabel": "المبلغ",
+    "cardFeeLabel": "رسوم البطاقة",
+    "convertedLabel": "المحول",
+    "youReceiveLabel": "تستلم",
+    "cardFeeExplanation": "رسوم البطاقة 2.9% + $0.30. لا توجد رسوم أخرى.",
+    "payButton": "دفع"
   },
   "marketTrade": {
     "markets": "Markets",

@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "Paiement confirmé ! Cycles en cours de création…",
     "cardOpenCheckout": "Ouvrir le paiement Stripe",
     "cardZeroMarkup": "0% de Marge",
-    "cardProcessing": "Votre paiement est en cours de traitement…"
+    "cardProcessing": "Votre paiement est en cours de traitement…",
+    "cardTopUpHint": "Payez par carte pour ajouter des cycles à ce canister.",
+    "tabIcp": "ICP",
+    "tabCard": "Carte",
+    "amountLabel": "Montant",
+    "cardFeeLabel": "Frais de carte",
+    "convertedLabel": "Converti",
+    "youReceiveLabel": "Vous recevez",
+    "cardFeeExplanation": "Frais de carte 2,9% + 0,30$. Aucun autre frais.",
+    "payButton": "Payer"
   },
   "marketTrade": {
     "markets": "Markets",

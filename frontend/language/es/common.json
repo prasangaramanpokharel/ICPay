@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "¡Pago confirmado! Minteando cycles al canister…",
     "cardOpenCheckout": "Abrir Checkout de Stripe",
     "cardZeroMarkup": "0% Recargo",
-    "cardProcessing": "Tu pago se está procesando…"
+    "cardProcessing": "Tu pago se está procesando…",
+    "cardTopUpHint": "Paga con tarjeta para añadir cycles a este canister.",
+    "tabIcp": "ICP",
+    "tabCard": "Tarjeta",
+    "amountLabel": "Monto",
+    "cardFeeLabel": "Comisión de tarjeta",
+    "convertedLabel": "Convertido",
+    "youReceiveLabel": "Recibes",
+    "cardFeeExplanation": "Comisión de tarjeta 2.9% + $0.30. Sin otros cargos.",
+    "payButton": "Pagar"
   },
   "marketTrade": {
     "markets": "Markets",

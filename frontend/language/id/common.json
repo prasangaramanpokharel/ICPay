@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "Pembayaran dikonfirmasi! Mencetak cycles ke canister…",
     "cardOpenCheckout": "Buka Checkout Stripe",
     "cardZeroMarkup": "Markup 0%",
-    "cardProcessing": "Pembayaran Anda sedang diproses…"
+    "cardProcessing": "Pembayaran Anda sedang diproses…",
+    "cardTopUpHint": "Bayar dengan kartu untuk menambahkan cycles ke canister ini.",
+    "tabIcp": "ICP",
+    "tabCard": "Kartu",
+    "amountLabel": "Jumlah",
+    "cardFeeLabel": "Biaya kartu",
+    "convertedLabel": "Dikonversi",
+    "youReceiveLabel": "Anda menerima",
+    "cardFeeExplanation": "Biaya kartu 2,9% + $0,30. Tidak ada biaya lain.",
+    "payButton": "Bayar"
   },
   "marketTrade": {
     "markets": "Markets",

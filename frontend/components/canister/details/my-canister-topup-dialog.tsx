@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useMemo, useState, useRef } from "react"
-import Image from "next/image"
 import { useTranslations } from "next-intl"
 import { toast } from "@/components/ui/toast"
 import { Button } from "@/components/ui/button"
@@ -16,10 +15,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Icon } from "@/components/ui/icon"
-import { CreditCardIcon, WalletBalanceIcon, ZapGlassIcon } from "@thesvg/ui-react"
 import { AmountInput } from "@/components/shared/amount-input"
 import { FieldError, FieldGroup } from "@/components/ui/field"
 import { CanisterSuccessDialog } from "@/components/canister/canister-success-dialog"
@@ -84,6 +80,7 @@ export function MyCanisterTopupDialog({
 
   const [cardUsdText, setCardUsdText] = useState("25")
   const [cyclePayRate, setCyclePayRate] = useState<bigint | null>(null)
+  const [rateFetchedAt, setRateFetchedAt] = useState<string>("")
   const [cardSubmitting, setCardSubmitting] = useState(false)
   const [cardOrderStatus, setCardOrderStatus] = useState<string | null>(null)
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
@@ -136,6 +133,11 @@ export function MyCanisterTopupDialog({
     return null
   }, [cardUsdText, parsedCardUsd, t])
 
+  const ratePerTrillionFormatted = useMemo(() => {
+    const num = Number(effectiveCardRate) / 10000
+    return num.toFixed(2)
+  }, [effectiveCardRate])
+
   useEffect(() => {
     if (!open) return
     let cancelled = false
@@ -150,11 +152,15 @@ export function MyCanisterTopupDialog({
           setRate(r)
           setFee(f)
           setCyclePayRate(cRate.ratePermyriad)
+          const now = new Date()
+          const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+          setRateFetchedAt(timeStr)
         }
       } catch {
         if (!cancelled) {
           setRate(null)
           setCyclePayRate(13450n)
+          setRateFetchedAt("12:00")
         }
       }
     })()
@@ -250,7 +256,7 @@ export function MyCanisterTopupDialog({
               void invalidateCanisterStatus(canisterId)
               setSuccess({
                 cycles: formatCycles(status.cyclesDelivered ?? cardCyclesEstimated),
-                amount: `$${parsedCardUsd}`,
+                amount: `$${parsedCardUsd.toFixed(2)}`,
               })
               onDone?.()
             } else if (status.status === "Refunded" || status.status === "Refunding") {
@@ -296,17 +302,17 @@ export function MyCanisterTopupDialog({
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader className="gap-1.5">
-            <DialogTitle className="flex items-center gap-2">
-              <Icon icon={ZapGlassIcon} className="size-5 text-primary shrink-0" strokeWidth={1.75} />
-              <span>{t("topUpTitle")}</span>
-            </DialogTitle>
+            <DialogTitle>{t("topUpTitle")}</DialogTitle>
             <DialogDescription>
-              {t("topUpHint")}
+              {activeTab === "card" ? t("cardTopUpHint") : t("topUpHint")}
             </DialogDescription>
           </DialogHeader>
 
-          <div className="py-1">
-            <p className="break-all font-mono text-xs text-muted-foreground">{canisterId}</p>
+          <div className="py-0.5">
+            <p className="text-xs text-muted-foreground">
+              <span className="font-medium text-foreground">Canister:</span>{" "}
+              <span className="font-mono">{canisterId}</span>
+            </p>
           </div>
 
           <Tabs
@@ -321,63 +327,62 @@ export function MyCanisterTopupDialog({
             <TabsList className="grid w-full grid-cols-2 rounded-xl bg-muted/60 p-1">
               <TabsTrigger
                 value="icp"
-                className="flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium cursor-pointer"
+                className="flex items-center justify-center rounded-lg py-1.5 text-xs font-medium cursor-pointer"
               >
-                <Icon icon={WalletBalanceIcon} className="size-3.5" />
-                <span>{t("topUpTabIcp")}</span>
+                <span>{t("tabIcp")}</span>
               </TabsTrigger>
               <TabsTrigger
                 value="card"
-                className="flex items-center justify-center gap-1.5 rounded-lg py-1.5 text-xs font-medium cursor-pointer"
+                className="flex items-center justify-center rounded-lg py-1.5 text-xs font-medium cursor-pointer"
               >
-                <Icon icon={CreditCardIcon} className="size-3.5" />
-                <span>{t("topUpTabCard")}</span>
+                <span>{t("tabCard")}</span>
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="card" className="space-y-4 pt-3 outline-none">
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-foreground">{t("cardAmountLabel")}</span>
-                  <Badge variant="outline" className="text-[10px] font-semibold text-primary border-primary/30">
-                    {t("cardZeroMarkup")}
-                  </Badge>
-                </div>
+                <span className="text-xs font-medium text-foreground">{t("amountLabel")}</span>
 
                 <div className="grid grid-cols-4 gap-2">
                   {PRESET_AMOUNTS.map((amt) => {
                     const isSelected = parsedCardUsd === amt
+                    const presetFeeCents = calculateStripeFee(BigInt(amt * 100))
+                    const presetFeePct = ((Number(presetFeeCents) / (amt * 100)) * 100).toFixed(1)
                     return (
                       <button
                         key={amt}
                         type="button"
                         onClick={() => setCardUsdText(amt.toString())}
-                        className={`rounded-xl border py-2 text-center text-xs font-semibold transition-all cursor-pointer ${
+                        className={`flex flex-col items-center justify-center rounded-xl border py-2 text-center transition-all cursor-pointer ${
                           isSelected
-                            ? "border-primary bg-primary/10 text-primary"
-                            : "border-border/60 bg-muted/20 text-muted-foreground hover:border-border hover:bg-muted/40 hover:text-foreground"
+                            ? "border-primary bg-primary/10 text-primary font-semibold"
+                            : "border-border/60 bg-muted/20 text-muted-foreground hover:border-border hover:bg-muted/40 hover:text-foreground font-medium"
                         }`}
                       >
-                        ${amt}
+                        <span className="text-xs">${amt}</span>
+                        <span className="text-[10px] opacity-75">{presetFeePct}% fee</span>
                       </button>
                     )
                   })}
                 </div>
 
                 <div className="relative mt-2">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm font-semibold text-muted-foreground">
-                    $
-                  </span>
                   <Input
-                    type="number"
-                    min="1"
-                    max="200"
-                    step="1"
+                    type="text"
+                    inputMode="decimal"
                     value={cardUsdText}
-                    onChange={(e) => setCardUsdText(e.target.value)}
-                    placeholder="25"
-                    className="pl-8 text-sm font-medium"
+                    onChange={(e) => {
+                      const val = e.target.value
+                      if (/^\d*\.?\d{0,2}$/.test(val)) {
+                        setCardUsdText(val)
+                      }
+                    }}
+                    placeholder="25.00"
+                    className="pr-12 text-sm font-medium"
                   />
+                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-semibold text-muted-foreground pointer-events-none">
+                    USD
+                  </span>
                 </div>
 
                 {cardError && (
@@ -385,30 +390,28 @@ export function MyCanisterTopupDialog({
                 )}
               </div>
 
-              <div className="rounded-2xl border border-border/60 bg-muted/25 px-4 py-3.5 space-y-2.5">
+              <div className="rounded-2xl border border-border/60 bg-muted/25 px-4 py-3.5 space-y-2 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-medium text-muted-foreground">
-                    {t("topUpEstimateLabel")}
-                  </span>
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
-                    <span>≈ {formatCycles(cardCyclesEstimated)}</span>
-                    <Image
-                      src="/images/pages/canister/icon/tcycle.svg"
-                      alt="TC"
-                      width={18}
-                      height={18}
-                      className="size-4 shrink-0 rounded-full select-none"
-                    />
-                  </div>
+                  <span className="text-muted-foreground">{t("amountLabel")}</span>
+                  <span className="font-mono tabular-nums text-foreground">{formatUsdCents(cardCents)}</span>
                 </div>
-
-                <div className="flex items-center justify-between border-t border-border/40 pt-2 text-[11px] text-muted-foreground">
-                  <span>Net after Stripe fee ({formatUsdCents(cardFee)})</span>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{t("cardFeeLabel")}</span>
+                  <span className="font-mono tabular-nums text-muted-foreground">−{formatUsdCents(cardFee)}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">{t("convertedLabel")}</span>
                   <span className="font-mono tabular-nums text-foreground">{formatUsdCents(cardNetCents)}</span>
                 </div>
-
-                <p className="text-[11px] text-muted-foreground leading-normal">
-                  {t("cardAmountHint")}
+                <div className="flex items-center justify-between border-t border-border/50 pt-2 font-semibold">
+                  <span className="text-foreground">{t("youReceiveLabel")}</span>
+                  <span className="tabular-nums text-foreground">≈ {formatCycles(cardCyclesEstimated)} {tt("cyclesUnit")}</span>
+                </div>
+                <div className="border-t border-border/30 pt-2 text-[11px] text-muted-foreground flex items-center justify-between">
+                  <span>Rate: 1 T cycles = ${ratePerTrillionFormatted}{rateFetchedAt ? ` · updated ${rateFetchedAt}` : ""}</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground pt-1 leading-normal">
+                  {t("cardFeeExplanation")}
                 </p>
               </div>
 
@@ -461,7 +464,7 @@ export function MyCanisterTopupDialog({
                       ? cardOrderStatus === "creating"
                         ? t("cardOpeningCheckout")
                         : t("cardProcessing")
-                      : t("cardPayButton")}
+                      : t("payButton")}
                   </span>
                 </Button>
               </DialogFooter>
@@ -487,15 +490,8 @@ export function MyCanisterTopupDialog({
                     </p>
                     <div className="mt-1 flex items-center gap-2">
                       <span className="text-2xl font-bold tracking-tight tabular-nums text-foreground sm:text-3xl">
-                        ≈ {formatCycles(estimated)}
+                        ≈ {formatCycles(estimated)} {tt("cyclesUnit")}
                       </span>
-                      <Image
-                        src="/images/pages/canister/icon/tcycle.svg"
-                        alt="TC"
-                        width={24}
-                        height={24}
-                        className="size-5 sm:size-6 shrink-0 rounded-full select-none"
-                      />
                     </div>
                     <p className="mt-1 text-[11px] text-muted-foreground">{t("topUpEstimateHint")}</p>
                   </div>
@@ -549,13 +545,6 @@ export function MyCanisterTopupDialog({
               <span className="text-3xl font-bold tracking-tight tabular-nums">
                 {success.cycles}
               </span>
-              <Image
-                src="/images/pages/canister/icon/tcycle.svg"
-                alt="TC"
-                width={24}
-                height={24}
-                className="size-5 shrink-0 rounded-full select-none"
-              />
               <span className="text-lg font-semibold text-muted-foreground">
                 {tt("cyclesUnit")}
               </span>

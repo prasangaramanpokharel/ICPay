@@ -2770,7 +2770,16 @@
     "cardMintingCycles": "Đã xác nhận thanh toán! Đang đúc cycles vào canister…",
     "cardOpenCheckout": "Mở cổng Stripe",
     "cardZeroMarkup": "0% Phụ phí",
-    "cardProcessing": "Khoản thanh toán của bạn đang được xử lý…"
+    "cardProcessing": "Khoản thanh toán của bạn đang được xử lý…",
+    "cardTopUpHint": "Thanh toán bằng thẻ để nạp cycles vào canister này.",
+    "tabIcp": "ICP",
+    "tabCard": "Thẻ",
+    "amountLabel": "Số tiền",
+    "cardFeeLabel": "Phí thẻ",
+    "convertedLabel": "Đã quy đổi",
+    "youReceiveLabel": "Bạn nhận được",
+    "cardFeeExplanation": "Phí thẻ 2.9% + $0.30. Không phụ phí khác.",
+    "payButton": "Thanh toán"
   },
   "marketTrade": {
     "markets": "Markets",
