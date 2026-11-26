@@ -86,6 +86,7 @@ export function MyCanisterTopupDialog({
   const [cyclePayRate, setCyclePayRate] = useState<bigint | null>(null)
   const [cardSubmitting, setCardSubmitting] = useState(false)
   const [cardOrderStatus, setCardOrderStatus] = useState<string | null>(null)
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null)
   const pollTimerRef = useRef<NodeJS.Timeout | null>(null)
 
   const amountE8s = useMemo(() => parseIcp(amountText), [amountText])
@@ -215,6 +216,8 @@ export function MyCanisterTopupDialog({
     setCardSubmitting(true)
     setCardOrderStatus("creating")
 
+    const checkoutWindow = typeof window !== "undefined" ? window.open("about:blank", "_blank") : null
+
     try {
       let urlToOpen: string
       let orderId: string | null = null
@@ -227,7 +230,12 @@ export function MyCanisterTopupDialog({
         urlToOpen = getCyclePayGuestUrl(canisterId, parsedCardUsd)
       }
 
-      window.open(urlToOpen, "_blank", "noopener,noreferrer")
+      setCheckoutUrl(urlToOpen)
+      if (checkoutWindow && !checkoutWindow.closed) {
+        checkoutWindow.location.href = urlToOpen
+      } else {
+        window.open(urlToOpen, "_blank", "noopener,noreferrer")
+      }
       setCardOrderStatus("awaiting_payment")
 
       if (orderId) {
@@ -255,6 +263,9 @@ export function MyCanisterTopupDialog({
         }, 3000)
       }
     } catch (err) {
+      if (checkoutWindow && !checkoutWindow.closed) {
+        checkoutWindow.close()
+      }
       setCardSubmitting(false)
       setCardOrderStatus(null)
       toast.error(err instanceof Error ? err.message : "Failed to initiate payment")
@@ -276,6 +287,7 @@ export function MyCanisterTopupDialog({
               setSuccess(null)
               setFlowStep(null)
               setCardOrderStatus(null)
+              setCheckoutUrl(null)
             }
             onOpenChange(next)
           }
@@ -406,8 +418,8 @@ export function MyCanisterTopupDialog({
               </div>
 
               {cardOrderStatus && (
-                <div className="flex items-center gap-3 rounded-2xl border border-border/60 bg-muted/30 px-4 py-3.5">
-                  <Spinner className="size-4 shrink-0 text-primary" />
+                <div className="flex items-start gap-3 rounded-2xl border border-border/60 bg-muted/30 px-4 py-3.5">
+                  <Spinner className="size-4 shrink-0 text-primary mt-0.5" />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-foreground">
                       {cardOrderStatus === "creating"
@@ -417,6 +429,19 @@ export function MyCanisterTopupDialog({
                     <p className="text-[11px] text-muted-foreground mt-0.5">
                       {t("cardAwaitingPayment")}
                     </p>
+                    {checkoutUrl && (
+                      <div className="mt-2 pt-2 border-t border-border/40">
+                        <a
+                          href={checkoutUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-xs font-semibold text-primary underline underline-offset-2 hover:opacity-80 transition-opacity"
+                        >
+                          <span>{t("cardOpenCheckout")}</span>
+                          <span aria-hidden="true">&rarr;</span>
+                        </a>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
