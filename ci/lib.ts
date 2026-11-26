@@ -188,13 +188,63 @@ export function capture(cmd: string, args: string[], cwd: string = BACKEND): str
   return res.stdout?.trim() ?? ""
 }
 
-export const dfx = (args: string[], cwd?: string): void =>
-  run("dfx", [...args, "--network", network()], cwd)
-
-export const dfxOut = (args: string[], cwd?: string): string =>
-  capture("dfx", [...args, "--network", network()], cwd)
-
 export const icpEnv = (): string => (process.argv.includes("--local") ? "local" : "ic")
+
+export function translateDfxToIcp(args: string[]): string[] {
+  if (args[0] === "canister") {
+    const sub = args[1]
+    const rawTarget = args[2]
+    const target = rawTarget ? (resolveOwnedCanister(rawTarget) ?? rawTarget) : CANISTER
+    if (sub === "id") {
+      return ["canister", "status", target, "--id-only", "-e", icpEnv()]
+    }
+    if (sub === "info") {
+      return ["canister", "status", target, "-p", "-e", icpEnv()]
+    }
+    if (sub === "status") {
+      return ["canister", "status", target, "-e", icpEnv()]
+    }
+    if (sub === "logs") {
+      return ["canister", "logs", target, "-e", icpEnv()]
+    }
+    if (sub === "call") {
+      const method = args[3]
+      const callArgs = args.slice(4).filter((a) => a !== "--network" && a !== "ic" && a !== "local")
+      return ["canister", "call", target, method, ...callArgs, "-e", icpEnv()]
+    }
+    if (sub === "create") {
+      return ["canister", "create", target, "-e", icpEnv()]
+    }
+    if (sub === "stop") {
+      return ["canister", "stop", target, "-e", icpEnv()]
+    }
+    if (sub === "delete") {
+      const rest = args.slice(3).filter((a) => a !== "--network" && a !== "ic" && a !== "local")
+      return ["canister", "delete", target, ...rest, "-e", icpEnv()]
+    }
+  }
+  if (args[0] === "build") {
+    const target = args[1] ? (resolveOwnedCanister(args[1]) ?? args[1]) : CANISTER
+    return ["build", target, "-e", icpEnv()]
+  }
+  if (args[0] === "deploy") {
+    const target = args[1] ? (resolveOwnedCanister(args[1]) ?? args[1]) : CANISTER
+    const rest = args.slice(2).filter((a) => a !== "--network" && a !== "ic" && a !== "local")
+    return ["deploy", target, ...rest, "-e", icpEnv()]
+  }
+  if (args[0] === "cycles") {
+    return ["cycles", ...args.slice(1)]
+  }
+  if (args[0] === "ledger") {
+    if (args[1] === "balance") {
+      return ["token", "balance", "icp", ...args.slice(2), "-e", icpEnv()]
+    }
+    if (args[1] === "transfer") {
+      return ["token", "transfer", "icp", ...args.slice(2), "-e", icpEnv()]
+    }
+  }
+  return [...args, "-e", icpEnv()]
+}
 
 export const icp = (args: string[], cwd?: string): void =>
   run("icp", [...args, "-e", icpEnv()], cwd)
@@ -202,16 +252,19 @@ export const icp = (args: string[], cwd?: string): void =>
 export const icpOut = (args: string[], cwd?: string): string =>
   capture("icp", [...args, "-e", icpEnv()], cwd)
 
-// A round trip to a mainnet boundary node is ~7s regardless of how trivial the
-// method is, so a command making tens of calls has to overlap them or it takes
-// minutes. Only safe for queries: they are not billed and cannot mutate state.
+export const dfx = (args: string[], cwd?: string): void =>
+  run("icp", translateDfxToIcp(args), cwd)
+
+export const dfxOut = (args: string[], cwd?: string): string =>
+  capture("icp", translateDfxToIcp(args), cwd)
+
 export function dfxOutMany(argSets: string[][], cwd?: string): Promise<string[]> {
-  const net = network()
   return Promise.all(
     argSets.map(
       (args) =>
         new Promise<string>((done) => {
-          const child = spawn("dfx", [...args, "--network", net], { cwd: cwd ?? BACKEND, env })
+          const translated = translateDfxToIcp(args)
+          const child = spawn("icp", translated, { cwd: cwd ?? BACKEND, env })
           let stdout = ""
           child.stdout.on("data", (chunk) => (stdout += chunk))
           child.on("close", () => done(stdout))
@@ -221,7 +274,9 @@ export function dfxOutMany(argSets: string[][], cwd?: string): Promise<string[]>
 }
 
 export function moduleHash(canister: string = CANISTER): string {
-  return dfxOut(["canister", "info", canister]).match(/Module hash: (0x[0-9a-f]+)/)?.[1] ?? "unknown"
+  const target = resolveOwnedCanister(canister) ?? canister
+  const res = capture("icp", ["canister", "status", target, "-p", "-e", icpEnv()], BACKEND)
+  return res.match(/Module hash: (0x[0-9a-f]+)/)?.[1] ?? "unknown"
 }
 
 // A mainnet write is irreversible and this canister custodies real ICP, so every

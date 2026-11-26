@@ -10,19 +10,16 @@ run("bash", ["scripts/run-tests.sh"], BACKEND)
 
 if (network() === "local") {
   step("LOCAL ENVIRONMENT CHECK")
-  const ping = spawnSync("dfx", ["ping", "local"], { cwd: BACKEND, encoding: "utf8" })
+  const ping = spawnSync("icp", ["network", "ping", "local"], { cwd: BACKEND, encoding: "utf8" })
   if (ping.status !== 0) {
-    console.error("\nError: Local dfx replica is not running.")
+    console.error("\nError: Local network is not running.")
     console.error("Start it in another terminal with:")
-    console.error("  cd backend && dfx start --clean\n")
+    console.error("  cd backend && icp network start -d\n")
     process.exit(1)
   }
   step("CANISTER INIT (LOCAL)")
   try {
-    dfx(["deps", "pull"])
-  } catch {}
-  try {
-    dfx(["canister", "create", CANISTER])
+    icp(["canister", "create", CANISTER])
   } catch {}
 }
 
