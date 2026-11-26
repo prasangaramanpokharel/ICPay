@@ -3,7 +3,6 @@
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
-import { AnimatedShinyText } from "@/components/ui/animated-shiny-text"
 import { Icon } from "@/components/ui/icon"
 import { Ascii } from "@/components/ui/ascii"
 import {
@@ -16,83 +15,61 @@ export function HeroSection() {
     <section className="relative overflow-hidden border-b border-border/60 bg-background">
       <Ascii
         fade="bottom"
-        className="py-16 md:py-24"
-        colors={["var(--muted-foreground)", "var(--primary)"]}
+        className="py-12 md:py-20"
+        colors={["var(--muted-foreground)", "var(--foreground)"]}
         glyphs=" .:;+*x%#@"
-        clearing={0.5}
-        contrast={1.05}
-        intensity={0.7}
-        opacity={0.8}
+        clearing={0.65}
+        contrast={1.0}
+        intensity={0.4}
+        opacity={0.35}
         size={13}
-        speed={0.75}
+        speed={0.5}
       >
         <div className="mx-auto max-w-7xl px-4 md:px-6">
           <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
             <div className="space-y-6 lg:col-span-7">
-              <Link
-                href="/cron"
-                className="group inline-flex items-center gap-2 rounded-full border border-border/70 bg-card/60 py-1 pl-1.5 pr-2 text-xs font-medium text-foreground shadow-xs backdrop-blur-xs transition-all duration-200 hover:border-border hover:bg-card hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-              >
-                <span className="rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-semibold text-primary dark:bg-primary/20">
-                  Live
-                </span>
-                <AnimatedShinyText className="inline-flex items-center gap-1.5 text-xs">
-                  <span className="font-medium text-foreground">Decentralized Job Orchestration</span>
-                  <span className="hidden text-muted-foreground sm:inline">· icCron Engine</span>
-                </AnimatedShinyText>
-                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-foreground transition-transform duration-200 group-hover:translate-x-0.5">
-                  <ArrowRightGlassIcon className="size-3" />
-                </span>
-              </Link>
-
-              <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                Autonomous On-Chain{" "}
-                <span className="bg-gradient-to-r from-primary via-accent-foreground to-primary bg-clip-text text-transparent">
-                  Cron & Webhook
-                </span>{" "}
-                Dispatcher
+              <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+                On-chain cron and webhook scheduler
               </h1>
 
               <p className="max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Trigger HTTP webhooks and inter-canister smart contracts with sub-second precision.
-                Zero keeper bots, zero plaintext private keys, and no Vercel Pro $20/month tax.
-                Powered directly by the Internet Computer blockchain.
+                Schedule HTTP webhooks and canister calls on the Internet Computer. No servers to run and no private keys to store.
               </p>
 
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <Button
                   size="lg"
-                  className="gap-2 rounded-xl px-7 font-semibold shadow-sm"
+                  className="gap-2 rounded-xl px-7 font-semibold shadow-sm cursor-pointer"
                   nativeButton={false}
                   render={<Link href="/cron" />}
                 >
-                  Get Started Free
+                  <span>Start free</span>
                   <ArrowRightGlassIcon className="size-4" />
                 </Button>
                 <Button
                   size="lg"
                   variant="outline"
-                  className="gap-2 rounded-xl px-6 font-medium"
+                  className="gap-2 rounded-xl px-6 font-medium cursor-pointer"
                   nativeButton={false}
                   render={<Link href="/cron/docs" />}
                 >
                   <Icon icon={BookOpenGlassIcon} className="size-4" />
-                  Documentation
+                  <span>Docs</span>
                 </Button>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border/50 text-left">
-                <div>
-                  <p className="text-2xl font-bold tracking-tight text-foreground">99.4%</p>
-                  <p className="text-xs text-muted-foreground">Cycle Reduction vs Heartbeat</p>
-                </div>
+              <div className="grid grid-cols-3 gap-6 pt-6 border-t border-border/60 text-left">
                 <div>
                   <p className="text-2xl font-bold tracking-tight text-foreground">$0.0005</p>
-                  <p className="text-xs text-muted-foreground">Per Execution Run</p>
+                  <p className="text-xs text-muted-foreground">Per run</p>
                 </div>
                 <div>
-                  <p className="text-2xl font-bold tracking-tight text-foreground">0 Servers</p>
-                  <p className="text-xs text-muted-foreground">Zero Devops Overhead</p>
+                  <p className="text-2xl font-bold tracking-tight text-foreground">60 free runs</p>
+                  <p className="text-xs text-muted-foreground">A month</p>
+                </div>
+                <div>
+                  <p className="text-2xl font-bold tracking-tight text-foreground">No servers</p>
+                  <p className="text-xs text-muted-foreground">Fully on-chain</p>
                 </div>
               </div>
             </div>
@@ -101,10 +78,10 @@ export function HeroSection() {
               <Image
                 src="/images/logo/iccron/iccron.png"
                 alt="icCron"
-                width={440}
-                height={440}
+                width={400}
+                height={400}
                 priority
-                className="w-full max-w-[380px] rounded-3xl object-contain drop-shadow-2xl"
+                className="w-full max-w-[340px] rounded-3xl object-contain drop-shadow-lg"
               />
             </div>
           </div>

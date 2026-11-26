@@ -25,7 +25,7 @@ const PAIN_POINTS = [
       "Running continuous scripts on AWS EC2 or VPS instances to trigger smart contracts requires babysitting server uptime, process managers, memory leaks, and OS security patches.",
     solutionTitle: "100% On-Chain Canister Timers",
     solutionDesc:
-      "icCron executes inside a replicated Internet Computer WebAssembly canister. Backed by dozens of independent node providers with automatic failover.",
+      "icCron executes inside a replicated Internet Computer WebAssembly canister. Backed by 13 independent subnet node providers with automatic failover.",
     savings: "Zero Downtime",
   },
   {
@@ -56,12 +56,9 @@ export function ProblemSolution() {
   return (
     <section className="border-b border-border/60 bg-background py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="mx-auto max-w-3xl text-center space-y-3">
-          <Badge variant="outline" className="border-primary/30 bg-primary/10 text-primary">
-            Why We Built icCron
-          </Badge>
+        <div className="max-w-3xl space-y-2">
           <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl text-foreground">
-            The Traditional Cron Infrastructure is Broken
+            Why we built icCron
           </h2>
           <p className="text-base text-muted-foreground leading-relaxed">
             Developers shouldn&apos;t have to pay enterprise SaaS markups or manage fragile server fleets just to run scheduled background tasks.
