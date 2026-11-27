@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/drawer"
 import { Spinner } from "@/components/ui/spinner"
 import { createAgent } from "@/services/icp"
-import { requiredWalletDebit } from "@/lib/trade/fees"
+import { requiredWalletDebit, SEVERE_PRICE_IMPACT_PCT } from "@/lib/trade/fees"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import type { TokenHolding } from "@/services/tokens"
@@ -27,6 +27,8 @@ type TradeConfirmDrawerProps = {
   tokenOut: TokenHolding | null
   amountIn: bigint | null
   amountOut: bigint | null
+  priceImpact?: string | null
+  priceImpactPct?: number | null
   trading: boolean
   onConfirm: () => void
 }
@@ -39,6 +41,8 @@ export function TradeConfirmDrawer({
   tokenOut,
   amountIn,
   amountOut,
+  priceImpact,
+  priceImpactPct,
   trading,
   onConfirm,
 }: TradeConfirmDrawerProps) {
@@ -82,6 +86,17 @@ export function TradeConfirmDrawer({
                 value={`${formatTokenAmount(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`}
               />
               <ConfirmRow label={t("slippage")} value="1%" />
+              {priceImpact ? (
+                <ConfirmRow
+                  label={t("priceImpact")}
+                  value={priceImpact}
+                  highlight={
+                    priceImpactPct !== null &&
+                    priceImpactPct !== undefined &&
+                    priceImpactPct >= SEVERE_PRICE_IMPACT_PCT
+                  }
+                />
+              ) : null}
             </div>
 
             <div className="mx-4 border-t border-border/70" />
@@ -118,11 +133,21 @@ export function TradeConfirmDrawer({
   )
 }
 
-function ConfirmRow({ label, value }: { label: string; value: string }) {
+function ConfirmRow({
+  label,
+  value,
+  highlight,
+}: {
+  label: string
+  value: string
+  highlight?: boolean
+}) {
   return (
     <div className="flex items-center justify-between gap-4 text-sm">
       <span className="text-muted-foreground">{label}</span>
-      <span className="font-medium tabular-nums">{value}</span>
+      <span className={`font-medium tabular-nums ${highlight ? "text-destructive" : ""}`}>
+        {value}
+      </span>
     </div>
   )
 }

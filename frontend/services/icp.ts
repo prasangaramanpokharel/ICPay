@@ -5,7 +5,7 @@ import {
   type UpdateOptions,
   type PollingOptions,
 } from "@icp-sdk/core/agent"
-import type { Principal } from "@icp-sdk/core/principal"
+import { Principal } from "@icp-sdk/core/principal"
 
 const LOCAL_IC_HOST = "http://127.0.0.1:4943"
 const IC_HOST = "https://icp0.io"
@@ -45,7 +45,26 @@ export function preferAsyncUpdates(agent: HttpAgent): HttpAgent {
       canisterId,
       { ...fields, callSync: fields.callSync ?? false },
       pollingOptions
-    )
+    ).catch((err: unknown) => {
+      if (err && typeof err === "object" && "code" in err) {
+        const code = (err as { code?: { callContext?: Record<string, unknown> } }).code
+        if (code && !code.callContext?.effectiveTarget) {
+          const cid = typeof canisterId === "string" ? Principal.fromText(canisterId) : canisterId
+          const effectiveTarget = fields.effectiveTarget ?? {
+            canisterId: fields.effectiveCanisterId
+              ? Principal.from(fields.effectiveCanisterId)
+              : cid,
+          }
+          code.callContext = {
+            ...(code.callContext ?? {}),
+            canisterId: cid,
+            methodName: fields.methodName,
+            effectiveTarget,
+          }
+        }
+      }
+      throw err
+    })
   return agent
 }
 

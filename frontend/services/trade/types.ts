@@ -6,6 +6,7 @@ export type TradeQuoteResult = {
   serviceFee: bigint
   swapFee: bigint
   priceImpact: string
+  priceImpactPct: number | null
   poolId: string
 }
 

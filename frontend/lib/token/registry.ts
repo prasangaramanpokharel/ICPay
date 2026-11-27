@@ -64,7 +64,21 @@ async function loadRegistry(): Promise<Map<string, TokenMarket>> {
   return new Map(rows)
 }
 
+const ICPSWAP_TOKEN_URL = "https://api.icpswap.com/token/"
 const REGISTRY_KEY = "token-registry"
+
+export async function fetchIcpswapTokenPrice(ledgerId: string): Promise<number | null> {
+  try {
+    const res = await fetch(`${ICPSWAP_TOKEN_URL}${ledgerId}`)
+    if (!res.ok) return null
+    const json: { data?: { price?: string | number | null } | null } = await res.json()
+    const raw = json.data?.price
+    const price = typeof raw === "string" || typeof raw === "number" ? Number(raw) : NaN
+    return Number.isFinite(price) && price > 0 ? price : null
+  } catch {
+    return null
+  }
+}
 
 export function useTokenRegistry(): Map<string, TokenMarket> | undefined {
   const { data } = useSWR(REGISTRY_KEY, fetchTokenRegistry, {
@@ -77,4 +91,26 @@ export function useTokenRegistry(): Map<string, TokenMarket> | undefined {
   })
 
   return data
+}
+
+export function useTokenUsdPrice(
+  ledgerId: string,
+  registry: Map<string, TokenMarket> | undefined
+): number | undefined {
+  const registryPrice = registry?.get(ledgerId)?.priceUsd
+  const needsFallback = Boolean(ledgerId) && registry !== undefined && registryPrice === undefined
+
+  const { data: fallbackPrice } = useSWR(
+    needsFallback ? (["icpswap-token-price", ledgerId] as const) : null,
+    ([, id]) => fetchIcpswapTokenPrice(id),
+    {
+      dedupingInterval: 60_000,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      keepPreviousData: true,
+      shouldRetryOnError: false,
+    }
+  )
+
+  return registryPrice ?? fallbackPrice ?? undefined
 }

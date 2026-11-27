@@ -1,6 +1,7 @@
 "use client"
 
 import { useTranslations } from "next-intl"
+import { HIGH_PRICE_IMPACT_PCT, SEVERE_PRICE_IMPACT_PCT } from "@/lib/trade/fees"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import type { TokenHolding } from "@/services/tokens"
 
@@ -12,6 +13,8 @@ export function TradeFeeSummary({
   depositFee,
   totalDebit,
   rate,
+  priceImpact,
+  priceImpactPct,
 }: {
   tokenIn: TokenHolding
   tokenOut: TokenHolding
@@ -20,8 +23,17 @@ export function TradeFeeSummary({
   depositFee: bigint
   totalDebit: bigint | null
   rate: string | null
+  priceImpact?: string | null
+  priceImpactPct?: number | null
 }) {
   const t = useTranslations("trade")
+
+  const impactTone =
+    priceImpactPct !== null && priceImpactPct !== undefined && priceImpactPct >= SEVERE_PRICE_IMPACT_PCT
+      ? "font-semibold text-destructive"
+      : priceImpactPct !== null && priceImpactPct !== undefined && priceImpactPct >= HIGH_PRICE_IMPACT_PCT
+        ? "font-medium text-warning"
+        : "text-foreground"
 
   return (
     <div className="rounded-2xl border border-border/50 bg-muted/20 px-4 py-3 text-xs">
@@ -38,6 +50,12 @@ export function TradeFeeSummary({
         <FeeRow label={t("serviceFee")} value={serviceFee} token={tokenIn} />
         {poolFee !== null && <FeeRow label={t("poolFee")} value={poolFee} token={tokenIn} />}
         <FeeRow label={t("depositFee")} value={depositFee} token={tokenIn} />
+        {priceImpact && (
+          <div className="flex justify-between gap-3 py-0.5">
+            <span>{t("priceImpact")}</span>
+            <span className={`tabular-nums ${impactTone}`}>{priceImpact}</span>
+          </div>
+        )}
       </div>
 
       {totalDebit !== null && (

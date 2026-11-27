@@ -6,7 +6,7 @@ import { useDebounced } from "@/hooks/ui/useDebounced"
 import { useTokenHoldings, useRefreshWallet } from "@/hooks/wallet/useWalletData"
 import { filterSwapTokens, sortSwapTokens } from "@/lib/swap/tokens"
 import { requiredWalletDebit } from "@/lib/trade/fees"
-import { fetchTradeQuoteChecked, type TradeQuoteOpts } from "@/services/trade/trade"
+import { fetchTradeQuoteChecked, getTradingBalance, type TradeQuoteOpts } from "@/services/trade/trade"
 import { balancesCacheKey } from "@/lib/wallet/walletCache"
 
 const keyFor = (identity: { getPrincipal(): { toText(): string } } | undefined, ...parts: string[]) =>
@@ -103,4 +103,28 @@ export function useApplyTradeBalances() {
 
     void refreshWallet()
   }
+}
+
+export function useTradingBalance(
+  ledgerId: string | null | undefined,
+  enabled = true
+): {
+  balance: bigint
+  isLoading: boolean
+  refresh: () => Promise<bigint | undefined>
+} {
+  const { identity } = useAuth()
+  const active = Boolean(identity && ledgerId && enabled)
+
+  const { data, isLoading, mutate } = useSWR(
+    active ? keyFor(identity, "trading-balance", ledgerId!) : null,
+    () => getTradingBalance(identity, ledgerId!),
+    {
+      revalidateOnFocus: false,
+      dedupingInterval: 10_000,
+      shouldRetryOnError: false,
+    }
+  )
+
+  return { balance: data ?? 0n, isLoading, refresh: mutate }
 }

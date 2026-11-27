@@ -2,7 +2,7 @@
 
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 import { tokenUsdValue } from "@/lib/token/price"
-import { useTokenRegistry } from "@/lib/token/registry"
+import { useTokenRegistry, useTokenUsdPrice } from "@/lib/token/registry"
 import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 
 type TokenFiatHintProps = {
@@ -15,7 +15,8 @@ type TokenFiatHintProps = {
 export function TokenFiatHint({ ledgerId, amount, decimals, className }: TokenFiatHintProps) {
   const { hidden } = useBalanceVisibility()
   const registry = useTokenRegistry()
-  const usd = tokenUsdValue(amount, decimals, registry?.get(ledgerId)?.priceUsd)
+  const priceUsd = useTokenUsdPrice(ledgerId, registry)
+  const usd = tokenUsdValue(amount, decimals, priceUsd)
   const fiat = useFiatValue(usd)
 
   if (hidden || fiat.formatted === null) return null

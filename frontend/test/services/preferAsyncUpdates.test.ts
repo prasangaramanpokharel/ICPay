@@ -26,4 +26,21 @@ await fake.update("aaaaa-aa", {
 })
 assert(seen[0]?.callSync === true, "keeps explicit true")
 
+const rejectFake = {
+  update: async () => {
+    const err = new Error("rejected") as Error & { code?: { callContext?: Record<string, unknown> } }
+    err.code = {}
+    throw err
+  },
+} as unknown as HttpAgent
+
+preferAsyncUpdates(rejectFake)
+let caughtCode: { callContext?: Record<string, unknown> } | undefined
+try {
+  await rejectFake.update("aaaaa-aa", { methodName: "m", arg: new Uint8Array() })
+} catch (err) {
+  caughtCode = (err as { code?: { callContext?: Record<string, unknown> } }).code
+}
+assert(Boolean(caughtCode?.callContext?.effectiveTarget), "populates missing effectiveTarget on reject error")
+
 console.log("preferAsyncUpdates ok")

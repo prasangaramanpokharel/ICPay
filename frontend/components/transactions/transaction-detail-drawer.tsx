@@ -17,6 +17,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { TokenFiatHint } from "@/components/token/token-fiat-hint"
+import { TradeRecoveryCard } from "@/components/trade/trade-recovery-card"
 import { PremiumBadge } from "@/components/verified/premium-badge"
 import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { avatarUriFor } from "@/lib/profile/avatar"
@@ -211,6 +212,16 @@ function TransactionDrawerBody({ tx }: { tx: TransactionPublic }) {
           {t(`status.${status}`)}
         </p>
       </div>
+
+      {type === "swapOut" ? (
+        <TradeRecoveryCard
+          ledgerId={tx.ledgerId}
+          symbol={symbol}
+          decimals={decimals}
+          fee={tx.fee}
+          pendingSwapHint={status === "pending"}
+        />
+      ) : null}
 
       {showAction ? (
         <Button
