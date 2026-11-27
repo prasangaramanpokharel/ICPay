@@ -1,7 +1,7 @@
-export const SERVICE_FEE_BPS = 10n
+export const SERVICE_FEE_BPS = 15n
 export const MIN_SERVICE_FEE = 1n
 
-export const DEFAULT_SLIPPAGE_BPS = 100n
+export const DEFAULT_SLIPPAGE_BPS = 200n
 export const HIGH_PRICE_IMPACT_PCT = 5
 export const SEVERE_PRICE_IMPACT_PCT = 15
 
