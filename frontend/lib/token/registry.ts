@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react"
 import useSWR from "swr"
 import { resolveTokenDisplayName } from "@/lib/wallet/utils"
 
@@ -113,4 +114,56 @@ export function useTokenUsdPrice(
   )
 
   return registryPrice ?? fallbackPrice ?? undefined
+}
+
+export function useResolvedTokenPrices(
+  tokens: ReadonlyArray<{ ledgerId: string; balance: bigint }>
+): Map<string, number> {
+  const registry = useTokenRegistry()
+
+  const missingKey = useMemo(() => {
+    if (!registry) return ""
+    const missing = new Set<string>()
+    for (const token of tokens) {
+      if (token.balance > 0n && registry.get(token.ledgerId)?.priceUsd === undefined) {
+        missing.add(token.ledgerId)
+      }
+    }
+    return [...missing].sort().join(",")
+  }, [registry, tokens])
+
+  const { data: fallbackPrices } = useSWR(
+    missingKey ? (["icpswap-token-prices", missingKey] as const) : null,
+    async ([, ids]) => {
+      const entries = await Promise.all(
+        ids.split(",").map(async (id) => {
+          const price = await fetchIcpswapTokenPrice(id)
+          return price !== null ? ([id, price] as const) : null
+        })
+      )
+      return new Map(entries.flatMap((e) => (e ? [e] : [])))
+    },
+    {
+      dedupingInterval: 60_000,
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+      keepPreviousData: true,
+      shouldRetryOnError: false,
+    }
+  )
+
+  return useMemo(() => {
+    const merged = new Map<string, number>()
+    if (registry) {
+      for (const [id, meta] of registry) {
+        if (meta.priceUsd !== undefined) merged.set(id, meta.priceUsd)
+      }
+    }
+    if (fallbackPrices) {
+      for (const [id, price] of fallbackPrices) {
+        if (!merged.has(id)) merged.set(id, price)
+      }
+    }
+    return merged
+  }, [registry, fallbackPrices])
 }

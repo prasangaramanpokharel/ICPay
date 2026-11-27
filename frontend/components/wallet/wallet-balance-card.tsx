@@ -10,8 +10,8 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import { WalletAllocation } from "@/components/wallet/wallet-allocation"
-import type { Holding, UnpricedHolding } from "@/lib/allocation"
-import { useTokenRegistry } from "@/lib/token/registry"
+import { partitionHoldingsByPrice } from "@/lib/token/price"
+import { useResolvedTokenPrices } from "@/lib/token/registry"
 import { type TokenHolding } from "@/services/tokens"
 import {
   DropdownMenu,
@@ -33,7 +33,7 @@ import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 import { useFiatCurrency } from "@/components/fiat/fiat-provider"
 import { CURRENCIES, type FiatCurrency } from "@/lib/fiat/config"
 import type { IcpPrice } from "@/lib/market/icpPrice"
-import { formatAmount, formatTokenAmount, E8S } from "@/lib/wallet/utils"
+import { formatAmount, E8S } from "@/lib/wallet/utils"
 import { cn } from "@/lib/ui/utils"
 
 type WalletBalanceCardProps = {
@@ -67,45 +67,21 @@ export function WalletBalanceCard({ balance, usdValue, price, holdings = [] }: W
   const { hidden, toggleVisibility } = useBalanceVisibility()
   const fiat = useFiatValue(usdValue)
   const { currency, setCurrency } = useFiatCurrency()
-  const registry = useTokenRegistry()
+  const resolvedPrices = useResolvedTokenPrices(holdings)
   const loading = balance === undefined
   const formattedBalance = balance !== undefined ? formatAmount(balance) : "0.0"
 
-  const pricedHoldings = useMemo<Holding[]>(() => {
-    const list: Holding[] = []
-    const rate = fiat.rate ?? 1
-    const icpAmount = Number(balance ?? 0n) / Number(E8S)
-    const icpVal = price && price.usd > 0 ? icpAmount * price.usd * rate : 0
-    if (icpVal > 0) {
-      list.push({ symbol: "ICP", value: icpVal })
-    }
-
-    for (const h of holdings) {
-      if (h.symbol === "ICP") continue
-      const amt = Number(h.balance) / 10 ** h.decimals
-      if (amt <= 0) continue
-      const p = registry?.get(h.ledgerId)?.priceUsd
-      if (!p || p <= 0) continue
-      list.push({ symbol: h.symbol, value: amt * p * rate })
-    }
-    return list
-  }, [balance, price, holdings, registry, fiat.rate])
-
-  const unpricedHoldings = useMemo<UnpricedHolding[]>(() => {
-    const list: UnpricedHolding[] = []
-    for (const h of holdings) {
-      if (h.symbol === "ICP") continue
-      if (h.balance <= 0n) continue
-      const p = registry?.get(h.ledgerId)?.priceUsd
-      if (!p || p <= 0) {
-        list.push({
-          symbol: h.symbol,
-          amount: formatTokenAmount(h.balance, h.decimals, 4),
-        })
-      }
-    }
-    return list
-  }, [holdings, registry])
+  const { pricedHoldings, unpricedHoldings } = useMemo(
+    () =>
+      partitionHoldingsByPrice(
+        Number(balance ?? 0n) / Number(E8S),
+        price?.usd,
+        fiat.rate ?? 1,
+        holdings,
+        resolvedPrices
+      ),
+    [balance, price, holdings, resolvedPrices, fiat.rate]
+  )
 
   return (
     <Card className="relative overflow-hidden rounded-(--radius) border border-border/60 bg-card p-5 text-card-foreground gap-0">
