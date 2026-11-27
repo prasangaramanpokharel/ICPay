@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/drawer"
 import { Spinner } from "@/components/ui/spinner"
 import { createAgent } from "@/services/icp"
-import { requiredWalletDebit, SEVERE_PRICE_IMPACT_PCT } from "@/lib/trade/fees"
+import { DEFAULT_SLIPPAGE_BPS, requiredWalletDebit, SEVERE_PRICE_IMPACT_PCT } from "@/lib/trade/fees"
 import { formatTokenAmount } from "@/lib/wallet/utils"
 import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
 import type { TokenHolding } from "@/services/tokens"
@@ -85,7 +85,7 @@ export function TradeConfirmDrawer({
                 label={t("youReceive")}
                 value={`${formatTokenAmount(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`}
               />
-              <ConfirmRow label={t("slippage")} value="1%" />
+              <ConfirmRow label={t("slippage")} value={`${Number(DEFAULT_SLIPPAGE_BPS) / 100}%`} />
               {priceImpact ? (
                 <ConfirmRow
                   label={t("priceImpact")}
