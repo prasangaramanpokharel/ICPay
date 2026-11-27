@@ -2,7 +2,7 @@ import type { Identity } from "@icp-sdk/core/agent"
 import { createAgent } from "@/services/icp"
 import { icrcTransferFee } from "@/services/ledger/icrc"
 import { isSwapBlocked } from "@/lib/swap/config"
-import { poolSwapFee, quoteIcpswapPool, resolveIcpswapPool } from "@/lib/swap/icpswap"
+import { poolSwapFee, quoteIcpswapWithImpact, resolveIcpswapPool } from "@/lib/swap/icpswap"
 import { icpServiceFee, netSwapOutput } from "@/lib/swap/utils"
 import type { SwapQuoteResult } from "@/services/types"
 
@@ -36,7 +36,11 @@ export async function fetchIcpswapQuote(
   const quoteAmountIn = amountIn - tokenInFee
   if (quoteAmountIn <= 0n) throw new Error("amountIn too small after ledger fee")
 
-  const grossOut = await quoteIcpswapPool(agent, pool, quoteAmountIn)
+  const { amountOut: grossOut, priceImpact } = await quoteIcpswapWithImpact(
+    agent,
+    pool,
+    quoteAmountIn
+  )
   if (grossOut === 0n) throw new Error("No pool liquidity for this swap direction")
 
   const swapFee = poolSwapFee(quoteAmountIn, pool.fee)
@@ -47,7 +51,7 @@ export async function fetchIcpswapQuote(
     amountOutRaw: grossOut,
     icpServiceFee: serviceFee,
     swapFee,
-    priceImpact: "",
+    priceImpact,
     poolId: pool.poolId,
   }
 }

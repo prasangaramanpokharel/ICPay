@@ -6,11 +6,13 @@ import { Icon } from "@/components/ui/icon"
 import { ReplaceGlassIcon } from "@thesvg/ui-react"
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Skeleton } from "@/components/ui/skeleton"
 import { TradeConfirmDrawer } from "@/components/trade/trade-confirm-drawer"
 import { TradeTokenPicker } from "@/components/trade/trade-token-picker"
 import { TradeAmountField } from "@/components/trade/trade-amount-field"
 import { TradeFeeSummary } from "@/components/trade/trade-fee-summary"
+import { TradeRecoveryCard } from "@/components/trade/trade-recovery-card"
 import { useTradeQuote, useTradeTokens } from "@/hooks/trade/useTrade"
 import { defaultSwapPair } from "@/lib/swap/tokens"
 import {
@@ -18,6 +20,7 @@ import {
   minAmountOut,
   minTradeInput,
   requiredWalletDebit,
+  SEVERE_PRICE_IMPACT_PCT,
   tradeRate,
 } from "@/lib/trade/fees"
 import { parseTokenAmount, toPlainTokenAmount, formatTokenAmount } from "@/lib/wallet/utils"
@@ -105,17 +108,32 @@ export function TradeForm({
   const [amountText, setAmountText] = useState("")
   const [picker, setPicker] = useState<"in" | "out" | null>(null)
   const [confirmOpen, setConfirmOpen] = useState(false)
+  const [impactConfirmed, setImpactConfirmed] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [trading, setTrading] = useState(false)
   const tradeLock = useRef(false)
 
   const pickIn = (token: TokenHolding) => {
     setPickedIn(token)
+    setImpactConfirmed(false)
+    setError(null)
     const out = pickedOut ?? defaultPair?.tokenOut ?? null
     if (out?.ledgerId === token.ledgerId) {
       const alt = tokens.find((x) => x.ledgerId !== token.ledgerId)
       if (alt) setPickedOut(alt)
     }
+  }
+
+  const pickOut = (token: TokenHolding) => {
+    setPickedOut(token)
+    setImpactConfirmed(false)
+    setError(null)
+  }
+
+  const handleAmountChange = (value: string) => {
+    setAmountText(value)
+    setImpactConfirmed(false)
+    setError(null)
   }
 
   const amountIn = tokenIn ? parseTokenAmount(amountText, tokenIn.decimals) : null
@@ -128,6 +146,8 @@ export function TradeForm({
 
   const belowMin =
     amountIn !== null && tokenIn !== null && amountIn > 0n && amountIn < minTradeInput(tokenIn.fee)
+
+  const sameToken = Boolean(tokenIn && tokenOut && tokenIn.ledgerId === tokenOut.ledgerId)
 
   const { quote, error: quoteError, isLoading: quoteLoading } = useTradeQuote(
     tokenIn?.ledgerId ?? null,
@@ -144,33 +164,61 @@ export function TradeForm({
       ? tradeRate(amountIn, quote.amountOut)
       : null
 
-  const quoteMessage = useMemo(() => {
+  const quoteCause = useMemo(() => {
     if (!quoteError) return null
     const msg = quoteError instanceof Error ? quoteError.message : String(quoteError)
-    if (msg === "sameToken") return t("sameToken")
-    if (msg === "unsupported") return t("unsupported")
-    if (msg.includes("liquidity")) return t("noLiquidity")
-    return msg
+    if (msg === "sameToken") return t("sameTokenShort")
+    if (msg === "unsupported") return t("unsupportedShort")
+    if (msg.includes("liquidity") || msg.includes("No pool")) return t("noLiquidityShort")
+    if (msg.includes("too small")) return t("belowMinShort")
+    return t("quoteUnavailable")
   }, [quoteError, t])
 
-  const canReview =
-    tokenIn &&
-    tokenOut &&
-    tokenIn.ledgerId !== tokenOut.ledgerId &&
-    amountIn !== null &&
-    amountIn > 0n &&
+  const highImpact =
+    quote?.priceImpactPct !== null &&
+    quote?.priceImpactPct !== undefined &&
+    quote.priceImpactPct >= SEVERE_PRICE_IMPACT_PCT
+
+  const showImpactWarning =
+    highImpact &&
     !insufficient &&
     !belowMin &&
-    quote &&
-    quote.amountOut > 0n &&
-    !quoteLoading &&
-    !quoteError
+    !quoteError &&
+    amountIn !== null &&
+    amountIn > 0n
+
+  const canReview = Boolean(
+    tokenIn &&
+      tokenOut &&
+      !sameToken &&
+      amountIn !== null &&
+      amountIn > 0n &&
+      !insufficient &&
+      !belowMin &&
+      quote &&
+      quote.amountOut > 0n &&
+      !quoteLoading &&
+      !quoteError &&
+      (!highImpact || impactConfirmed)
+  )
+
+  const submitLabel = useMemo(() => {
+    if (sameToken) return t("sameTokenShort")
+    if (amountIn === null || amountIn <= 0n) return t("enterAmount")
+    if (insufficient) return t("insufficientLabel")
+    if (belowMin) return t("belowMinShort")
+    if (quoteLoading) return t("fetchingQuote")
+    if (quoteCause) return quoteCause
+    if (highImpact && !impactConfirmed) return t("confirmPriceImpact")
+    return t("review")
+  }, [sameToken, amountIn, insufficient, belowMin, quoteLoading, quoteCause, highImpact, impactConfirmed, t])
 
   const flip = () => {
     if (!tokenIn || !tokenOut) return
     setPickedIn(tokenOut)
     setPickedOut(tokenIn)
     setAmountText("")
+    setImpactConfirmed(false)
     setError(null)
   }
 
@@ -178,6 +226,8 @@ export function TradeForm({
     if (!tokenIn || maxIn === 0n) return
     const slice = (maxIn * BigInt(pct)) / 100n
     setAmountText(toPlainTokenAmount(slice > 0n ? slice : 0n, tokenIn.decimals))
+    setImpactConfirmed(false)
+    setError(null)
   }
 
   const openReview = () => {
@@ -239,6 +289,9 @@ export function TradeForm({
         ? "…"
         : "0"
 
+  const receiveAmount =
+    quote && !quoteError && quote.amountOut > 0n ? quote.amountOut : null
+
   return (
     <>
       <div className="mx-auto w-full max-w-md space-y-4">
@@ -248,7 +301,7 @@ export function TradeForm({
             token={tokenIn}
             amountText={amountText}
             fiatAmount={amountIn}
-            onAmountChange={setAmountText}
+            onAmountChange={handleAmountChange}
             onPickToken={() => setPicker("in")}
             balance={tokenIn?.balance}
             maxHint={maxIn}
@@ -276,7 +329,7 @@ export function TradeForm({
             label={t("youReceive")}
             token={tokenOut}
             readOnly
-            fiatAmount={quote && !quoteError && quote.amountOut > 0n ? quote.amountOut : null}
+            fiatAmount={receiveAmount}
             amountText={receiveText}
             onPickToken={() => setPicker("out")}
           />
@@ -291,20 +344,44 @@ export function TradeForm({
             depositFee={tokenIn.fee}
             totalDebit={totalDebit}
             rate={rate}
+            priceImpact={quote?.priceImpact}
+            priceImpactPct={quote?.priceImpactPct}
           />
         )}
 
         <div className="space-y-3">
-          {belowMin && (
-            <Alert variant="destructive">
-              <AlertDescription>{t("amountTooSmall")}</AlertDescription>
-            </Alert>
+          {tokenIn && (
+            <TradeRecoveryCard
+              ledgerId={tokenIn.ledgerId}
+              symbol={tokenIn.symbol}
+              decimals={tokenIn.decimals}
+              fee={tokenIn.fee}
+            />
           )}
-          {quoteMessage && amountIn !== null && amountIn > 0n && (
-            <Alert variant="destructive">
-              <AlertDescription>{quoteMessage}</AlertDescription>
-            </Alert>
+          {tokenOut && tokenOut.ledgerId !== tokenIn?.ledgerId && (
+            <TradeRecoveryCard
+              ledgerId={tokenOut.ledgerId}
+              symbol={tokenOut.symbol}
+              decimals={tokenOut.decimals}
+              fee={tokenOut.fee}
+            />
           )}
+
+          {showImpactWarning && quote?.priceImpact && (
+            <label
+              htmlFor="high-impact-confirm"
+              className="flex cursor-pointer items-start gap-3 rounded-xl border border-destructive/40 bg-destructive/5 px-3.5 py-3 text-xs leading-relaxed text-foreground"
+            >
+              <Checkbox
+                id="high-impact-confirm"
+                checked={impactConfirmed}
+                onCheckedChange={(checked) => setImpactConfirmed(Boolean(checked))}
+                className="mt-0.5"
+              />
+              <span>{t("highImpactWarning", { impact: quote.priceImpact })}</span>
+            </label>
+          )}
+
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
@@ -316,11 +393,7 @@ export function TradeForm({
             disabled={!canReview}
             onClick={openReview}
           >
-            {insufficient
-              ? t("insufficientLabel")
-              : quoteLoading
-                ? t("fetchingQuote")
-                : t("review")}
+            {submitLabel}
           </Button>
 
           <p className="text-center text-xs text-muted-foreground">{t("processHint")}</p>
@@ -340,7 +413,7 @@ export function TradeForm({
         onOpenChange={(o) => setPicker(o ? "out" : null)}
         tokens={tokens.filter((x) => x.ledgerId !== tokenIn?.ledgerId)}
         selectedId={tokenOut?.ledgerId ?? null}
-        onSelect={(token) => setPickedOut(token)}
+        onSelect={pickOut}
         title={t("selectReceive")}
       />
 
@@ -352,6 +425,8 @@ export function TradeForm({
         tokenOut={tokenOut}
         amountIn={amountIn}
         amountOut={quote?.amountOut ?? null}
+        priceImpact={quote?.priceImpact}
+        priceImpactPct={quote?.priceImpactPct}
         trading={trading}
         onConfirm={handleConfirm}
       />

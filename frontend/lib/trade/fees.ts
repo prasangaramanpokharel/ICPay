@@ -2,6 +2,8 @@ export const SERVICE_FEE_BPS = 10n
 export const MIN_SERVICE_FEE = 1n
 
 export const DEFAULT_SLIPPAGE_BPS = 100n
+export const HIGH_PRICE_IMPACT_PCT = 5
+export const SEVERE_PRICE_IMPACT_PCT = 15
 
 export function tradeServiceFee(amountIn: bigint): bigint {
   if (amountIn === 0n) return 0n

@@ -5,7 +5,7 @@ import { isSwapBlocked } from "@/lib/swap/config"
 import {
   icpswapErrorMessage,
   poolSwapFee,
-  quoteIcpswapPool,
+  quoteIcpswapWithImpact,
   resolveIcpswapPool,
 } from "@/lib/swap/icpswap"
 import { netSwapOutput } from "@/lib/swap/utils"
@@ -40,10 +40,15 @@ export async function fetchTradeQuote(
   ])
 
   const afterService = amountAfterServiceFee(amountIn)
-  const quoteAmountIn = afterService > tokenInFee ? afterService - tokenInFee : 0n
+  const inFees = tokenInFee * 2n
+  const quoteAmountIn = afterService > inFees ? afterService - inFees : 0n
   if (quoteAmountIn <= 0n) throw new Error("amountIn too small after fees")
 
-  const grossOut = await quoteIcpswapPool(agent, pool, quoteAmountIn)
+  const { amountOut: grossOut, priceImpact, priceImpactPct } = await quoteIcpswapWithImpact(
+    agent,
+    pool,
+    quoteAmountIn
+  )
   if (grossOut === 0n) throw new Error("No pool liquidity for this trade direction")
 
   const swapFee = poolSwapFee(quoteAmountIn, pool.fee)
@@ -54,7 +59,8 @@ export async function fetchTradeQuote(
     amountOutRaw: grossOut,
     serviceFee,
     swapFee,
-    priceImpact: "",
+    priceImpact,
+    priceImpactPct,
     poolId: pool.poolId,
   }
 }
