@@ -853,7 +853,12 @@
     "disclosureInfoTitle": "आपूर्ति सूचना",
     "disclosureInfo": "ICPAY को मिन्टिङ खाता खाता कुञ्जी हो — आपूर्ति निश्चित छैन र थप समर्थन गर्न जारी राख्नुहोस्। मिति पहिले पहिलो खातामा icrc1_total_supply र icrc1_minting_account प्रमाणित गर्नुहोस्।",
     "progressInfoTitle": "प्रगति र भिडियो",
-    "progressInfo": "बिक्री = बिक्री पूर्व क्याप सूची।\n\n10,000,000 ICPAY हो। आईसीपीए लेजरमा क्यानिस्टर उप-खाताको बिक्री ब्यालेन्स हो।\n\nICP उठाइयो = ICPAY ÷ 20,000 बेचियो।"
+    "progressInfo": "बिक्री = बिक्री पूर्व क्याप सूची।\n\n10,000,000 ICPAY हो। आईसीपीए लेजरमा क्यानिस्टर उप-खाताको बिक्री ब्यालेन्स हो।\n\nICP उठाइयो = ICPAY ÷ 20,000 बेचियो।",
+    "endedBadge": "प्रिसेल समाप्त भयो",
+    "endedSubtitle": "सम्पन्न · अब ICPay मा ट्रेड गर्न मिल्ने",
+    "endedNotice": "{symbol} प्रिसेल समाप्त भइसकेको छ। अब सिधै ICPay भित्र {symbol} ट्रेड गर्नुहोस्।",
+    "currentPriceTitle": "हालको मूल्य",
+    "tradeAction": "ट्रेड"
   },
   "brandProtection": {
     "title": "ब्रान्ड संरक्षण",
@@ -2264,7 +2269,8 @@
     "stepExecute": "Executing on ICPSwap",
     "stepDeliver": "Delivering to your wallet",
     "balanceAfter": "Wallet balance",
-    "afterLabel": "after"
+    "afterLabel": "after",
+    "insufficientLabel": "अपर्याप्त ब्यालेन्स"
   },
   "cyclesTopUp": {
     "eyebrow": "साइकल्स",

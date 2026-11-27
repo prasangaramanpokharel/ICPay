@@ -853,7 +853,12 @@
     "disclosureInfoTitle": "Thông báo cung",
     "disclosureInfo": "Tài khoản mint ICPAY là khóa live — cung không cố định và có thể phát hành thêm. Luôn xác minh icrc1_total_supply và icrc1_minting_account trên ledger trước khi mua.",
     "progressInfoTitle": "Tiến độ & còn lại",
-    "progressInfo": "Đã bán = trần presale − tồn kho còn lại.\n\nTrần là 10.000.000 ICPAY. Còn lại là số dư Live trong subaccount bán của canister trên ledger ICPAY.\n\nICP huy động = ICPAY đã bán ÷ 20.000."
+    "progressInfo": "Đã bán = trần presale − tồn kho còn lại.\n\nTrần là 10.000.000 ICPAY. Còn lại là số dư Live trong subaccount bán của canister trên ledger ICPAY.\n\nICP huy động = ICPAY đã bán ÷ 20.000.",
+    "endedBadge": "Đã kết thúc mở bán",
+    "endedSubtitle": "Hoàn tất · Đã mở giao dịch trên ICPay",
+    "endedNotice": "Đợt mở bán trước {symbol} đã kết thúc. Giao dịch {symbol} trực tiếp ngay trong ICPay.",
+    "currentPriceTitle": "Giá hiện tại",
+    "tradeAction": "Giao dịch"
   },
   "brandProtection": {
     "title": "Bảo vệ thương hiệu",
@@ -2264,7 +2269,8 @@
     "stepExecute": "Executing on ICPSwap",
     "stepDeliver": "Delivering to your wallet",
     "balanceAfter": "Wallet balance",
-    "afterLabel": "after"
+    "afterLabel": "after",
+    "insufficientLabel": "Số dư không đủ"
   },
   "cyclesTopUp": {
     "eyebrow": "Cycles",

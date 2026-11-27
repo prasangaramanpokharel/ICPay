@@ -1166,7 +1166,12 @@
     "guideStep3Title": "Premium identity",
     "guideStep3Body": "ICPAY holders can claim premium usernames on ICPay — shorter handles, verified badges, and priority across the app.",
     "guideStep4Title": "Ready to buy?",
-    "guideStep4Body": "Pick an amount between 0.1 and 50 ICP per purchase, review the quote, and confirm. You can buy again anytime while inventory lasts."
+    "guideStep4Body": "Pick an amount between 0.1 and 50 ICP per purchase, review the quote, and confirm. You can buy again anytime while inventory lasts.",
+    "endedBadge": "프리세일 종료",
+    "endedSubtitle": "종료됨 · ICPay에서 거래 가능",
+    "endedNotice": "{symbol} 프리세일이 종료되었습니다. 이제 ICPay 내에서 {symbol}을(를) 바로 거래할 수 있습니다.",
+    "currentPriceTitle": "현재 가격",
+    "tradeAction": "거래"
   },
   "community": {
     "title": "Channels",
@@ -2264,7 +2269,8 @@
     "stepExecute": "Executing on ICPSwap",
     "stepDeliver": "Delivering to your wallet",
     "balanceAfter": "Wallet balance",
-    "afterLabel": "after"
+    "afterLabel": "after",
+    "insufficientLabel": "잔액 부족"
   },
   "cyclesTopUp": {
     "eyebrow": "사이클",

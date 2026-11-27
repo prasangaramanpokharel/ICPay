@@ -853,7 +853,12 @@
     "disclosureInfoTitle": "Paunawa ng supply",
     "disclosureInfo": "Ang minting account ng ICPAY ay isang live na key — hindi naayos ang supply at mas maraming token ang maaaring maibigay. Palaging i-verify ang icrc1_total_supply at icrc1_minting_account sa ledger bago ka bumili.",
     "progressInfoTitle": "Pag-unlad at natitira",
-    "progressInfo": "Nabenta = presale cap − natitirang imbentaryo.\n\nAng cap ay 10,000,000 ICPAY. Ang natitira ay ang live na balanse sa subaccount ng canister sale sa ledger ng ICPAY.\n\nItinaas ang ICP = Nabenta ang ICPAY ÷ 20,000."
+    "progressInfo": "Nabenta = presale cap − natitirang imbentaryo.\n\nAng cap ay 10,000,000 ICPAY. Ang natitira ay ang live na balanse sa subaccount ng canister sale sa ledger ng ICPAY.\n\nItinaas ang ICP = Nabenta ang ICPAY ÷ 20,000.",
+    "endedBadge": "Tapos na ang Presale",
+    "endedSubtitle": "Tapos na · Live para sa trading sa ICPay",
+    "endedNotice": "Tapos na ang presale ng {symbol}. Mag-trade ng {symbol} direkta sa loob ng ICPay.",
+    "currentPriceTitle": "Kasalukuyang presyo",
+    "tradeAction": "Trade"
   },
   "brandProtection": {
     "title": "Proteksyon ng Brand",
@@ -2264,7 +2269,8 @@
     "stepExecute": "Executing on ICPSwap",
     "stepDeliver": "Delivering to your wallet",
     "balanceAfter": "Wallet balance",
-    "afterLabel": "after"
+    "afterLabel": "after",
+    "insufficientLabel": "Kulang ang balanse"
   },
   "cyclesTopUp": {
     "eyebrow": "Cycles",

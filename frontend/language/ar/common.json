@@ -853,7 +853,12 @@
     "disclosureInfoTitle": "إشعار التوريد",
     "disclosureInfo": "يعد حساب سك العملة الخاص بـ ICPAY جاهزًا لمفتاح مباشر — فالعرض ليس ثابتًا وربما إصدار المزيد من العملات. تأكد دائمًا من حساب icrc1_total_supply وicrc1_minting_account في دفتر الأستاذ قبل الشراء.",
     "progressInfoTitle": "التقدم والبقاء",
-    "progressInfo": "تم البيع = الحد الأقصى للبيع − ليس فقط.\n\nالحد الأقصى هو 10,000,000 ICPAY. وأخيرا هو الحساب المباشر في الحساب المباشر للعلبة في دفتر حسابات ICPAY.\n\nرفع برنامج المقارنات الدولية = بيع ICPAY ÷ 20000."
+    "progressInfo": "تم البيع = الحد الأقصى للبيع − ليس فقط.\n\nالحد الأقصى هو 10,000,000 ICPAY. وأخيرا هو الحساب المباشر في الحساب المباشر للعلبة في دفتر حسابات ICPAY.\n\nرفع برنامج المقارنات الدولية = بيع ICPAY ÷ 20000.",
+    "endedBadge": "انتهى البيع المسبق",
+    "endedSubtitle": "مكتمل · متاح الآن للتداول داخل ICPay",
+    "endedNotice": "انتهى البيع المسبق لـ {symbol}. يمكنك الآن تداول {symbol} مباشرة داخل ICPay.",
+    "currentPriceTitle": "السعر الحالي",
+    "tradeAction": "تداول"
   },
   "brandProtection": {
     "title": "حماية العلامة التجارية",
@@ -2264,7 +2269,8 @@
     "stepExecute": "Executing on ICPSwap",
     "stepDeliver": "Delivering to your wallet",
     "balanceAfter": "Wallet balance",
-    "afterLabel": "after"
+    "afterLabel": "after",
+    "insufficientLabel": "الرصيد غير كافٍ"
   },
   "cyclesTopUp": {
     "eyebrow": "الدورات",
