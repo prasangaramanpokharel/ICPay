@@ -24,7 +24,7 @@ import { TokenLogo } from "@/components/token/token-logo"
 import { AddTokenDrawer } from "@/components/wallet/add-token-drawer"
 import { TokenDetailDrawer } from "@/components/wallet/token-detail-drawer"
 import { readHideZeroBalances, writeHideZeroBalances, HIDE_ZERO_EVENT } from "@/lib/wallet/tokenListPrefs"
-import { useTokenRegistry } from "@/lib/token/registry"
+import { useResolvedTokenPrices } from "@/lib/token/registry"
 import { useIcpPrice } from "@/hooks/market/useIcpPrice"
 import { useFiatValue } from "@/hooks/fiat/useFiatValue"
 import { useBalanceVisibility } from "@/components/wallet/balance-visibility-provider"
@@ -84,7 +84,7 @@ export function TokenList({
   const page = pageState.key === filterKey ? pageState.page : 0
   const setPage = (next: number) => setPageState({ key: filterKey, page: next })
 
-  const registry = useTokenRegistry()
+  const resolvedPrices = useResolvedTokenPrices(holdings)
   const { price: icpPrice } = useIcpPrice()
   const fiat = useFiatValue(null)
 
@@ -265,7 +265,7 @@ export function TokenList({
             <TableBody>
               {pageItems.map((token) => {
                 const priceUsd =
-                  token.symbol === "ICP" ? icpPrice?.usd : registry?.get(token.ledgerId)?.priceUsd
+                  token.symbol === "ICP" ? icpPrice?.usd : resolvedPrices.get(token.ledgerId)
                 return (
                   <TokenTableRow
                     key={token.ledgerId}

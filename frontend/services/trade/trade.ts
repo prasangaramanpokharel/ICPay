@@ -1,5 +1,8 @@
 import type { Identity } from "@icp-sdk/core/agent"
+import { Principal } from "@icp-sdk/core/principal"
 import { call, type Outcome } from "@/services/client"
+import { TRADE_CANISTER_ID } from "@/services/icp"
+import { icrcLedger } from "@/services/ledger/icrc"
 import { getWalletActor } from "@/services/wallet"
 import { isSwapToken } from "@/lib/swap/tokens"
 import { isLedgerSupported } from "@/services/tokens"
@@ -84,6 +87,54 @@ export async function executeTradeSwap(
   }
 }
 
+const SETTLE_POLL_DELAYS_MS = [1_500, 2_000, 2_500, 3_000, 4_000] as const
+const WITHDRAW_RETRY_DELAY_MS = 2_500
+const MAX_WITHDRAW_ATTEMPTS = 3
+
+const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
+
+async function waitForTradeLiquidity(
+  identity: Identity | undefined,
+  ledgerId: string,
+  requiredAmount: bigint
+): Promise<void> {
+  if (requiredAmount <= 0n) return
+  try {
+    const ledger = await icrcLedger(identity, ledgerId)
+    const owner = Principal.fromText(TRADE_CANISTER_ID)
+    for (let i = 0; i <= SETTLE_POLL_DELAYS_MS.length; i++) {
+      const balance = await ledger.balance({ owner, certified: false })
+      if (balance >= requiredAmount) return
+      const delay = SETTLE_POLL_DELAYS_MS[i]
+      if (!delay) return
+      await sleep(delay)
+    }
+  } catch {
+    // Fall through to withdraw attempt; withdraw will return exact ledger error if still unsettled.
+  }
+}
+
+export function isTransientWithdrawError(err: string): boolean {
+  return err.toLowerCase().includes("insufficient funds")
+}
+
+export async function runWithWithdrawRetry<T>(
+  attempt: () => Promise<Outcome<T>>,
+  beforeAttempt?: (attemptIndex: number) => Promise<void>,
+  delayMs: number = WITHDRAW_RETRY_DELAY_MS
+): Promise<Outcome<T>> {
+  let last: Outcome<T> = { err: "Withdraw failed" }
+  for (let i = 0; i < MAX_WITHDRAW_ATTEMPTS; i++) {
+    if (i > 0 && delayMs > 0) await sleep(delayMs)
+    if (beforeAttempt) await beforeAttempt(i)
+    last = await attempt()
+    if (!("err" in last) || !isTransientWithdrawError(last.err)) {
+      return last
+    }
+  }
+  return last
+}
+
 export async function runTrade(
   identity: Identity | undefined,
   tokenIn: string,
@@ -96,19 +147,25 @@ export async function runTrade(
 
   const swap = await executeTradeSwap(identity, tokenIn, tokenOut, amountIn, amountOutMin)
   if ("err" in swap) {
-    const refund = await withdrawFromTrade(identity, tokenIn, amountIn)
+    const refund = await runWithWithdrawRetry(
+      () => withdrawFromTrade(identity, tokenIn, amountIn),
+      () => waitForTradeLiquidity(identity, tokenIn, amountIn)
+    )
     if ("err" in refund) {
       return {
-        err: `${swap.err}. Your ${tokenIn} is in trade balance — contact support or retry withdraw.`,
+        err: `${swap.err}. Your ${tokenIn} is in trade balance — withdraw it below or in History.`,
       }
     }
     return swap
   }
 
-  const withdraw = await withdrawFromTrade(identity, tokenOut, swap.ok.amountOut)
+  const withdraw = await runWithWithdrawRetry(
+    () => withdrawFromTrade(identity, tokenOut, swap.ok.amountOut),
+    () => waitForTradeLiquidity(identity, tokenOut, swap.ok.amountOut)
+  )
   if ("err" in withdraw) {
     return {
-      err: `Swap succeeded but withdraw failed: ${withdraw.err}. Check your trade balance.`,
+      err: `Swap succeeded but withdraw failed: ${withdraw.err}. Withdraw it directly below.`,
     }
   }
 
