@@ -853,7 +853,12 @@
     "disclosureInfoTitle": "Arz bildirimi",
     "disclosureInfo": "ICPAY'in minting hesabı aktif bir anahtardır — arz sabit değildir ve daha fazla token çıkarılabilir. Satın almadan önce ledger'da icrc1_total_supply ve icrc1_minting_account'u her zaman doğrulayın.",
     "progressInfoTitle": "İlerleme ve kalan",
-    "progressInfo": "Satılan = presale tavanı − kalan stok.\n\nTavan 10.000.000 ICPAY. Kalan, ICPAY ledger'ındaki canister satış subaccount'undaki Live bakiyedir.\n\nToplanan ICP = satılan ICPAY ÷ 20.000."
+    "progressInfo": "Satılan = presale tavanı − kalan stok.\n\nTavan 10.000.000 ICPAY. Kalan, ICPAY ledger'ındaki canister satış subaccount'undaki Live bakiyedir.\n\nToplanan ICP = satılan ICPAY ÷ 20.000.",
+    "endedBadge": "Ön Satış Sona Erdi",
+    "endedSubtitle": "Tamamlandı · ICPay üzerinde işleme açık",
+    "endedNotice": "{symbol} ön satışı sona erdi. {symbol} işlemlerini doğrudan ICPay içinde yapabilirsiniz.",
+    "currentPriceTitle": "Güncel fiyat",
+    "tradeAction": "İşlem Yap"
   },
   "brandProtection": {
     "title": "Brand Protection",
@@ -2264,7 +2269,8 @@
     "stepExecute": "Executing on ICPSwap",
     "stepDeliver": "Delivering to your wallet",
     "balanceAfter": "Wallet balance",
-    "afterLabel": "after"
+    "afterLabel": "after",
+    "insufficientLabel": "Yetersiz bakiye"
   },
   "cyclesTopUp": {
     "eyebrow": "Cycles",

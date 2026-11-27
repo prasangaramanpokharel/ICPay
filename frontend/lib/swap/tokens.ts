@@ -1,8 +1,7 @@
-import { ICPAY_LEDGER_ID } from "@/services/icpay/icpay"
 import { ICP_LEDGER_ID, PINNED_LEDGER_IDS, type TokenHolding } from "@/services/tokens"
 
 export function isSwapToken(ledgerId: string): boolean {
-  return ledgerId !== ICPAY_LEDGER_ID
+  return Boolean(ledgerId)
 }
 
 export function filterSwapTokens(holdings: TokenHolding[]): TokenHolding[] {

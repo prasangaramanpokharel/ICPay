@@ -853,7 +853,12 @@
     "disclosureInfoTitle": "Supply notice",
     "disclosureInfo": "ICPAY's minting account is a live key — supply is not fixed and more tokens can be issued. Always verify icrc1_total_supply and icrc1_minting_account on the ledger before you buy.",
     "progressInfoTitle": "Progress & remaining",
-    "progressInfo": "Sold = presale cap − remaining inventory.\n\nCap is 10,000,000 ICPAY. Remaining is the live balance in the canister sale subaccount on the ICPAY ledger.\n\nICP raised = ICPAY sold ÷ 20,000."
+    "progressInfo": "Sold = presale cap − remaining inventory.\n\nCap is 10,000,000 ICPAY. Remaining is the live balance in the canister sale subaccount on the ICPAY ledger.\n\nICP raised = ICPAY sold ÷ 20,000.",
+    "endedBadge": "Presale Ended",
+    "endedSubtitle": "Concluded · Live for trading on ICPay",
+    "endedNotice": "The {symbol} presale has ended. Trade {symbol} anytime directly inside ICPay.",
+    "currentPriceTitle": "Current price",
+    "tradeAction": "Trade"
   },
   "brandProtection": {
     "title": "Brand Protection",
@@ -1000,7 +1005,8 @@
     "stepExecute": "Executing on ICPSwap",
     "stepDeliver": "Delivering to your wallet",
     "balanceAfter": "Wallet balance",
-    "afterLabel": "after"
+    "afterLabel": "after",
+    "insufficientLabel": "Insufficient balance"
   },
   "live": {
     "title": "Live",

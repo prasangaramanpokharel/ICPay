@@ -853,7 +853,12 @@
     "disclosureInfoTitle": "Pemberitahuan pasokan",
     "disclosureInfo": "Akun pembuatan ICPAY adalah kunci aktif — persediaan tidak tetap dan lebih banyak token dapat diterbitkan. Selalu verifikasi icrc1_total_supply dan icrc1_minting_account di buku besar sebelum Anda membeli.",
     "progressInfoTitle": "Kemajuan & sisa",
-    "progressInfo": "Terjual = batas prapenjualan - sisa persediaan.\n\nBatasnya adalah 10.000.000 ICPAY. Sisanya adalah saldo langsung di sub-akun penjualan tabung di buku besar ICPAY.\n\nICP dinaikkan = ICPAY terjual 20.000."
+    "progressInfo": "Terjual = batas prapenjualan - sisa persediaan.\n\nBatasnya adalah 10.000.000 ICPAY. Sisanya adalah saldo langsung di sub-akun penjualan tabung di buku besar ICPAY.\n\nICP dinaikkan = ICPAY terjual 20.000.",
+    "endedBadge": "Presale Berakhir",
+    "endedSubtitle": "Selesai · Siap diperdagangkan di ICPay",
+    "endedNotice": "Presale {symbol} telah berakhir. Perdagangkan {symbol} kapan saja langsung di dalam ICPay.",
+    "currentPriceTitle": "Harga saat ini",
+    "tradeAction": "Trade"
   },
   "brandProtection": {
     "title": "Perlindungan Merek",
@@ -2264,7 +2269,8 @@
     "stepExecute": "Executing on ICPSwap",
     "stepDeliver": "Delivering to your wallet",
     "balanceAfter": "Wallet balance",
-    "afterLabel": "after"
+    "afterLabel": "after",
+    "insufficientLabel": "Saldo tidak cukup"
   },
   "cyclesTopUp": {
     "eyebrow": "Cycles",

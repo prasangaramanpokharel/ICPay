@@ -300,11 +300,6 @@ export function TradeForm({
               <AlertDescription>{t("amountTooSmall")}</AlertDescription>
             </Alert>
           )}
-          {insufficient && (
-            <Alert variant="destructive">
-              <AlertDescription>{t("insufficientBalance")}</AlertDescription>
-            </Alert>
-          )}
           {quoteMessage && amountIn !== null && amountIn > 0n && (
             <Alert variant="destructive">
               <AlertDescription>{quoteMessage}</AlertDescription>
@@ -321,7 +316,11 @@ export function TradeForm({
             disabled={!canReview}
             onClick={openReview}
           >
-            {quoteLoading ? t("fetchingQuote") : t("review")}
+            {insufficient
+              ? t("insufficientLabel")
+              : quoteLoading
+                ? t("fetchingQuote")
+                : t("review")}
           </Button>
 
           <p className="text-center text-xs text-muted-foreground">{t("processHint")}</p>

@@ -1,126 +1,102 @@
 "use client"
 
-import { useState, useSyncExternalStore } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useTranslations } from "next-intl"
-import { Icon } from "@/components/ui/icon"
-import { InfoGlassIcon } from "@thesvg/ui-react"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { useAuth } from "@/components/auth/auth-provider"
-import { useIcpaySale } from "@/hooks/icpay/useIcpaySale"
-import { BuyIcpayDrawer } from "@/components/icpay/buy-icpay-drawer"
-import { PresaleStatsPanel } from "@/components/icpay/presale-stats-panel"
-import { PresaleGuideDialog } from "@/components/icpay/presale-guide-dialog"
-import { GradientBadge } from "@/components/ui/gradient-badge"
-import { PresaleBgCard } from "@/components/icpay/presale-bg-card"
-import { hasSeenPresaleGuide } from "@/lib/icpay/presaleGuide"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Skeleton } from "@/components/ui/skeleton"
+import { formatUsdPrecise } from "@/lib/market/icpPrice"
 import { ICPAY_TOKEN_ICON } from "@/lib/ui/brand-images"
+import type { IcpayStats } from "@/services/icpay/icpay"
+import { ICP_LEDGER_ID, ICPAY_LEDGER_ID } from "@/services/tokens"
 
-export function IcpayPresaleHero({ symbol }: { symbol: string }) {
+const TRADE_ICPAY_HREF = `/trade?from=${ICP_LEDGER_ID}&to=${ICPAY_LEDGER_ID}`
+
+export function IcpayPresaleHero({
+  symbol,
+  stats,
+  isLoading,
+}: {
+  symbol: string
+  stats: IcpayStats | undefined
+  isLoading: boolean
+}) {
   const t = useTranslations("buyIcpay")
-  const { identity } = useAuth()
-  const { sale, isLoading } = useIcpaySale()
-  const [buyOpen, setBuyOpen] = useState(false)
-  const [manualGuideOpen, setManualGuideOpen] = useState(false)
-  const [autoDismissed, setAutoDismissed] = useState(false)
-  const unseenGuide = useSyncExternalStore(
-    () => () => {},
-    () => !hasSeenPresaleGuide(),
-    () => false
-  )
-  const guideOpen =
-    manualGuideOpen || (Boolean(sale?.active) && unseenGuide && !autoDismissed)
-
-  const closeGuide = () => {
-    setManualGuideOpen(false)
-    setAutoDismissed(true)
-  }
+  const market = stats?.market ?? null
+  const change = market?.priceChange24h ?? 0
 
   return (
-    <section className="space-y-4">
-      <PresaleBgCard minHeight="min-h-[28rem]" contentClassName="space-y-6 px-5 py-7">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <span className="relative flex size-13 shrink-0 overflow-hidden rounded-full">
-                <Image
-                  src={ICPAY_TOKEN_ICON}
-                  alt=""
-                  width={52}
-                  height={52}
-                  unoptimized
-                  priority
-                  className="size-full object-cover"
-                />
-              </span>
-              <div>
-                <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-lg font-bold tracking-tight">{t("heroTitle")}</h2>
-                  {sale?.active && <GradientBadge>{t("liveBadge")}</GradientBadge>}
-                </div>
-                <p className="text-xs text-muted-foreground">{t("heroSubtitle")}</p>
-              </div>
+    <section className="mx-auto w-full max-w-lg">
+      <Card>
+        <CardHeader className="flex flex-row items-center gap-3.5 border-b border-border/60 pb-5">
+          <span className="relative flex size-12 shrink-0 overflow-hidden rounded-full border border-border">
+            <Image
+              src={ICPAY_TOKEN_ICON}
+              alt={symbol}
+              width={48}
+              height={48}
+              unoptimized
+              priority
+              className="size-full object-cover"
+            />
+          </span>
+          <div className="min-w-0 flex-1 space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle className="text-lg font-semibold tracking-tight">
+                {t("heroTitle")}
+              </CardTitle>
+              <Badge variant="secondary">{t("endedBadge")}</Badge>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              type="button"
-              onClick={() => setManualGuideOpen(true)}
-              className="size-8 shrink-0 rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
-              aria-label={t("viewGuide")}
-            >
-              <Icon icon={InfoGlassIcon} className="size-4" strokeWidth={1.75} />
-            </Button>
+            <CardDescription>{t("endedSubtitle")}</CardDescription>
           </div>
+        </CardHeader>
 
-          <div className="py-2 text-center">
-            <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">
-              {t("rateInfoTitle")}
+        <CardContent className="space-y-5 py-6">
+          <div className="space-y-1.5 text-center">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              {t("currentPriceTitle")}
             </p>
-            <p className="mt-2 text-2xl font-bold tracking-tight tabular-nums">
-              {t("heroRate")}
-            </p>
+            {isLoading && !stats ? (
+              <Skeleton className="mx-auto h-9 w-40 rounded-md" />
+            ) : (
+              <p className="text-3xl font-bold tracking-tight tabular-nums text-foreground">
+                {market ? formatUsdPrecise(market.priceUsd) : "—"}
+              </p>
+            )}
+            {market && (
+              <p
+                className={`text-xs font-medium tabular-nums ${
+                  change > 0
+                    ? "text-success"
+                    : change < 0
+                      ? "text-destructive"
+                      : "text-muted-foreground"
+                }`}
+              >
+                {change > 0 ? "+" : ""}
+                {change.toFixed(2)}% (24h)
+              </p>
+            )}
           </div>
 
-          <PresaleStatsPanel
-            sale={sale}
-            symbol={symbol}
-            isLoading={isLoading}
-            remainingLabel={(amount, sym) => t("remaining", { amount, symbol: sym })}
-            raisedLabel={(icp) => t("raised", { icp })}
-            inactiveLabel={t("soldOut")}
-          />
-
-          <div className="rounded-2xl border border-dashed border-primary/20 bg-primary/5 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
-            {t("liquidityInfo")}
+          <div className="rounded-lg border border-border bg-muted/40 px-4 py-3 text-xs leading-relaxed text-muted-foreground">
+            {t("endedNotice", { symbol })}
           </div>
+        </CardContent>
 
-          {identity ? (
-            <Button
-              className="w-full"
-              disabled={!sale?.active}
-              onClick={() => setBuyOpen(true)}
-            >
-              {sale?.active ? t("openBuy") : t("soldOut")}
-            </Button>
-          ) : (
-            <Button
-              className="w-full"
-              nativeButton={false}
-              render={<Link href="/login" />}
-            >
-              {t("loginToBuy")}
-            </Button>
-          )}
-      </PresaleBgCard>
-
-      <PresaleGuideDialog
-        open={guideOpen}
-        onClose={closeGuide}
-      />
-      {buyOpen ? (
-        <BuyIcpayDrawer open={buyOpen} onOpenChange={setBuyOpen} symbol={symbol} />
-      ) : null}
+        <CardFooter className="pt-0">
+          <Button
+            size="lg"
+            className="w-full font-semibold"
+            nativeButton={false}
+            render={<Link href={TRADE_ICPAY_HREF} />}
+          >
+            {t("tradeAction")}
+          </Button>
+        </CardFooter>
+      </Card>
     </section>
   )
 }

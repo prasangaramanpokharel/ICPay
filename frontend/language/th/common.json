@@ -853,7 +853,12 @@
     "disclosureInfoTitle": "ประกาศอุปทาน",
     "disclosureInfo": "บัญชี minting ของ ICPAY เป็น key ที่ยังใช้งาน — อุปทานไม่คงที่และออกโทเคนเพิ่มได้ ตรวจ icrc1_total_supply และ icrc1_minting_account บน ledger ก่อนซื้อเสมอ",
     "progressInfoTitle": "ความคืบหน้าและคงเหลือ",
-    "progressInfo": "ขายแล้ว = เพดาน presale − สต็อกคงเหลือ\n\nเพดาน 10,000,000 ICPAY คงเหลือคือยอด Live ใน subaccount ขายของ canister บน ledger ICPAY\n\nICP ที่ระดม = ICPAY ขาย ÷ 20,000"
+    "progressInfo": "ขายแล้ว = เพดาน presale − สต็อกคงเหลือ\n\nเพดาน 10,000,000 ICPAY คงเหลือคือยอด Live ใน subaccount ขายของ canister บน ledger ICPAY\n\nICP ที่ระดม = ICPAY ขาย ÷ 20,000",
+    "endedBadge": "สิ้นสุดรอบพรีเซลแล้ว",
+    "endedSubtitle": "สิ้นสุดแล้ว · พร้อมเทรดใน ICPay",
+    "endedNotice": "รอบพรีเซลของ {symbol} สิ้นสุดลงแล้ว คุณสามารถเทรด {symbol} ได้โดยตรงใน ICPay",
+    "currentPriceTitle": "ราคาปัจจุบัน",
+    "tradeAction": "เทรด"
   },
   "brandProtection": {
     "title": "Brand Protection",
@@ -2264,7 +2269,8 @@
     "stepExecute": "Executing on ICPSwap",
     "stepDeliver": "Delivering to your wallet",
     "balanceAfter": "Wallet balance",
-    "afterLabel": "after"
+    "afterLabel": "after",
+    "insufficientLabel": "ยอดคงเหลือไม่เพียงพอ"
   },
   "cyclesTopUp": {
     "eyebrow": "Cycles",
