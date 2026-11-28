@@ -432,7 +432,13 @@
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
-    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet.",
+    "selfCustodyWithdraw": "プリンシパルから出金",
+    "selfCustodyWithdrawing": "出金中…",
+    "selfCustodyWithdrawn": "プリンシパルから {amount} {symbol} を出金しました。",
+    "selfCustodyDestLabel": "送信先アドレス",
+    "selfCustodyDestPlaceholder": "プリンシパルまたは ICRC-1 アドレス",
+    "selfCustodyOrExternal": "別のアドレスへ出金する"
   },
   "sendToken": {
     "title": "{symbol} を送金",

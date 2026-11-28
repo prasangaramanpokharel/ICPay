@@ -432,7 +432,13 @@
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
-    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet.",
+    "selfCustodyWithdraw": "프린시펄에서 출금",
+    "selfCustodyWithdrawing": "출금 중…",
+    "selfCustodyWithdrawn": "프린시펄에서 {amount} {symbol}을(를) 출금했습니다.",
+    "selfCustodyDestLabel": "받을 주소",
+    "selfCustodyDestPlaceholder": "프린시펄 또는 ICRC-1 주소",
+    "selfCustodyOrExternal": "또는 다른 주소로 출금"
   },
   "sendToken": {
     "title": "{symbol} 보내기",

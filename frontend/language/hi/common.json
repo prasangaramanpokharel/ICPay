@@ -432,7 +432,13 @@
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
-    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet.",
+    "selfCustodyWithdraw": "प्रिंसिपल से निकालें",
+    "selfCustodyWithdrawing": "निकासी हो रही है…",
+    "selfCustodyWithdrawn": "आपके प्रिंसिपल से {amount} {symbol} निकाले गए।",
+    "selfCustodyDestLabel": "गंतव्य पता",
+    "selfCustodyDestPlaceholder": "प्रिंसिपल या ICRC-1 पता",
+    "selfCustodyOrExternal": "या किसी अन्य पते पर निकालें"
   },
   "sendToken": {
     "title": "{symbol} भेजें",
