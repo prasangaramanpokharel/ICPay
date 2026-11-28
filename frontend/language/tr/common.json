@@ -482,7 +482,13 @@
     "snsLink": "SNS'i görüntüle",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
-    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet.",
+    "selfCustodyWithdraw": "Principal üzerinden çek",
+    "selfCustodyWithdrawing": "Çekiliyor…",
+    "selfCustodyWithdrawn": "Principal hesabınızdan {amount} {symbol} çekildi.",
+    "selfCustodyDestLabel": "Hedef adres",
+    "selfCustodyDestPlaceholder": "Principal veya ICRC-1 adresi",
+    "selfCustodyOrExternal": "Veya başka bir adrese çek"
   },
   "tokenHistory": {
     "empty": "Henüz dizinlenmiş işlem yok.",

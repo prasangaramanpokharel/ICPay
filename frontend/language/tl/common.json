@@ -482,7 +482,13 @@
     "snsLink": "Tingnan ang SNS",
     "snsDashboard": "Dashboard ng SNS",
     "snsSwap": "SNS palitan",
-    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet.",
+    "selfCustodyWithdraw": "I-withdraw mula sa principal",
+    "selfCustodyWithdrawing": "Nagwi-withdraw…",
+    "selfCustodyWithdrawn": "Na-withdraw ang {amount} {symbol} mula sa iyong principal.",
+    "selfCustodyDestLabel": "Destinasyong address",
+    "selfCustodyDestPlaceholder": "Principal o ICRC-1 address",
+    "selfCustodyOrExternal": "O mag-withdraw sa ibang address"
   },
   "tokenHistory": {
     "empty": "Wala pang naka-index na transaksyon.",

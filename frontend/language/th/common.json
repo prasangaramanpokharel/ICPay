@@ -482,7 +482,13 @@
     "snsLink": "ดู SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
-    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet.",
+    "selfCustodyWithdraw": "ถอนจาก Principal",
+    "selfCustodyWithdrawing": "กำลังถอน…",
+    "selfCustodyWithdrawn": "ถอน {amount} {symbol} จาก Principal ของคุณแล้ว",
+    "selfCustodyDestLabel": "ที่อยู่ปลายทาง",
+    "selfCustodyDestPlaceholder": "Principal หรือที่อยู่ ICRC-1",
+    "selfCustodyOrExternal": "หรือถอนไปยังที่อยู่อื่น"
   },
   "tokenHistory": {
     "empty": "ยังไม่มีธุรกรรมที่จัดทำดัชนี",

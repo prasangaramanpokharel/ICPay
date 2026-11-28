@@ -482,7 +482,13 @@
     "snsLink": "View SNS",
     "snsDashboard": "SNS dashboard",
     "snsSwap": "SNS swap",
-    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet.",
+    "selfCustodyWithdraw": "Withdraw from principal",
+    "selfCustodyWithdrawing": "Withdrawing…",
+    "selfCustodyWithdrawn": "Withdrew {amount} {symbol} from your principal.",
+    "selfCustodyDestLabel": "Destination address",
+    "selfCustodyDestPlaceholder": "Principal or ICRC-1 address",
+    "selfCustodyOrExternal": "Or withdraw to another address"
   },
   "tokenHistory": {
     "empty": "No indexed transactions yet.",

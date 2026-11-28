@@ -482,7 +482,13 @@
     "snsLink": "Xem SNS",
     "snsDashboard": "Bảng điều khiển SNS",
     "snsSwap": "Swap SNS",
-    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet.",
+    "selfCustodyWithdraw": "Rút từ principal",
+    "selfCustodyWithdrawing": "Đang rút…",
+    "selfCustodyWithdrawn": "Đã rút {amount} {symbol} từ principal của bạn.",
+    "selfCustodyDestLabel": "Địa chỉ nhận",
+    "selfCustodyDestPlaceholder": "Principal hoặc địa chỉ ICRC-1",
+    "selfCustodyOrExternal": "Hoặc rút về địa chỉ khác"
   },
   "tokenHistory": {
     "empty": "Chưa có giao dịch được lập chỉ mục.",

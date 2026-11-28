@@ -1,11 +1,14 @@
 import type { Identity } from "@icp-sdk/core/agent"
 import { IcrcTransferError } from "@icp-sdk/canisters/ledger/icrc"
-import type { Principal } from "@icp-sdk/core/principal"
+import { Principal } from "@icp-sdk/core/principal"
 import type { Outcome } from "@/services/client"
+import { parseAddress } from "@/lib/wallet/icpAddress"
 import { icrcLedger } from "@/services/ledger/icrc"
 import { custodialSubaccount, canMoveToCustody } from "@/services/tokens"
 
 export type SweepResult = { blockIndex: bigint; amount: bigint }
+
+type IcrcTarget = { owner: Principal; subaccount: [] | [Uint8Array] }
 
 type TransferError = {
   BadFee?: { expected_fee: bigint }
@@ -29,26 +32,31 @@ function describe(err: TransferError): string {
   return "The transfer was rejected."
 }
 
-export async function sweepToCustody(
+export function parsePrincipalOrIcrc1(raw: string): IcrcTarget | null {
+  const hit = parseAddress(raw)
+  if (!hit) return null
+  if (hit.kind === "principal") {
+    return { owner: Principal.fromText(hit.principal), subaccount: [] }
+  }
+  if (hit.kind === "icrc1") {
+    return { owner: Principal.fromText(hit.owner), subaccount: [hit.subaccount] }
+  }
+  return null
+}
+
+async function transferFromPrincipal(
   identity: Identity | undefined,
   ledgerId: string,
-  custodian: Principal,
+  to: IcrcTarget,
   amount: bigint
 ): Promise<Outcome<SweepResult>> {
   if (!identity) return { err: "Not authenticated" }
   if (amount <= 0n) return { err: "Nothing to move." }
 
-  if (!(await canMoveToCustody(identity, ledgerId))) {
-    return { err: "This token cannot be moved into ICPay." }
-  }
-
   try {
     const ledger = await icrcLedger(identity, ledgerId)
     const blockIndex = await ledger.transfer({
-      to: {
-        owner: custodian,
-        subaccount: [custodialSubaccount(identity.getPrincipal())],
-      },
+      to,
       amount,
       created_at_time: BigInt(Date.now()) * 1_000_000n,
     })
@@ -64,4 +72,45 @@ export async function sweepToCustody(
     console.error(e)
     return { err: "Could not reach the ledger. Nothing was sent." }
   }
+}
+
+export async function sweepToCustody(
+  identity: Identity | undefined,
+  ledgerId: string,
+  custodian: Principal,
+  amount: bigint
+): Promise<Outcome<SweepResult>> {
+  if (!identity) return { err: "Not authenticated" }
+  if (amount <= 0n) return { err: "Nothing to move." }
+
+  if (!(await canMoveToCustody(identity, ledgerId))) {
+    return { err: "This token cannot be moved into ICPay." }
+  }
+
+  return transferFromPrincipal(
+    identity,
+    ledgerId,
+    { owner: custodian, subaccount: [custodialSubaccount(identity.getPrincipal())] },
+    amount
+  )
+}
+
+export async function withdrawFromPrincipal(
+  identity: Identity | undefined,
+  ledgerId: string,
+  destination: string,
+  amount: bigint
+): Promise<Outcome<SweepResult>> {
+  if (!identity) return { err: "Not authenticated" }
+  if (amount <= 0n) return { err: "Nothing to withdraw." }
+
+  const target = parsePrincipalOrIcrc1(destination)
+  if (!target) {
+    return { err: "Enter a valid principal or ICRC-1 address." }
+  }
+  if (target.subaccount.length === 0 && target.owner.toText() === identity.getPrincipal().toText()) {
+    return { err: "Choose a different destination address." }
+  }
+
+  return transferFromPrincipal(identity, ledgerId, target, amount)
 }

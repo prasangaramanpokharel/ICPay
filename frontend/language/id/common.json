@@ -482,7 +482,13 @@
     "snsLink": "Lihat SNS",
     "snsDashboard": "Dasbor SNS",
     "snsSwap": "pertukaran SNS",
-    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet."
+    "selfCustodyUnsupported": "ICPay does not custody this token yet. You can track it here, but it cannot be moved into your wallet.",
+    "selfCustodyWithdraw": "Tarik dari principal",
+    "selfCustodyWithdrawing": "Menarik…",
+    "selfCustodyWithdrawn": "Berhasil menarik {amount} {symbol} dari principal Anda.",
+    "selfCustodyDestLabel": "Alamat tujuan",
+    "selfCustodyDestPlaceholder": "Principal atau alamat ICRC-1",
+    "selfCustodyOrExternal": "Atau tarik ke alamat lain"
   },
   "tokenHistory": {
     "empty": "Belum ada transaksi yang diindeks.",
